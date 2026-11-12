@@ -1,3 +1,8 @@
-import { route } from "@/server/http";
+import { resetTravelStore } from "@/lib/travel/store";
 import { resetDb } from "@/server/db";
-export const POST = route(() => { resetDb(); return { ok: true, reset: true }; });
+import { route } from "@/server/http";
+export const POST = route(() => {
+  resetDb();
+  resetTravelStore();
+  return { ok: true, reset: true };
+});

@@ -9,7 +9,7 @@ import { ModeBadge, ReasoningStream } from "@/components/travel/Reasoning";
 import { TripCard } from "@/components/travel/TripCard";
 import { Avatar, Button, Empty, cx } from "@/components/ui";
 import { useApi } from "@/lib/api";
-import { readUserId } from "@/lib/session";
+import { streamPost } from "@/lib/sse";
 import type { StreamStep } from "@/lib/travel/store";
 import type { Trip } from "@/lib/travel/validate";
 
@@ -20,35 +20,6 @@ type Options = {
   budgets: number[];
 };
 type Result = { runId: string; trips: Trip[]; declineReason?: string; mode: string; costUsd: number; latencyMs: number; model: string };
-
-/** POST + parse Server-Sent Events by hand (EventSource can't POST). */
-export async function streamDiscover(body: { start: string; end: string; budget: number; hint?: string }, onStep: (s: StreamStep) => void): Promise<Result> {
-  const res = await fetch("/api/travel/discover", { method: "POST", headers: { "content-type": "application/json", "x-user-id": readUserId() }, body: JSON.stringify(body) });
-  if (!res.ok || !res.body) throw new Error((await res.json().catch(() => ({})))?.error ?? `HTTP ${res.status}`);
-  const reader = res.body.getReader();
-  const dec = new TextDecoder();
-  let buf = "";
-  let result: Result | undefined;
-  for (;;) {
-    const { value, done } = await reader.read();
-    if (done) break;
-    buf += dec.decode(value, { stream: true });
-    let idx;
-    while ((idx = buf.indexOf("\n\n")) >= 0) {
-      const chunk = buf.slice(0, idx);
-      buf = buf.slice(idx + 2);
-      const ev = chunk.match(/^event: (.+)$/m)?.[1];
-      const data = chunk.match(/^data: (.+)$/m)?.[1];
-      if (!ev || !data) continue;
-      const d = JSON.parse(data);
-      if (ev === "step") onStep(d);
-      else if (ev === "result") result = d;
-      else if (ev === "error") throw new Error(d.message);
-    }
-  }
-  if (!result) throw new Error("The agent stopped without a result");
-  return result;
-}
 
 function DiscoverInner() {
   const params = useSearchParams();
@@ -62,6 +33,7 @@ function DiscoverInner() {
   const [error, setError] = useState<string | null>(null);
   const [showSteps, setShowSteps] = useState(true);
   const autoRan = useRef(false);
+  const inFlight = useRef(false);
 
   useEffect(() => {
     if (!opt) return;
@@ -75,20 +47,22 @@ function DiscoverInner() {
   async function run(over?: { start: string; end: string; budget?: number; hint?: string }) {
     const [start, end] = over ? [over.start, over.end] : weekend.split("|");
     const b = over?.budget ?? (Number(budget) || 150);
-    if (!start) return;
+    if (!start || inFlight.current) return;
+    inFlight.current = true;
     setRunning(true);
     setResult(null);
     setError(null);
     setSteps([]);
     setShowSteps(true);
     try {
-      const r = await streamDiscover({ start, end, budget: b, hint: over?.hint ?? (hint || undefined) }, (s) => setSteps((prev) => [...prev, s]));
+      const r = await streamPost<StreamStep, Result>("/api/travel/discover", { start, end, budget: b, hint: over?.hint ?? (hint || undefined) }, (s) => setSteps((prev) => [...prev, s]));
       setResult(r);
       setShowSteps(false);
       window.history.replaceState(null, "", `/travel?start=${start}&end=${end}&budget=${b}`);
     } catch (e) {
       setError((e as Error).message);
     } finally {
+      inFlight.current = false;
       setRunning(false);
     }
   }

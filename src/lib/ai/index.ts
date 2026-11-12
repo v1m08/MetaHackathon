@@ -112,9 +112,25 @@ async function chat(body: ChatBody, meta: { task: string; kind: CallKind; cache:
     // Throws BudgetExceededError when the ledger is full; callers turn that into a mock fallback.
     const id = ledger().reserve({ task: meta.task, model: body.model, kind: meta.kind, reservedUsd: est, images, attempt });
     try {
-      const r = await rawPost<ChatCompletion>("/chat/completions", body);
-      const settled = r.usage ? settleChatUsd(body.model, r.usage) : { usd: est, cached: 0 };
+      let r = await rawPost<ChatCompletion>("/chat/completions", body);
+      let settled = r.usage ? settleChatUsd(body.model, r.usage) : { usd: est, cached: 0 };
       ledger().settle(id, { costUsd: settled.usd, promptTokens: r.usage?.prompt_tokens, cachedTokens: settled.cached, completionTokens: r.usage?.completion_tokens, note: r.usage ? undefined : "no usage in response; booked the estimate" });
+      // Muse reasons before answering; if hidden reasoning ate the whole max_tokens, retry once with 3x.
+      const c0 = r.choices?.[0];
+      if (c0?.finish_reason === "length" && !c0.message?.tool_calls?.length && !(typeof c0.message?.content === "string" && c0.message.content.trim().length > 20)) {
+        const bigger = { ...body, max_tokens: Math.min(8000, (body.max_tokens ?? 1024) * 3) };
+        const est2 = estimateChatUsd(bigger.model, promptChars(bigger), bigger.max_tokens, images);
+        const id2 = ledger().reserve({ task: meta.task, model: body.model, kind: meta.kind, reservedUsd: est2, images, attempt, note: "retry: reasoning consumed max_tokens" });
+        try {
+          r = await rawPost<ChatCompletion>("/chat/completions", bigger);
+          const s2 = r.usage ? settleChatUsd(body.model, r.usage) : { usd: est2, cached: 0 };
+          ledger().settle(id2, { costUsd: s2.usd, promptTokens: r.usage?.prompt_tokens, cachedTokens: s2.cached, completionTokens: r.usage?.completion_tokens });
+          settled = { usd: settled.usd + s2.usd, cached: s2.cached };
+        } catch (err) {
+          ledger().fail(id2, (err as Error).message);
+          throw err;
+        }
+      }
       if (meta.cache && r.choices?.length) cacheSet(key, r);
       return { r, mode: "live", costUsd: settled.usd };
     } catch (err) {
@@ -152,8 +168,12 @@ function finish(t: Trace, start: number, patch: Partial<Trace>) {
 /** Live was wanted but is impossible (budget full, API down): answer with mock and label it. */
 function shouldFallback(err: unknown) {
   if (err instanceof BudgetExceededError) return "budget";
-  const status = (err as AIError).status;
-  if (status === undefined || status === 429 || status >= 500) return "api-unavailable";
+  if (err instanceof AIError) {
+    const status = err.status;
+    if (status === undefined || status === 429 || status >= 500) return "api-unavailable";
+    return null;
+  }
+  if (err instanceof SyntaxError) return "bad-json";
   return null;
 }
 
@@ -253,7 +273,7 @@ async function json<T = unknown>(input: string | AIMessage[], opts: CallOptions 
       model,
       messages,
       temperature: opts.temperature ?? 0.3,
-      max_tokens: opts.maxTokens ?? 1200,
+      max_tokens: opts.maxTokens ?? 1600,
       reasoning_effort: opts.reasoningEffort ?? "low",
       response_format: { type: "json_schema", json_schema: { name: opts.schemaName ?? "result", schema: opts.schema, strict: false } },
     };
@@ -278,7 +298,7 @@ async function json<T = unknown>(input: string | AIMessage[], opts: CallOptions 
       data = extractJson(raw) as T;
     } catch {
       // one repair pass
-      const fix = await chat({ model, temperature: 0, max_tokens: opts.maxTokens ?? 1200, reasoning_effort: "low", messages: [...messages, { role: "assistant", content: raw }, { role: "user", content: "That was not valid JSON. Return only the corrected JSON object." }] }, meta);
+      const fix = await chat({ model, temperature: 0, max_tokens: (opts.maxTokens ?? 1600) * 2, reasoning_effort: "low", messages: [...messages, { role: "assistant", content: raw }, { role: "user", content: "That was not valid JSON. Return only the corrected JSON object." }] }, meta);
       costUsd += fix.costUsd;
       data = extractJson(textOf(fix.r.choices[0]?.message)) as T;
     }

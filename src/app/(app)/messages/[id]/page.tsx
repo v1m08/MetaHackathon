@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { ArrowLeft, Image as ImageIcon, Info, Phone, Plus, Send, Smile, ThumbsUp, Video } from "lucide-react";
+import { ArrowLeft, Check, Compass, Image as ImageIcon, Info, Pencil, Phone, Plus, Send, Smile, ThumbsUp, Trash2, Video } from "lucide-react";
 import { Avatar, Photo, cx } from "@/components/ui";
 import { api, refresh, useApi } from "@/lib/api";
 import { messageTime } from "@/lib/format";
@@ -11,6 +11,43 @@ import type { Conversation, Listing } from "@/types";
 
 type Card = { id: string; name: string; avatar: string };
 type Conv = Conversation & { name: string; participants: Card[]; others: Card[] };
+
+function DraftBubble({ m, onDone }: { m: Conversation["messages"][number]; onDone: () => void }) {
+  const [editing, setEditing] = useState(false);
+  const [text, setText] = useState(m.text);
+  const [busy, setBusy] = useState(false);
+  const act = async (action: "approve" | "edit" | "discard") => {
+    setBusy(true);
+    try {
+      await api(`/api/travel/drafts/${m.id}`, { method: "POST", json: { action, text } });
+      setEditing(false);
+      onDone();
+    } finally {
+      setBusy(false);
+    }
+  };
+  return (
+    <div className="my-2 ml-auto w-[88%] rounded-2xl border border-amber-300 bg-amber-50 p-3">
+      <div className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide text-amber-800"><Compass size={12} /> Drafted by your trip agent · awaiting your approval</div>
+      {m.draftReason && <div className="mt-0.5 text-[12px] text-amber-900/80">{m.draftReason}</div>}
+      {editing ? (
+        <textarea value={text} onChange={(e) => setText(e.target.value)} rows={4} className="mt-2 w-full rounded-xl border border-amber-300 bg-white p-2 text-[15px] outline-none" />
+      ) : (
+        <div className="mt-2 rounded-[18px] bg-messenger px-3 py-2 text-[15px] leading-snug whitespace-pre-wrap text-white">{text}</div>
+      )}
+      <div className="mt-2 flex gap-2">
+        {editing ? (
+          <button disabled={busy} onClick={() => act("edit")} className="flex-1 rounded-full bg-amber-600 py-1.5 text-[13px] font-semibold text-white">Save</button>
+        ) : (
+          <button disabled={busy} onClick={() => act("approve")} className="flex flex-1 items-center justify-center gap-1 rounded-full bg-messenger py-1.5 text-[13px] font-semibold text-white"><Check size={14} /> Approve &amp; send</button>
+        )}
+        <button disabled={busy} onClick={() => setEditing((v) => !v)} className="flex items-center gap-1 rounded-full bg-white px-3 py-1.5 text-[13px] font-semibold text-ink"><Pencil size={14} /> {editing ? "Cancel" : "Edit"}</button>
+        <button disabled={busy} onClick={() => act("discard")} className="flex items-center gap-1 rounded-full bg-white px-3 py-1.5 text-[13px] font-semibold text-red-600"><Trash2 size={14} /></button>
+      </div>
+      <div className="mt-1.5 text-[11px] text-amber-900/70">Nothing is sent until you approve. Sending stays inside this app.</div>
+    </div>
+  );
+}
 
 function ListingChip({ id }: { id: string }) {
   const { data } = useApi<Listing>(`/api/marketplace/${id}`);
@@ -83,6 +120,7 @@ export default function ThreadPage() {
           const firstOfRun = !prev || prev.senderId !== m.senderId || gap;
           const lastOfRun = !next || next.senderId !== m.senderId;
           const sender = byId[m.senderId];
+          if (m.status === "draft") return <DraftBubble key={m.id} m={m} onDone={() => { mutate(); refresh("/api/conversations"); }} />;
           return (
             <div key={m.id}>
               {gap && <div className="my-3 text-center text-[11px] font-semibold text-ink-2 uppercase">{messageTime(m.createdAt)}</div>}
