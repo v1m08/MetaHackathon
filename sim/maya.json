@@ -1,0 +1,258 @@
+{
+ "persona": {
+  "id": "maya",
+  "weekend": 4,
+  "budget": 120,
+  "car": false,
+  "persona": "Maya, 23, product designer in Austin, no car, saves hard, loves trail runs, pottery, cheap tacos, small music rooms. Comfortable staying with college friends, hesitant with strangers unless a close friend vouches."
+ },
+ "weekend": {
+  "n": 4,
+  "start": "2026-12-11",
+  "end": "2026-12-13",
+  "label": "Dec 11–13",
+  "busy": false
+ },
+ "startedAt": "2026-11-12T11:16:57.112Z",
+ "stages": {
+  "discover": {
+   "steps": [
+    {
+     "kind": "info",
+     "text": "Starting from Austin, Dec 11–13, about $120",
+     "i": 0,
+     "at": 0
+    },
+    {
+     "kind": "model",
+     "text": "Deciding what to look at next",
+     "detail": "1 ms",
+     "i": 1,
+     "at": 1
+    },
+    {
+     "kind": "tool",
+     "tool": "scan_network",
+     "text": "Mapping your whole network: who lives where, who hosts, who's driving Dec 11–13",
+     "i": 2,
+     "at": 1
+    },
+    {
+     "kind": "result",
+     "tool": "scan_network",
+     "text": "37 people in 11 cities · 20 hosts free that weekend · 2 events · 2 rides with seats",
+     "detail": "you're into foodies, art people, photographers and budget travellers, no car · Deep Ellum Vintage Market (winter edition) (Dallas) · RiNo Mural Crawl + Movement bouldering comp finals (Denver) · → Dallas, 3 seats · → Dallas, 2 seats",
+     "ids": [
+      "kai",
+      "marisol",
+      "tess",
+      "ruben",
+      "leah",
+      "andre",
+      "bri",
+      "simone",
+      "kwame",
+      "noah",
+      "ivy",
+      "jules",
+      "mateo",
+      "arjun",
+      "nadia",
+      "mei",
+      "beau",
+      "elijah",
+      "camille",
+      "theo",
+      "dani",
+      "rosa",
+      "wes",
+      "ava",
+      "ibrahim",
+      "cole",
+      "harper",
+      "diego",
+      "sienna",
+      "raj",
+      "tj",
+      "layla",
+      "maddie",
+      "gabe",
+      "lena",
+      "june",
+      "silas",
+      "e_dal_vintage",
+      "e_den_mural_comp",
+      "ride_owen_dal",
+      "ride_ravi_dal"
+     ],
+     "i": 3,
+     "at": 4
+    },
+    {
+     "kind": "model",
+     "text": "Deciding what to look at next",
+     "detail": "0 ms",
+     "i": 4,
+     "at": 4
+    },
+    {
+     "kind": "tool",
+     "tool": "estimate_trip_cost",
+     "text": "Pricing Dallas: 2 nights, staying with a friend, by a friend's car",
+     "i": 5,
+     "at": 4
+    },
+    {
+     "kind": "result",
+     "tool": "estimate_trip_cost",
+     "text": "about $75 if they say yes, about $255 otherwise",
+     "detail": "215 mi · 3.2h drive · hotel + solo would be $420",
+     "i": 6,
+     "at": 4
+    },
+    {
+     "kind": "tool",
+     "tool": "estimate_trip_cost",
+     "text": "Pricing Houston: 2 nights, staying with a friend, by bus",
+     "i": 7,
+     "at": 4
+    },
+    {
+     "kind": "result",
+     "tool": "estimate_trip_cost",
+     "text": "about $110 if they say yes, about $245 otherwise",
+     "detail": "173 mi · 2.5h drive · hotel + solo would be $405",
+     "i": 8,
+     "at": 5
+    },
+    {
+     "kind": "tool",
+     "tool": "estimate_trip_cost",
+     "text": "Pricing San Antonio: 2 nights, staying with a friend, by bus",
+     "i": 9,
+     "at": 5
+    },
+    {
+     "kind": "result",
+     "tool": "estimate_trip_cost",
+     "text": "about $95 if they say yes, about $230 otherwise",
+     "detail": "87 mi · 1.3h drive · hotel + solo would be $385",
+     "i": 10,
+     "at": 5
+    },
+    {
+     "kind": "model",
+     "text": "Deciding what to look at next",
+     "detail": "0 ms",
+     "i": 11,
+     "at": 5
+    },
+    {
+     "kind": "tool",
+     "tool": "get_city_media",
+     "text": "Reading your friends' photos and Reels from Dallas",
+     "i": 12,
+     "at": 5
+    },
+    {
+     "kind": "result",
+     "tool": "get_city_media",
+     "text": "Read 3 photos from Dallas",
+     "detail": "1 of Harper's, 1 of Cole's, 1 of Grace's",
+     "i": 13,
+     "at": 5
+    },
+    {
+     "kind": "tool",
+     "tool": "get_city_media",
+     "text": "Reading your friends' photos and Reels from San Antonio",
+     "i": 14,
+     "at": 5
+    },
+    {
+     "kind": "result",
+     "tool": "get_city_media",
+     "text": "Read 3 photos from San Antonio",
+     "detail": "2 of Gabriel's, 1 of Lena's",
+     "i": 15,
+     "at": 5
+    },
+    {
+     "kind": "model",
+     "text": "Deciding what to look at next",
+     "detail": "1 ms",
+     "i": 16,
+     "at": 6
+    },
+    {
+     "kind": "tool",
+     "tool": "propose_trips",
+     "text": "Putting together 1237 trips",
+     "i": 17,
+     "at": 6
+    },
+    {
+     "kind": "info",
+     "text": "Checking every person, ride, event and photo against what you can actually see",
+     "i": 18,
+     "at": 6
+    },
+    {
+     "kind": "done",
+     "text": "No trip this time",
+     "detail": "0.0s · cached",
+     "i": 19,
+     "at": 6
+    }
+   ],
+   "result": {
+    "runId": "run_mwdgdolm",
+    "trips": [],
+    "declineReason": "the agent's proposal was malformed",
+    "mode": "cached",
+    "costUsd": 0,
+    "latencyMs": 6,
+    "model": "muse-spark-1.3"
+   }
+  },
+  "audit": {
+   "runId": "run_mwdgdolm",
+   "viewerId": "maya",
+   "input": {
+    "start": "2026-12-11",
+    "end": "2026-12-13",
+    "budget": 120
+   },
+   "mode": "cached",
+   "costUsd": 0,
+   "latencyMs": 6,
+   "raw": {
+    "ids": 0,
+    "grounded": 0,
+    "privacyViolationsCaught": 0,
+    "invented": 0
+   },
+   "trips": [],
+   "declined": true
+  }
+ },
+ "cost": 0.0004,
+ "verdict": {
+  "looksBroken": [
+   "the proposal was malformed and declined, so no actual trip data was provided"
+  ],
+  "objections": [
+   "no actual trips were proposed to evaluate",
+   "can't verify the ~$120 budget or Dec 11-13 dates",
+   "no info on distance, strangers, or who'd be going"
+  ],
+  "pickTripIndex": -1,
+  "reason": "nah there's literally nothing to pick from here, just a declined malformed proposal, so i wouldn't take any of it",
+  "surprising": 2,
+  "trustworthy": 1,
+  "wouldTake": false
+ },
+ "verdictMode": "live",
+ "latencyMs": 2489,
+ "finishedAt": "2026-11-12T11:16:59.334Z"
+}

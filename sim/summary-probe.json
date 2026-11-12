@@ -1,0 +1,41 @@
+{
+ "ranAt": "2026-11-12T11:16:24.358Z",
+ "rows": [
+  {
+   "id": "maya",
+   "weekend": "Dec 11–13",
+   "budget": 120,
+   "mode": "live",
+   "trips": 0,
+   "declined": true,
+   "declineReason": "the agent's proposal was malformed",
+   "picked": null,
+   "wouldTake": false,
+   "surprising": 5,
+   "trustworthy": 1,
+   "objections": [
+    "no trip details at all so i can't check the $120 budget or dec 11-13 dates",
+    "no info on distance, strangers, or who i'd be going with"
+   ],
+   "looksBroken": [
+    "the proposal was marked declined / malformed",
+    "zero trips were actually listed"
+   ],
+   "reason": "nah i wouldn't take anything here, there's literally no actual trip to pick from lol",
+   "renderedViolations": 0,
+   "rawGrounding": {
+    "ids": 0,
+    "grounded": 0,
+    "privacyViolationsCaught": 0,
+    "invented": 0
+   },
+   "fitsBudget": 0,
+   "drafts": 0,
+   "approved": 0,
+   "edited": 0,
+   "discarded": 0,
+   "costUsd": 0.046,
+   "latencyMs": 24870
+  }
+ ]
+}

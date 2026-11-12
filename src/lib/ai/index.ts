@@ -376,6 +376,18 @@ async function tools(input: string | AIMessage[], opts: ToolsOptions): Promise<T
       } catch {
         /* keep {} */
       }
+      // Models sometimes double-encode arrays/objects as JSON strings; coerce to the declared type.
+      const props = (def?.parameters?.properties ?? {}) as Record<string, { type?: string }>;
+      for (const [k, v] of Object.entries(args)) {
+        const want = props[k]?.type;
+        if (typeof v === "string" && (want === "array" || want === "object")) {
+          try {
+            args[k] = JSON.parse(v);
+          } catch {
+            /* leave as is; validation will drop it */
+          }
+        }
+      }
       push({ type: "tool_call", name: c.function.name, args });
       const s0 = performance.now();
       let result: unknown;

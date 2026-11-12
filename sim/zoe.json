@@ -1,0 +1,369 @@
+{
+ "persona": {
+  "id": "zoe",
+  "weekend": 4,
+  "budget": 40,
+  "car": false,
+  "persona": "Zoe, 20, UT sophomore, broke ($40 is real money), no car, thrifts everything, anime club, private profile, mostly travels only if a ride is free and a friend's couch is guaranteed. Suspicious of anything that looks like an ad."
+ },
+ "weekend": {
+  "n": 4,
+  "start": "2026-12-11",
+  "end": "2026-12-13",
+  "label": "Dec 11–13",
+  "busy": false
+ },
+ "startedAt": "2026-11-12T11:16:59.586Z",
+ "stages": {
+  "discover": {
+   "steps": [
+    {
+     "kind": "info",
+     "text": "Starting from Austin, Dec 11–13, about $40",
+     "i": 0,
+     "at": 0
+    },
+    {
+     "kind": "model",
+     "text": "Deciding what to look at next",
+     "detail": "1223 ms",
+     "i": 1,
+     "at": 1224
+    },
+    {
+     "kind": "tool",
+     "tool": "scan_network",
+     "text": "Mapping your whole network: who lives where, who hosts, who's driving Dec 11–13",
+     "i": 2,
+     "at": 1224
+    },
+    {
+     "kind": "result",
+     "tool": "scan_network",
+     "text": "11 people in 7 cities · 6 hosts free that weekend · 2 events · 0 rides with seats",
+     "detail": "you're into art people, foodies, night owls and photographers, no car · Deep Ellum Vintage Market (winter edition) (Dallas) · RiNo Mural Crawl + Movement bouldering comp finals (Denver)",
+     "ids": [
+      "ruben",
+      "leah",
+      "kwame",
+      "mei",
+      "arjun",
+      "colin",
+      "camille",
+      "dani",
+      "theo",
+      "diego",
+      "raj",
+      "e_dal_vintage",
+      "e_den_mural_comp"
+     ],
+     "i": 3,
+     "at": 1227
+    },
+    {
+     "kind": "model",
+     "text": "Deciding what to look at next",
+     "detail": "6528 ms",
+     "i": 4,
+     "at": 7755
+    },
+    {
+     "kind": "tool",
+     "tool": "estimate_trip_cost",
+     "text": "Pricing Dallas: 2 nights, staying with a friend, by bus",
+     "i": 5,
+     "at": 7755
+    },
+    {
+     "kind": "result",
+     "tool": "estimate_trip_cost",
+     "text": "about $115 if they say yes, about $255 otherwise",
+     "detail": "215 mi · 3.2h drive · hotel + solo would be $420",
+     "i": 6,
+     "at": 7756
+    },
+    {
+     "kind": "tool",
+     "tool": "estimate_trip_cost",
+     "text": "Pricing Houston: 2 nights, staying with a friend, by bus",
+     "i": 7,
+     "at": 7756
+    },
+    {
+     "kind": "result",
+     "tool": "estimate_trip_cost",
+     "text": "about $110 if they say yes, about $245 otherwise",
+     "detail": "173 mi · 2.5h drive · hotel + solo would be $405",
+     "i": 8,
+     "at": 7756
+    },
+    {
+     "kind": "model",
+     "text": "Deciding what to look at next",
+     "detail": "4113 ms",
+     "i": 9,
+     "at": 11869
+    },
+    {
+     "kind": "tool",
+     "tool": "get_city_media",
+     "text": "Reading your friends' photos and Reels from Houston",
+     "i": 10,
+     "at": 11869
+    },
+    {
+     "kind": "result",
+     "tool": "get_city_media",
+     "text": "Read 2 photos from Houston",
+     "detail": "1 of Raj's, 1 of Layla's",
+     "i": 11,
+     "at": 11869
+    },
+    {
+     "kind": "tool",
+     "tool": "get_city_media",
+     "text": "Reading your friends' photos and Reels from Dallas",
+     "i": 12,
+     "at": 11869
+    },
+    {
+     "kind": "result",
+     "tool": "get_city_media",
+     "text": "Read 2 photos from Dallas",
+     "detail": "1 of Harper's, 1 of Cole's",
+     "i": 13,
+     "at": 11869
+    },
+    {
+     "kind": "model",
+     "text": "Deciding what to look at next",
+     "detail": "4810 ms",
+     "i": 14,
+     "at": 16680
+    },
+    {
+     "kind": "tool",
+     "tool": "propose_trips",
+     "text": "Putting together 1 trip",
+     "i": 15,
+     "at": 16680
+    },
+    {
+     "kind": "info",
+     "text": "Checking every person, ride, event and photo against what you can actually see",
+     "i": 16,
+     "at": 16680
+    },
+    {
+     "kind": "done",
+     "text": "1 trip that only exist because of your people",
+     "detail": "16.7s · live · $0.031",
+     "i": 17,
+     "at": 16682
+    }
+   ],
+   "result": {
+    "runId": "run_mwdge3c1",
+    "trips": [
+     {
+      "id": "trip_mwdge3c1v5lu",
+      "viewerId": "zoe",
+      "city": "houston",
+      "cityName": "Houston",
+      "state": "TX",
+      "start": "2026-12-11",
+      "end": "2026-12-13",
+      "nights": 2,
+      "budget": 40,
+      "title": "houston with raj, $70 over budget",
+      "pitch": "this is $110 with raj hosting, so $70 over your $40. it's the cheapest your people make possible that weekend.",
+      "reasons": [
+       "raj in montrose is free dec 11-13 and wants to host you (via jordan)",
+       "his $4.50 bellaire banh mi post is literally his free night market tour offer",
+       "bus austin-houston is the shortest hop you've got at 173mi"
+      ],
+      "host": {
+       "id": "raj",
+       "name": "Raj Iyer",
+       "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D71",
+       "connection": "Jordan's friend (Cheap Eats regular)",
+       "degree": 2,
+       "via": {
+        "id": "jordan",
+        "name": "Jordan Reyes"
+       },
+       "openToHosting": true,
+       "hostingNote": "guest room in Montrose. always. I have a ridiculous number of towels.",
+       "hasCar": true,
+       "freeThatWeekend": true
+      },
+      "people": [],
+      "evidence": [
+       {
+        "kind": "post",
+        "id": "p_00ql",
+        "authorId": "raj",
+        "author": "Raj Iyer",
+        "image": "/api/img?u=https%3A%2F%2Fupload.wikimedia.org%2Fwikipedia%2Fcommons%2Fc%2Fc1%2FB%25C3%25A1nh_m%25C3%25AC_x%25C3%25ADu_m%25E1%25BA%25A1i-meatball-sandwich.jpg",
+        "caption": "the banh mi on bellaire. $4.50. shredded pork, pickled carrots, cucumber sticks, a fistful of cilantro, on paper like it should be. this is the first stop on my official night market tour (the tour is me, driving you, for free). guest room in montrose has a ridiculous number of towels, come use them"
+       }
+      ],
+      "prices": {
+       "ifYes": {
+        "total": 110,
+        "lines": [
+         {
+          "label": "bus, round trip (173 mi)",
+          "usd": 48
+         },
+         {
+          "label": "staying with a friend (2 nights)",
+          "usd": 0
+         },
+         {
+          "label": "food, 3 days (local's cheap spots)",
+          "usd": 54
+         },
+         {
+          "label": "getting around, 3 days",
+          "usd": 6
+         }
+        ],
+        "transport": "bus",
+        "lodging": "host"
+       },
+       "otherwise": {
+        "total": 245,
+        "lines": [
+         {
+          "label": "bus, round trip (173 mi)",
+          "usd": 48
+         },
+         {
+          "label": "hostel, 2 nights × $40",
+          "usd": 80
+         },
+         {
+          "label": "food, 3 days",
+          "usd": 105
+         },
+         {
+          "label": "getting around, 3 days",
+          "usd": 12
+         }
+        ],
+        "transport": "bus",
+        "lodging": "hostel"
+       },
+       "solo": {
+        "total": 405,
+        "lines": [
+         {
+          "label": "bus, round trip (173 mi)",
+          "usd": 48
+         },
+         {
+          "label": "hotel, 2 nights × $120",
+          "usd": 240
+         },
+         {
+          "label": "food, 3 days",
+          "usd": 105
+         },
+         {
+          "label": "getting around, 3 days",
+          "usd": 12
+         }
+        ],
+        "transport": "bus",
+        "lodging": "hotel"
+       },
+       "miles": 173,
+       "driveHours": 2.5,
+       "transportIfYes": "bus",
+       "lodgingIfYes": "host",
+       "conditions": [
+        "Raj says yes to hosting"
+       ]
+      },
+      "fitsBudget": false,
+      "repairs": [],
+      "createdAt": "2026-11-12T11:17:16.513Z"
+     }
+    ],
+    "mode": "live",
+    "costUsd": 0.031000000000000003,
+    "latencyMs": 16681,
+    "model": "muse-spark-1.3"
+   }
+  },
+  "audit": {
+   "runId": "run_mwdge3c1",
+   "viewerId": "zoe",
+   "input": {
+    "start": "2026-12-11",
+    "end": "2026-12-13",
+    "budget": 40
+   },
+   "mode": "live",
+   "costUsd": 0.031000000000000003,
+   "latencyMs": 16681,
+   "raw": {
+    "ids": 2,
+    "grounded": 2,
+    "privacyViolationsCaught": 0,
+    "invented": 0
+   },
+   "trips": [
+    {
+     "tripId": "trip_mwdge3c1v5lu",
+     "city": "houston",
+     "elements": [
+      {
+       "kind": "host",
+       "id": "raj",
+       "exists": true,
+       "visible": true
+      },
+      {
+       "kind": "post",
+       "id": "p_00ql",
+       "exists": true,
+       "visible": true
+      }
+     ],
+     "renderedViolations": 0,
+     "fitsBudget": false,
+     "ifYes": 110,
+     "otherwise": 245,
+     "solo": 405,
+     "hostOptedIn": true,
+     "hostDegree": 2,
+     "fofHasMutual": true
+    }
+   ],
+   "declined": false
+  }
+ },
+ "cost": 0.0316,
+ "verdict": {
+  "looksBroken": [
+   "ride is null but the pitch relies on an austin-houston bus",
+   "people list is empty even though raj is supposed to be the host"
+  ],
+  "objections": [
+   "$110 is almost 3x my $40 budget",
+   "staying with raj who i don't know, just jordan's friend",
+   "173mi bus ride for one weekend is a lot",
+   "no actual ride booked, just mentioned in the reasons"
+  ],
+  "pickTripIndex": -1,
+  "reason": "nah i can't swing $110 on a $40 budget and crashing with a friend-of-a-friend i've never met feels sketchy. cool idea but not for me.",
+  "surprising": 3,
+  "trustworthy": 2,
+  "wouldTake": false
+ },
+ "verdictMode": "live",
+ "latencyMs": 20231,
+ "finishedAt": "2026-11-12T11:17:19.566Z"
+}
