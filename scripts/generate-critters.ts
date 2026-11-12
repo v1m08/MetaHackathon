@@ -1,4 +1,4 @@
-// npm run critters:generate [-- --force] [-- --style flat|plush|cute] [-- maya dev …]
+// npm run critters:generate [-- --force] [-- --style flat|plush|cute|costume|fuzzy] [-- maya dev …]
 // Draws each friend's critter with Muse Image (muse-image-1.0), from their memory file: the body/color/accessory
 // Muse Wonder picked plus a prop from a shared place or inside joke. Saves to public/seed/critters/<id>.<ext>.
 // Existing images are kept unless --force. Blocked friends are never drawn.
@@ -11,7 +11,7 @@ import { ai } from "@/lib/ai";
 import { colorById } from "@/lib/hangout/parts";
 import { builtMemory, hang } from "@/server/hangout/store";
 
-const STYLES = ["flat", "plush", "cute"] as const;
+const STYLES = ["flat", "plush", "cute", "costume", "fuzzy"] as const;
 type Style = (typeof STYLES)[number];
 const styleArg = process.argv.find((a, i) => a.startsWith("--style=") || process.argv[i - 1] === "--style")?.replace("--style=", "");
 const STYLE: Style = STYLES.includes(styleArg as Style) ? (styleArg as Style) : "flat";
@@ -20,6 +20,26 @@ const STYLE_TEXT: Record<Style, string> = {
   flat: "Gentle happy expression, soft rosy cheeks, tiny stubby arms. Simple flat vector illustration with soft pastel shading and a thin darker outline, centered on a plain cream background, no text, no logos.",
   plush: "An original character made as a soft handmade plush toy from fuzzy felt fabric, with simple dot eyes, a tiny stitched smile, rosy embroidered cheeks and tiny stubby arms. Photographed like a 3D plush toy in soft studio lighting, centered on a plain cream background, no text, no logos.",
   cute: "An original kawaii character with chibi proportions: a big round head on a tiny body, large sparkly eyes with white highlights, rosy blush, a small happy open smile and tiny nub arms. Soft glossy 3D cartoon render in pastel colors with gentle rim light, like a collectible sticker, centered on a plain cream background, no text, no logos.",
+  fuzzy: "Chubby rounded proportions with a cream-colored muzzle, tiny black dot eyes, soft pink blush cheeks, a tiny smile, short stubby arms and little feet, standing full-body facing the viewer. Photorealistic 3D render of a soft fuzzy felt-and-fur collectible plush in pastel colors, clean pure white background, soft diffused studio lighting, subtle shadow, centered, no text, no logos.",
+  costume: "Small black dot eyes, rosy cheeks, a tiny gentle smile, short arms and little feet, standing full-body facing the viewer. Photorealistic 3D render of a soft collectible figure with realistic fuzzy fur and real fabric clothing, clean bright white studio background, soft even lighting, subtle floor shadow, no text, no logos.",
+};
+
+/** Costume style: each friendship becomes an outfit, picked from what Muse remembers about it. */
+const COSTUME: Record<string, string> = {
+  ramen: "a little ramen chef outfit: a white twisted headband, a navy apron, and a tiny steaming bowl of ramen with chopsticks in its hands",
+  goose: "a park ranger vest and wide-brim ranger hat, with a small grumpy white goose tucked under one arm",
+  school: "a varsity letterman jacket with a big letter patch, holding a small school pennant",
+  run: "running gear: a sweatband, a race bib pinned to a tank top, and bright running sneakers",
+  movies: "a movie-night outfit: retro red-and-blue 3D glasses and a striped popcorn bucket",
+  swim: "swim gear: goggles pushed up on its head, a flower behind one ear, and a striped swim ring around its waist",
+  campus: "a cozy oversized campus hoodie and a tiny backpack, holding a pencil",
+};
+const FIGURE: Record<string, string> = {
+  blob: "a round, chubby body",
+  noodle: "a tall, slender, slightly wiggly body",
+  bean: "a plump, bean-shaped body",
+  puff: "a cloud-like, extra fluffy body",
+  pebble: "a short, wide, chubby body",
 };
 const MODEL = process.env.MUSE_IMAGE_MODEL || process.env.MODEL_IMAGE || "muse-image-1.0";
 
@@ -56,10 +76,44 @@ const PROP: Record<string, string> = {
   diner: "holding a tiny stack of pancakes",
 };
 
+/** Fuzzy style: each friendship becomes a pastel animal plus one small detail from what Muse remembers. */
+const ANIMAL: Record<string, { species: string; detail: string }> = {
+  ramen: { species: "kitten", detail: "holding a tiny steaming bowl of ramen with chopsticks, wearing a little red knit scarf" },
+  goose: { species: "baby gosling", detail: "holding a single white goose feather" },
+  school: { species: "bunny with long floppy ears", detail: "holding a tiny school pennant, with a yellow star clip on one ear" },
+  run: { species: "fox with a fluffy tail", detail: "wearing a red sweatband and tiny running sneakers" },
+  movies: { species: "bear cub", detail: "wearing little round glasses and hugging a striped popcorn bucket" },
+  swim: { species: "baby seal", detail: "wearing a striped swim ring, with a pink flower behind one ear" },
+  campus: { species: "penguin", detail: "wearing a tiny backpack" },
+};
+
+function themeKey(m: NonNullable<ReturnType<typeof builtMemory>>) {
+  if (m.insideJokes.some((j) => /goose/i.test(j.phrase))) return "goose";
+  const kinds = m.sharedPlaces.map((p) => PLACES.find((x) => x.name === p.name)?.kind);
+  const kind = kinds.find((k) => k && ANIMAL[k]);
+  if (kind) return kind;
+  return /lincoln|high/i.test(m.sharedPlaces[0]?.name ?? "") ? "school" : "campus";
+}
+
+function costumeFor(m: NonNullable<ReturnType<typeof builtMemory>>) {
+  if (m.insideJokes.some((j) => /goose/i.test(j.phrase))) return COSTUME.goose;
+  const kinds = m.sharedPlaces.map((p) => PLACES.find((x) => x.name === p.name)?.kind);
+  const kind = kinds.find((k) => k && COSTUME[k]);
+  if (kind) return COSTUME[kind];
+  if (/lincoln|high/i.test(m.sharedPlaces[0]?.name ?? "")) return COSTUME.school;
+  return COSTUME.campus;
+}
+
 function promptFor(friendId: string) {
   const m = builtMemory(friendId);
   if (!m) return null;
   const c = colorById(m.critter.color);
+  if (STYLE === "fuzzy") {
+    const a = ANIMAL[themeKey(m)];
+    return `An original kawaii plush animal character: a ${a.species} with soft fuzzy pastel ${c.label.toLowerCase()} (${c.fill}) fur, ${a.detail}. ${STYLE_TEXT.fuzzy}`;
+  }
+  if (STYLE === "costume")
+    return `An original fluffy creature character with ${FIGURE[m.critter.body] ?? FIGURE.blob} covered in soft ${c.label.toLowerCase()} (${c.fill}) fur, dressed in ${costumeFor(m)}. ${STYLE_TEXT.costume}`;
   const joke = m.insideJokes.find((j) => /goose/i.test(j.phrase));
   const kind = m.sharedPlaces.map((p) => PLACES.find((x) => x.name === p.name)?.kind).find((k) => k && PROP[k]);
   const extra = joke ? "with a tiny cartoon goose peeking out from behind it" : kind ? PROP[kind] : /lincoln|school|gym/i.test(m.sharedPlaces[0]?.name ?? "") ? "holding a small school pennant" : "";
