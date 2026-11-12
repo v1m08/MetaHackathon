@@ -1,5 +1,7 @@
 // npm run critters:generate [-- --force] [-- --style flat|plush|cute|costume|fuzzy|soft] [-- maya dev …]
 // npm run critters:generate -- --host     draws the original plush Hangout host
+// npm run critters:generate -- --style soft --anchor [--force]   restyles each friend's approved drawing in
+//   public/seed/critters/anchor/<id>.webp into Muse's animal, so the whole set keeps one house style
 // Draws each friend's critter with Muse Image (muse-image-1.0), from their memory file: the body/color/accessory
 // Muse Wonder picked plus a prop from a shared place or inside joke. Saves to public/seed/critters/<id>.<ext>.
 // Existing images are kept unless --force. Blocked friends are never drawn.
@@ -10,7 +12,7 @@ for (const f of [".env.local", ".env"]) if (existsSync(f)) process.loadEnvFile(f
 import { PLACES } from "@/data/hangout/seed";
 import { ai } from "@/lib/ai";
 import { ART, artKey } from "@/lib/hangout/art";
-import { cutout, dataUrlToBuffer } from "@/server/hangout/art";
+import { cutout, dataUrlToBuffer, museEdit } from "@/server/hangout/art";
 import { colorById } from "@/lib/hangout/parts";
 import { builtMemory, hang } from "@/server/hangout/store";
 
@@ -124,6 +126,14 @@ async function drawHost() {
   console.log("✓ host → public/seed/muse/host-plush.webp");
 }
 
+/** House-style redraw: keep everything about the approved anchor drawing except the animal, color and prop. */
+const ANCHOR_DIR = join(process.cwd(), "public", "seed", "critters", "anchor");
+function restylePrompt(m: NonNullable<ReturnType<typeof builtMemory>>) {
+  const a = softDesign(m);
+  const prop = a.detail.split(/ and |, /)[0];
+  return `Redraw this exact plush character as a different animal, keeping exactly the same art style: the same big round head with a smooth cream-colored face, the same small black dot eyes set wide apart, the same tiny curved smile and pink blush, the same body proportions with short nub arms and little feet, the same soft felted fuzz texture, lighting and plain white background. Make it a ${a.animal} with ${a.color} fur; only its ears, tail and small features show the animal. Remove any feature of the old animal this one wouldn't have (ears, tail, beak). Give it one small prop: ${prop}. No other props, no text.`;
+}
+
 function costumeFor(m: NonNullable<ReturnType<typeof builtMemory>>) {
   if (m.insideJokes.some((j) => /goose/i.test(j.phrase))) return COSTUME.goose;
   const kinds = m.sharedPlaces.map((p) => PLACES.find((x) => x.name === p.name)?.kind);
@@ -166,6 +176,7 @@ async function main() {
   const args = process.argv.slice(2);
   if (args.includes("--host")) return drawHost();
   const force = args.includes("--force");
+  const anchor = STYLE === "soft" && args.includes("--anchor");
   const only = args.filter((a, i) => !a.startsWith("--") && args[i - 1] !== "--style");
   mkdirSync(OUT, { recursive: true });
   const have = new Set(readdirSync(OUT).map((f) => f.replace(/\.\w+$/, "")));
@@ -175,12 +186,16 @@ async function main() {
 
   await Promise.all(
     todo.map(async (f) => {
-      const prompt = promptFor(f.id);
+      const anchorFile = join(ANCHOR_DIR, `${f.id}.webp`);
+      const mem = builtMemory(f.id);
+      const useAnchor = anchor && !!mem && existsSync(anchorFile);
+      const prompt = useAnchor ? restylePrompt(mem!) : promptFor(f.id);
       if (!prompt) return console.log(`✗ ${f.id}: no memory file`);
       const t0 = Date.now();
       try {
-        const { url } = await ai.image(prompt, { task: "hangout.critterImage", model: MODEL, size: "1024x1024", mode: "live" });
-        const buf = url.startsWith("data:") ? Buffer.from(url.split(",")[1], "base64") : Buffer.from(await (await fetch(url)).arrayBuffer());
+        const buf = useAnchor
+          ? await museEdit(readFileSync(anchorFile), prompt, "hangout.critterImage.restyle")
+          : await dataUrlToBuffer((await ai.image(prompt, { task: "hangout.critterImage", model: MODEL, size: "1024x1024", mode: "live" })).url);
         const file = join(OUT, `${f.id}.${extFor(buf)}`);
         writeFileSync(file, buf);
         if (STYLE === "soft") {
