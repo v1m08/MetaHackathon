@@ -1,4 +1,4 @@
-// npm run critters:generate [-- --force] [-- maya dev …]
+// npm run critters:generate [-- --force] [-- --style plush] [-- maya dev …]
 // Draws each friend's critter with Muse Image (muse-image-1.0), from their memory file: the body/color/accessory
 // Muse Wonder picked plus a prop from a shared place or inside joke. Saves to public/seed/critters/<id>.<ext>.
 // Existing images are kept unless --force. Blocked friends are never drawn.
@@ -11,7 +11,12 @@ import { ai } from "@/lib/ai";
 import { colorById } from "@/lib/hangout/parts";
 import { builtMemory, hang } from "@/server/hangout/store";
 
-const OUT = join(process.cwd(), "public", "seed", "critters");
+const STYLE = process.argv.includes("plush") || process.argv.includes("--style=plush") ? "plush" : "flat";
+const OUT = join(process.cwd(), "public", "seed", "critters", ...(STYLE === "plush" ? ["plush"] : []));
+const STYLE_TEXT = {
+  flat: "Gentle happy expression, soft rosy cheeks, tiny stubby arms. Simple flat vector illustration with soft pastel shading and a thin darker outline, centered on a plain cream background, no text, no logos.",
+  plush: "An original character made as a soft handmade plush toy from fuzzy felt fabric, with simple dot eyes, a tiny stitched smile, rosy embroidered cheeks and tiny stubby arms. Photographed like a 3D plush toy in soft studio lighting, centered on a plain cream background, no text, no logos.",
+}[STYLE];
 const MODEL = process.env.MUSE_IMAGE_MODEL || process.env.MODEL_IMAGE || "muse-image-1.0";
 
 const BODY: Record<string, string> = {
@@ -55,13 +60,13 @@ function promptFor(friendId: string) {
   const kind = m.sharedPlaces.map((p) => PLACES.find((x) => x.name === p.name)?.kind).find((k) => k && PROP[k]);
   const extra = joke ? "with a tiny cartoon goose peeking out from behind it" : kind ? PROP[kind] : /lincoln|school|gym/i.test(m.sharedPlaces[0]?.name ?? "") ? "holding a small school pennant" : "";
   return [
-    `A cute friendship critter mascot for a cozy social app: ${BODY[m.critter.body] ?? BODY.blob} in soft ${c.label.toLowerCase()} (${c.fill})`,
+    `A cute friendship critter for a cozy social app: ${BODY[m.critter.body] ?? BODY.blob} in soft ${c.label.toLowerCase()} (${c.fill})`,
     ACCESSORY[m.critter.accessory],
     extra,
   ]
     .filter(Boolean)
     .join(", ")
-    .concat(". Gentle happy expression, soft rosy cheeks, tiny stubby arms. Simple flat vector illustration with soft pastel shading and a thin darker outline, centered on a plain cream background, no text, no logos.");
+    .concat(`. ${STYLE_TEXT}`);
 }
 
 const extFor = (buf: Buffer) => (buf.subarray(0, 4).toString() === "RIFF" ? "webp" : buf[0] === 0x89 ? "png" : "jpg");
@@ -69,12 +74,12 @@ const extFor = (buf: Buffer) => (buf.subarray(0, 4).toString() === "RIFF" ? "web
 async function main() {
   const args = process.argv.slice(2);
   const force = args.includes("--force");
-  const only = args.filter((a) => !a.startsWith("--"));
+  const only = args.filter((a) => !a.startsWith("--") && a !== "plush");
   mkdirSync(OUT, { recursive: true });
   const have = new Set(readdirSync(OUT).map((f) => f.replace(/\.\w+$/, "")));
   const friends = hang().friends.filter((f) => !f.isBlocked && f.isFriend && (!only.length || only.includes(f.id)));
   const todo = friends.filter((f) => force || !have.has(f.id));
-  console.log(`\nDrawing ${todo.length} critter${todo.length === 1 ? "" : "s"} with ${MODEL}${have.size ? ` (keeping ${friends.length - todo.length} existing; --force to redraw)` : ""}\n`);
+  console.log(`\nStyle: ${STYLE}. Drawing ${todo.length} critter${todo.length === 1 ? "" : "s"} with ${MODEL}${have.size ? ` (keeping ${friends.length - todo.length} existing; --force to redraw)` : ""}\n`);
 
   await Promise.all(
     todo.map(async (f) => {
