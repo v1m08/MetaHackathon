@@ -141,6 +141,11 @@ function DiscoverInner() {
         )}
 
         {error && <div className="rounded-2xl bg-red-50 p-4 text-[14px] text-red-700">{error}</div>}
+        {result && result.mode !== "live" && (
+          <div className="rounded-2xl border border-amber-300 bg-amber-50 px-4 py-2.5 text-[13px] text-amber-900">
+            {result.mode === "replay" ? <><b className="font-semibold">Replay.</b> Muse didn&apos;t run just now; this is a recorded real run replayed and re-checked against today&apos;s data.</> : result.mode === "cached" ? <><b className="font-semibold">Cached.</b> Identical request answered from the on-disk cache of a real Muse response.</> : <><b className="font-semibold">Mock.</b> No model ran; placeholder output for development.</>}
+          </div>
+        )}
 
         {result && result.trips.length > 0 && (
           <section className="space-y-3">

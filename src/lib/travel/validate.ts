@@ -71,6 +71,13 @@ export function validateTrip(viewerId: ID, p: ProposedTrip, ctx: { start: string
   const me = getUser(viewerId);
   const city = cityById(p.city);
   const repairs: string[] = [];
+  /** lowercase first names / ids of people removed, so reasons that cite them can be scrubbed */
+  const droppedNames: string[] = [];
+  const dropPerson = (id: string) => {
+    droppedNames.push(id.toLowerCase());
+    const n = getUser(id)?.name.split(" ")[0].toLowerCase();
+    if (n) droppedNames.push(n);
+  };
   if (!me || !city || city.id === me.city) return null;
   const dates = datesBetween(ctx.start, ctx.end);
   const nights = Math.max(1, Math.min(7, Math.round(p.nights || dates.length - 1)));
@@ -85,6 +92,7 @@ export function validateTrip(viewerId: ID, p: ProposedTrip, ctx: { start: string
     else if (!u.openToHosting) repairs.push(`dropped host ${u.name}: has not turned on "open to hosting"`);
     else if (!tp.freeThatWeekend) repairs.push(`dropped host ${u.name}: busy that weekend`);
     else host = tp;
+    if (!host) dropPerson(p.hostId);
   }
   // ride
   let ride: Trip["ride"];
@@ -115,10 +123,12 @@ export function validateTrip(viewerId: ID, p: ProposedTrip, ctx: { start: string
     const tp = tripPerson(viewerId, id, dates);
     if (!u || !tp) {
       repairs.push(`dropped person ${id}: not in your network`);
+      dropPerson(id);
       continue;
     }
     if (u.city !== city.id && !event?.goingYouKnow.some((g) => g.id === id)) {
       repairs.push(`dropped person ${u.name}: not in ${city.id}`);
+      dropPerson(id);
       continue;
     }
     people.push(tp);
@@ -143,10 +153,14 @@ export function validateTrip(viewerId: ID, p: ProposedTrip, ctx: { start: string
   }
   if (!host && !ride && !event && !people.length) return null;
 
-  // reasons: drop any that name a person we removed
+  // reasons: drop any that name a person we removed (unless someone kept shares that first name)
+  if (p.rideId && !ride) {
+    const r = db().rides.find((x) => x.id === p.rideId);
+    if (r) dropPerson(r.driverId);
+  }
   const keptNames = new Set([host, ride?.driver, ...people, ...(event?.goingYouKnow ?? [])].filter(Boolean).map((x) => x!.name.split(" ")[0].toLowerCase()));
-  const droppedNames = repairs.map((r) => r.match(/dropped (?:host|person) ([A-Z][a-z]+)/)?.[1]?.toLowerCase()).filter(Boolean) as string[];
-  const reasons = (p.reasons ?? []).filter((r) => !droppedNames.some((n) => !keptNames.has(n) && r.toLowerCase().includes(n))).slice(0, 5);
+  const scrub = droppedNames.filter((n) => !keptNames.has(n));
+  const reasons = (p.reasons ?? []).filter((r) => !scrub.some((n) => new RegExp(`\\b${n}\\b`, "i").test(r))).slice(0, 5);
 
   // prices, in code
   const miles = milesBetween(cityById(me.city!)!, city);

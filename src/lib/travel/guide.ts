@@ -5,7 +5,10 @@ import { mediaIdForUrl, mediaIndex } from "@/data/travel";
 import { ai, type ToolDef, type TraceStep } from "@/lib/ai";
 import { db, getUser } from "@/server/db";
 import type { ID } from "@/types";
+import { findGuideRecording, forceReplay, replaySteps } from "./replay";
 import { getTrip, travelStore, type StreamStep } from "./store";
+import { appendFileSync, mkdirSync } from "node:fs";
+import { join } from "node:path";
 import { tasteFor } from "./taste";
 import { cityMediaFor, cityName, getMyTravelProfile } from "./tools";
 import type { Trip } from "./validate";
@@ -18,7 +21,7 @@ export interface GuideItem {
   tasteTags: string[];
   priceHint?: string;
   credit: { id: ID; name: string; avatar: string; connection: string };
-  evidence: { kind: "post" | "reel"; id: string; image?: string; caption: string; sawLive?: string };
+  evidence: { kind: "post" | "reel"; id: string; authorId: ID; image?: string; caption: string; sawLive?: string };
   when?: string;
 }
 export interface Guide {
@@ -135,10 +138,32 @@ export async function buildGuide(viewerId: ID, tripId: string, onStep?: (s: Stre
   const tools: ToolDef[] = [getMyTravelProfile as ToolDef, cityMediaTool(trip) as ToolDef, lookAtPhotoTool(viewerId, trip.city, (x) => looked.push(x)) as ToolDef, proposeGuide as ToolDef];
   const taste = tasteFor(viewerId);
   push({ kind: "info", text: `Building your ${trip.cityName} guide from what ${[trip.host, ...trip.people].filter(Boolean).slice(0, 2).map((p) => p!.name.split(" ")[0]).join(" and ") || "your friends"} posted` });
+
+  const replay = async (why: string): Promise<Guide | null> => {
+    const rec = findGuideRecording(viewerId, trip.city);
+    if (!rec) return null;
+    push({ kind: "info", text: why });
+    await replaySteps(rec.steps.filter((s) => s.kind !== "info" || !/^Building/.test(s.text)), (s) => push({ ...s }));
+    // credits/evidence re-validated against what THIS viewer can see
+    const visibleIds = new Set(cityMediaFor(viewerId, trip.city, 80).map((m) => m.id));
+    const items = rec.items.filter((it) => visibleIds.has(it.evidence.id));
+    const guide: Guide = { ...rec, tripId, items, steps, mode: "replay", costUsd: 0, latencyMs: Date.now() - t0, createdAt: new Date().toISOString() };
+    push({ kind: "done", text: `${items.length} picks (replayed from a real run)`, detail: `${(guide.latencyMs / 1000).toFixed(1)}s · replay` });
+    travelStore().guides.set(tripId, guide);
+    return guide;
+  };
+  if (forceReplay()) {
+    const g = await replay("Replay mode is on: replaying a recorded guide");
+    if (g) return g;
+  }
   const res = await ai.tools(
     `Build my guide for ${trip.cityName} (${trip.city}), ${trip.start} to ${trip.end}. I'm staying with ${trip.host ? trip.host.name + " (" + trip.host.connection + ")" : "nobody in particular (hostel)"}${trip.people.length ? `; also there: ${trip.people.map((p) => p.name).join(", ")}` : ""}. My budget for the whole trip is about $${trip.budget}. My taste: ${taste.summary}. My user id is "${viewerId}".`,
     { task: "travel.guide", userId: viewerId, tools, system: SYSTEM, maxSteps: 7, maxTokens: 2200, temperature: 0.5, stopOnTool: "propose_guide", onStep: (s) => { const d = describeGuideStep(s, trip.city); if (d) push(d); }, mock: () => "(mock)" },
   );
+  if (res.trace.fallback) {
+    const g = await replay(res.trace.fallback === "budget" ? "Budget guard: replaying a recorded guide" : "Muse didn't answer, replaying a recorded guide");
+    if (g) return g;
+  }
   if (!proposed) proposed = mockGuide(viewerId, trip);
   push({ kind: "info", text: "Checking every credit against the real author and what you can see" });
   const items: GuideItem[] = [];
@@ -150,13 +175,20 @@ export async function buildGuide(viewerId: ID, tripId: string, onStep?: (s: Stre
     if (!visible) continue;
     const author = getUser(ev.authorId)!; // credit is forced to the real author, whatever the model said
     const saw = looked.find((l) => l.image === ev.image)?.saw;
-    items.push({ title: it.title, what: it.what, whyYou: it.whyYou, tasteTags: (it.tasteTags ?? []).slice(0, 3), priceHint: it.priceHint, when: it.when, credit: { id: author.id, name: author.name, avatar: author.avatar, connection: connection(viewerId, author.id)?.label ?? (author.id === viewerId ? "you" : "public post") }, evidence: { kind: ev.kind, id: ev.id, image: ev.image, caption: ev.caption, sawLive: saw } });
+    items.push({ title: it.title, what: it.what, whyYou: it.whyYou, tasteTags: (it.tasteTags ?? []).slice(0, 3), priceHint: it.priceHint, when: it.when, credit: { id: author.id, name: author.name, avatar: author.avatar, connection: connection(viewerId, author.id)?.label ?? (author.id === viewerId ? "you" : "public post") }, evidence: { kind: ev.kind, id: ev.id, authorId: ev.authorId, image: ev.image, caption: ev.caption, sawLive: saw } });
   }
   const dropped = (proposed.items?.length ?? 0) - items.length;
   if (dropped) push({ kind: "info", text: `Dropped ${dropped} recommendation${dropped === 1 ? "" : "s"} that didn't trace to a post you can see` });
   const guide: Guide = { tripId, intro: proposed.intro ?? "", items, looked, steps, mode: res.trace.mode, costUsd: (res.trace.costUsd ?? 0) + looked.reduce((n, l) => n + l.costUsd, 0), latencyMs: Date.now() - t0, model: res.trace.model, createdAt: new Date().toISOString() };
   push({ kind: "done", text: `${items.length} picks, credited to ${new Set(items.map((i) => i.credit.name)).size} friend${new Set(items.map((i) => i.credit.name)).size === 1 ? "" : "s"}`, detail: `${(guide.latencyMs / 1000).toFixed(1)}s · ${guide.mode}${guide.costUsd ? ` · $${guide.costUsd.toFixed(3)}` : ""}` });
   travelStore().guides.set(tripId, guide);
+  try {
+    const dir = process.env.AI_RUNS_DIR ?? join(process.cwd(), ".ai-runs");
+    mkdirSync(dir, { recursive: true });
+    appendFileSync(join(dir, "guides.jsonl"), JSON.stringify({ ...guide, city: trip.city, viewerId }) + "\n");
+  } catch {
+    /* optional */
+  }
   return guide;
 }
 

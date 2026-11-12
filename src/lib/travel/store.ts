@@ -21,6 +21,8 @@ export interface DiscoverRun {
   input: { start: string; end: string; budget: number; hint?: string };
   steps: StreamStep[];
   rawSteps: TraceStep[];
+  /** What the model proposed before validation (for the eval's grounding + privacy numbers). */
+  proposal?: { trips: { city: string; hostId?: string; rideId?: string; eventId?: string; peopleIds?: string[]; evidence?: { kind: "post" | "reel"; id: string }[] }[]; declineReason?: string };
   trips: Trip[];
   declineReason?: string;
   mode: string;
