@@ -9,7 +9,11 @@
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
     "warm": "curl -s http://localhost:3000/api/admin/warm-images",
-    "reset": "curl -s -X POST http://localhost:3000/api/admin/reset"
+    "reset": "curl -s -X POST http://localhost:3000/api/admin/reset",
+    "test": "tsx --test 'src/**/*.test.ts'",
+    "eval:moments": "tsx scripts/eval-moments.ts",
+    "memory:rebuild": "tsx scripts/rebuild-memory.ts",
+    "hangout:reset": "curl -s -X POST http://localhost:3000/api/hangout/demo -H 'content-type: application/json' -d '{\"action\":\"reset\"}'"
   },
   "dependencies": {
     "lucide-react": "^0.468.0",

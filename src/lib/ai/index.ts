@@ -11,9 +11,10 @@ import type { AIMessage, AIMode, CallKind, CallOptions, ImageResult, JSONSchema,
 export * from "./types";
 export { traces, clearTraces, traceStats } from "./trace";
 
+// META_MODEL_* (Hang Again's names) and MODEL_* (the base app's names) are interchangeable.
 const env = () => ({
-  key: process.env.MODEL_API_KEY ?? "",
-  base: (process.env.MODEL_API_BASE_URL ?? "https://api.meta.ai/v1").replace(/\/$/, ""),
+  key: process.env.META_MODEL_API_KEY || process.env.MODEL_API_KEY || "",
+  base: (process.env.META_MODEL_BASE_URL || process.env.MODEL_API_BASE_URL || "https://api.meta.ai/v1").replace(/\/$/, ""),
   text: process.env.MODEL_TEXT ?? "muse-spark",
   image: process.env.MODEL_IMAGE ?? "muse-image",
   mode: (process.env.AI_MODE ?? "auto") as "auto" | AIMode,
