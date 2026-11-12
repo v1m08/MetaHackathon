@@ -5,7 +5,7 @@ import test from "node:test";
 
 import { signalPosts } from "@/data/signals";
 import { gatherSignals } from "@/lib/travel/availability";
-import { anonymise, scrubHostAnswer, viewRequest } from "@/lib/travel/negotiate";
+import { anonymise, requestsFor, scrubHostAnswer, viewRequest } from "@/lib/travel/negotiate";
 import { connectionFacts, doorOpenTo, openDoorOf, reachTier, setOpenDoor } from "@/lib/travel/openDoor";
 import { travelStore, type OpenDoorRequest } from "@/lib/travel/store";
 import { db, getUser, resetDb } from "@/server/db";
@@ -82,6 +82,9 @@ test("availability signals never include anyone's chats with third parties", () 
 test("request views hide identities until revealed, and the host never sees the traveler's private turns", () => {
   const r: OpenDoorRequest = { id: "odr_t", travelerId: "maya", hostId: "cole", tier: "friends", ask: { start: "2026-12-11", end: "2026-12-13", guests: 1, offer: "" }, status: "proposed", decision: "yes", conditions: [], fit: { reasons: [{ text: "x", side: "traveler", evidence: "y" }], score: 1 }, anon: { forHost: "A friend wants to stay", forTraveler: "A host says yes" }, turns: [{ i: 0, at: 0, from: "traveler", kind: "ask", text: "To Cole's agent: hi", payload: {} }, { i: 1, at: 0, from: "host", kind: "answer", text: "yes" }], mode: "test", costUsd: 0, createdAt: "" };
   travelStore().requests.unshift(r);
+  assert.ok(!requestsFor("cole").includes(r), "host does not see a request the traveler hasn't accepted");
+  r.travelerAccepted = true;
+  assert.ok(requestsFor("cole").includes(r));
   const hostView = viewRequest("cole", r)!;
   assert.equal(hostView.other, null);
   assert.equal(hostView.anon, "A friend wants to stay");

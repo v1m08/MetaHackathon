@@ -281,7 +281,8 @@ Other weekends the traveler could do: ${Array.from({ length: 6 }, (_, i) => `${w
 
 // ---------------------------------------------------------------- accept / reveal
 
-export const requestsFor = (viewerId: ID) => travelStore().requests.filter((r) => r.travelerId === viewerId || (r.hostId === viewerId && r.status !== "negotiating" && r.status !== "declined_by_agent"));
+/** The traveler sees all of their agent's asks; the host sees a request only once the traveler has accepted it. */
+export const requestsFor = (viewerId: ID) => travelStore().requests.filter((r) => r.travelerId === viewerId || (r.hostId === viewerId && !!r.travelerAccepted && r.status !== "declined_by_agent"));
 
 /** What a viewer may see of a request. Names only after the reveal; the other side's private turns never. */
 export function viewRequest(viewerId: ID, r: OpenDoorRequest) {
