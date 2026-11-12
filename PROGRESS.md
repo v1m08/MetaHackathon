@@ -1,6 +1,8 @@
 # PROGRESS
 
-Running Muse spend (ledger, with 1.5× margin): **$1.46** at 03:17 PST (probes ≈$0.03 by hand + ledger; baseline eval $0.55; judge review ≈$0.12)
+Running Muse spend (ledger, with 1.5× margin): **≈$5.2** at 04:15 PST (see `npm run ledger`; final eval $0.61, two 16-persona swarms $0.84 + $0.99, judge review, QA inputs ≈$0.4)
+
+Earlier: **$1.46** at 03:17 PST (probes ≈$0.03 by hand + ledger; baseline eval $0.55; judge review ≈$0.12)
 
 Earlier: **$0.26** at 02:50 PST (probes ≈$0.03 by hand + ledger $0.23: media index $0.04, 4 Discover runs ≈$0.05 each).
 
@@ -45,4 +47,18 @@ Earlier: **$0.26** at 02:50 PST (probes ≈$0.03 by hand + ledger $0.23: media i
 ## Milestone 9 — Evaluation (baseline 03:14 PST; final run pending after persona fixes)
 - `npm run eval` over 12 scenarios: rendered violations 0, raw grounding 100%, budget fit 76%, guide photo match 92% (24 labelled items), network trip 70% cheaper than hotel+solo, live Discover ≈25s, $0.55 for the eval. One crash (Hannah: malformed `trips`) fixed; Ella now declines by construction. Baseline kept in `eval/EVAL-baseline.md`.
 
-## Milestone 10 — Personas (running "before" swarm since 03:17 PST)
+## Milestone 9 — Evaluation, final ✔ (04:05 PST)
+- `npm run eval`, 12 scenarios + 5 guides, all live: rendered violations **0** of 146 elements; raw grounding **100%**; budget fit **89%** (rest labelled over); guide photo match **90%** on labelled items, credit = real author 100%; network trip **73%** cheaper than hotel+solo; live Discover avg **26s**; $0.61. `EVAL.md` + `eval/results.json`. Baseline kept in `eval/EVAL-baseline.md`.
+
+## Milestone 10 — Personas ✔ (before 03:38, after 03:56 PST)
+- Two 16-persona swarms through the real endpoints. Before: 11/16 would go, trust 2.9, 13 flagged something (mostly model-written prices ≠ card). After fixes: 12/16, trust 3.0, 0 privacy violations both runs. `PERSONAS.md`, `sim/*.json`, `sim/summary-{before,after}.json`. Harness bug found and fixed on the way (persona wasn't shown the trip at the drafts stage).
+
+## Milestone 11 — Animations ✔ (04:10 PST)
+- `pitch/animations/agent.html` (Maya's Dallas run, replayed from the recording) and `swarm.html` (16 personas from sim summaries), built by `npm run animations`, self-contained, R to replay, `?final=1` for the PDF frame. Previewed at /api/pitch/animations/.
+
+## Milestone 12 — README, pitch ✔ (04:15 PST; PDF re-exported at the end)
+- README rewritten; `pitch/deck.html` (8 slides, real screenshots in `pitch/shots/`, numbers from EVAL/PERSONAS), `script.md`, `runbook.md`, `qa.md`, `submission.md`.
+
+## Milestone 13 — Final QA (in progress)
+- Fresh clone + `npm install` + `npm run build`: passed (03:35 PST).
+- Ten judge-style inputs (`node scripts/qa-inputs.mjs`): 10/10 believable or declined with a reason, incl. $25 budget (Dallas flagged $32 over), one-night and week-long asks.

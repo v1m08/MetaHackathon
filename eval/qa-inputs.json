@@ -1,0 +1,141 @@
+{
+  "ranAt": "2026-11-12T12:09:48.668Z",
+  "user": "maya",
+  "rows": [
+    {
+      "label": "typical",
+      "w": 4,
+      "budget": 100,
+      "start": "2026-12-11",
+      "end": "2026-12-13",
+      "ms": 21978,
+      "mode": "live",
+      "trips": [
+        "Dallas $60/178 · Cole hosts · Owen drives",
+        "San Antonio $99/235 · Gabriel hosts"
+      ]
+    },
+    {
+      "label": "tiny budget",
+      "w": 4,
+      "budget": 25,
+      "start": "2026-12-11",
+      "end": "2026-12-13",
+      "ms": 27921,
+      "mode": "live",
+      "trips": [
+        "Dallas $57/178 (over) · Cole hosts · Ravi drives"
+      ]
+    },
+    {
+      "label": "odd number",
+      "w": 3,
+      "budget": 137,
+      "start": "2026-12-04",
+      "end": "2026-12-06",
+      "ms": 22214,
+      "mode": "live",
+      "trips": [
+        "San Antonio $52/156 · Gabriel hosts · Tyler drives",
+        "Houston $111/251 · Raj hosts",
+        "Dallas $117/261 · Cole hosts"
+      ]
+    },
+    {
+      "label": "rich",
+      "w": 5,
+      "budget": 900,
+      "start": "2026-12-18",
+      "end": "2026-12-20",
+      "ms": 23383,
+      "mode": "live",
+      "trips": [
+        "Marfa $103/319 · June hosts · Kenji drives",
+        "New Orleans $163/313 · Beau hosts",
+        "Nashville $243/403 · Kai hosts"
+      ]
+    },
+    {
+      "label": "thanksgiving",
+      "w": 2,
+      "budget": 80,
+      "start": "2026-11-27",
+      "end": "2026-11-29",
+      "ms": 22019,
+      "mode": "live",
+      "trips": [
+        "Houston $57/170 · Raj hosts · Yara drives",
+        "San Antonio $99/235 (over) · Gabriel hosts"
+      ]
+    },
+    {
+      "label": "far out",
+      "w": 8,
+      "budget": 150,
+      "start": "2027-01-08",
+      "end": "2027-01-10",
+      "ms": 17814,
+      "mode": "live",
+      "trips": [
+        "San Antonio $99/235 · Gabriel hosts",
+        "Houston $111/251 · Raj hosts"
+      ]
+    },
+    {
+      "label": "with hint: no flights",
+      "w": 3,
+      "budget": 200,
+      "hint": "no flights, I hate airports",
+      "start": "2026-12-04",
+      "end": "2026-12-06",
+      "ms": 26866,
+      "mode": "live",
+      "trips": [
+        "San Antonio $52/156 · Gabriel hosts · Tyler drives",
+        "Houston $111/251 · Raj hosts"
+      ]
+    },
+    {
+      "label": "with hint: somewhere I can run",
+      "w": 5,
+      "budget": 150,
+      "hint": "somewhere I can run outside",
+      "start": "2026-12-18",
+      "end": "2026-12-20",
+      "ms": 33432,
+      "mode": "live",
+      "trips": [
+        "San Antonio $99/235 · Gabriel hosts",
+        "Marfa $103/319 · June hosts · Kenji drives"
+      ]
+    },
+    {
+      "label": "one night",
+      "w": 4,
+      "budget": 60,
+      "oneNight": true,
+      "start": "2026-12-11",
+      "end": "2026-12-12",
+      "ms": 18154,
+      "mode": "live",
+      "trips": [
+        "San Antonio $78/156 (over) · Gabriel hosts"
+      ]
+    },
+    {
+      "label": "week-long",
+      "w": 6,
+      "budget": 300,
+      "week": true,
+      "start": "2026-12-25",
+      "end": "2026-12-31",
+      "ms": 23812,
+      "mode": "live",
+      "trips": [
+        "San Antonio $183/551 · Gabriel hosts",
+        "Houston $195/575 · Raj hosts",
+        "Atlanta $327/731 (over) · Andre hosts"
+      ]
+    }
+  ]
+}

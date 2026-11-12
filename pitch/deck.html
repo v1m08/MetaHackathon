@@ -28,7 +28,7 @@
   .light .stat span { color:#65676b; }
   .shots { display:flex; gap:22px; align-items:flex-start; justify-content:center; }
   .shot { background:#111; border-radius:28px; padding:8px; box-shadow:0 30px 80px rgba(0,0,0,.5); }
-  .shot img { display:block; width:300px; border-radius:22px; }
+  .shot img { display:block; width:185px; border-radius:18px; }
   .shot figcaption { text-align:center; font-size:14px; color:var(--muted); margin-top:8px; }
   .light .shot figcaption { color:#65676b; }
   iframe { width:1280px; height:720px; border:0; border-radius:16px; transform-origin:top left; }
@@ -65,7 +65,7 @@
       <p>23, product designer in Austin, no car. Hasn't left the city since March.</p>
       <p class="muted">She knows <b style="color:#fff">28 people in 11 other cities</b>, and three of them would put her up tonight. She has no way to know that.</p>
     </div>
-    <figure class="shot" style="justify-self:center"><img src="shots/01-profile.png" alt="Maya's profile" /><figcaption>her profile · Open to hosting friends is a setting, off by default</figcaption></figure>
+    <figure class="shot" style="justify-self:center"><img src="shots/01-profile.jpg" alt="Maya's profile" /><figcaption>her profile · Open to hosting friends is a setting, off by default</figcaption></figure>
   </div>
   <div class="foot"><span>Where can my people take me?</span><span>Meta hackathon · young adults · built on Muse</span></div>
 </section>
@@ -75,7 +75,7 @@
   <div class="kicker">the idea</div>
   <h1 style="font-size:64px">You give Facebook a weekend and a budget.<br/><span style="color:var(--fb)">Not a destination.</span></h1>
   <p style="max-width:1000px">A Muse agent reasons over your actual network — who lives where, who opted in to hosting, who's driving there with an empty seat, what your friends posted from there — and proposes trips that only exist because of the people you know. With two honest prices.</p>
-  <div class="quote">"dallas with cole + harper for the deep ellum vintage market — about $75 if Cole says yes and Ravi has a seat, about $290 otherwise."</div>
+  <div class="quote">"dallas with cole + harper for the deep ellum vintage market — about $60 if Cole says yes and Owen has a seat, about $180 otherwise. a hotel trip would be ~$360."</div>
   <div class="foot"><span>Discover → Guide → Coordinate</span><span>nothing sends without you</span></div>
 </section>
 
@@ -84,11 +84,12 @@
   <div class="kicker">live demo</div>
   <h2>Feed nudge → Discover → Guide → Coordinate → Cole's inbox</h2>
   <div class="shots">
-    <figure class="shot"><img src="shots/02-nudge.png" alt="Feed nudge" /><figcaption>feed nudge</figcaption></figure>
-    <figure class="shot"><img src="shots/03-stream.png" alt="Reasoning stream" /><figcaption>the agent working</figcaption></figure>
-    <figure class="shot"><img src="shots/04-card.png" alt="Trip card" /><figcaption>two prices, every person connected</figcaption></figure>
-    <figure class="shot"><img src="shots/05-guide.png" alt="Guide" /><figcaption>guide, credited · Muse saw</figcaption></figure>
-    <figure class="shot"><img src="shots/06-drafts.png" alt="Drafts" /><figcaption>drafts awaiting approval</figcaption></figure>
+    <figure class="shot"><img src="shots/02-nudge.jpg" alt="Feed nudge" /><figcaption>feed nudge</figcaption></figure>
+    <figure class="shot"><img src="shots/03-stream.jpg" alt="Reasoning stream" /><figcaption>the agent working</figcaption></figure>
+    <figure class="shot"><img src="shots/04-card.jpg" alt="Trip card" /><figcaption>two prices, every person connected</figcaption></figure>
+    <figure class="shot"><img src="shots/05-guide.jpg" alt="Guide" /><figcaption>guide, credited · Muse saw</figcaption></figure>
+    <figure class="shot"><img src="shots/06-drafts.jpg" alt="Drafts" /><figcaption>drafts awaiting approval</figcaption></figure>
+    <figure class="shot"><img src="shots/08-cole.jpg" alt="Cole's inbox" /><figcaption>Cole gets exactly one message</figcaption></figure>
   </div>
   <div class="foot"><span>stills are the backup; the demo is live</span><span>runbook: pitch/runbook.md</span></div>
 </section>
@@ -116,12 +117,12 @@
   <div class="grid g4">
     <div class="stat"><b id="n-ground">100%</b><span>of rendered trip elements trace to a real record the viewer can see</span></div>
     <div class="stat"><b id="n-priv">0</b><span>privacy violations rendered, with restricted profiles seeded to catch them</span></div>
-    <div class="stat"><b id="n-budget">76%</b><span>of trips inside the budget; the rest labelled "$X over"</span></div>
-    <div class="stat"><b id="n-save">70%</b><span>cheaper than the same trip with a hotel and solo transport</span></div>
+    <div class="stat"><b id="n-budget">89%</b><span>of trips inside the budget; the rest labelled "$X over"</span></div>
+    <div class="stat"><b id="n-save">73%</b><span>cheaper than the same trip with a hotel and solo transport</span></div>
   </div>
   <div class="grid g3" style="margin-top:28px">
-    <div class="stat"><b id="n-guide">92%</b><span>of guide picks on hand-labelled photos describe what's in the photo; credit is always the real author</span></div>
-    <div class="stat"><b id="n-lat">25 s</b><span>live Discover, about $0.05 of Muse per run</span></div>
+    <div class="stat"><b id="n-guide">90%</b><span>of guide picks on hand-labelled photos describe what's in the photo; credit is always the real author</span></div>
+    <div class="stat"><b id="n-lat">26 s</b><span>live Discover, about $0.05 of Muse per run</span></div>
     <div class="stat"><b id="n-raw">100%</b><span>of ids the model emitted were real and visible (raw, before validation)</span></div>
   </div>
   <p class="muted" style="margin-top:26px;font-size:17px">Limits: seeded people and a seeded price table (the "% cheaper" is arithmetic on it, not market data). Scenarios chosen by us. Full numbers and method: EVAL.md.</p>
@@ -134,7 +135,7 @@
   <div class="grid" style="grid-template-columns: 1fr 1.6fr; align-items:start">
     <div>
       <p>16 simulated young adults, each played by a Muse agent with its own budget, network, car and taste, used the <b style="color:#fff">real endpoints</b>: pick a trip, read the guide, approve or refuse the drafts.</p>
-      <p class="muted" id="sim-line">Personas give opinions; code checks facts. Top problems they exposed were fixed and the swarm re-run.</p>
+      <p class="muted" id="sim-line">12 of 16 would take the trip after fixes (11 before); trust 3.0/5; 0 privacy violations in either run. Their top catch, model-written prices disagreeing with the card, is now impossible by construction. Personas give opinions; code checks facts.</p>
     </div>
     <div style="--s:0.62"><div class="frame"><iframe data-src="animations/swarm.html" title="The persona swarm"></iframe></div><img class="printshot" src="shots/anim-swarm.png" alt="swarm animation final frame" style="width:800px;border-radius:12px" /></div>
   </div>
