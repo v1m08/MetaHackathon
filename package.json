@@ -14,7 +14,8 @@
     "eval:moments": "tsx scripts/eval-moments.ts",
     "memory:rebuild": "tsx scripts/rebuild-memory.ts",
     "hangout:reset": "curl -s -X POST http://localhost:3000/api/hangout/demo -H 'content-type: application/json' -d '{\"action\":\"reset\"}'",
-    "seed:images": "tsx scripts/seed-images.ts"
+    "seed:images": "tsx scripts/seed-images.ts",
+    "critters:generate": "tsx scripts/generate-critters.ts"
   },
   "dependencies": {
     "lucide-react": "^0.468.0",
