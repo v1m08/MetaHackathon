@@ -111,7 +111,7 @@ export default function TripPage() {
         <section className="overflow-hidden rounded-2xl bg-white shadow-sm">
           {cover && <Photo src={cover} className="h-36 w-full object-cover" />}
           <div className="p-4">
-            <div className="text-[12px] font-semibold uppercase tracking-wide text-fb">{fmt(trip.start)} – {fmt(trip.end)} · {trip.nights} nights</div>
+            <div className="text-[12px] font-semibold uppercase tracking-wide text-fb">{trip.nights === 0 ? `${fmt(trip.start)} · day trip` : `${fmt(trip.start)} – ${fmt(trip.end)} · ${trip.nights} night${trip.nights === 1 ? "" : "s"}`}</div>
             <h1 className="mt-0.5 text-[22px] font-bold leading-tight">{trip.title}</h1>
             <div className="mt-3"><PriceLine trip={trip} big /></div>
             <div className="mt-2 divide-y divide-line/60">
