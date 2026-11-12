@@ -1,0 +1,254 @@
+{
+  "maya": {
+    "sharedPlaces": [
+      {
+        "name": "Ramen Ya",
+        "count": 9,
+        "firstDate": "2023-09-15",
+        "lastDate": "2024-04-26",
+        "photoIds": [
+          "ph_maya_01",
+          "ph_maya_02",
+          "ph_maya_03",
+          "ph_maya_04",
+          "ph_maya_05",
+          "ph_maya_06",
+          "ph_maya_07",
+          "ph_maya_08",
+          "ph_maya_09"
+        ]
+      },
+      {
+        "name": "Mozart's Coffee",
+        "count": 1,
+        "firstDate": "2024-02-24",
+        "lastDate": "2024-02-24",
+        "photoIds": [
+          "ph_maya_10"
+        ]
+      },
+      {
+        "name": "Kerbey Lane Cafe",
+        "count": 1,
+        "firstDate": "2025-12-20",
+        "lastDate": "2025-12-20",
+        "photoIds": [
+          "ph_maya_11"
+        ]
+      }
+    ],
+    "insideJokes": [],
+    "critter": {
+      "body": "noodle",
+      "color": "coral",
+      "accessory": "scarf",
+      "why": "Coral noodle with cozy scarf for nine Ramen Ya ramen nights"
+    },
+    "source": "live",
+    "model": "muse-ember-1.0",
+    "builtAt": "2026-11-12T18:20:19.658Z"
+  },
+  "dev": {
+    "sharedPlaces": [
+      {
+        "name": "Pease Park",
+        "count": 1,
+        "firstDate": "2024-04-20",
+        "lastDate": "2024-04-20",
+        "photoIds": [
+          "ph_dev_01"
+        ]
+      },
+      {
+        "name": "Spider House Cafe",
+        "count": 1,
+        "firstDate": "2026-02-01",
+        "lastDate": "2026-02-01",
+        "photoIds": [
+          "ph_dev_02"
+        ]
+      },
+      {
+        "name": "Zilker Park",
+        "count": 1,
+        "firstDate": "2026-06-06",
+        "lastDate": "2026-06-06",
+        "photoIds": [
+          "ph_dev_03"
+        ]
+      }
+    ],
+    "insideJokes": [
+      {
+        "phrase": "goose incident",
+        "sourceIds": [
+          "ph_dev_01",
+          "ch_dev_021",
+          "ch_dev_023",
+          "ch_dev_024",
+          "ch_dev_032"
+        ]
+      }
+    ],
+    "critter": {
+      "body": "pebble",
+      "color": "sky",
+      "accessory": "feather",
+      "why": "Pebble for Zilker Park hikes, sky for park days, feather for the goose incident."
+    },
+    "source": "live",
+    "model": "muse-ember-1.0",
+    "builtAt": "2026-11-12T18:20:27.227Z"
+  },
+  "jess": {
+    "sharedPlaces": [
+      {
+        "name": "Lincoln High",
+        "count": 3,
+        "firstDate": "2019-09-20",
+        "lastDate": "2020-10-02",
+        "photoIds": [
+          "ph_jess_01",
+          "ph_jess_02",
+          "ph_jess_04"
+        ]
+      },
+      {
+        "name": "Bird Bakery",
+        "count": 2,
+        "firstDate": "2020-02-14",
+        "lastDate": "2021-03-12",
+        "photoIds": [
+          "ph_jess_03",
+          "ph_jess_05"
+        ]
+      },
+      {
+        "name": "Jess's backyard",
+        "count": 1,
+        "firstDate": "2021-08-10",
+        "lastDate": "2021-08-10",
+        "photoIds": [
+          "ph_jess_06"
+        ]
+      }
+    ],
+    "insideJokes": [],
+    "critter": {
+      "body": "bean",
+      "color": "butter",
+      "accessory": "star_clip",
+      "why": "Lincoln High school spirit bean with butter tones from Bird Bakery days."
+    },
+    "source": "live",
+    "model": "muse-ember-1.0",
+    "builtAt": "2026-11-12T18:20:37.455Z"
+  },
+  "sam": {
+    "sharedPlaces": [
+      {
+        "name": "Lady Bird Lake Trail",
+        "count": 1,
+        "firstDate": "2026-11-14",
+        "lastDate": "2026-11-14",
+        "photoIds": [
+          "ph_runclub_01"
+        ]
+      }
+    ],
+    "insideJokes": [],
+    "critter": {
+      "body": "pebble",
+      "color": "sky",
+      "accessory": "bandana",
+      "why": "Pebble and bandana for active days on Lady Bird Lake Trail."
+    },
+    "source": "live",
+    "model": "muse-ember-1.0",
+    "builtAt": "2026-11-12T18:20:43.193Z"
+  },
+  "priya": {
+    "sharedPlaces": [
+      {
+        "name": "Alamo Drafthouse",
+        "count": 2,
+        "firstDate": "2025-10-03",
+        "lastDate": "2026-08-22",
+        "photoIds": [
+          "ph_priya_01",
+          "ph_priya_03"
+        ]
+      },
+      {
+        "name": "Mozart's Coffee",
+        "count": 1,
+        "firstDate": "2026-02-14",
+        "lastDate": "2026-02-14",
+        "photoIds": [
+          "ph_priya_02"
+        ]
+      }
+    ],
+    "insideJokes": [],
+    "critter": {
+      "body": "noodle",
+      "color": "butter",
+      "accessory": "glasses",
+      "why": "Glasses and butter popcorn vibes for our Alamo Drafthouse movie nights with Priya"
+    },
+    "source": "live",
+    "model": "muse-ember-1.0",
+    "builtAt": "2026-11-12T18:20:49.792Z"
+  },
+  "chris": {
+    "sharedPlaces": [
+      {
+        "name": "Gregory Gym",
+        "count": 1,
+        "firstDate": "2023-03-10",
+        "lastDate": "2023-03-10",
+        "photoIds": [
+          "ph_chris_01"
+        ]
+      }
+    ],
+    "insideJokes": [],
+    "critter": {
+      "body": "pebble",
+      "color": "coral",
+      "accessory": "bandana",
+      "why": "Pebble and bandana for our active Gregory Gym photo together."
+    },
+    "source": "live",
+    "model": "muse-ember-1.0",
+    "builtAt": "2026-11-12T18:20:55.859Z"
+  },
+  "alex": {
+    "sharedPlaces": [
+      {
+        "name": "Barton Springs",
+        "count": 6,
+        "firstDate": "2024-06-15",
+        "lastDate": "2025-08-30",
+        "photoIds": [
+          "ph_alex_01",
+          "ph_alex_02",
+          "ph_alex_03",
+          "ph_alex_04",
+          "ph_alex_05",
+          "ph_alex_06"
+        ]
+      }
+    ],
+    "insideJokes": [],
+    "critter": {
+      "body": "pebble",
+      "color": "sky",
+      "accessory": "flower",
+      "why": "Pebble and flower for sunny swimming days at Barton Springs with Alex."
+    },
+    "source": "live",
+    "model": "muse-ember-1.0",
+    "builtAt": "2026-11-12T18:21:01.168Z"
+  }
+}

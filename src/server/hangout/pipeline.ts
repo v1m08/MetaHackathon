@@ -132,7 +132,7 @@ export const WHY_NOW_SYSTEM = `You help someone reconnect with a friend by linki
 
 Details:
 - Write the reason to the user ("you"), calling the friend by first name. Example: "Maya's back at Ramen Ya. You two came here 9 times junior year."
-- type: "place" when the new activity is at a place you've been together; "joke" when it touches a running inside joke; "life_update" for big news that makes hanging out newly possible (like moving to your city); "drift" only if none fit.
+- type: "place" when the new activity is at a place you've been together; "joke" when it touches a running inside joke; "life_update" for big news that makes hanging out newly possible (a friend you share real history with moving to your city counts, even if you haven't talked in a while); "drift" only if none fit.
 - action: "send_photo" when one of your shared photos fits (set photoId to a cited photo ID), "say_hi", or "suggest_plan" (good for life updates).
 - evidenceIds: the IDs from SHARED HISTORY that prove the link (1 to 10). Never cite the new activity's own ID. Never invent IDs.
 - Generic overlap (everyone eats lunch, everyone likes memes) is not a connection. A recent real chat means a nudge is rarely needed.

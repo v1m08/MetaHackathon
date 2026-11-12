@@ -73,7 +73,12 @@ export interface MuseCall<T> {
   /** Live call failed (network, no key)? Replay the cache instead of failing. Off for evals. */
   fallbackToCache?: boolean;
   temperature?: number;
+  /** Muse Ember/Wonder are reasoning models: thinking tokens count against this, so keep it generous. */
+  maxTokens?: number;
 }
+
+const MAX_TOKENS = 4096;
+const isEmpty = (raw: unknown) => !!raw && typeof raw === "object" && !Array.isArray(raw) && Object.keys(raw).length === 0;
 
 const toJsonSchema = (schema: z.ZodType) => {
   const { $schema: _drop, ...rest } = z.toJSONSchema(schema) as Record<string, unknown>;
@@ -124,10 +129,11 @@ export async function museJson<T>(c: MuseCall<T>): Promise<{ data: T | null; raw
   }
 
   let messages: AIMessage[] = [{ role: "user", content: c.prompt }];
+  let maxTokens = c.maxTokens ?? MAX_TOKENS;
   for (let attempt = 0; attempt < 2; attempt++) {
     let raw: unknown;
     try {
-      const r = await ai.json(messages, { task: attempt ? `${c.task}.retry` : c.task, model: modelId, schema, system: c.system, mode: "live", temperature: c.temperature ?? 0.3 });
+      const r = await ai.json(messages, { task: attempt ? `${c.task}.retry` : c.task, model: modelId, schema, system: c.system, mode: "live", temperature: c.temperature ?? 0.3, maxTokens });
       log.traceIds.push(r.trace.id);
       raw = r.data;
     } catch (err) {
@@ -143,6 +149,12 @@ export async function museJson<T>(c: MuseCall<T>): Promise<{ data: T | null; raw
         return replay();
       }
       return done(null, null);
+    }
+    // An empty object means the model used its whole budget thinking and never answered: retry with more room.
+    if (isEmpty(raw)) {
+      log.attempts.push({ raw, issues: [`empty response (reasoning used all ${maxTokens} tokens)`] });
+      maxTokens *= 2;
+      continue;
     }
     const v = check(raw);
     log.attempts.push({ raw, issues: v.issues });

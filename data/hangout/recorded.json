@@ -1,0 +1,347 @@
+{
+  "whyNow:maya_ramen": {
+    "response": {
+      "action": "send_photo",
+      "evidenceIds": [
+        "ph_maya_01",
+        "ph_maya_02",
+        "ph_maya_03",
+        "ph_maya_04",
+        "ph_maya_05",
+        "ph_maya_06",
+        "ph_maya_07",
+        "ph_maya_08",
+        "ph_maya_09",
+        "ch_maya_015"
+      ],
+      "nudge": true,
+      "photoId": "ph_maya_01",
+      "reason": "Maya's back at Ramen Ya for the spicy miso. You two went there 9 times junior year.",
+      "type": "place"
+    },
+    "model": "muse-wonder-1.0",
+    "latencyMs": 9896,
+    "recordedAt": "2026-11-12T18:21:15.726Z"
+  },
+  "whyNow:dev_goose": {
+    "response": {
+      "action": "send_photo",
+      "evidenceIds": [
+        "ph_dev_01",
+        "ch_dev_021",
+        "ch_dev_023",
+        "ch_dev_024",
+        "ch_dev_032"
+      ],
+      "nudge": true,
+      "photoId": "ph_dev_01",
+      "reason": "Dev posted a violent goose reel. You two have the original goose incident photo from Pease Park.",
+      "type": "joke"
+    },
+    "model": "muse-wonder-1.0",
+    "latencyMs": 7003,
+    "recordedAt": "2026-11-12T18:21:22.733Z"
+  },
+  "whyNow:jess_moved": {
+    "response": {
+      "action": "suggest_plan",
+      "evidenceIds": [
+        "ph_jess_01",
+        "ph_jess_04",
+        "ph_jess_06"
+      ],
+      "nudge": true,
+      "photoId": null,
+      "reason": "Jess just moved to Austin, and you two go back to Lincoln High. Perfect chance to show her around.",
+      "type": "life_update"
+    },
+    "model": "muse-wonder-1.0",
+    "latencyMs": 67461,
+    "recordedAt": "2026-11-12T18:22:30.199Z"
+  },
+  "whyNow:priya_lunch": {
+    "response": {
+      "action": null,
+      "evidenceIds": [],
+      "nudge": false,
+      "photoId": null,
+      "reason": "",
+      "type": null
+    },
+    "model": "muse-wonder-1.0",
+    "latencyMs": 3346,
+    "recordedAt": "2026-11-12T18:22:33.548Z"
+  },
+  "whyNow:chris_meme": {
+    "response": {
+      "action": null,
+      "evidenceIds": [],
+      "nudge": false,
+      "photoId": null,
+      "reason": "",
+      "type": null
+    },
+    "model": "muse-wonder-1.0",
+    "latencyMs": 3243,
+    "recordedAt": "2026-11-12T18:22:36.793Z"
+  },
+  "memory:maya": {
+    "response": {
+      "insideJokes": [],
+      "sharedPlaces": [
+        {
+          "name": "Ramen Ya",
+          "photoIds": [
+            "ph_maya_01",
+            "ph_maya_02",
+            "ph_maya_03",
+            "ph_maya_04",
+            "ph_maya_05",
+            "ph_maya_06",
+            "ph_maya_07",
+            "ph_maya_08",
+            "ph_maya_09"
+          ]
+        },
+        {
+          "name": "Mozart's Coffee",
+          "photoIds": [
+            "ph_maya_10"
+          ]
+        },
+        {
+          "name": "Kerbey Lane Cafe",
+          "photoIds": [
+            "ph_maya_11"
+          ]
+        }
+      ]
+    },
+    "model": "muse-ember-1.0",
+    "latencyMs": 3650,
+    "recordedAt": "2026-11-12T18:20:14.899Z"
+  },
+  "critter:maya": {
+    "response": {
+      "accessory": "scarf",
+      "body": "noodle",
+      "color": "coral",
+      "why": "Coral noodle with cozy scarf for nine Ramen Ya ramen nights"
+    },
+    "model": "muse-wonder-1.0",
+    "latencyMs": 4756,
+    "recordedAt": "2026-11-12T18:20:19.657Z"
+  },
+  "memory:dev": {
+    "response": {
+      "insideJokes": [
+        {
+          "phrase": "goose incident",
+          "sourceIds": [
+            "ph_dev_01",
+            "ch_dev_021",
+            "ch_dev_023",
+            "ch_dev_024",
+            "ch_dev_032"
+          ]
+        }
+      ],
+      "sharedPlaces": [
+        {
+          "name": "Pease Park",
+          "photoIds": [
+            "ph_dev_01"
+          ]
+        },
+        {
+          "name": "Spider House Cafe",
+          "photoIds": [
+            "ph_dev_02"
+          ]
+        },
+        {
+          "name": "Zilker Park",
+          "photoIds": [
+            "ph_dev_03"
+          ]
+        }
+      ]
+    },
+    "model": "muse-ember-1.0",
+    "latencyMs": 3317,
+    "recordedAt": "2026-11-12T18:20:22.977Z"
+  },
+  "critter:dev": {
+    "response": {
+      "accessory": "feather",
+      "body": "pebble",
+      "color": "sky",
+      "why": "Pebble for Zilker Park hikes, sky for park days, feather for the goose incident."
+    },
+    "model": "muse-wonder-1.0",
+    "latencyMs": 4248,
+    "recordedAt": "2026-11-12T18:20:27.226Z"
+  },
+  "memory:jess": {
+    "response": {
+      "insideJokes": [],
+      "sharedPlaces": [
+        {
+          "name": "Lincoln High",
+          "photoIds": [
+            "ph_jess_01",
+            "ph_jess_02",
+            "ph_jess_04"
+          ]
+        },
+        {
+          "name": "Bird Bakery",
+          "photoIds": [
+            "ph_jess_03",
+            "ph_jess_05"
+          ]
+        },
+        {
+          "name": "Jess's backyard",
+          "photoIds": [
+            "ph_jess_06"
+          ]
+        }
+      ]
+    },
+    "model": "muse-ember-1.0",
+    "latencyMs": 3991,
+    "recordedAt": "2026-11-12T18:20:31.219Z"
+  },
+  "critter:jess": {
+    "response": {
+      "accessory": "star_clip",
+      "body": "bean",
+      "color": "butter",
+      "why": "Lincoln High school spirit bean with butter tones from Bird Bakery days."
+    },
+    "model": "muse-wonder-1.0",
+    "latencyMs": 6234,
+    "recordedAt": "2026-11-12T18:20:37.455Z"
+  },
+  "memory:sam": {
+    "response": {
+      "insideJokes": [],
+      "sharedPlaces": [
+        {
+          "name": "Lady Bird Lake Trail",
+          "photoIds": [
+            "ph_runclub_01"
+          ]
+        }
+      ]
+    },
+    "model": "muse-ember-1.0",
+    "latencyMs": 1689,
+    "recordedAt": "2026-11-12T18:20:39.145Z"
+  },
+  "critter:sam": {
+    "response": {
+      "accessory": "bandana",
+      "body": "pebble",
+      "color": "sky",
+      "why": "Pebble and bandana for active days on Lady Bird Lake Trail."
+    },
+    "model": "muse-wonder-1.0",
+    "latencyMs": 4045,
+    "recordedAt": "2026-11-12T18:20:43.192Z"
+  },
+  "memory:priya": {
+    "response": {
+      "insideJokes": [],
+      "sharedPlaces": [
+        {
+          "name": "Alamo Drafthouse",
+          "photoIds": [
+            "ph_priya_01",
+            "ph_priya_03"
+          ]
+        },
+        {
+          "name": "Mozart's Coffee",
+          "photoIds": [
+            "ph_priya_02"
+          ]
+        }
+      ]
+    },
+    "model": "muse-ember-1.0",
+    "latencyMs": 2210,
+    "recordedAt": "2026-11-12T18:20:45.405Z"
+  },
+  "critter:priya": {
+    "response": {
+      "accessory": "glasses",
+      "body": "noodle",
+      "color": "butter",
+      "why": "Glasses and butter popcorn vibes for our Alamo Drafthouse movie nights with Priya"
+    },
+    "model": "muse-wonder-1.0",
+    "latencyMs": 4378,
+    "recordedAt": "2026-11-12T18:20:49.791Z"
+  },
+  "memory:chris": {
+    "response": {
+      "insideJokes": [],
+      "sharedPlaces": [
+        {
+          "name": "Gregory Gym",
+          "photoIds": [
+            "ph_chris_01"
+          ]
+        }
+      ]
+    },
+    "model": "muse-ember-1.0",
+    "latencyMs": 2381,
+    "recordedAt": "2026-11-12T18:20:52.175Z"
+  },
+  "critter:chris": {
+    "response": {
+      "accessory": "bandana",
+      "body": "pebble",
+      "color": "coral",
+      "why": "Pebble and bandana for our active Gregory Gym photo together."
+    },
+    "model": "muse-wonder-1.0",
+    "latencyMs": 3679,
+    "recordedAt": "2026-11-12T18:20:55.855Z"
+  },
+  "memory:alex": {
+    "response": {
+      "insideJokes": [],
+      "sharedPlaces": [
+        {
+          "name": "Barton Springs",
+          "photoIds": [
+            "ph_alex_01",
+            "ph_alex_02",
+            "ph_alex_03",
+            "ph_alex_04",
+            "ph_alex_05",
+            "ph_alex_06"
+          ]
+        }
+      ]
+    },
+    "model": "muse-ember-1.0",
+    "latencyMs": 2348,
+    "recordedAt": "2026-11-12T18:20:58.208Z"
+  },
+  "critter:alex": {
+    "response": {
+      "accessory": "flower",
+      "body": "pebble",
+      "color": "sky",
+      "why": "Pebble and flower for sunny swimming days at Barton Springs with Alex."
+    },
+    "model": "muse-wonder-1.0",
+    "latencyMs": 2957,
+    "recordedAt": "2026-11-12T18:21:01.166Z"
+  }
+}
