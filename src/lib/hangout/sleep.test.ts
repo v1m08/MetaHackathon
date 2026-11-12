@@ -109,6 +109,6 @@ describe("seeded cast on the demo date", () => {
   });
   it("Dev is sleepy", () => assert.equal(stateOf("dev").state, "sleepy"));
   it("Priya is awake", () => assert.equal(stateOf("priya").state, "awake"));
-  it("Jess is napping", () => assert.equal(stateOf("jess").state, "napping"));
+  it("Jess is awake (she texted about the Austin job in September)", () => assert.equal(stateOf("jess").state, "awake"));
   it("Alex is resting", () => assert.equal(stateOf("alex").state, "resting"));
 });

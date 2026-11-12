@@ -46,18 +46,18 @@
     "response": {
       "action": "suggest_plan",
       "evidenceIds": [
-        "ph_jess_01",
-        "ph_jess_04",
+        "ch_jess_054",
+        "ch_jess_055",
         "ph_jess_06"
       ],
       "nudge": true,
       "photoId": null,
-      "reason": "Jess just moved to Austin, and you two go back to Lincoln High. Perfect chance to show her around.",
+      "reason": "Jess moved to Austin, the job move you cheered on in September, so you two can finally hang out.",
       "type": "life_update"
     },
     "model": "muse-wonder-1.0",
-    "latencyMs": 67461,
-    "recordedAt": "2026-11-12T18:22:30.199Z"
+    "latencyMs": 13652,
+    "recordedAt": "2026-11-12T19:16:31.557Z"
   },
   "whyNow:priya_lunch": {
     "response": {
@@ -180,13 +180,19 @@
   "critter:dev": {
     "response": {
       "accessory": "feather",
-      "body": "pebble",
-      "color": "sky",
-      "why": "Pebble for Zilker Park hikes, sky for park days, feather for the goose incident."
+      "art": {
+        "animal": "fluffy baby goose",
+        "caption": "A fluffy baby goose remembering the goose incident at Zilker Park",
+        "color": "soft butter yellow",
+        "detail": "tiny white feather tucked behind one ear"
+      },
+      "body": "puff",
+      "color": "butter",
+      "why": "Puffy silly friend honoring the goose incident at Pease Park"
     },
     "model": "muse-wonder-1.0",
-    "latencyMs": 4248,
-    "recordedAt": "2026-11-12T18:20:27.226Z"
+    "latencyMs": 9723,
+    "recordedAt": "2026-11-12T19:17:01.249Z"
   },
   "memory:jess": {
     "response": {
@@ -221,14 +227,20 @@
   },
   "critter:jess": {
     "response": {
-      "accessory": "star_clip",
+      "accessory": "feather",
+      "art": {
+        "animal": "small songbird chick",
+        "caption": "A small songbird chick remembering sweet days at Bird Bakery",
+        "color": "soft butter yellow",
+        "detail": "tiny Bird Bakery cupcake held in wing"
+      },
       "body": "bean",
       "color": "butter",
-      "why": "Lincoln High school spirit bean with butter tones from Bird Bakery days."
+      "why": "Bean for Lincoln High school days, feather for Bird Bakery visits."
     },
     "model": "muse-wonder-1.0",
-    "latencyMs": 6234,
-    "recordedAt": "2026-11-12T18:20:37.455Z"
+    "latencyMs": 10547,
+    "recordedAt": "2026-11-12T19:17:11.799Z"
   },
   "memory:sam": {
     "response": {
@@ -249,13 +261,19 @@
   "critter:sam": {
     "response": {
       "accessory": "bandana",
+      "art": {
+        "animal": "small river otter",
+        "caption": "A small river otter from Lady Bird Lake Trail walks",
+        "color": "soft sky blue",
+        "detail": "tiny red bandana for trail walks"
+      },
       "body": "pebble",
       "color": "sky",
-      "why": "Pebble and bandana for active days on Lady Bird Lake Trail."
+      "why": "Pebble bandana for active walks together on Lady Bird Lake Trail."
     },
     "model": "muse-wonder-1.0",
-    "latencyMs": 4045,
-    "recordedAt": "2026-11-12T18:20:43.192Z"
+    "latencyMs": 8779,
+    "recordedAt": "2026-11-12T19:17:20.581Z"
   },
   "memory:priya": {
     "response": {
@@ -283,13 +301,19 @@
   "critter:priya": {
     "response": {
       "accessory": "glasses",
-      "body": "noodle",
-      "color": "butter",
-      "why": "Glasses and butter popcorn vibes for our Alamo Drafthouse movie nights with Priya"
+      "art": {
+        "animal": "kitten with round ears",
+        "caption": "A kitten for Alamo Drafthouse movies and Mozart's Coffee dates.",
+        "color": "soft pastel peach",
+        "detail": "tiny popcorn bucket from Alamo Drafthouse"
+      },
+      "body": "blob",
+      "color": "peach",
+      "why": "For movie nights at Alamo Drafthouse and coffee at Mozart's Coffee."
     },
     "model": "muse-wonder-1.0",
-    "latencyMs": 4378,
-    "recordedAt": "2026-11-12T18:20:49.791Z"
+    "latencyMs": 10470,
+    "recordedAt": "2026-11-12T19:17:31.056Z"
   },
   "memory:chris": {
     "response": {
@@ -310,13 +334,19 @@
   "critter:chris": {
     "response": {
       "accessory": "bandana",
+      "art": {
+        "animal": "small strong bear cub",
+        "caption": "A small strong bear cub remembering workouts at Gregory Gym.",
+        "color": "soft coral pink",
+        "detail": "tiny workout bandana from Gregory Gym"
+      },
       "body": "pebble",
       "color": "coral",
-      "why": "Pebble and bandana for our active Gregory Gym photo together."
+      "why": "Sturdy pebble with bandana for workouts together at Gregory Gym."
     },
     "model": "muse-wonder-1.0",
-    "latencyMs": 3679,
-    "recordedAt": "2026-11-12T18:20:55.855Z"
+    "latencyMs": 11832,
+    "recordedAt": "2026-11-12T19:17:42.894Z"
   },
   "memory:alex": {
     "response": {
@@ -342,13 +372,19 @@
   "critter:alex": {
     "response": {
       "accessory": "flower",
+      "art": {
+        "animal": "otter with round ears",
+        "caption": "A little otter remembering sunny swims at Barton Springs",
+        "color": "soft mint blue",
+        "detail": "tiny flower tucked behind ear for Barton Springs swims"
+      },
       "body": "pebble",
       "color": "sky",
-      "why": "Pebble and flower for sunny swimming days at Barton Springs with Alex."
+      "why": "Pebble body and flower for active summer swims at Barton Springs with Alex."
     },
     "model": "muse-wonder-1.0",
-    "latencyMs": 2957,
-    "recordedAt": "2026-11-12T18:21:01.166Z"
+    "latencyMs": 8872,
+    "recordedAt": "2026-11-12T19:17:51.767Z"
   },
   "plan:priya": {
     "response": {

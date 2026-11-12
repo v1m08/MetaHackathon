@@ -97,14 +97,20 @@
       }
     ],
     "critter": {
-      "body": "pebble",
-      "color": "sky",
+      "body": "puff",
+      "color": "butter",
       "accessory": "feather",
-      "why": "Pebble for Zilker Park hikes, sky for park days, feather for the goose incident."
+      "why": "Puffy silly friend honoring the goose incident at Pease Park",
+      "art": {
+        "animal": "fluffy baby goose",
+        "color": "soft butter yellow",
+        "detail": "tiny white feather tucked behind one ear",
+        "caption": "A fluffy baby goose remembering the goose incident at Zilker Park"
+      }
     },
     "source": "live",
     "model": "muse-ember-1.0",
-    "builtAt": "2026-11-12T18:20:27.227Z"
+    "builtAt": "2026-11-12T19:17:01.250Z"
   },
   "jess": {
     "sharedPlaces": [
@@ -143,12 +149,18 @@
     "critter": {
       "body": "bean",
       "color": "butter",
-      "accessory": "star_clip",
-      "why": "Lincoln High school spirit bean with butter tones from Bird Bakery days."
+      "accessory": "feather",
+      "why": "Bean for Lincoln High school days, feather for Bird Bakery visits.",
+      "art": {
+        "animal": "small songbird chick",
+        "color": "soft butter yellow",
+        "detail": "tiny Bird Bakery cupcake held in wing",
+        "caption": "A small songbird chick remembering sweet days at Bird Bakery"
+      }
     },
     "source": "live",
     "model": "muse-ember-1.0",
-    "builtAt": "2026-11-12T18:20:37.455Z"
+    "builtAt": "2026-11-12T19:17:11.800Z"
   },
   "sam": {
     "sharedPlaces": [
@@ -167,11 +179,17 @@
       "body": "pebble",
       "color": "sky",
       "accessory": "bandana",
-      "why": "Pebble and bandana for active days on Lady Bird Lake Trail."
+      "why": "Pebble bandana for active walks together on Lady Bird Lake Trail.",
+      "art": {
+        "animal": "small river otter",
+        "color": "soft sky blue",
+        "detail": "tiny red bandana for trail walks",
+        "caption": "A small river otter from Lady Bird Lake Trail walks"
+      }
     },
     "source": "live",
     "model": "muse-ember-1.0",
-    "builtAt": "2026-11-12T18:20:43.193Z"
+    "builtAt": "2026-11-12T19:17:20.582Z"
   },
   "priya": {
     "sharedPlaces": [
@@ -197,14 +215,20 @@
     ],
     "insideJokes": [],
     "critter": {
-      "body": "noodle",
-      "color": "butter",
+      "body": "blob",
+      "color": "peach",
       "accessory": "glasses",
-      "why": "Glasses and butter popcorn vibes for our Alamo Drafthouse movie nights with Priya"
+      "why": "For movie nights at Alamo Drafthouse and coffee at Mozart's Coffee.",
+      "art": {
+        "animal": "kitten with round ears",
+        "color": "soft pastel peach",
+        "detail": "tiny popcorn bucket from Alamo Drafthouse",
+        "caption": "A kitten for Alamo Drafthouse movies and Mozart's Coffee dates."
+      }
     },
     "source": "live",
     "model": "muse-ember-1.0",
-    "builtAt": "2026-11-12T18:20:49.792Z"
+    "builtAt": "2026-11-12T19:17:31.058Z"
   },
   "chris": {
     "sharedPlaces": [
@@ -223,11 +247,17 @@
       "body": "pebble",
       "color": "coral",
       "accessory": "bandana",
-      "why": "Pebble and bandana for our active Gregory Gym photo together."
+      "why": "Sturdy pebble with bandana for workouts together at Gregory Gym.",
+      "art": {
+        "animal": "small strong bear cub",
+        "color": "soft coral pink",
+        "detail": "tiny workout bandana from Gregory Gym",
+        "caption": "A small strong bear cub remembering workouts at Gregory Gym."
+      }
     },
     "source": "live",
     "model": "muse-ember-1.0",
-    "builtAt": "2026-11-12T18:20:55.859Z"
+    "builtAt": "2026-11-12T19:17:42.894Z"
   },
   "alex": {
     "sharedPlaces": [
@@ -251,10 +281,16 @@
       "body": "pebble",
       "color": "sky",
       "accessory": "flower",
-      "why": "Pebble and flower for sunny swimming days at Barton Springs with Alex."
+      "why": "Pebble body and flower for active summer swims at Barton Springs with Alex.",
+      "art": {
+        "animal": "otter with round ears",
+        "color": "soft mint blue",
+        "detail": "tiny flower tucked behind ear for Barton Springs swims",
+        "caption": "A little otter remembering sunny swims at Barton Springs"
+      }
     },
     "source": "live",
     "model": "muse-ember-1.0",
-    "builtAt": "2026-11-12T18:21:01.168Z"
+    "builtAt": "2026-11-12T19:17:51.768Z"
   }
 }

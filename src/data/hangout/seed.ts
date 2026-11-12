@@ -142,6 +142,7 @@ export const CHATS: ChatSnippet[] = [
   ...talk("jess", "2023-01-09", ["jess", "happy new year!!"], ["me", "happy new year bestie"]),
   ...talk("jess", "2024-06-12", ["me", "happy birthday!!"], ["jess", "thank you!! come visit chicago"]),
   ...talk("jess", "2025-06-12", ["me", "happy birthday!! old lady"], ["jess", "rude. thank you 💕"]),
+  ...talk("jess", "2026-09-24", ["jess", "ok don't freak out but I applied for a job in austin 👀"], ["me", "WAIT. take it. take it right now"]),
   // Priya: talked last week
   ...talk("priya", "2026-09-05", ["priya", "movie this weekend?"], ["me", "yes"]),
   ...talk("priya", "2026-09-16", ["me", "did you finish the show"], ["priya", "the finale ruined me"]),
