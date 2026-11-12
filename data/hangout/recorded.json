@@ -227,20 +227,20 @@
   },
   "critter:jess": {
     "response": {
-      "accessory": "feather",
+      "accessory": "flower",
       "art": {
-        "animal": "small songbird chick",
-        "caption": "A small songbird chick remembering sweet days at Bird Bakery",
-        "color": "soft butter yellow",
-        "detail": "tiny Bird Bakery cupcake held in wing"
+        "animal": "fluffy baby bunny",
+        "caption": "A fluffy baby bunny remembering sunny days in Jess's backyard",
+        "color": "soft pastel lilac",
+        "detail": "tiny flower from Jess's backyard tucked behind ear"
       },
       "body": "bean",
-      "color": "butter",
-      "why": "Bean for Lincoln High school days, feather for Bird Bakery visits."
+      "color": "lilac",
+      "why": "Bean for Lincoln High school days, lilac flower for Jess's backyard in August."
     },
     "model": "muse-wonder-1.0",
-    "latencyMs": 10547,
-    "recordedAt": "2026-11-12T19:17:11.799Z"
+    "latencyMs": 14407,
+    "recordedAt": "2026-11-12T19:18:49.743Z"
   },
   "memory:sam": {
     "response": {
@@ -262,18 +262,18 @@
     "response": {
       "accessory": "bandana",
       "art": {
-        "animal": "small river otter",
-        "caption": "A small river otter from Lady Bird Lake Trail walks",
+        "animal": "baby turtle with shell",
+        "caption": "A baby turtle from Lady Bird Lake Trail with Sam Okafor",
         "color": "soft sky blue",
-        "detail": "tiny red bandana for trail walks"
+        "detail": "tiny bandana and miniature lake trail sign"
       },
       "body": "pebble",
       "color": "sky",
-      "why": "Pebble bandana for active walks together on Lady Bird Lake Trail."
+      "why": "Pebble body and bandana for active walks at Lady Bird Lake Trail with Sam."
     },
     "model": "muse-wonder-1.0",
-    "latencyMs": 8779,
-    "recordedAt": "2026-11-12T19:17:20.581Z"
+    "latencyMs": 12560,
+    "recordedAt": "2026-11-12T19:19:02.306Z"
   },
   "memory:priya": {
     "response": {
@@ -373,18 +373,18 @@
     "response": {
       "accessory": "flower",
       "art": {
-        "animal": "otter with round ears",
-        "caption": "A little otter remembering sunny swims at Barton Springs",
-        "color": "soft mint blue",
-        "detail": "tiny flower tucked behind ear for Barton Springs swims"
+        "animal": "baby frog with big eyes",
+        "caption": "A baby frog ready for swims at Barton Springs with Alex.",
+        "color": "soft pastel mint",
+        "detail": "tiny inflatable ring for Barton Springs"
       },
       "body": "pebble",
-      "color": "sky",
-      "why": "Pebble body and flower for active summer swims at Barton Springs with Alex."
+      "color": "mint",
+      "why": "Pebble body and flower for sunny Barton Springs swims with Alex."
     },
     "model": "muse-wonder-1.0",
-    "latencyMs": 8872,
-    "recordedAt": "2026-11-12T19:17:51.767Z"
+    "latencyMs": 10750,
+    "recordedAt": "2026-11-12T19:19:13.060Z"
   },
   "plan:priya": {
     "response": {

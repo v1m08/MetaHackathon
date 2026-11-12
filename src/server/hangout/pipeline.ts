@@ -112,11 +112,21 @@ const CRITTER_SYSTEM = `You design a small friendship critter. Base every choice
    - detail: one tiny prop or accessory taken from a specific shared place or inside joke, max 12 words.
    - caption: one line starting with "A" that names the animal and the place or joke, max 14 words.`;
 
+/** Plush animals other friends already have, so every critter in the Hangout is a different kind of animal. */
+function takenArt(friendId: string) {
+  return hang()
+    .friends.filter((x) => x.id !== friendId && !x.isBlocked)
+    .map((x) => builtMemory(x.id)?.critter.art)
+    .filter((a): a is NonNullable<typeof a> => !!a)
+    .map((a) => `${a.animal} (${a.color})`);
+}
+
 export async function designCritter(friendId: string, mem: Parameters<typeof memorySummary>[0], opts: RunOpts = {}): Promise<{ design: Omit<CritterDesign, "keepsakes">; step: RunStep }> {
   const f = friendById(friendId)!;
+  const taken = takenArt(friendId);
   const prompt = `FRIEND: ${f.name}
 ${memorySummary(mem)}
-
+${taken.length ? `ALREADY IN THE HANGOUT (pick a different kind of animal and a different fur color): ${taken.join("; ")}\n` : ""}
 BODIES: ${BODIES.map((b) => `${b.id} (${b.hint})`).join("; ")}
 COLORS: ${COLORS.map((c) => c.id).join(", ")}
 ACCESSORIES: ${ACCESSORIES.map((a) => `${a.id} (${a.hint})`).join("; ")}`;
