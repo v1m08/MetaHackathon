@@ -13,7 +13,7 @@
   "label": "Nov 20–22",
   "busy": false
  },
- "startedAt": "2026-11-12T11:32:38.276Z",
+ "startedAt": "2026-11-12T11:49:52.728Z",
  "stages": {
   "discover": {
    "steps": [
@@ -21,21 +21,21 @@
      "kind": "info",
      "text": "Starting from Austin, Nov 20–22, about $100",
      "i": 0,
-     "at": 1
+     "at": 0
     },
     {
      "kind": "model",
      "text": "Deciding what to look at next",
-     "detail": "2002 ms",
+     "detail": "1552 ms",
      "i": 1,
-     "at": 2002
+     "at": 1553
     },
     {
      "kind": "tool",
      "tool": "scan_network",
      "text": "Mapping your whole network: who lives where, who hosts, who's driving Nov 20–22",
      "i": 2,
-     "at": 2003
+     "at": 1553
     },
     {
      "kind": "result",
@@ -63,21 +63,21 @@
       "ride_finn_nola"
      ],
      "i": 3,
-     "at": 2006
+     "at": 1556
     },
     {
      "kind": "model",
      "text": "Deciding what to look at next",
-     "detail": "7184 ms",
+     "detail": "7898 ms",
      "i": 4,
-     "at": 9190
+     "at": 9454
     },
     {
      "kind": "tool",
      "tool": "estimate_trip_cost",
      "text": "Pricing New Orleans: 2 nights, staying with a friend, by a friend's car",
      "i": 5,
-     "at": 9190
+     "at": 9454
     },
     {
      "kind": "result",
@@ -85,51 +85,51 @@
      "text": "about $105 if they say yes, about $307 otherwise",
      "detail": "542 mi · 8h drive · hotel + solo would be $527",
      "i": 6,
-     "at": 9190
-    },
-    {
-     "kind": "tool",
-     "tool": "estimate_trip_cost",
-     "text": "Pricing Dallas: 2 nights, staying with a friend, by bus",
-     "i": 7,
-     "at": 9190
-    },
-    {
-     "kind": "result",
-     "tool": "estimate_trip_cost",
-     "text": "about $114 if they say yes, about $255 otherwise",
-     "detail": "215 mi · 3.2h drive · hotel + solo would be $421",
-     "i": 8,
-     "at": 9190
+     "at": 9454
     },
     {
      "kind": "tool",
      "tool": "estimate_trip_cost",
      "text": "Pricing Houston: 2 nights, staying with a friend, by bus",
-     "i": 9,
-     "at": 9190
+     "i": 7,
+     "at": 9454
     },
     {
      "kind": "result",
      "tool": "estimate_trip_cost",
      "text": "about $108 if they say yes, about $245 otherwise",
      "detail": "173 mi · 2.5h drive · hotel + solo would be $405",
+     "i": 8,
+     "at": 9454
+    },
+    {
+     "kind": "tool",
+     "tool": "estimate_trip_cost",
+     "text": "Pricing Dallas: 2 nights, staying with a friend, by bus",
+     "i": 9,
+     "at": 9454
+    },
+    {
+     "kind": "result",
+     "tool": "estimate_trip_cost",
+     "text": "about $114 if they say yes, about $255 otherwise",
+     "detail": "215 mi · 3.2h drive · hotel + solo would be $421",
      "i": 10,
-     "at": 9190
+     "at": 9454
     },
     {
      "kind": "model",
      "text": "Deciding what to look at next",
-     "detail": "7035 ms",
+     "detail": "3678 ms",
      "i": 11,
-     "at": 16225
+     "at": 13133
     },
     {
      "kind": "tool",
      "tool": "get_city_media",
      "text": "Reading your friends' photos and Reels from New Orleans",
      "i": 12,
-     "at": 16225
+     "at": 13133
     },
     {
      "kind": "result",
@@ -137,41 +137,41 @@
      "text": "Read 5 photos from New Orleans",
      "detail": "1 of Beau's, 1 of Elijah's, 1 of Camille's, 1 of Devon's",
      "i": 13,
-     "at": 16226
+     "at": 13134
     },
     {
      "kind": "model",
      "text": "Deciding what to look at next",
-     "detail": "7906 ms",
+     "detail": "6880 ms",
      "i": 14,
-     "at": 24132
+     "at": 20013
     },
     {
      "kind": "tool",
      "tool": "propose_trips",
      "text": "Putting together 1 trip",
      "i": 15,
-     "at": 24132
+     "at": 20014
     },
     {
      "kind": "info",
      "text": "Checking every person, ride, event and photo against what you can actually see",
      "i": 16,
-     "at": 24132
+     "at": 20014
     },
     {
      "kind": "done",
      "text": "1 trip that only exist because of your people",
-     "detail": "24.1s · live · $0.033",
+     "detail": "20.0s · live · $0.035",
      "i": 17,
-     "at": 24133
+     "at": 20015
     }
    ],
    "result": {
-    "runId": "run_mwdgydd9",
+    "runId": "run_mwdhkgdj",
     "trips": [
      {
-      "id": "trip_mwdgydd90gy0",
+      "id": "trip_mwdhkgdj1ozn",
       "viewerId": "sam",
       "city": "new-orleans",
       "cityName": "New Orleans",
@@ -181,12 +181,12 @@
       "nights": 2,
       "budget": 100,
       "title": "new orleans with finn for colin's hi-ho late set",
-      "pitch": "finn's driving the van down friday and colin is on the late set with you already on the rider list. crash at beau's bywater spot and let camille get you in on frenchmen.",
+      "pitch": "finn's driving the van down friday and colin is on the late set with samantha. crash at beau's in the bywater and let camille get you in on frenchmen.",
       "reasons": [
-       "ride_finn_nola with finn, 2 seats open, $45 gas split from austin",
-       "late set at hi-ho with camille + colin + lucas + zoe all going",
-       "beau (via camille) has the spare room in the bywater, free that weekend",
-       "camille's frenchmen spot, no cover for her people"
+       "ride with finn from hotel vegas friday, seat open for you",
+       "late set at hi-ho with camille, beau, colin and lucas all going",
+       "beau's spare room in the bywater, he's free and open to hosting (via camille)",
+       "cheapest option in your network, just a bit over what you said"
       ],
       "host": {
        "id": "beau",
@@ -394,7 +394,7 @@
         "total": 307,
         "lines": [
          {
-          "label": "bus, round trip (542 mi)",
+          "label": "bus, round trip (542 mi each way)",
           "usd": 100
          },
          {
@@ -417,7 +417,7 @@
         "total": 527,
         "lines": [
          {
-          "label": "bus, round trip (542 mi)",
+          "label": "bus, round trip (542 mi each way)",
           "usd": 100
          },
          {
@@ -447,17 +447,17 @@
       },
       "fitsBudget": false,
       "repairs": [],
-      "createdAt": "2026-11-12T11:33:02.637Z"
+      "createdAt": "2026-11-12T11:50:12.967Z"
      }
     ],
     "mode": "live",
-    "costUsd": 0.0332,
-    "latencyMs": 24133,
+    "costUsd": 0.0353,
+    "latencyMs": 20015,
     "model": "muse-spark-1.3"
    }
   },
   "audit": {
-   "runId": "run_mwdgydd9",
+   "runId": "run_mwdhkgdj",
    "viewerId": "sam",
    "input": {
     "start": "2026-11-20",
@@ -465,8 +465,8 @@
     "budget": 100
    },
    "mode": "live",
-   "costUsd": 0.0332,
-   "latencyMs": 24133,
+   "costUsd": 0.0353,
+   "latencyMs": 20015,
    "raw": {
     "ids": 7,
     "grounded": 7,
@@ -475,7 +475,7 @@
    },
    "trips": [
     {
-     "tripId": "trip_mwdgydd90gy0",
+     "tripId": "trip_mwdhkgdj1ozn",
      "city": "new-orleans",
      "elements": [
       {
@@ -560,27 +560,27 @@
    "declined": false
   }
  },
- "cost": 0.0341,
+ "cost": 0.0361,
  "verdict": {
   "looksBroken": [
-   "priceIfYes is $105 but budget was about $100 and it's flagged overBudget",
-   "getting around is $6 for 3 days in the cheap version vs $12 otherwise, and food drops from $105 to $54 with no real explanation",
-   "host note says 'bring a bike or borrow mine' but it's not clear if that's Beau or Camille talking"
+   "pitch says beau is free/open to hosting via camille, but that's not an actual yes from him",
+   "price only works if both beau says yes AND finn has a seat, neither is confirmed",
+   "'ride with finn from hotel vegas' - no idea where that came from or if that's even where i'd be starting from",
+   "people list adds zoe and elijah who aren't in the pitch at all"
   ],
   "objections": [
-   "money: $105 is already over $100 and only if both Finn and Beau say yes",
-   "strangers: crashing at Beau's via Camille and riding with Finn the sound tech, I don't really know either of them",
-   "distance: 542 mi each way from Austin is a long drive to bank on",
-   "people: Elijah Brown is listed but never mentioned in the pitch or plans",
-   "dates: Nov 20-22, 2026 is a long way out to lock in a maybe host and a maybe seat"
+   "money: $105 is already over my ~$100 budget, and $307 if the ride/hosting falls through is way over",
+   "strangers: crashing at beau's who i don't know, only via camille, and riding with finn who i don't know",
+   "distance: 542 mi each way is a long drive for one weekend",
+   "people/dates: late set is cool but i don't actually know if colin/samantha thing is real or if everyone's really going"
   ],
   "pickTripIndex": -1,
-  "reason": "sounds fun with camille, colin, lucas and zoe going, but it's not actually confirmed at all and i'm not driving 542 mi hoping beau says yes while already over budget.",
+  "reason": "sounds fun on paper and the network angle is surprising, but i'm not getting in a van / crashing at a stranger's place based on secondhand yeses. would need actual confirmation from finn and beau first.",
   "surprising": 4,
   "trustworthy": 2,
   "wouldTake": false
  },
  "verdictMode": "live",
- "latencyMs": 27498,
- "finishedAt": "2026-11-12T11:33:05.533Z"
+ "latencyMs": 23469,
+ "finishedAt": "2026-11-12T11:50:15.956Z"
 }

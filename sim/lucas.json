@@ -13,7 +13,7 @@
   "label": "Dec 18–20",
   "busy": false
  },
- "startedAt": "2026-11-12T11:36:00.223Z",
+ "startedAt": "2026-11-12T11:53:32.620Z",
  "stages": {
   "discover": {
    "steps": [
@@ -21,27 +21,27 @@
      "kind": "info",
      "text": "Starting from Austin, Dec 18–20, about $180",
      "i": 0,
-     "at": 1
+     "at": 0
     },
     {
      "kind": "model",
      "text": "Deciding what to look at next",
-     "detail": "1187 ms",
+     "detail": "1370 ms",
      "i": 1,
-     "at": 1187
+     "at": 1370
     },
     {
      "kind": "tool",
      "tool": "scan_network",
      "text": "Mapping your whole network: who lives where, who hosts, who's driving Dec 18–20",
      "i": 2,
-     "at": 1188
+     "at": 1371
     },
     {
      "kind": "result",
      "tool": "scan_network",
      "text": "29 people in 11 cities · 14 hosts free that weekend · 2 events · 1 ride with seats",
-     "detail": "you're into foodies, art people, night owls and music lovers, no car · Marfa Night Sky Weekend (Chinati grounds + McDonald Observatory star party) (Marfa) · Shelby Bottoms trail run + hot chicken after (Nashville) · → Marfa, 3 seats",
+     "detail": "you're into foodies, art people, night owls and music lovers, no car · Marfa Night Sky Weekend (McDonald Observatory star party) (Marfa) · Shelby Bottoms trail run + hot chicken after (Nashville) · → Marfa, 3 seats",
      "ids": [
       "kai",
       "marisol",
@@ -77,21 +77,21 @@
       "ride_kenji_marfa"
      ],
      "i": 3,
-     "at": 1191
+     "at": 1374
     },
     {
      "kind": "model",
      "text": "Deciding what to look at next",
-     "detail": "6128 ms",
+     "detail": "9574 ms",
      "i": 4,
-     "at": 7319
+     "at": 10948
     },
     {
      "kind": "tool",
      "tool": "estimate_trip_cost",
      "text": "Pricing Marfa: 2 nights, staying with a friend, by a friend's car",
      "i": 5,
-     "at": 7319
+     "at": 10948
     },
     {
      "kind": "result",
@@ -99,14 +99,14 @@
      "text": "about $100 if they say yes, about $313 otherwise",
      "detail": "442 mi · 6.5h drive · hotel + solo would be $523",
      "i": 6,
-     "at": 7319
+     "at": 10948
     },
     {
      "kind": "tool",
      "tool": "estimate_trip_cost",
      "text": "Pricing Houston: 2 nights, staying with a friend, by bus",
      "i": 7,
-     "at": 7319
+     "at": 10948
     },
     {
      "kind": "result",
@@ -114,14 +114,14 @@
      "text": "about $108 if they say yes, about $245 otherwise",
      "detail": "173 mi · 2.5h drive · hotel + solo would be $405",
      "i": 8,
-     "at": 7319
+     "at": 10948
     },
     {
      "kind": "tool",
      "tool": "estimate_trip_cost",
      "text": "Pricing San Antonio: 2 nights, staying with a friend, by bus",
      "i": 9,
-     "at": 7319
+     "at": 10948
     },
     {
      "kind": "result",
@@ -129,21 +129,21 @@
      "text": "about $96 if they say yes, about $229 otherwise",
      "detail": "87 mi · 1.3h drive · hotel + solo would be $383",
      "i": 10,
-     "at": 7319
+     "at": 10948
     },
     {
      "kind": "model",
      "text": "Deciding what to look at next",
-     "detail": "2780 ms",
+     "detail": "2907 ms",
      "i": 11,
-     "at": 10099
+     "at": 13856
     },
     {
      "kind": "tool",
      "tool": "get_city_media",
      "text": "Reading your friends' photos and Reels from Marfa",
      "i": 12,
-     "at": 10099
+     "at": 13856
     },
     {
      "kind": "result",
@@ -151,14 +151,14 @@
      "text": "Read 2 photos from Marfa",
      "detail": "1 of Kenji's, 1 of Lucas's",
      "i": 13,
-     "at": 10099
+     "at": 13856
     },
     {
      "kind": "tool",
      "tool": "get_city_media",
      "text": "Reading your friends' photos and Reels from Houston",
      "i": 14,
-     "at": 10099
+     "at": 13856
     },
     {
      "kind": "result",
@@ -166,41 +166,183 @@
      "text": "Read 2 photos from Houston",
      "detail": "1 of Raj's, 1 of Layla's",
      "i": 15,
-     "at": 10099
+     "at": 13856
     },
     {
      "kind": "model",
      "text": "Deciding what to look at next",
-     "detail": "9068 ms",
+     "detail": "11157 ms",
      "i": 16,
-     "at": 19167
+     "at": 25013
     },
     {
      "kind": "tool",
      "tool": "propose_trips",
-     "text": "Putting together 2 trips",
+     "text": "Putting together 3 trips",
      "i": 17,
-     "at": 19167
+     "at": 25013
     },
     {
      "kind": "info",
      "text": "Checking every person, ride, event and photo against what you can actually see",
      "i": 18,
-     "at": 19168
+     "at": 25013
     },
     {
      "kind": "done",
-     "text": "2 trips that only exist because of your people",
-     "detail": "19.2s · live · $0.035",
+     "text": "3 trips that only exist because of your people",
+     "detail": "25.0s · live · $0.045",
      "i": 19,
-     "at": 19168
+     "at": 25014
     }
    ],
    "result": {
-    "runId": "run_mwdh2lde",
+    "runId": "run_mwdhp9wl",
     "trips": [
      {
-      "id": "trip_mwdh2lde0iw4",
+      "id": "trip_mwdhp9wl6rqs",
+      "viewerId": "lucas",
+      "city": "san-antonio",
+      "cityName": "San Antonio",
+      "state": "TX",
+      "start": "2026-12-18",
+      "end": "2026-12-20",
+      "nights": 2,
+      "budget": 180,
+      "title": "san antonio with gabe in southtown",
+      "pitch": "gabe (via maya) has a spare room in southtown and is free, plus breakfast tacos on him basically. quick hop down for a low-key weekend.",
+      "reasons": [
+       "host gabe via maya, free and open to hosting",
+       "southtown base, breakfast tacos + spurs talk",
+       "bus down is quick, leaves plenty in budget",
+       "good backup if you want to stay close to austin"
+      ],
+      "host": {
+       "id": "gabe",
+       "name": "Gabriel Flores",
+       "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D40",
+       "connection": "Maya's friend (UT Design cohort)",
+       "degree": 2,
+       "via": {
+        "id": "maya",
+        "name": "Maya Chen"
+       },
+       "openToHosting": true,
+       "hostingNote": "spare room at my place in Southtown. abuela lives downstairs and will cook.",
+       "hasCar": true,
+       "freeThatWeekend": true
+      },
+      "people": [],
+      "evidence": [
+       {
+        "kind": "reel",
+        "id": "tr_pearl",
+        "authorId": "gabe",
+        "author": "Gabriel Flores",
+        "image": "/api/img?u=https%3A%2F%2Fupload.wikimedia.org%2Fwikipedia%2Fcommons%2Fe%2Fea%2FGustavs_Geysers_Pearl_Brewery_San_Antonio_2021.jpg",
+        "caption": "pearl at dusk. the ground fountains lit up, trees wrapped in string lights, a kid and a dog losing their minds in the spray, the old brewery chimney behind it all. saturday ritual. free to walk, $12 tacos if you cave #sanantonio #thepearl"
+       },
+       {
+        "kind": "post",
+        "id": "p_00qw",
+        "authorId": "lena",
+        "author": "Lena Schultz",
+        "image": "/api/img?u=https%3A%2F%2Fthumb.wikimedia.org%2Fwikipedia%2Fcommons%2Fthumb%2F6%2F67%2FSan_Antonio_River_Walk_at_night.jpg%2F1280px-San_Antonio_River_Walk_at_night.jpg",
+        "caption": "took my out of town cousin to the river walk against my will. dusk is the only acceptable time: stone bridge, trees lit purple and green, a boat with red lights way down the water. still not a fan but I get it for 20 minutes. go eat at the pearl after, don't eat down here"
+       },
+       {
+        "kind": "post",
+        "id": "p_00qz",
+        "authorId": "gabe",
+        "author": "Gabriel Flores",
+        "image": "/api/img?u=https%3A%2F%2Fthumb.wikimedia.org%2Fwikipedia%2Fcommons%2Fthumb%2Fb%2Fb3%2FMission_San_Jos%25C3%25A9_y_San_Miguel_de_Aguayo%252C_San_Antonio%252C_Texas_arches.jpg%2F1280px-Mission_San_Jos%25C3%25A9_y_San_Miguel_de_Aguayo%252C_San_Antonio%252C_Texas_arches.jpg",
+        "caption": "mission san josé with abuela on a cloudy sunday. the long wall of stone arches, two rows, green bushes in front, weathered like it's been there 300 years because it has. free. national park. she lit a candle and then made me drive her to h-e-b. spare room in southtown is open, she WILL cook for you"
+       }
+      ],
+      "prices": {
+       "ifYes": {
+        "total": 96,
+        "lines": [
+         {
+          "label": "bus, round trip (87 mi each way)",
+          "usd": 36
+         },
+         {
+          "label": "staying with a friend (2 nights)",
+          "usd": 0
+         },
+         {
+          "label": "food, 3 days (local's cheap spots)",
+          "usd": 54
+         },
+         {
+          "label": "getting around, 3 days",
+          "usd": 6
+         }
+        ],
+        "transport": "bus",
+        "lodging": "host"
+       },
+       "otherwise": {
+        "total": 229,
+        "lines": [
+         {
+          "label": "bus, round trip (87 mi each way)",
+          "usd": 36
+         },
+         {
+          "label": "hostel, 2 nights × $38",
+          "usd": 76
+         },
+         {
+          "label": "food, 3 days",
+          "usd": 105
+         },
+         {
+          "label": "getting around, 3 days",
+          "usd": 12
+         }
+        ],
+        "transport": "bus",
+        "lodging": "hostel"
+       },
+       "solo": {
+        "total": 383,
+        "lines": [
+         {
+          "label": "bus, round trip (87 mi each way)",
+          "usd": 36
+         },
+         {
+          "label": "hotel, 2 nights × $115",
+          "usd": 230
+         },
+         {
+          "label": "food, 3 days",
+          "usd": 105
+         },
+         {
+          "label": "getting around, 3 days",
+          "usd": 12
+         }
+        ],
+        "transport": "bus",
+        "lodging": "hotel"
+       },
+       "miles": 87,
+       "driveHours": 1.3,
+       "transportIfYes": "bus",
+       "lodgingIfYes": "host",
+       "conditions": [
+        "Gabriel says yes to hosting"
+       ]
+      },
+      "fitsBudget": true,
+      "repairs": [],
+      "createdAt": "2026-11-12T11:53:57.861Z"
+     },
+     {
+      "id": "trip_mwdhp9wkablq",
       "viewerId": "lucas",
       "city": "marfa",
       "cityName": "Marfa",
@@ -209,13 +351,13 @@
       "end": "2026-12-20",
       "nights": 2,
       "budget": 180,
-      "title": "marfa with kenji for the night sky weekend",
-      "pitch": "kenji's driving out friday and has a seat with your name on it. june's casita is free and you'll be shooting stars with silas by saturday.",
+      "title": "marfa with kenji + june for night sky weekend",
+      "pitch": "kenji's driving out friday from east austin and already saved you a seat, and june's casita is open for the star party weekend. made for your film camera.",
       "reasons": [
-       "ride with kenji from austin friday, $40 gas split, 3 seats open",
-       "crash in june's casita behind the house, she's free and hosting",
-       "night sky weekend with june + silas + kenji at chinati / mcdonald observatory",
-       "kenji's prada marfa at night tip: pull over, lights off, just stars"
+       "ride with kenji (maya's friend) from austin friday, seat open",
+       "stay in june's casita (via maya) who is free and hosting",
+       "night sky weekend with june + silas, your film photo friend",
+       "kenji's prada marfa post proves the road trip photo ops"
       ],
       "host": {
        "id": "june",
@@ -257,7 +399,7 @@
       },
       "event": {
        "id": "e_marfa_sky",
-       "title": "Marfa Night Sky Weekend (Chinati grounds + McDonald Observatory star party)",
+       "title": "Marfa Night Sky Weekend (McDonald Observatory star party)",
        "startsAt": "2026-12-19T02:00:00.000Z",
        "location": "June's casita → Chinati → McDonald Observatory",
        "price": "Star party $25 · Chinati self-guided free",
@@ -344,7 +486,7 @@
         "total": 313,
         "lines": [
          {
-          "label": "bus, round trip (442 mi)",
+          "label": "bus, round trip (442 mi each way)",
           "usd": 86
          },
          {
@@ -367,7 +509,7 @@
         "total": 523,
         "lines": [
          {
-          "label": "bus, round trip (442 mi)",
+          "label": "bus, round trip (442 mi each way)",
           "usd": 86
          },
          {
@@ -397,10 +539,10 @@
       },
       "fitsBudget": true,
       "repairs": [],
-      "createdAt": "2026-11-12T11:36:19.634Z"
+      "createdAt": "2026-11-12T11:53:57.860Z"
      },
      {
-      "id": "trip_mwdh2lde6ocf",
+      "id": "trip_mwdhp9wl8fm7",
       "viewerId": "lucas",
       "city": "houston",
       "cityName": "Houston",
@@ -409,13 +551,13 @@
       "end": "2026-12-20",
       "nights": 2,
       "budget": 180,
-      "title": "houston with raj for banh mi + night markets",
-      "pitch": "raj has the montrose guest room and wants to drive you to bellaire for $4.50 banh mi. layla's around too for museum district wandering.",
+      "title": "houston with raj for night market eats",
+      "pitch": "raj (via maya) has the montrose guest room ready and wants to drive you around bellaire for cheap eats. easy bus down, local showing you spots.",
       "reasons": [
-       "stay with raj in montrose, free, he's free that weekend",
-       "raj's night market tour - he drives, you eat",
-       "see layla for museums, she's into architecture + cycling like you",
-       "cheap bus down, ~$108 all-in with raj showing cheap spots"
+       "host raj via maya, free that weekend and open to hosting",
+       "raj's banh mi post is exactly the food crawl he'd take you on",
+       "layla (via omar) also in town for museums",
+       "short bus ride, cheapest option in your network"
       ],
       "host": {
        "id": "raj",
@@ -463,7 +605,7 @@
         "total": 108,
         "lines": [
          {
-          "label": "bus, round trip (173 mi)",
+          "label": "bus, round trip (173 mi each way)",
           "usd": 48
          },
          {
@@ -486,7 +628,7 @@
         "total": 245,
         "lines": [
          {
-          "label": "bus, round trip (173 mi)",
+          "label": "bus, round trip (173 mi each way)",
           "usd": 48
          },
          {
@@ -509,7 +651,7 @@
         "total": 405,
         "lines": [
          {
-          "label": "bus, round trip (173 mi)",
+          "label": "bus, round trip (173 mi each way)",
           "usd": 48
          },
          {
@@ -538,17 +680,17 @@
       },
       "fitsBudget": true,
       "repairs": [],
-      "createdAt": "2026-11-12T11:36:19.634Z"
+      "createdAt": "2026-11-12T11:53:57.861Z"
      }
     ],
     "mode": "live",
-    "costUsd": 0.0346,
-    "latencyMs": 19168,
+    "costUsd": 0.044899999999999995,
+    "latencyMs": 25014,
     "model": "muse-spark-1.3"
    }
   },
   "audit": {
-   "runId": "run_mwdh2lde",
+   "runId": "run_mwdhp9wl",
    "viewerId": "lucas",
    "input": {
     "start": "2026-12-18",
@@ -556,17 +698,55 @@
     "budget": 180
    },
    "mode": "live",
-   "costUsd": 0.0346,
-   "latencyMs": 19168,
+   "costUsd": 0.044899999999999995,
+   "latencyMs": 25014,
    "raw": {
-    "ids": 8,
-    "grounded": 8,
+    "ids": 9,
+    "grounded": 9,
     "privacyViolationsCaught": 0,
     "invented": 0
    },
    "trips": [
     {
-     "tripId": "trip_mwdh2lde0iw4",
+     "tripId": "trip_mwdhp9wl6rqs",
+     "city": "san-antonio",
+     "elements": [
+      {
+       "kind": "host",
+       "id": "gabe",
+       "exists": true,
+       "visible": true
+      },
+      {
+       "kind": "reel",
+       "id": "tr_pearl",
+       "exists": true,
+       "visible": true
+      },
+      {
+       "kind": "post",
+       "id": "p_00qw",
+       "exists": true,
+       "visible": true
+      },
+      {
+       "kind": "post",
+       "id": "p_00qz",
+       "exists": true,
+       "visible": true
+      }
+     ],
+     "renderedViolations": 0,
+     "fitsBudget": true,
+     "ifYes": 96,
+     "otherwise": 229,
+     "solo": 383,
+     "hostOptedIn": true,
+     "hostDegree": 2,
+     "fofHasMutual": true
+    },
+    {
+     "tripId": "trip_mwdhp9wkablq",
      "city": "marfa",
      "elements": [
       {
@@ -618,7 +798,7 @@
      "fofHasMutual": true
     },
     {
-     "tripId": "trip_mwdh2lde6ocf",
+     "tripId": "trip_mwdhp9wl8fm7",
      "city": "houston",
      "elements": [
       {
@@ -656,235 +836,210 @@
    "steps": [
     {
      "kind": "info",
-     "text": "Building your Houston guide from what Raj and Layla posted",
+     "text": "Building your San Antonio guide from what Gabriel posted",
      "i": 0,
-     "at": 2
+     "at": 1
     },
     {
      "kind": "model",
      "text": "Deciding what to read next",
-     "detail": "2490 ms",
+     "detail": "1983 ms",
      "i": 1,
-     "at": 2492
+     "at": 1985
     },
     {
      "kind": "tool",
      "tool": "get_my_travel_profile",
      "text": "Reading your taste from saved Reels and likes",
      "i": 2,
-     "at": 2492
+     "at": 1985
     },
     {
      "kind": "result",
      "tool": "get_my_travel_profile",
      "text": "You're into foodies, art people, night owls and music lovers",
      "i": 3,
-     "at": 2494
+     "at": 1986
     },
     {
      "kind": "tool",
      "tool": "get_city_media",
-     "text": "Reading your friends' posts and Reels from Houston",
+     "text": "Reading your friends' posts and Reels from San Antonio",
      "i": 4,
-     "at": 2494
+     "at": 1986
     },
     {
      "kind": "result",
      "tool": "get_city_media",
-     "text": "2 photos and captions from Raj, Layla",
+     "text": "3 photos and captions from Gabriel, Lena",
      "i": 5,
-     "at": 2495
+     "at": 1986
     },
     {
      "kind": "model",
      "text": "Deciding what to read next",
-     "detail": "9851 ms",
+     "detail": "5582 ms",
      "i": 6,
-     "at": 12346
+     "at": 7568
     },
     {
      "kind": "tool",
      "tool": "look_at_photo",
-     "text": "Looking closely at a photo: what is the dish and vibe? any price or place details visibl",
+     "text": "Looking closely at a photo: What's happening in this plaza at dusk? Describe lights, fou",
      "ids": [
-      "p_00ql"
+      "tr_pearl"
      ],
      "i": 7,
-     "at": 12346
+     "at": 7568
     },
     {
      "kind": "result",
      "tool": "look_at_photo",
-     "text": "Muse saw: it's a banh mi on bellaire for $4.50 — shredded pork, pickled carrots, cucumber sticks, and a fistful of cilantro on paper. vibe is casual f",
-     "detail": "Raj Iyer's photo · live image understanding",
+     "text": "Muse saw: the ground fountains are lit up pink, blue and purple, trees are wrapped in warm string lights, and a kid, a dog and a few people are hangin",
+     "detail": "Gabriel Flores's photo · live image understanding",
      "i": 8,
-     "at": 15611
+     "at": 12339
     },
     {
      "kind": "tool",
      "tool": "look_at_photo",
-     "text": "Looking closely at a photo: describe the exhibit vibe, crowding, and what makes it photo",
+     "text": "Looking closely at a photo: What does this historic site look like? Describe the arches,",
      "ids": [
-      "p_00qr"
+      "p_00qz"
      ],
      "i": 9,
-     "at": 15611
+     "at": 12340
     },
     {
      "kind": "result",
      "tool": "look_at_photo",
-     "text": "Muse saw: looks totally empty in the hangar, just the rocket lying on black supports over fake grass. it's photo-worthy cause it stretches way back an",
-     "detail": "Layla Haddad's photo · live image understanding",
+     "text": "Muse saw: long weathered stone wall with two rows of arches and green bushes in front, under a cloudy sky. feels quiet and super old for a daytime vis",
+     "detail": "Gabriel Flores's photo · live image understanding",
      "i": 10,
-     "at": 18116
+     "at": 14627
     },
     {
      "kind": "model",
      "text": "Deciding what to read next",
-     "detail": "14301 ms",
+     "detail": "13527 ms",
      "i": 11,
-     "at": 32418
+     "at": 28153
     },
     {
      "kind": "tool",
      "tool": "propose_guide",
-     "text": "Writing 4 recommendations, each credited to a friend",
+     "text": "Writing 3 recommendations, each credited to a friend",
      "i": 12,
-     "at": 32418
+     "at": 28154
     },
     {
      "kind": "info",
      "text": "Checking every credit against the real author and what you can see",
      "i": 13,
-     "at": 32418
+     "at": 28154
     },
     {
      "kind": "done",
-     "text": "4 picks, credited to 2 friends",
-     "detail": "32.4s · live · $0.025",
+     "text": "3 picks, credited to 2 friends",
+     "detail": "28.2s · live · $0.023",
      "i": 14,
-     "at": 32418
+     "at": 28154
     }
    ],
    "result": {
-    "tripId": "trip_mwdh2lde6ocf",
-    "intro": "raj + layla already left you the cheat sheet. cheap eats, late drives, big rockets. staying with raj so you're set.",
+    "tripId": "trip_mwdhp9wl6rqs",
+    "intro": "gabe's basically already hosting you, so this is his san antonio + lena's reluctant river walk endorsement. all free to walk, cheap if you eat.",
     "items": [
      {
-      "title": "the $4.50 banh mi on bellaire",
-      "what": "shredded pork, pickled carrots, cucumber + fistful of cilantro on paper. raj calls it stop one, go hungry.",
-      "whyYou": "you're foodies-coded and this is exactly your late-night cheap-eats thing.",
-      "tasteTags": [
-       "foodies",
-       "night owls"
-      ],
-      "priceHint": "$4.50",
-      "when": "friday night landing fuel",
-      "credit": {
-       "id": "raj",
-       "name": "Raj Iyer",
-       "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D71",
-       "connection": "Maya's friend (freshman dorm floor at UT)"
-      },
-      "evidence": {
-       "kind": "post",
-       "id": "p_00ql",
-       "authorId": "raj",
-       "image": "/api/img?u=https%3A%2F%2Fupload.wikimedia.org%2Fwikipedia%2Fcommons%2Fc%2Fc1%2FB%25C3%25A1nh_m%25C3%25AC_x%25C3%25ADu_m%25E1%25BA%25A1i-meatball-sandwich.jpg",
-       "caption": "the banh mi on bellaire. $4.50. shredded pork, pickled carrots, cucumber sticks, a fistful of cilantro, on paper like it should be. this is the first stop on my official night market tour (the tour is me, driving you, for free). guest room in montrose has a ridiculous number of towels, come use them",
-       "sawLive": "it's a banh mi on bellaire for $4.50 — shredded pork, pickled carrots, cucumber sticks, and a fistful of cilantro on paper. vibe is casual first stop on a night market tour, with a free ride offer and a montrose guest room plug."
-      }
-     },
-     {
-      "title": "raj's night market tour",
-      "what": "raj driving you around bellaire at night, his words. free ride, just roll with him.",
-      "whyYou": "you're a night owl with no car in houston — built-in driver who actually wants to go.",
+      "title": "pearl at dusk",
+      "what": "ground fountains lit pink/blue/purple, trees wrapped in string lights, old brewery chimney behind. walk it, shoot reflections on the wet pavement, cave for tacos if you must.",
+      "whyYou": "night owl + film photography thing — gabe calls it his saturday ritual and the wet ground is made for night shots.",
       "tasteTags": [
        "night owls",
-       "foodies"
+       "foodies",
+       "photographers"
       ],
-      "priceHint": "free",
-      "when": "friday late",
+      "priceHint": "free to walk, $12 tacos if you cave",
+      "when": "saturday dusk",
       "credit": {
-       "id": "raj",
-       "name": "Raj Iyer",
-       "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D71",
-       "connection": "Maya's friend (freshman dorm floor at UT)"
+       "id": "gabe",
+       "name": "Gabriel Flores",
+       "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D40",
+       "connection": "Maya's friend (UT Design cohort)"
       },
       "evidence": {
-       "kind": "post",
-       "id": "p_00ql",
-       "authorId": "raj",
-       "image": "/api/img?u=https%3A%2F%2Fupload.wikimedia.org%2Fwikipedia%2Fcommons%2Fc%2Fc1%2FB%25C3%25A1nh_m%25C3%25AC_x%25C3%25ADu_m%25E1%25BA%25A1i-meatball-sandwich.jpg",
-       "caption": "the banh mi on bellaire. $4.50. shredded pork, pickled carrots, cucumber sticks, a fistful of cilantro, on paper like it should be. this is the first stop on my official night market tour (the tour is me, driving you, for free). guest room in montrose has a ridiculous number of towels, come use them",
-       "sawLive": "it's a banh mi on bellaire for $4.50 — shredded pork, pickled carrots, cucumber sticks, and a fistful of cilantro on paper. vibe is casual first stop on a night market tour, with a free ride offer and a montrose guest room plug."
+       "kind": "reel",
+       "id": "tr_pearl",
+       "authorId": "gabe",
+       "image": "/api/img?u=https%3A%2F%2Fupload.wikimedia.org%2Fwikipedia%2Fcommons%2Fe%2Fea%2FGustavs_Geysers_Pearl_Brewery_San_Antonio_2021.jpg",
+       "caption": "pearl at dusk. the ground fountains lit up, trees wrapped in string lights, a kid and a dog losing their minds in the spray, the old brewery chimney behind it all. saturday ritual. free to walk, $12 tacos if you cave #sanantonio #thepearl",
+       "sawLive": "the ground fountains are lit up pink, blue and purple, trees are wrapped in warm string lights, and a kid, a dog and a few people are hanging out by the tall pearl chimney. super chill vibe and yeah, great for night photos with all the reflections on the wet ground."
       }
      },
      {
-      "title": "saturn v lying down",
-      "what": "full rocket stretched out on black supports in the hangar, burnt capsule up front. empty, quiet, stupid photogenic.",
-      "whyYou": "you save film-photography stuff and layla says the rocket alone is worth it — go shoot it.",
-      "tasteTags": [
-       "photographers",
-       "art people"
-      ],
-      "priceHint": "$30",
-      "when": "saturday daytime",
-      "credit": {
-       "id": "layla",
-       "name": "Layla Haddad",
-       "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D36",
-       "connection": "Omar's friend (siblings)"
-      },
-      "evidence": {
-       "kind": "post",
-       "id": "p_00qr",
-       "authorId": "layla",
-       "image": "/api/img?u=https%3A%2F%2Fthumb.wikimedia.org%2Fwikipedia%2Fcommons%2Fthumb%2F8%2F8d%2FSaturn_V_Rocket_--_Johnson_Space_Center.jpg%2F1280px-Saturn_V_Rocket_--_Johnson_Space_Center.jpg",
-       "caption": "the saturn v lying down in its hangar is the whole museum for me. stages stretched out on black supports, the burnt capsule at the front, info signs on fake grass. it's like $30 to get in which is steep but the rocket alone is worth 20 of it. sundays I'm usually at the museum district instead, half those are free",
-       "sawLive": "looks totally empty in the hangar, just the rocket lying on black supports over fake grass. it's photo-worthy cause it stretches way back and the burnt capsule up front contrasts the white and yellow stages."
-      }
-     },
-     {
-      "title": "museum district sundays",
-      "what": "layla's usual sunday move — half the museums in the district are free. wander, no ticket stress.",
-      "whyYou": "keeps you in that $180 lane and hits your art-people side without spending.",
+      "title": "mission san josé with abuela energy",
+      "what": "long weathered stone wall with two rows of arches, green bushes in front, quiet and 300 years old. national park, light a candle, let abuela feed you after.",
+      "whyYou": "you're into art people textures and quiet historic stuff — plus you're literally staying in gabe's southtown spare room.",
       "tasteTags": [
        "art people",
-       "music lovers"
+       "photographers"
       ],
       "priceHint": "free",
       "when": "sunday morning",
       "credit": {
-       "id": "layla",
-       "name": "Layla Haddad",
-       "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D36",
-       "connection": "Omar's friend (siblings)"
+       "id": "gabe",
+       "name": "Gabriel Flores",
+       "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D40",
+       "connection": "Maya's friend (UT Design cohort)"
       },
       "evidence": {
        "kind": "post",
-       "id": "p_00qr",
-       "authorId": "layla",
-       "image": "/api/img?u=https%3A%2F%2Fthumb.wikimedia.org%2Fwikipedia%2Fcommons%2Fthumb%2F8%2F8d%2FSaturn_V_Rocket_--_Johnson_Space_Center.jpg%2F1280px-Saturn_V_Rocket_--_Johnson_Space_Center.jpg",
-       "caption": "the saturn v lying down in its hangar is the whole museum for me. stages stretched out on black supports, the burnt capsule at the front, info signs on fake grass. it's like $30 to get in which is steep but the rocket alone is worth 20 of it. sundays I'm usually at the museum district instead, half those are free",
-       "sawLive": "looks totally empty in the hangar, just the rocket lying on black supports over fake grass. it's photo-worthy cause it stretches way back and the burnt capsule up front contrasts the white and yellow stages."
+       "id": "p_00qz",
+       "authorId": "gabe",
+       "image": "/api/img?u=https%3A%2F%2Fthumb.wikimedia.org%2Fwikipedia%2Fcommons%2Fthumb%2Fb%2Fb3%2FMission_San_Jos%25C3%25A9_y_San_Miguel_de_Aguayo%252C_San_Antonio%252C_Texas_arches.jpg%2F1280px-Mission_San_Jos%25C3%25A9_y_San_Miguel_de_Aguayo%252C_San_Antonio%252C_Texas_arches.jpg",
+       "caption": "mission san josé with abuela on a cloudy sunday. the long wall of stone arches, two rows, green bushes in front, weathered like it's been there 300 years because it has. free. national park. she lit a candle and then made me drive her to h-e-b. spare room in southtown is open, she WILL cook for you",
+       "sawLive": "long weathered stone wall with two rows of arches and green bushes in front, under a cloudy sky. feels quiet and super old for a daytime visit."
+      }
+     },
+     {
+      "title": "river walk for 20 minutes max",
+      "what": "stone bridge, trees lit purple and green, boat with red lights down the water at dusk. walk it quick for photos, then go eat at the pearl per lena + gabe — don't eat down here.",
+      "whyYou": "quick night-owl photo loop on your first night — dusk lights, reflections, then food where your people actually eat.",
+      "tasteTags": [
+       "night owls",
+       "photographers"
+      ],
+      "priceHint": "free",
+      "when": "friday dusk",
+      "credit": {
+       "id": "lena",
+       "name": "Lena Schultz",
+       "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D41",
+       "connection": "public post"
+      },
+      "evidence": {
+       "kind": "post",
+       "id": "p_00qw",
+       "authorId": "lena",
+       "image": "/api/img?u=https%3A%2F%2Fthumb.wikimedia.org%2Fwikipedia%2Fcommons%2Fthumb%2F6%2F67%2FSan_Antonio_River_Walk_at_night.jpg%2F1280px-San_Antonio_River_Walk_at_night.jpg",
+       "caption": "took my out of town cousin to the river walk against my will. dusk is the only acceptable time: stone bridge, trees lit purple and green, a boat with red lights way down the water. still not a fan but I get it for 20 minutes. go eat at the pearl after, don't eat down here"
       }
      }
     ],
     "looked": [
      {
-      "mediaId": "hou-viet",
-      "image": "/api/img?u=https%3A%2F%2Fupload.wikimedia.org%2Fwikipedia%2Fcommons%2Fc%2Fc1%2FB%25C3%25A1nh_m%25C3%25AC_x%25C3%25ADu_m%25E1%25BA%25A1i-meatball-sandwich.jpg",
-      "author": "Raj Iyer",
-      "saw": "it's a banh mi on bellaire for $4.50 — shredded pork, pickled carrots, cucumber sticks, and a fistful of cilantro on paper. vibe is casual first stop on a night market tour, with a free ride offer and a montrose guest room plug.",
-      "costUsd": 0.0005,
+      "mediaId": "sa-pearl",
+      "image": "/api/img?u=https%3A%2F%2Fupload.wikimedia.org%2Fwikipedia%2Fcommons%2Fe%2Fea%2FGustavs_Geysers_Pearl_Brewery_San_Antonio_2021.jpg",
+      "author": "Gabriel Flores",
+      "saw": "the ground fountains are lit up pink, blue and purple, trees are wrapped in warm string lights, and a kid, a dog and a few people are hanging out by the tall pearl chimney. super chill vibe and yeah, great for night photos with all the reflections on the wet ground.",
+      "costUsd": 0.0008,
       "mode": "live"
      },
      {
-      "mediaId": "hou-space",
-      "image": "/api/img?u=https%3A%2F%2Fthumb.wikimedia.org%2Fwikipedia%2Fcommons%2Fthumb%2F8%2F8d%2FSaturn_V_Rocket_--_Johnson_Space_Center.jpg%2F1280px-Saturn_V_Rocket_--_Johnson_Space_Center.jpg",
-      "author": "Layla Haddad",
-      "saw": "looks totally empty in the hangar, just the rocket lying on black supports over fake grass. it's photo-worthy cause it stretches way back and the burnt capsule up front contrasts the white and yellow stages.",
+      "mediaId": "sa-missions",
+      "image": "/api/img?u=https%3A%2F%2Fthumb.wikimedia.org%2Fwikipedia%2Fcommons%2Fthumb%2Fb%2Fb3%2FMission_San_Jos%25C3%25A9_y_San_Miguel_de_Aguayo%252C_San_Antonio%252C_Texas_arches.jpg%2F1280px-Mission_San_Jos%25C3%25A9_y_San_Miguel_de_Aguayo%252C_San_Antonio%252C_Texas_arches.jpg",
+      "author": "Gabriel Flores",
+      "saw": "long weathered stone wall with two rows of arches and green bushes in front, under a cloudy sky. feels quiet and super old for a daytime visit.",
       "costUsd": 0.0006,
       "mode": "live"
      }
@@ -892,121 +1047,121 @@
     "steps": [
      {
       "kind": "info",
-      "text": "Building your Houston guide from what Raj and Layla posted",
+      "text": "Building your San Antonio guide from what Gabriel posted",
       "i": 0,
-      "at": 2
+      "at": 1
      },
      {
       "kind": "model",
       "text": "Deciding what to read next",
-      "detail": "2490 ms",
+      "detail": "1983 ms",
       "i": 1,
-      "at": 2492
+      "at": 1985
      },
      {
       "kind": "tool",
       "tool": "get_my_travel_profile",
       "text": "Reading your taste from saved Reels and likes",
       "i": 2,
-      "at": 2492
+      "at": 1985
      },
      {
       "kind": "result",
       "tool": "get_my_travel_profile",
       "text": "You're into foodies, art people, night owls and music lovers",
       "i": 3,
-      "at": 2494
+      "at": 1986
      },
      {
       "kind": "tool",
       "tool": "get_city_media",
-      "text": "Reading your friends' posts and Reels from Houston",
+      "text": "Reading your friends' posts and Reels from San Antonio",
       "i": 4,
-      "at": 2494
+      "at": 1986
      },
      {
       "kind": "result",
       "tool": "get_city_media",
-      "text": "2 photos and captions from Raj, Layla",
+      "text": "3 photos and captions from Gabriel, Lena",
       "i": 5,
-      "at": 2495
+      "at": 1986
      },
      {
       "kind": "model",
       "text": "Deciding what to read next",
-      "detail": "9851 ms",
+      "detail": "5582 ms",
       "i": 6,
-      "at": 12346
+      "at": 7568
      },
      {
       "kind": "tool",
       "tool": "look_at_photo",
-      "text": "Looking closely at a photo: what is the dish and vibe? any price or place details visibl",
+      "text": "Looking closely at a photo: What's happening in this plaza at dusk? Describe lights, fou",
       "ids": [
-       "p_00ql"
+       "tr_pearl"
       ],
       "i": 7,
-      "at": 12346
+      "at": 7568
      },
      {
       "kind": "result",
       "tool": "look_at_photo",
-      "text": "Muse saw: it's a banh mi on bellaire for $4.50 — shredded pork, pickled carrots, cucumber sticks, and a fistful of cilantro on paper. vibe is casual f",
-      "detail": "Raj Iyer's photo · live image understanding",
+      "text": "Muse saw: the ground fountains are lit up pink, blue and purple, trees are wrapped in warm string lights, and a kid, a dog and a few people are hangin",
+      "detail": "Gabriel Flores's photo · live image understanding",
       "i": 8,
-      "at": 15611
+      "at": 12339
      },
      {
       "kind": "tool",
       "tool": "look_at_photo",
-      "text": "Looking closely at a photo: describe the exhibit vibe, crowding, and what makes it photo",
+      "text": "Looking closely at a photo: What does this historic site look like? Describe the arches,",
       "ids": [
-       "p_00qr"
+       "p_00qz"
       ],
       "i": 9,
-      "at": 15611
+      "at": 12340
      },
      {
       "kind": "result",
       "tool": "look_at_photo",
-      "text": "Muse saw: looks totally empty in the hangar, just the rocket lying on black supports over fake grass. it's photo-worthy cause it stretches way back an",
-      "detail": "Layla Haddad's photo · live image understanding",
+      "text": "Muse saw: long weathered stone wall with two rows of arches and green bushes in front, under a cloudy sky. feels quiet and super old for a daytime vis",
+      "detail": "Gabriel Flores's photo · live image understanding",
       "i": 10,
-      "at": 18116
+      "at": 14627
      },
      {
       "kind": "model",
       "text": "Deciding what to read next",
-      "detail": "14301 ms",
+      "detail": "13527 ms",
       "i": 11,
-      "at": 32418
+      "at": 28153
      },
      {
       "kind": "tool",
       "tool": "propose_guide",
-      "text": "Writing 4 recommendations, each credited to a friend",
+      "text": "Writing 3 recommendations, each credited to a friend",
       "i": 12,
-      "at": 32418
+      "at": 28154
      },
      {
       "kind": "info",
       "text": "Checking every credit against the real author and what you can see",
       "i": 13,
-      "at": 32418
+      "at": 28154
      },
      {
       "kind": "done",
-      "text": "4 picks, credited to 2 friends",
-      "detail": "32.4s · live · $0.025",
+      "text": "3 picks, credited to 2 friends",
+      "detail": "28.2s · live · $0.023",
       "i": 14,
-      "at": 32418
+      "at": 28154
      }
     ],
     "mode": "live",
-    "costUsd": 0.0253,
-    "latencyMs": 32418,
+    "costUsd": 0.022899999999999997,
+    "latencyMs": 28154,
     "model": "muse-spark-1.3",
-    "createdAt": "2026-11-12T11:36:54.908Z"
+    "createdAt": "2026-11-12T11:54:29.304Z"
    }
   },
   "coordinate": {
@@ -1026,9 +1181,9 @@
       "free": true
      },
      {
-      "id": "raj",
-      "name": "Raj Iyer",
-      "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D71",
+      "id": "gabe",
+      "name": "Gabriel Flores",
+      "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D40",
       "role": "host",
       "busyOn": [],
       "free": true
@@ -1050,7 +1205,7 @@
    },
    "drafts": [
     {
-     "id": "m_mwdh3lgksg",
+     "id": "m_mwdhq6vbsf",
      "conversationId": "c_maya_lucas",
      "key": "host",
      "to": {
@@ -1060,74 +1215,72 @@
       "connection": "friends"
      },
      "about": {
-      "id": "raj",
-      "name": "Raj Iyer"
+      "id": "gabe",
+      "name": "Gabriel Flores"
      },
-     "text": "hey maya, hope you're doing good! would you be comfy introducing me to raj? i'm thinking houston dec 18-20 for banh mi + night markets and wanted to ask him directly about his montrose spot, totally okay if not at all",
+     "text": "hey maya, hope you're doing good! would you be down to intro me to gabriel from ut design? saw his spare room in southtown and i'm trying to sort san antonio for dec 18-20, would love to ask him about it. totally cool if not btw!",
      "status": "draft",
-     "reason": "Trip: houston with raj for banh mi + night markets · ask Maya to introduce you to Raj so you can ask about staying Dec 18–20"
+     "reason": "Trip: san antonio with gabe in southtown · ask Maya to introduce you to Gabriel so you can ask about staying Dec 18–20"
     }
    ],
    "mode": "live",
    "costUsd": 0.0077
   }
  },
- "cost": 0.06910000000000001,
+ "cost": 0.07699999999999999,
  "verdict": {
   "looksBroken": [
-   "june's note says 'any weekend except Chinati Weekend' but the whole marfa pitch is for Chinati / Night Sky Weekend that same weekend, so she can't actually be free that weekend",
-   "layla is listed as 'Omar's friend (siblings)' which doesn't make sense as a connection",
-   "raj's host note is just 'always. I have a ridiculous number of towels.' which doesn't actually confirm he's free dec 18-20"
+   "marfa: 442 mi each way but only $40 gas split / $86 bus round trip, and that drive would eat most of the weekend"
   ],
   "objections": [
-   "marfa is 442 mi each way, that's a brutal drive for one weekend",
-   "both trips depend on maya's friends i don't know - june, kenji, raj, silas - staying at a stranger's casita/guest room feels risky",
-   "marfa price only works if june says yes AND kenji has a seat, otherwise it's $313 and over my $180 budget",
-   "houston is cheaper and closer but still relies on raj actually hosting and driving me around"
+   "none of the hosts are confirmed yet, they're all maya's friends i don't know",
+   "the cheap prices only work if hosting actually pans out",
+   "marfa is way too far for dec 18-20"
   ],
-  "pickTripIndex": 1,
-  "reason": "i'd take houston, it's way closer and actually in budget without a 9-hour drive. marfa sounds cool but june literally can't host that weekend per her own note so that whole plan falls apart.",
+  "pickTripIndex": 0,
+  "reason": "san antonio feels the most doable to me — close, cheap if gabe actually says yes, and not a huge haul for one weekend.",
   "surprising": 3,
-  "trustworthy": 2,
+  "trustworthy": 3,
   "wouldTake": true
  },
  "verdictMode": "live",
  "draftDecisions": {
   "decisions": [
    {
-    "action": "approve",
-    "draftId": "m_mwdh3lgksg",
-    "why": "sounds like me and maya's the right person to ask since raj came via her"
+    "action": "edit",
+    "draftId": "m_mwdhq6vbsf",
+    "text": "hey maya! hope ur good — would u be down to intro me to gabriel from ut design? heard he might have a spare room in southtown and i'm trying to sort san antonio for dec 18-20. no worries at all if that's weird tho!",
+    "why": "i'd ask maya since gabe's her friend, but the draft sounded a bit polished — made it more how i'd actually text her."
    }
   ],
-  "guideFeedback": "yeah the guide felt made for me, raj and layla credits line up with the trip and the cheap/free prices make sense."
+  "guideFeedback": "yeah the guide felt for me — night owl photo spots and the southtown base fit, and the gabe/lena credits made sense for where the tips came from."
  },
  "applied": [
   {
-   "action": "approve",
-   "draftId": "m_mwdh3lgksg",
-   "why": "sounds like me and maya's the right person to ask since raj came via her",
+   "action": "edit",
+   "draftId": "m_mwdhq6vbsf",
+   "text": "hey maya! hope ur good — would u be down to intro me to gabriel from ut design? heard he might have a spare room in southtown and i'm trying to sort san antonio for dec 18-20. no worries at all if that's weird tho!",
+   "why": "i'd ask maya since gabe's her friend, but the draft sounded a bit polished — made it more how i'd actually text her.",
    "result": {
     "ok": true,
     "message": {
-     "id": "m_mwdh3lgksg",
+     "id": "m_mwdhq6vbsf",
      "senderId": "lucas",
-     "text": "hey maya, hope you're doing good! would you be comfy introducing me to raj? i'm thinking houston dec 18-20 for banh mi + night markets and wanted to ask him directly about his montrose spot, totally okay if not at all",
-     "createdAt": "2026-11-12T11:37:08.656Z",
+     "text": "hey maya! hope ur good — would u be down to intro me to gabriel from ut design? heard he might have a spare room in southtown and i'm trying to sort san antonio for dec 18-20. no worries at all if that's weird tho!",
+     "createdAt": "2026-11-12T11:54:40.584Z",
      "readBy": [
       "lucas"
      ],
-     "status": "sent",
-     "draftReason": "Trip: houston with raj for banh mi + night markets · ask Maya to introduce you to Raj so you can ask about staying Dec 18–20",
+     "status": "draft",
+     "draftReason": "Trip: san antonio with gabe in southtown · ask Maya to introduce you to Gabriel so you can ask about staying Dec 18–20",
      "attachment": {
       "type": "trip",
-      "ref": "trip_mwdh2lde6ocf"
+      "ref": "trip_mwdhp9wl6rqs"
      }
-    },
-    "conversationId": "c_maya_lucas"
+    }
    }
   }
  ],
- "latencyMs": 68686,
- "finishedAt": "2026-11-12T11:37:08.657Z"
+ "latencyMs": 71048,
+ "finishedAt": "2026-11-12T11:54:43.427Z"
 }

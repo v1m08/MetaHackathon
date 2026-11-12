@@ -13,7 +13,7 @@
   "label": "Nov 27–29",
   "busy": false
  },
- "startedAt": "2026-11-12T11:35:34.066Z",
+ "startedAt": "2026-11-12T11:52:34.522Z",
  "stages": {
   "discover": {
    "steps": [
@@ -26,16 +26,16 @@
     {
      "kind": "model",
      "text": "Deciding what to look at next",
-     "detail": "2062 ms",
+     "detail": "2501 ms",
      "i": 1,
-     "at": 2063
+     "at": 2501
     },
     {
      "kind": "tool",
      "tool": "scan_network",
      "text": "Mapping your whole network: who lives where, who hosts, who's driving Nov 27–29",
      "i": 2,
-     "at": 2063
+     "at": 2501
     },
     {
      "kind": "result",
@@ -55,21 +55,21 @@
       "e_hou_night_market"
      ],
      "i": 3,
-     "at": 2065
+     "at": 2503
     },
     {
      "kind": "model",
      "text": "Deciding what to look at next",
-     "detail": "6549 ms",
+     "detail": "4626 ms",
      "i": 4,
-     "at": 8615
+     "at": 7129
     },
     {
      "kind": "tool",
      "tool": "estimate_trip_cost",
      "text": "Pricing Houston: 2 nights, staying with a friend, by own-car",
      "i": 5,
-     "at": 8615
+     "at": 7130
     },
     {
      "kind": "result",
@@ -77,14 +77,14 @@
      "text": "about $80 if they say yes, about $217 otherwise",
      "detail": "173 mi · 2.5h drive · hotel + solo would be $405",
      "i": 6,
-     "at": 8615
+     "at": 7130
     },
     {
      "kind": "tool",
      "tool": "estimate_trip_cost",
      "text": "Pricing Dallas: 2 nights, staying with a friend, by own-car",
      "i": 7,
-     "at": 8615
+     "at": 7130
     },
     {
      "kind": "result",
@@ -92,21 +92,21 @@
      "text": "about $85 if they say yes, about $226 otherwise",
      "detail": "215 mi · 3.2h drive · hotel + solo would be $421",
      "i": 8,
-     "at": 8615
+     "at": 7130
     },
     {
      "kind": "model",
      "text": "Deciding what to look at next",
-     "detail": "3147 ms",
+     "detail": "2104 ms",
      "i": 9,
-     "at": 11762
+     "at": 9234
     },
     {
      "kind": "tool",
      "tool": "get_city_media",
      "text": "Reading your friends' photos and Reels from Houston",
      "i": 10,
-     "at": 11762
+     "at": 9234
     },
     {
      "kind": "result",
@@ -114,14 +114,14 @@
      "text": "Read 2 photos from Houston",
      "detail": "1 of Raj's, 1 of Layla's",
      "i": 11,
-     "at": 11763
+     "at": 9234
     },
     {
      "kind": "tool",
      "tool": "get_city_media",
      "text": "Reading your friends' photos and Reels from Dallas",
      "i": 12,
-     "at": 11763
+     "at": 9234
     },
     {
      "kind": "result",
@@ -129,41 +129,41 @@
      "text": "Read 3 photos from Dallas",
      "detail": "1 of Harper's, 1 of Cole's, 1 of Grace's",
      "i": 13,
-     "at": 11763
+     "at": 9235
     },
     {
      "kind": "model",
      "text": "Deciding what to look at next",
-     "detail": "10487 ms",
+     "detail": "8738 ms",
      "i": 14,
-     "at": 22251
+     "at": 17973
     },
     {
      "kind": "tool",
      "tool": "propose_trips",
      "text": "Putting together 2 trips",
      "i": 15,
-     "at": 22251
+     "at": 17973
     },
     {
      "kind": "info",
      "text": "Checking every person, ride, event and photo against what you can actually see",
      "i": 16,
-     "at": 22251
+     "at": 17973
     },
     {
      "kind": "done",
      "text": "2 trips that only exist because of your people",
-     "detail": "22.3s · live · $0.025",
+     "detail": "18.0s · live · $0.036",
      "i": 17,
-     "at": 22251
+     "at": 17973
     }
    ],
    "result": {
-    "runId": "run_mwdh23k5",
+    "runId": "run_mwdhnvn9",
     "trips": [
      {
-      "id": "trip_mwdh23k5vl7l",
+      "id": "trip_mwdhnvn9ggd5",
       "viewerId": "nina",
       "city": "houston",
       "cityName": "Houston",
@@ -172,13 +172,13 @@
       "end": "2026-11-29",
       "nights": 2,
       "budget": 90,
-      "title": "houston with tj for montrose night market",
-      "pitch": "your brother's couch is free and raj is already going to the night market that weekend. cheap drive, free crash, $4.50 banh mi tour.",
+      "title": "houston with tj for the night market",
+      "pitch": "your brother tj has the couch and the grill, and raj is already doing his free night market tour that weekend. you'll roll in with family and roll out with cheap banh mi.",
       "reasons": [
-       "tj (your sibling) is free nov 27-29 and open to hosting",
-       "raj + tj + maddie are all going to montrose night market nov 29",
-       "raj posted the $4.50 bellaire banh mi + free driving tour",
-       "drive yourself ~2.5hr, $80 total fits your $90"
+       "tj (your sibling) is free and open to hosting",
+       "raj is going to montrose night market and posted his bellaire banh mi run",
+       "maddie is also going to the night market",
+       "drive yourself, short hop from austin"
       ],
       "host": {
        "id": "tj",
@@ -300,7 +300,7 @@
         "total": 100,
         "lines": [
          {
-          "label": "gas, driving yourself (173 mi each way)",
+          "label": "gas, driving yourself (173 mi each way, round trip)",
           "usd": 40
          },
          {
@@ -323,7 +323,7 @@
         "total": 237,
         "lines": [
          {
-          "label": "gas, driving yourself (173 mi each way)",
+          "label": "gas, driving yourself (173 mi each way, round trip)",
           "usd": 40
          },
          {
@@ -346,7 +346,7 @@
         "total": 405,
         "lines": [
          {
-          "label": "bus, round trip (173 mi)",
+          "label": "bus, round trip (173 mi each way)",
           "usd": 48
          },
          {
@@ -375,10 +375,10 @@
       },
       "fitsBudget": false,
       "repairs": [],
-      "createdAt": "2026-11-12T11:35:56.549Z"
+      "createdAt": "2026-11-12T11:52:52.725Z"
      },
      {
-      "id": "trip_mwdh23k5dqku",
+      "id": "trip_mwdhnvn9o1x8",
       "viewerId": "nina",
       "city": "dallas",
       "cityName": "Dallas",
@@ -387,13 +387,13 @@
       "end": "2026-11-29",
       "nights": 2,
       "budget": 90,
-      "title": "dallas with diego, oak cliff couch + dinner",
-      "pitch": "diego's couch in oak cliff with dinner included, and he's free that weekend. sienna's up there too for brunch + food trucks.",
+      "title": "dallas with diego via jordan, oak cliff couch",
+      "pitch": "diego has the oak cliff couch with dinner included and he's free all weekend. grace posted that uptown brunch-then-food-trucks day sienna hosted, that's the vibe you'd get.",
       "reasons": [
-       "diego (via jordan) is free nov 27-29 and open to hosting",
-       "sienna's also in dallas and free that weekend",
-       "grace posted sienna's brunch then klyde warren food trucks hang",
-       "drive yourself ~3.2hr, $85 total fits your $90"
+       "diego via jordan is free and open to hosting",
+       "sienna is also in town to see",
+       "grace posted sienna's brunch + klyde warren food trucks",
+       "easy drive up from austin in your car"
       ],
       "host": {
        "id": "diego",
@@ -441,7 +441,7 @@
         "total": 109,
         "lines": [
          {
-          "label": "gas, driving yourself (215 mi each way)",
+          "label": "gas, driving yourself (215 mi each way, round trip)",
           "usd": 49
          },
          {
@@ -464,7 +464,7 @@
         "total": 250,
         "lines": [
          {
-          "label": "gas, driving yourself (215 mi each way)",
+          "label": "gas, driving yourself (215 mi each way, round trip)",
           "usd": 49
          },
          {
@@ -487,7 +487,7 @@
         "total": 421,
         "lines": [
          {
-          "label": "bus, round trip (215 mi)",
+          "label": "bus, round trip (215 mi each way)",
           "usd": 54
          },
          {
@@ -516,17 +516,17 @@
       },
       "fitsBudget": false,
       "repairs": [],
-      "createdAt": "2026-11-12T11:35:56.549Z"
+      "createdAt": "2026-11-12T11:52:52.725Z"
      }
     ],
     "mode": "live",
-    "costUsd": 0.0245,
-    "latencyMs": 22251,
+    "costUsd": 0.0363,
+    "latencyMs": 17973,
     "model": "muse-spark-1.3"
    }
   },
   "audit": {
-   "runId": "run_mwdh23k5",
+   "runId": "run_mwdhnvn9",
    "viewerId": "nina",
    "input": {
     "start": "2026-11-27",
@@ -534,8 +534,8 @@
     "budget": 90
    },
    "mode": "live",
-   "costUsd": 0.0245,
-   "latencyMs": 22251,
+   "costUsd": 0.0363,
+   "latencyMs": 17973,
    "raw": {
     "ids": 8,
     "grounded": 8,
@@ -544,7 +544,7 @@
    },
    "trips": [
     {
-     "tripId": "trip_mwdh23k5vl7l",
+     "tripId": "trip_mwdhnvn9ggd5",
      "city": "houston",
      "elements": [
       {
@@ -595,7 +595,7 @@
      "fofHasMutual": null
     },
     {
-     "tripId": "trip_mwdh23k5dqku",
+     "tripId": "trip_mwdhnvn9o1x8",
      "city": "dallas",
      "elements": [
       {
@@ -628,28 +628,407 @@
     }
    ],
    "declined": false
+  },
+  "guide": {
+   "steps": [
+    {
+     "kind": "info",
+     "text": "Building your Houston guide from what TJ and Raj posted",
+     "i": 0,
+     "at": 2
+    },
+    {
+     "kind": "model",
+     "text": "Deciding what to read next",
+     "detail": "2144 ms",
+     "i": 1,
+     "at": 2146
+    },
+    {
+     "kind": "tool",
+     "tool": "get_my_travel_profile",
+     "text": "Reading your taste from saved Reels and likes",
+     "i": 2,
+     "at": 2146
+    },
+    {
+     "kind": "result",
+     "tool": "get_my_travel_profile",
+     "text": "You're into foodies, art people, coffee people and night owls",
+     "i": 3,
+     "at": 2149
+    },
+    {
+     "kind": "tool",
+     "tool": "get_city_media",
+     "text": "Reading your friends' posts and Reels from Houston",
+     "i": 4,
+     "at": 2149
+    },
+    {
+     "kind": "result",
+     "tool": "get_city_media",
+     "text": "2 photos and captions from Raj, Layla",
+     "i": 5,
+     "at": 2149
+    },
+    {
+     "kind": "model",
+     "text": "Deciding what to read next",
+     "detail": "8196 ms",
+     "i": 6,
+     "at": 10345
+    },
+    {
+     "kind": "tool",
+     "tool": "look_at_photo",
+     "text": "Looking closely at a photo: what exactly is in this banh mi and what is the vibe - casua",
+     "ids": [
+      "p_00ql"
+     ],
+     "i": 7,
+     "at": 10345
+    },
+    {
+     "kind": "result",
+     "tool": "look_at_photo",
+     "text": "Muse saw: it's a baguette stuffed with shredded pork, shredded orange carrots, cucumber sticks, and a ton of cilantro. it's sitting open on plain whit",
+     "detail": "Raj Iyer's photo · live image understanding",
+     "i": 8,
+     "at": 12988
+    },
+    {
+     "kind": "model",
+     "text": "Deciding what to read next",
+     "detail": "12215 ms",
+     "i": 9,
+     "at": 25203
+    },
+    {
+     "kind": "tool",
+     "tool": "propose_guide",
+     "text": "Writing 3 recommendations, each credited to a friend",
+     "i": 10,
+     "at": 25203
+    },
+    {
+     "kind": "info",
+     "text": "Checking every credit against the real author and what you can see",
+     "i": 11,
+     "at": 25203
+    },
+    {
+     "kind": "done",
+     "text": "3 picks, credited to 2 friends",
+     "detail": "25.2s · live · $0.018",
+     "i": 12,
+     "at": 25204
+    }
+   ],
+   "result": {
+    "tripId": "trip_mwdhnvn9ggd5",
+    "intro": "tj's got you, raj is driving, and your wallet is already crying — trip's running ~$100 on a $90 budget so we're keeping it free / stupid-cheap only.",
+    "items": [
+     {
+      "title": "the $4.50 banh mi on bellaire",
+      "what": "shredded pork, pickled carrots, cucumber sticks + a fistful of cilantro on paper. pure casual takeout, eat it in the car.",
+      "whyYou": "you're foodies to the core and this is cheap-eats perfection, straight from raj.",
+      "tasteTags": [
+       "foodies",
+       "budget travellers"
+      ],
+      "priceHint": "$4.50",
+      "when": "friday lunch after you land",
+      "credit": {
+       "id": "raj",
+       "name": "Raj Iyer",
+       "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D71",
+       "connection": "Jordan's friend (Cheap Eats regular)"
+      },
+      "evidence": {
+       "kind": "post",
+       "id": "p_00ql",
+       "authorId": "raj",
+       "image": "/api/img?u=https%3A%2F%2Fupload.wikimedia.org%2Fwikipedia%2Fcommons%2Fc%2Fc1%2FB%25C3%25A1nh_m%25C3%25AC_x%25C3%25ADu_m%25E1%25BA%25A1i-meatball-sandwich.jpg",
+       "caption": "the banh mi on bellaire. $4.50. shredded pork, pickled carrots, cucumber sticks, a fistful of cilantro, on paper like it should be. this is the first stop on my official night market tour (the tour is me, driving you, for free). guest room in montrose has a ridiculous number of towels, come use them",
+       "sawLive": "it's a baguette stuffed with shredded pork, shredded orange carrots, cucumber sticks, and a ton of cilantro. it's sitting open on plain white paper, so yeah, super casual takeout vibe."
+      }
+     },
+     {
+      "title": "raj's free night market tour",
+      "what": "raj's words: the tour is me, driving you, for free. let him do the bellaire night run with you riding shotgun.",
+      "whyYou": "you're a night owl and raj is literally offering to drive — zero cost, all snacks.",
+      "tasteTags": [
+       "night owls",
+       "foodies"
+      ],
+      "priceHint": "free",
+      "when": "friday late night",
+      "credit": {
+       "id": "raj",
+       "name": "Raj Iyer",
+       "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D71",
+       "connection": "Jordan's friend (Cheap Eats regular)"
+      },
+      "evidence": {
+       "kind": "post",
+       "id": "p_00ql",
+       "authorId": "raj",
+       "image": "/api/img?u=https%3A%2F%2Fupload.wikimedia.org%2Fwikipedia%2Fcommons%2Fc%2Fc1%2FB%25C3%25A1nh_m%25C3%25AC_x%25C3%25ADu_m%25E1%25BA%25A1i-meatball-sandwich.jpg",
+       "caption": "the banh mi on bellaire. $4.50. shredded pork, pickled carrots, cucumber sticks, a fistful of cilantro, on paper like it should be. this is the first stop on my official night market tour (the tour is me, driving you, for free). guest room in montrose has a ridiculous number of towels, come use them",
+       "sawLive": "it's a baguette stuffed with shredded pork, shredded orange carrots, cucumber sticks, and a ton of cilantro. it's sitting open on plain white paper, so yeah, super casual takeout vibe."
+      }
+     },
+     {
+      "title": "museum district free sundays",
+      "what": "skip the $30 saturn v hangar (her july post called it steep) and do what she does on sundays instead — half the museum district is free.",
+      "whyYou": "art people pick, and it keeps you at free when you're already over budget.",
+      "tasteTags": [
+       "art people",
+       "budget travellers"
+      ],
+      "priceHint": "free",
+      "when": "sunday morning",
+      "credit": {
+       "id": "layla",
+       "name": "Layla Haddad",
+       "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D36",
+       "connection": "public post"
+      },
+      "evidence": {
+       "kind": "post",
+       "id": "p_00qr",
+       "authorId": "layla",
+       "image": "/api/img?u=https%3A%2F%2Fthumb.wikimedia.org%2Fwikipedia%2Fcommons%2Fthumb%2F8%2F8d%2FSaturn_V_Rocket_--_Johnson_Space_Center.jpg%2F1280px-Saturn_V_Rocket_--_Johnson_Space_Center.jpg",
+       "caption": "the saturn v lying down in its hangar is the whole museum for me. stages stretched out on black supports, the burnt capsule at the front, info signs on fake grass. it's like $30 to get in which is steep but the rocket alone is worth 20 of it. sundays I'm usually at the museum district instead, half those are free"
+      }
+     }
+    ],
+    "looked": [
+     {
+      "mediaId": "hou-viet",
+      "image": "/api/img?u=https%3A%2F%2Fupload.wikimedia.org%2Fwikipedia%2Fcommons%2Fc%2Fc1%2FB%25C3%25A1nh_m%25C3%25AC_x%25C3%25ADu_m%25E1%25BA%25A1i-meatball-sandwich.jpg",
+      "author": "Raj Iyer",
+      "saw": "it's a baguette stuffed with shredded pork, shredded orange carrots, cucumber sticks, and a ton of cilantro. it's sitting open on plain white paper, so yeah, super casual takeout vibe.",
+      "costUsd": 0.0006,
+      "mode": "live"
+     }
+    ],
+    "steps": [
+     {
+      "kind": "info",
+      "text": "Building your Houston guide from what TJ and Raj posted",
+      "i": 0,
+      "at": 2
+     },
+     {
+      "kind": "model",
+      "text": "Deciding what to read next",
+      "detail": "2144 ms",
+      "i": 1,
+      "at": 2146
+     },
+     {
+      "kind": "tool",
+      "tool": "get_my_travel_profile",
+      "text": "Reading your taste from saved Reels and likes",
+      "i": 2,
+      "at": 2146
+     },
+     {
+      "kind": "result",
+      "tool": "get_my_travel_profile",
+      "text": "You're into foodies, art people, coffee people and night owls",
+      "i": 3,
+      "at": 2149
+     },
+     {
+      "kind": "tool",
+      "tool": "get_city_media",
+      "text": "Reading your friends' posts and Reels from Houston",
+      "i": 4,
+      "at": 2149
+     },
+     {
+      "kind": "result",
+      "tool": "get_city_media",
+      "text": "2 photos and captions from Raj, Layla",
+      "i": 5,
+      "at": 2149
+     },
+     {
+      "kind": "model",
+      "text": "Deciding what to read next",
+      "detail": "8196 ms",
+      "i": 6,
+      "at": 10345
+     },
+     {
+      "kind": "tool",
+      "tool": "look_at_photo",
+      "text": "Looking closely at a photo: what exactly is in this banh mi and what is the vibe - casua",
+      "ids": [
+       "p_00ql"
+      ],
+      "i": 7,
+      "at": 10345
+     },
+     {
+      "kind": "result",
+      "tool": "look_at_photo",
+      "text": "Muse saw: it's a baguette stuffed with shredded pork, shredded orange carrots, cucumber sticks, and a ton of cilantro. it's sitting open on plain whit",
+      "detail": "Raj Iyer's photo · live image understanding",
+      "i": 8,
+      "at": 12988
+     },
+     {
+      "kind": "model",
+      "text": "Deciding what to read next",
+      "detail": "12215 ms",
+      "i": 9,
+      "at": 25203
+     },
+     {
+      "kind": "tool",
+      "tool": "propose_guide",
+      "text": "Writing 3 recommendations, each credited to a friend",
+      "i": 10,
+      "at": 25203
+     },
+     {
+      "kind": "info",
+      "text": "Checking every credit against the real author and what you can see",
+      "i": 11,
+      "at": 25203
+     },
+     {
+      "kind": "done",
+      "text": "3 picks, credited to 2 friends",
+      "detail": "25.2s · live · $0.018",
+      "i": 12,
+      "at": 25204
+     }
+    ],
+    "mode": "live",
+    "costUsd": 0.0182,
+    "latencyMs": 25204,
+    "model": "muse-spark-1.3",
+    "createdAt": "2026-11-12T11:53:21.719Z"
+   }
+  },
+  "coordinate": {
+   "dates": {
+    "dates": [
+     "2026-11-27",
+     "2026-11-28",
+     "2026-11-29"
+    ],
+    "people": [
+     {
+      "id": "nina",
+      "name": "Nina Okafor",
+      "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D32",
+      "role": "you",
+      "busyOn": [],
+      "free": true
+     },
+     {
+      "id": "tj",
+      "name": "TJ Okafor",
+      "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D72",
+      "role": "host",
+      "busyOn": [],
+      "free": true
+     }
+    ],
+    "allFree": true,
+    "alternatives": [
+     {
+      "start": "2026-11-20",
+      "end": "2026-11-22",
+      "label": "Nov 20–22"
+     },
+     {
+      "start": "2026-12-04",
+      "end": "2026-12-06",
+      "label": "Dec 4–6"
+     }
+    ]
+   },
+   "drafts": [
+    {
+     "id": "m_mwdhoocuse",
+     "conversationId": "c_mwdhoocusd",
+     "key": "host",
+     "to": {
+      "id": "tj",
+      "name": "TJ Okafor",
+      "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D72",
+      "connection": "siblings"
+     },
+     "text": "hey tj! would you be open to me crashing nov 27-29 for the montrose night market? saw you have open to hosting friends on but totally fine to say no if it's busy. happy to cook and cover gas, plus i can bring you a plant cutting if you want one.",
+     "status": "draft",
+     "reason": "Trip: houston with tj for the night market · ask TJ about staying Nov 27–29"
+    }
+   ],
+   "mode": "live",
+   "costUsd": 0.006
   }
  },
- "cost": 0.025500000000000002,
+ "cost": 0.0622,
  "verdict": {
   "looksBroken": [
-   "trip 0 reasons say $80 total fits $90 but priceIfYes is $100",
-   "trip 1 reasons say $85 total fits $90 but priceIfYes is $109",
-   "trip 0 breakdown is $40 gas + $54 food + $6 getting around = $100, not $80 as pitched"
+   "dallas host diego is listed as both 'jordan's friend' and 'cousins' which doesn't line up",
+   "tj's note says rodeo weekends he's booked but late november isn't rodeo season"
   ],
   "objections": [
-   "both are over my ~$90 budget even with a free couch: $100 for houston, $109 for dallas",
-   "neither host has actually said yes yet, price depends on that",
-   "dallas is a longer drive and diego is a friend-of-a-friend i don't really know",
-   "houston is closer and tj is family, but still over budget"
+   "$100 is over the $90 budget and tj hasn't actually said yes yet",
+   "173 miles each way is a long drive for just a weekend",
+   "sleeping on tj's couch means i'm kinda locked into family/grill time"
   ],
-  "pickTripIndex": -1,
-  "reason": "houston is the better option and tj being my sibling makes that part feel real, but both are over $90 and the pitch math doesn't match the actual prices so i wouldn't lock either in yet.",
-  "surprising": 4,
-  "trustworthy": 2,
-  "wouldTake": false
+  "pickTripIndex": 0,
+  "reason": "houston is the only one i'd actually do — tj's family and it's closer, even if it's $10 over budget.",
+  "surprising": 3,
+  "trustworthy": 4,
+  "wouldTake": true
  },
  "verdictMode": "live",
- "latencyMs": 26140,
- "finishedAt": "2026-11-12T11:35:59.970Z"
+ "draftDecisions": {
+  "decisions": [
+   {
+    "action": "approve",
+    "draftId": "m_mwdhoocuse",
+    "why": "tj's listed as open to hosting and it's a short ask to family, wording sounds like me and i'd actually send it."
+   }
+  ],
+  "guideFeedback": "guide mostly felt for me and the raj credits lined up with the trip, but the layla museum sunday one felt random since she wasn't part of this trip."
+ },
+ "applied": [
+  {
+   "action": "approve",
+   "draftId": "m_mwdhoocuse",
+   "why": "tj's listed as open to hosting and it's a short ask to family, wording sounds like me and i'd actually send it.",
+   "result": {
+    "ok": true,
+    "message": {
+     "id": "m_mwdhoocuse",
+     "senderId": "nina",
+     "text": "hey tj! would you be open to me crashing nov 27-29 for the montrose night market? saw you have open to hosting friends on but totally fine to say no if it's busy. happy to cook and cover gas, plus i can bring you a plant cutting if you want one.",
+     "createdAt": "2026-11-12T11:53:32.377Z",
+     "readBy": [
+      "nina"
+     ],
+     "status": "sent",
+     "draftReason": "Trip: houston with tj for the night market · ask TJ about staying Nov 27–29",
+     "attachment": {
+      "type": "trip",
+      "ref": "trip_mwdhnvn9ggd5"
+     }
+    },
+    "conversationId": "c_mwdhoocusd"
+   }
+  }
+ ],
+ "latencyMs": 58084,
+ "finishedAt": "2026-11-12T11:53:32.378Z"
 }

@@ -13,7 +13,7 @@
   "label": "Dec 11–13",
   "busy": false
  },
- "startedAt": "2026-11-12T11:25:35.943Z",
+ "startedAt": "2026-11-12T11:40:14.097Z",
  "stages": {
   "discover": {
    "steps": [
@@ -21,21 +21,21 @@
      "kind": "info",
      "text": "Starting from Austin, Dec 11–13, about $40",
      "i": 0,
-     "at": 0
+     "at": 1
     },
     {
      "kind": "model",
      "text": "Deciding what to look at next",
-     "detail": "0 ms",
+     "detail": "1861 ms",
      "i": 1,
-     "at": 0
+     "at": 1862
     },
     {
      "kind": "tool",
      "tool": "scan_network",
      "text": "Mapping your whole network: who lives where, who hosts, who's driving Dec 11–13",
      "i": 2,
-     "at": 1
+     "at": 1862
     },
     {
      "kind": "result",
@@ -58,58 +58,58 @@
       "e_den_mural_comp"
      ],
      "i": 3,
-     "at": 2
+     "at": 1866
     },
     {
      "kind": "model",
      "text": "Deciding what to look at next",
-     "detail": "0 ms",
+     "detail": "14152 ms",
      "i": 4,
-     "at": 2
-    },
-    {
-     "kind": "tool",
-     "tool": "estimate_trip_cost",
-     "text": "Pricing Dallas: 2 nights, staying with a friend, by bus",
-     "i": 5,
-     "at": 2
-    },
-    {
-     "kind": "result",
-     "tool": "estimate_trip_cost",
-     "text": "about $114 if they say yes, about $255 otherwise",
-     "detail": "215 mi · 3.2h drive · hotel + solo would be $421",
-     "i": 6,
-     "at": 2
+     "at": 16019
     },
     {
      "kind": "tool",
      "tool": "estimate_trip_cost",
      "text": "Pricing Houston: 2 nights, staying with a friend, by bus",
-     "i": 7,
-     "at": 2
+     "i": 5,
+     "at": 16019
     },
     {
      "kind": "result",
      "tool": "estimate_trip_cost",
      "text": "about $108 if they say yes, about $245 otherwise",
      "detail": "173 mi · 2.5h drive · hotel + solo would be $405",
+     "i": 6,
+     "at": 16019
+    },
+    {
+     "kind": "tool",
+     "tool": "estimate_trip_cost",
+     "text": "Pricing Dallas: 2 nights, staying with a friend, by bus",
+     "i": 7,
+     "at": 16019
+    },
+    {
+     "kind": "result",
+     "tool": "estimate_trip_cost",
+     "text": "about $114 if they say yes, about $255 otherwise",
+     "detail": "215 mi · 3.2h drive · hotel + solo would be $421",
      "i": 8,
-     "at": 2
+     "at": 16019
     },
     {
      "kind": "model",
      "text": "Deciding what to look at next",
-     "detail": "5451 ms",
+     "detail": "5170 ms",
      "i": 9,
-     "at": 5454
+     "at": 21190
     },
     {
      "kind": "tool",
      "tool": "get_city_media",
      "text": "Reading your friends' photos and Reels from Houston",
      "i": 10,
-     "at": 5454
+     "at": 21190
     },
     {
      "kind": "result",
@@ -117,41 +117,41 @@
      "text": "Read 2 photos from Houston",
      "detail": "1 of Raj's, 1 of Layla's",
      "i": 11,
-     "at": 5454
+     "at": 21190
     },
     {
      "kind": "model",
      "text": "Deciding what to look at next",
-     "detail": "8428 ms",
+     "detail": "7935 ms",
      "i": 12,
-     "at": 13883
+     "at": 29126
     },
     {
      "kind": "tool",
      "tool": "propose_trips",
      "text": "Putting together 1 trip",
      "i": 13,
-     "at": 13883
+     "at": 29126
     },
     {
      "kind": "info",
      "text": "Checking every person, ride, event and photo against what you can actually see",
      "i": 14,
-     "at": 13883
+     "at": 29126
     },
     {
      "kind": "done",
      "text": "1 trip that only exist because of your people",
-     "detail": "13.9s · live · $0.018",
+     "detail": "29.1s · live · $0.040",
      "i": 15,
-     "at": 13883
+     "at": 29128
     }
    ],
    "result": {
-    "runId": "run_mwdgp3l4",
+    "runId": "run_mwdh88xn",
     "trips": [
      {
-      "id": "trip_mwdgp3l47ibx",
+      "id": "trip_mwdh88xmlvoa",
       "viewerId": "zoe",
       "city": "houston",
       "cityName": "Houston",
@@ -160,13 +160,13 @@
       "end": "2026-12-13",
       "nights": 2,
       "budget": 40,
-      "title": "houston with raj for banh mi + night markets",
-      "pitch": "raj has the guest room in montrose free and wants to drive you around his night market tour. heads up this is $108 if he hosts, so $68 over your $40 budget — nothing that weekend fits $40.",
+      "title": "houston with raj, towels + night markets",
+      "pitch": "raj actually wants you there, guest room + night market tour in montrose. it's the cheapest option in your whole network for dec 11-13, but still a bit over what you said.",
       "reasons": [
-       "raj is open to hosting and free dec 11-13, guest room in montrose",
-       "raj posted the $4.50 bellaire banh mi and offered free night-market drives",
-       "bus austin-houston round trip is $48, cheapest ride out of all your cities",
-       "no rides with seats and no events your people are going to that weekend"
+       "raj is free dec 11-13 and open to hosting in montrose",
+       "raj posted his bellaire banh mi run + free night market driving tour",
+       "bus from austin, no car needed, raj has a car there",
+       "nothing in your network fits your budget, this misses by the least"
       ],
       "host": {
        "id": "raj",
@@ -199,7 +199,7 @@
         "total": 108,
         "lines": [
          {
-          "label": "bus, round trip (173 mi)",
+          "label": "bus, round trip (173 mi each way)",
           "usd": 48
          },
          {
@@ -222,7 +222,7 @@
         "total": 245,
         "lines": [
          {
-          "label": "bus, round trip (173 mi)",
+          "label": "bus, round trip (173 mi each way)",
           "usd": 48
          },
          {
@@ -245,7 +245,7 @@
         "total": 405,
         "lines": [
          {
-          "label": "bus, round trip (173 mi)",
+          "label": "bus, round trip (173 mi each way)",
           "usd": 48
          },
          {
@@ -274,17 +274,17 @@
       },
       "fitsBudget": false,
       "repairs": [],
-      "createdAt": "2026-11-12T11:25:50.056Z"
+      "createdAt": "2026-11-12T11:40:43.450Z"
      }
     ],
     "mode": "live",
-    "costUsd": 0.0179,
-    "latencyMs": 13883,
+    "costUsd": 0.040400000000000005,
+    "latencyMs": 29128,
     "model": "muse-spark-1.3"
    }
   },
   "audit": {
-   "runId": "run_mwdgp3l4",
+   "runId": "run_mwdh88xn",
    "viewerId": "zoe",
    "input": {
     "start": "2026-12-11",
@@ -292,8 +292,8 @@
     "budget": 40
    },
    "mode": "live",
-   "costUsd": 0.0179,
-   "latencyMs": 13883,
+   "costUsd": 0.040400000000000005,
+   "latencyMs": 29128,
    "raw": {
     "ids": 2,
     "grounded": 2,
@@ -302,7 +302,7 @@
    },
    "trips": [
     {
-     "tripId": "trip_mwdgp3l47ibx",
+     "tripId": "trip_mwdh88xmlvoa",
      "city": "houston",
      "elements": [
       {
@@ -331,23 +331,21 @@
    "declined": false
   }
  },
- "cost": 0.0186,
+ "cost": 0.0408,
  "verdict": {
-  "looksBroken": [
-   "pitch says raj offered free night-market drives but ride is null, so it's unclear if that includes getting there or just around houston"
-  ],
+  "looksBroken": [],
   "objections": [
-   "money — $108 is almost 3x my $40 budget",
-   "staying with raj iyer, who i don't know directly, just via jordan",
-   "long bus trip to houston for one weekend"
+   "$108 is almost 3x my $40 budget, $245 if raj says no is way worse",
+   "raj is a friend-of-a-friend i've never met, staying in his guest room feels like a big ask",
+   "173 miles each way on a bus for a weekend is a lot for this price"
   ],
   "pickTripIndex": -1,
-  "reason": "i'd love the banh mi + night markets but $108 is way over my $40 and i don't actually know raj, so i'd pass for now.",
-  "surprising": 3,
-  "trustworthy": 4,
+  "reason": "i'd love a free place to crash but i can't justify blowing my whole budget like this, especially with someone i don't actually know yet.",
+  "surprising": 4,
+  "trustworthy": 3,
   "wouldTake": false
  },
  "verdictMode": "live",
- "latencyMs": 16780,
- "finishedAt": "2026-11-12T11:25:52.471Z"
+ "latencyMs": 31355,
+ "finishedAt": "2026-11-12T11:40:45.219Z"
 }

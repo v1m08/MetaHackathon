@@ -16,7 +16,7 @@ export const PRICES = {
   foodPerDay: 35,
   /** Share of gas a passenger chips in (driver was going anyway). */
   rideShare: 0.5,
-  localTransitPerDay: 4,
+  localTransitPerDay: 6,
 };
 
 export type TransportMode = "ride" | "own-car" | "bus" | "flight";

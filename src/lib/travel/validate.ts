@@ -121,6 +121,20 @@ export function validateTrip(viewerId: ID, p: ProposedTrip, ctx: { start: string
     else if (!dates.includes(e.startsAt.slice(0, 10))) repairs.push(`dropped event ${e.title}: not that weekend`);
     else event = { id: e.id, title: e.title, startsAt: e.startsAt, location: e.location, price: e.price, goingYouKnow: e.going.filter((id) => id !== viewerId && canSeeUser(viewerId, getUser(id)!)).map((id) => ({ ...cardFor(id), connection: connection(viewerId, id)?.label ?? "" })) };
   }
+  // a ride sets the real dates: you leave when the driver leaves and come back when they do
+  let start = ctx.start;
+  let end = ctx.end;
+  if (ride) {
+    const dep = ride.departAt.slice(0, 10);
+    const ret = ride.returnAt.slice(0, 10);
+    if (dep > start || ret < end) {
+      start = dep > start ? dep : start;
+      end = ret < end ? ret : end;
+      const n = Math.round((new Date(end).getTime() - new Date(start).getTime()) / 86_400_000);
+      if (nights !== 0) nights = Math.max(1, n);
+      repairs.push(`dates follow ${ride.driver.name.split(" ")[0]}'s car: ${start} → ${end}`);
+    }
+  }
   // other people there
   const people: TripPerson[] = [];
   for (const id of new Set([...(p.peopleIds ?? []), ...(event?.goingYouKnow.map((g) => g.id) ?? [])])) {
@@ -175,7 +189,8 @@ export function validateTrip(viewerId: ID, p: ProposedTrip, ctx: { start: string
     return !MONEY.test(r);
   }).slice(0, 5);
   const pitchSentences = (p.pitch ?? "").split(/(?<=[.!?])\s+/);
-  const pitch = pitchSentences.filter((x) => !MONEY.test(x)).join(" ").trim() || (pitchSentences[0] ?? "");
+  const namesDropped = (x: string) => scrub.some((n) => new RegExp(`\\b${n}\\b`, "i").test(x));
+  const pitch = pitchSentences.filter((x) => !MONEY.test(x) && !namesDropped(x)).join(" ").trim() || (pitchSentences[0] ?? "");
   if (pitch !== (p.pitch ?? "").trim()) repairs.push("removed a model-written price from the pitch");
 
   // prices, in code
@@ -186,12 +201,17 @@ export function validateTrip(viewerId: ID, p: ProposedTrip, ctx: { start: string
   const rideRec = ride ? db().rides.find((r) => r.id === ride!.id) : undefined;
   const prices = twoPrices({ fromCity: me.city!, toCity: city.id, nights, transport: transportIfYes, lodging: lodgingIfYes, carOccupants: rideRec ? Math.max(2, 1 + rideRec.riderIds.length + 1) : occupants, withLocal: !!host || people.length > 0, rideShareUsd: rideRec?.costShareUsd });
   const conditions = [host ? `${host.name.split(" ")[0]} says yes to hosting` : "", ride ? `${ride.driver.name.split(" ")[0]} has a seat` : ""].filter(Boolean);
+  const fits = prices.ifYes.total <= ctx.budget;
+  const CLAIM = /\b(under|within|inside|fits?|on|right at) (your |the )?budget\b|\bunder what you said\b|\bcheapest\b/i;
+  const reasonsFinal = fits ? reasons : reasons.filter((r) => !CLAIM.test(r));
+  const pitchFinal = fits ? pitch : pitch.split(/(?<=[.!?])\s+/).filter((x) => !CLAIM.test(x)).join(" ").trim() || pitch;
+  if (!fits && (reasonsFinal.length !== reasons.length || pitchFinal !== pitch)) repairs.push("removed an 'under budget' claim: the priced trip is over budget");
 
   return {
-    id: tripId(), viewerId, city: city.id, cityName: city.name, state: city.state, start: ctx.start, end: ctx.end, nights, budget: ctx.budget,
-    title: (p.title?.trim() || `${city.name.toLowerCase()} with ${(host ?? ride?.driver ?? people[0])?.name.split(" ")[0] ?? "your people"}`).replace(/\$\s?\d+/g, "").replace(/\s{2,}/g, " ").trim(), pitch, reasons, host, ride, event, people, evidence,
+    id: tripId(), viewerId, city: city.id, cityName: city.name, state: city.state, start, end, nights, budget: ctx.budget,
+    title: (p.title?.trim() || `${city.name.toLowerCase()} with ${(host ?? ride?.driver ?? people[0])?.name.split(" ")[0] ?? "your people"}`).replace(/\$\s?\d+/g, "").replace(/\s{2,}/g, " ").trim(), pitch: pitchFinal, reasons: reasonsFinal, host, ride, event, people, evidence,
     prices: { ...prices, transportIfYes, lodgingIfYes, conditions },
-    fitsBudget: prices.ifYes.total <= ctx.budget, repairs, createdAt: new Date().toISOString(),
+    fitsBudget: fits, repairs, createdAt: new Date().toISOString(),
   };
 }
 

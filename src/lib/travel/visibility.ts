@@ -67,5 +67,5 @@ export function connection(viewerId: ID, otherId: ID): { degree: 1 | 2; label: s
   const via = m[0];
   const viaUser = getUser(via)!;
   const how = viaUser.friendLabels?.[otherId];
-  return { degree: 2, label: `${viaUser.name.split(" ")[0]}'s friend${how ? ` (${how})` : ""}`, via };
+  return { degree: 2, label: `via ${viaUser.name.split(" ")[0]}${how ? ` · ${how}` : ""}`, via };
 }
