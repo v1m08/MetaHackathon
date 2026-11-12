@@ -1,4 +1,4 @@
-// npm run critters:generate [-- --force] [-- --style plush] [-- maya dev …]
+// npm run critters:generate [-- --force] [-- --style flat|plush|cute] [-- maya dev …]
 // Draws each friend's critter with Muse Image (muse-image-1.0), from their memory file: the body/color/accessory
 // Muse Wonder picked plus a prop from a shared place or inside joke. Saves to public/seed/critters/<id>.<ext>.
 // Existing images are kept unless --force. Blocked friends are never drawn.
@@ -11,12 +11,16 @@ import { ai } from "@/lib/ai";
 import { colorById } from "@/lib/hangout/parts";
 import { builtMemory, hang } from "@/server/hangout/store";
 
-const STYLE = process.argv.includes("plush") || process.argv.includes("--style=plush") ? "plush" : "flat";
-const OUT = join(process.cwd(), "public", "seed", "critters", ...(STYLE === "plush" ? ["plush"] : []));
-const STYLE_TEXT = {
+const STYLES = ["flat", "plush", "cute"] as const;
+type Style = (typeof STYLES)[number];
+const styleArg = process.argv.find((a, i) => a.startsWith("--style=") || process.argv[i - 1] === "--style")?.replace("--style=", "");
+const STYLE: Style = STYLES.includes(styleArg as Style) ? (styleArg as Style) : "flat";
+const OUT = join(process.cwd(), "public", "seed", "critters", ...(STYLE === "flat" ? [] : [STYLE]));
+const STYLE_TEXT: Record<Style, string> = {
   flat: "Gentle happy expression, soft rosy cheeks, tiny stubby arms. Simple flat vector illustration with soft pastel shading and a thin darker outline, centered on a plain cream background, no text, no logos.",
   plush: "An original character made as a soft handmade plush toy from fuzzy felt fabric, with simple dot eyes, a tiny stitched smile, rosy embroidered cheeks and tiny stubby arms. Photographed like a 3D plush toy in soft studio lighting, centered on a plain cream background, no text, no logos.",
-}[STYLE];
+  cute: "An original kawaii character with chibi proportions: a big round head on a tiny body, large sparkly eyes with white highlights, rosy blush, a small happy open smile and tiny nub arms. Soft glossy 3D cartoon render in pastel colors with gentle rim light, like a collectible sticker, centered on a plain cream background, no text, no logos.",
+};
 const MODEL = process.env.MUSE_IMAGE_MODEL || process.env.MODEL_IMAGE || "muse-image-1.0";
 
 const BODY: Record<string, string> = {
@@ -66,7 +70,7 @@ function promptFor(friendId: string) {
   ]
     .filter(Boolean)
     .join(", ")
-    .concat(`. ${STYLE_TEXT}`);
+    .concat(`. ${STYLE_TEXT[STYLE]}`);
 }
 
 const extFor = (buf: Buffer) => (buf.subarray(0, 4).toString() === "RIFF" ? "webp" : buf[0] === 0x89 ? "png" : "jpg");
@@ -74,7 +78,7 @@ const extFor = (buf: Buffer) => (buf.subarray(0, 4).toString() === "RIFF" ? "web
 async function main() {
   const args = process.argv.slice(2);
   const force = args.includes("--force");
-  const only = args.filter((a) => !a.startsWith("--") && a !== "plush");
+  const only = args.filter((a, i) => !a.startsWith("--") && args[i - 1] !== "--style");
   mkdirSync(OUT, { recursive: true });
   const have = new Set(readdirSync(OUT).map((f) => f.replace(/\.\w+$/, "")));
   const friends = hang().friends.filter((f) => !f.isBlocked && f.isFriend && (!only.length || only.includes(f.id)));
