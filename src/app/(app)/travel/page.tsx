@@ -1,7 +1,7 @@
 "use client";
 // Discover: weekend + budget in, a watchable agent run, trips out.
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useRef, useState } from "react";
 import { Activity, Car, ChevronDown, ChevronUp, Compass, Sparkles } from "lucide-react";
 import { Shell } from "@/components/Shell";
@@ -51,7 +51,6 @@ export async function streamDiscover(body: { start: string; end: string; budget:
 }
 
 function DiscoverInner() {
-  const router = useRouter();
   const params = useSearchParams();
   const { data: opt } = useApi<Options>("/api/travel/options");
   const [weekend, setWeekend] = useState<string>("");
@@ -86,7 +85,7 @@ function DiscoverInner() {
       const r = await streamDiscover({ start, end, budget: b, hint: over?.hint ?? (hint || undefined) }, (s) => setSteps((prev) => [...prev, s]));
       setResult(r);
       setShowSteps(false);
-      router.replace(`/travel?start=${start}&end=${end}&budget=${b}`);
+      window.history.replaceState(null, "", `/travel?start=${start}&end=${end}&budget=${b}`);
     } catch (e) {
       setError((e as Error).message);
     } finally {

@@ -3,7 +3,7 @@
 import { cityById } from "@/data/cities";
 import { weekendDates, weekendLabel } from "@/data/travel";
 import { tasteFor } from "@/lib/travel/taste";
-import { cityName } from "@/lib/travel/tools";
+import { cityName, rideTouches } from "@/lib/travel/tools";
 import { canSeeUser, connection } from "@/lib/travel/visibility";
 import { db, getUser, requireUser } from "@/server/db";
 import { route } from "@/server/http";
@@ -18,7 +18,7 @@ export const GET = route((_req, { userId }) => {
   const nudges = db()
     .rides.filter((r) => r.fromCity === me.city && r.seatsOpen > 0 && r.driverId !== userId && canSeeUser(userId, getUser(r.driverId)!))
     .map((r) => {
-      const wk = weekends.find((w) => r.departAt.slice(0, 10) >= w.start || r.departAt.slice(0, 10) <= w.end) ?? weekends.find((w) => r.departAt.slice(0, 10) <= w.end);
+      const wk = weekends.find((w) => rideTouches(r.departAt, r.returnAt, w.start, w.end));
       const d = getUser(r.driverId)!;
       const ev = r.eventId ? db().events.find((e) => e.id === r.eventId) : undefined;
       return { rideId: r.id, driver: { id: d.id, name: d.name, avatar: d.avatar, connection: connection(userId, d.id)?.label }, toCity: r.toCity, toCityName: cityName(r.toCity), departAt: r.departAt, seatsOpen: r.seatsOpen, event: ev ? { id: ev.id, title: ev.title } : undefined, weekend: wk && !wk.busy ? { start: wk.start, end: wk.end, label: wk.label } : undefined };

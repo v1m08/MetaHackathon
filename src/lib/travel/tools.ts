@@ -16,6 +16,15 @@ const inRange = (iso: string, start: string, end: string) => {
   const d = iso.slice(0, 10);
   return d >= start && d <= end;
 };
+/** A ride counts for a weekend if it leaves up to a day before the start and is back by a day after the end. */
+export const rideTouches = (departAt: string, returnAt: string, start: string, end: string) => {
+  const shift = (ymd: string, days: number) => {
+    const d = new Date(ymd + "T12:00:00");
+    d.setDate(d.getDate() + days);
+    return d.toISOString().slice(0, 10);
+  };
+  return departAt.slice(0, 10) >= shift(start, -1) && departAt.slice(0, 10) <= end && returnAt.slice(0, 10) <= shift(end, 1);
+};
 export const datesBetween = (start: string, end: string) => {
   const out: string[] = [];
   const d = new Date(start + "T12:00:00");
@@ -83,7 +92,7 @@ export const getTravelEventsAndRides: ToolDef<{ start: string; end: string }> = 
         return { id: e.id, title: e.title, city: e.city, cityName: cityName(e.city), startsAt: e.startsAt, location: e.location, price: e.price, going, meInterested: e.interested.includes(userId) };
       });
     const rides = db()
-      .rides.filter((r) => r.seatsOpen > 0 && canSeeUser(userId, getUser(r.driverId)!) && inRange(r.departAt, start, end) === inRange(r.departAt, start, end) && (inRange(r.departAt, start, end) || inRange(r.returnAt, start, end)))
+      .rides.filter((r) => r.seatsOpen > 0 && r.driverId !== userId && canSeeUser(userId, getUser(r.driverId)!) && rideTouches(r.departAt, r.returnAt, start, end))
       .map((r) => ({ id: r.id, driver: personFor(userId, getUser(r.driverId)!), fromCity: r.fromCity, toCity: r.toCity, toCityName: cityName(r.toCity), departAt: r.departAt, returnAt: r.returnAt, seatsOpen: r.seatsOpen, riders: r.riderIds.filter((id) => canSeeUser(userId, getUser(id)!)).map((id) => getUser(id)!.name), eventId: r.eventId, note: r.note, leavesFromMyCity: r.fromCity === me?.city }));
     return { range: { start, end }, events, rides };
   },

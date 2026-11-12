@@ -158,7 +158,7 @@ export function validateTrip(viewerId: ID, p: ProposedTrip, ctx: { start: string
 
   return {
     id: tripId(), viewerId, city: city.id, cityName: city.name, state: city.state, start: ctx.start, end: ctx.end, nights, budget: ctx.budget,
-    title: p.title, pitch: p.pitch, reasons, host, ride, event, people, evidence,
+    title: p.title?.trim() || `${city.name.toLowerCase()} with ${(host ?? ride?.driver ?? people[0])?.name.split(" ")[0] ?? "your people"}`, pitch: p.pitch ?? "", reasons, host, ride, event, people, evidence,
     prices: { ...prices, transportIfYes, lodgingIfYes, conditions },
     fitsBudget: prices.ifYes.total <= ctx.budget, repairs, createdAt: new Date().toISOString(),
   };
