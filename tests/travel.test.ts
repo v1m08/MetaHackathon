@@ -9,6 +9,7 @@ import { allTravelTools, cityMediaFor, datesBetween, findPeopleByCity, getCityMe
 import { rankTrips, validateTrip } from "@/lib/travel/validate";
 import { canSeePost, canSeeReel, canSeeUser, connection, mutuals } from "@/lib/travel/visibility";
 import { db, getUser, resetDb } from "@/server/db";
+import { travelStore } from "@/lib/travel/store";
 
 resetDb();
 const d = db();
@@ -92,10 +93,16 @@ test("validation: a host who did not opt in, or is busy, is never shown as a hos
   assert.ok(notOptedIn?.repairs.some((r) => r.includes("open to hosting")));
   // and a trip with nothing real left is dropped entirely
   assert.equal(validateTrip("maya", { city: "nashville", title: "n", pitch: "", hostId: "tess", nights: 2, reasons: [] }, ctx), null);
-  // kai is busy on weekend 4 (the dallas weekend)
+  // availability is inferred, not seeded: with nothing inferred yet, kai is "unknown" and stays a host (the app asks)
+  const unknown = validateTrip("maya", { city: "nashville", title: "n", pitch: "", hostId: "kai", peopleIds: ["leah"], nights: 2, reasons: [] }, ctx);
+  assert.equal(unknown?.host?.availability, "unknown");
+  // once an inference (from kai's own chat line) says busy, the host is dropped
+  const dates = datesBetween(weekend.start, weekend.end);
+  travelStore().availability.set(`maya|kai|${weekend.start}`, { personId: "kai", requesterId: "maya", dates, days: dates.map((date) => ({ date, status: "busy" as const, reason: "in Fort Worth", confidence: "high" as const })), overall: "busy", summary: "busy", mode: "test", costUsd: 0, signalCount: 1, computedAt: "", key: "" });
   const busy = validateTrip("maya", { city: "nashville", title: "n", pitch: "", hostId: "kai", peopleIds: ["leah"], nights: 2, reasons: [] }, ctx);
   assert.equal(busy?.host, undefined);
   assert.ok(busy?.repairs.some((r) => r.includes("busy")));
+  travelStore().availability.clear();
   // a friends-only post by a non-friend cannot be evidence
   const rubenPost = d.posts.find((p) => p.authorId === "ruben" && p.city === "nashville" && p.images?.length)!;
   const t = validateTrip("maya", { city: "nashville", title: "n", pitch: "", peopleIds: ["leah"], evidence: [{ kind: "post", id: rubenPost.id }], nights: 2, reasons: [] }, ctx)!;

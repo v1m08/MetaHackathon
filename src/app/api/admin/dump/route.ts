@@ -1,4 +1,4 @@
-// Debug/eval helper: dump a slice of the store. GET /api/admin/dump?what=rides|events|users|trips|runs
+// Debug/eval helper: dump a slice of the store. GET /api/admin/dump?what=rides|events|users|posts|trips|runs
 import { travelStore } from "@/lib/travel/store";
 import { db } from "@/server/db";
 import { route } from "@/server/http";
@@ -12,7 +12,9 @@ export const GET = route((req) => {
     case "events":
       return d.events.map((e) => ({ id: e.id, title: e.title, city: e.city, startsAt: e.startsAt, going: e.going }));
     case "users":
-      return d.users.map((u) => ({ id: u.id, name: u.name, city: u.city, openToHosting: u.openToHosting, hasCar: u.hasCar, privacy: u.privacy, busyDates: u.busyDates, friends: u.friendIds.length }));
+      return d.users.map((u) => ({ id: u.id, name: u.name, city: u.city, openToHosting: u.openToHosting, hasCar: u.hasCar, privacy: u.privacy, interests: u.interests, openDoor: u.openDoor, friends: u.friendIds.length }));
+    case "posts":
+      return d.posts.map((p) => ({ id: p.id, authorId: p.authorId, text: p.text, city: p.city, audience: p.audience, createdAt: p.createdAt }));
     case "trips":
       return [...travelStore().trips.values()];
     case "runs":
