@@ -9,7 +9,7 @@ import { useSession } from "@/lib/session";
 import { cx } from "@/components/ui";
 import type { Trace } from "@/lib/ai/types";
 
-type Status = { mode: string; hasKey: boolean; baseUrl: string; textModel: string; imageModel: string; configuredMode: string; calls: number; errors: number; avgLatency: number };
+type Status = { mode: string; hasKey: boolean; baseUrl: string; textModel: string; visionModel: string; imageModel: string; configuredMode: string; calls: number; errors: number; avgLatency: number; budget: { spentUsd: number; committedUsd: number; limitUsd: number; budgetUsd: number; calls: number } };
 const KIND_ICON = { text: MessageSquareText, json: Braces, image: ImageIcon, tools: Wrench } as const;
 
 function Json({ value, max = 4000 }: { value: unknown; max?: number }) {
@@ -61,7 +61,8 @@ export default function InspectorPage() {
             <div className="ml-auto flex flex-wrap items-center gap-2 text-xs">
               <span className={cx("rounded-full px-2.5 py-1 font-semibold", status.mode === "live" ? "bg-emerald-500/20 text-emerald-300" : "bg-amber-500/20 text-amber-300")}>{status.mode === "live" ? "● LIVE · Meta Model API" : "● MOCK · no key"}</span>
               <span className="rounded-full bg-white/10 px-2.5 py-1">text: {status.textModel}</span>
-              <span className="rounded-full bg-white/10 px-2.5 py-1">image: {status.imageModel}</span>
+              <span className="rounded-full bg-white/10 px-2.5 py-1">vision: {status.visionModel}</span>
+              <span className={cx("rounded-full px-2.5 py-1 font-semibold", status.budget.committedUsd > status.budget.limitUsd * 0.9 ? "bg-red-500/20 text-red-300" : "bg-white/10")} title="Booked Muse spend (ledger, 1.5x margin) vs this process's limit">${status.budget.committedUsd.toFixed(2)} / ${status.budget.limitUsd} budget</span>
               <span className="rounded-full bg-white/10 px-2.5 py-1">{status.calls} calls · {status.avgLatency}ms avg{status.errors ? ` · ${status.errors} errors` : ""}</span>
               <span className="rounded-full bg-white/10 px-2.5 py-1">as @{userId}</span>
             </div>
