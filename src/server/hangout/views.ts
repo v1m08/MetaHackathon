@@ -97,8 +97,13 @@ export function nudgeView(n: Nudge) {
   const evidence = n.evidenceIds.map((id) => index.get(id)).filter((e): e is EvidenceItem => !!e);
   // The old photo to show: the one Muse picked to send, else the first cited photo.
   const photoId = n.photoId ?? evidence.find((e) => e.kind === "photo")?.id;
+  const headline =
+    trigger?.kind === "reel" ? `${first} shared a Reel` : trigger?.kind === "post" && trigger.post.kind === "life_update" ? `${first} has news` : trigger?.kind === "post" && trigger.post.place ? `${first} posted from ${trigger.post.place}` : `${first} posted`;
+  const triggerLabel = trigger?.kind === "reel" ? `${first}'s new Reel` : trigger?.kind === "post" && trigger.post.kind === "life_update" ? `${first}'s news` : `${first}'s new post`;
   return {
     ...n,
+    headline,
+    triggerLabel,
     friend: { id: f.id, name: f.name, first, avatar: f.avatarPhoto },
     trigger: trigger ? evidenceCard(trigger, first) : null,
     photo: (photoId && photoById(photoId)) || null,
@@ -124,7 +129,7 @@ export function friendView(friendId: string) {
     isCloseCircle: f.isCloseCircle,
     why: card.design.why,
     sleep: { daysSince: sleep.daysSince, rhythmDays: sleep.rhythmDays, ratio: sleep.ratio, lastRealContact: sleep.lastRealContact?.date ?? null },
-    lastChat: last ? { date: last.date.slice(0, 10), text: last.text, sender: last.sender === "me" ? "You" : card.first } : null,
+    lastChat: last ? { date: last.date.slice(0, 10), daysAgo: daysBetween(last.date.slice(0, 10), s.demoDate), text: last.text, sender: last.sender === "me" ? "You" : card.first } : null,
     sharedPlaces: (mem?.sharedPlaces ?? []).map((p) => ({ ...p, photos: p.photoIds.map(photoById).filter((x) => !!x) })),
     insideJokes: (mem?.insideJokes ?? []).map((j) => ({ phrase: j.phrase, sources: j.sourceIds.length })),
     memorySource: memoryStore()[friendId]?.source ?? "fixture",
@@ -180,3 +185,9 @@ export function demoView() {
     runs: s.runs,
   };
 }
+
+export type HangoutView = ReturnType<typeof hangoutView>;
+export type FriendView = ReturnType<typeof friendView>;
+export type ChatView = ReturnType<typeof chatView>;
+export type DemoView = ReturnType<typeof demoView>;
+export type AlertView = NonNullable<ReturnType<typeof latestAlert>>;

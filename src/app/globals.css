@@ -20,7 +20,7 @@ body { background: var(--color-bg); color: var(--color-ink); font-family: var(--
 .no-scrollbar { scrollbar-width: none; }
 
 /* Desktop phone frame */
-.phone-stage { min-height: 100dvh; display: flex; align-items: center; justify-content: center; background: radial-gradient(1200px 600px at 50% -10%, #1f2937, #0b1220 70%); }
+.phone-stage { min-height: 100dvh; align-items: center; justify-content: center; background: radial-gradient(1200px 600px at 50% -10%, #1f2937, #0b1220 70%); }
 .phone { width: 390px; height: 844px; max-height: calc(100dvh - 32px); background: var(--color-bg); border-radius: 44px; box-shadow: 0 0 0 10px #111827, 0 0 0 12px #374151, 0 30px 80px rgba(0,0,0,.6); overflow: hidden; position: relative; }
 .phone-notch { position: absolute; top: 10px; left: 50%; transform: translateX(-50%); width: 120px; height: 32px; background: #111827; border-radius: 20px; z-index: 50; pointer-events: none; }
 .app-viewport { height: 100%; overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; scrollbar-width: none; position: relative; }
@@ -83,3 +83,5 @@ body { background: var(--color-bg); color: var(--color-ink); font-family: var(--
   .crit *, .hang-banner, .hang-glow, .pop, .slideup, .fadein, .kenburns { animation: none !important; }
   .crit-zzz, .crit-confetti > * { opacity: .9; }
 }
+.hang-banner-pos { top: calc(env(safe-area-inset-top, 0px) + 8px); }
+.phone .hang-banner-pos { top: 50px; }

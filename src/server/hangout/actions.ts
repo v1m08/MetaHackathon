@@ -112,10 +112,24 @@ export function markHatchSeen(friendId: string) {
 
 // ---------- plans and meetups ----------
 
-export function confirmPlan(friendId: string, who: string) {
+/** The user chose to post Muse's draft plan into the chat. */
+export function sharePlan(friendId: string) {
   requireFriend(friendId);
   const plan = hang().plans[friendId];
   if (!plan) throw notFound("Plan");
+  plan.sharedOn ??= hang().demoDate;
+  return plan;
+}
+
+export function dismissPlan(friendId: string) {
+  const plan = hang().plans[friendId];
+  if (plan && !plan.sharedOn) delete hang().plans[friendId];
+}
+
+export function confirmPlan(friendId: string, who: string) {
+  requireFriend(friendId);
+  const plan = hang().plans[friendId];
+  if (!plan?.sharedOn) throw notFound("Shared plan");
   if ((who === "me" || who === friendId) && !plan.confirmedBy.includes(who)) plan.confirmedBy.push(who);
   return plan;
 }

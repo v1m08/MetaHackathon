@@ -165,6 +165,8 @@ export interface Plan {
   estCostPerPerson: number;
   reason: string;
   confirmedBy: ID[];
+  /** Muse's suggestion stays a private draft until the user shares it in the chat. */
+  sharedOn?: string;
   metUpOn?: string;
   keepsake?: string;
 }
