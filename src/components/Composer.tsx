@@ -184,7 +184,7 @@ export function ComposerScreen({ groupId, groupName }: { groupId?: string; group
         </div>
       )}
 
-      <div className="sticky bottom-0 flex items-center justify-around border-t border-line/60 bg-white py-1">
+      <div className="safe-bottom sticky bottom-0 flex items-center justify-around border-t border-line/60 bg-white py-1">
         <button onClick={() => setPanel(panel === "photo" ? null : "photo")} className={cx("flex items-center gap-1.5 rounded-lg px-3 py-2 text-[14px] font-semibold", panel === "photo" ? "bg-hover" : "")}>
           <ImageIcon size={22} className="text-green-600" /> Photo
         </button>

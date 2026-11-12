@@ -256,7 +256,7 @@ export function CommentsSheet({ open, onClose, post, onChange }: { open: boolean
             <CommentRow key={c.id} c={c} onReply={setReplyTo} />
           ))}
         </div>
-        <div className="sticky bottom-0 border-t border-line/60 bg-white p-2">
+        <div className="safe-bottom sticky bottom-0 border-t border-line/60 bg-white p-2">
           {replyTo && (
             <div className="flex items-center justify-between px-2 pb-1 text-[12px] text-ink-2">
               <span>Replying to {replyTo.author.name}</span>

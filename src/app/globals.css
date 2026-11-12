@@ -19,14 +19,22 @@ body { background: var(--color-bg); color: var(--color-ink); font-family: var(--
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { scrollbar-width: none; }
 
-/* Desktop phone frame */
-.phone-stage { min-height: 100dvh; display: flex; align-items: center; justify-content: center; background: radial-gradient(1200px 600px at 50% -10%, #1f2937, #0b1220 70%); }
-.phone { width: 390px; height: 844px; max-height: calc(100dvh - 32px); background: var(--color-bg); border-radius: 44px; box-shadow: 0 0 0 10px #111827, 0 0 0 12px #374151, 0 30px 80px rgba(0,0,0,.6); overflow: hidden; position: relative; }
-.phone-notch { position: absolute; top: 10px; left: 50%; transform: translateX(-50%); width: 120px; height: 32px; background: #111827; border-radius: 20px; z-index: 50; pointer-events: none; }
-.app-viewport { height: 100%; overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; scrollbar-width: none; position: relative; }
-.app-viewport::-webkit-scrollbar { display: none; }
-.phone .safe-top { padding-top: 46px; }
-.safe-top { padding-top: env(safe-area-inset-top, 0px); }
+/* Desktop phone frame. In @layer components so Tailwind utilities (hidden, h-dvh, …) still win over these. */
+@layer components {
+  .phone-stage { min-height: 100dvh; display: flex; align-items: center; justify-content: center; background: radial-gradient(1200px 600px at 50% -10%, #1f2937, #0b1220 70%); }
+  .phone { width: 390px; height: 844px; max-height: calc(100dvh - 32px); background: var(--color-bg); border-radius: 44px; box-shadow: 0 0 0 10px #111827, 0 0 0 12px #374151, 0 30px 80px rgba(0,0,0,.6); overflow: hidden; position: relative; }
+  .phone-notch { position: absolute; top: 10px; left: 50%; transform: translateX(-50%); width: 120px; height: 32px; background: #111827; border-radius: 20px; z-index: 50; pointer-events: none; }
+  .app-viewport { height: 100%; overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; scrollbar-width: none; position: relative; -webkit-overflow-scrolling: touch; }
+  .app-viewport::-webkit-scrollbar { display: none; }
+  /* Real device: pad for the notch / Dynamic Island and the home indicator. */
+  .safe-top { padding-top: env(safe-area-inset-top, 0px); }
+  .safe-bottom { padding-bottom: env(safe-area-inset-bottom, 0px); }
+  /* Desktop frame: fake notch, no home indicator. */
+  .phone .safe-top { padding-top: 46px; }
+  .phone .safe-bottom { padding-bottom: 0; }
+}
+/* A real phone scrolls the app viewport, never the document (no rubber-band behind the tab bar). */
+html, body { overflow: hidden; overscroll-behavior: none; }
 
 @keyframes kenburns { 0% { transform: scale(1) translate(0,0); } 100% { transform: scale(1.12) translate(-1.5%, -1.5%); } }
 .kenburns { animation: kenburns 9s ease-in-out infinite alternate; }

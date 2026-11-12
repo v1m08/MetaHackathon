@@ -115,7 +115,7 @@ export default function ThreadPage() {
         <div ref={bottom} />
       </div>
 
-      <div className="sticky bottom-0 flex items-center gap-1 border-t border-line/60 bg-white px-2 py-2">
+      <div className="safe-bottom sticky bottom-0 flex items-center gap-1 border-t border-line/60 bg-white px-2 py-2">
         <button className="p-1.5 text-messenger"><Plus size={24} /></button>
         <button className="p-1.5 text-messenger"><ImageIcon size={22} /></button>
         <div className="flex flex-1 items-center rounded-full bg-[#f0f2f5] pr-2">

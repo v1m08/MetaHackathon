@@ -2,6 +2,7 @@
 // Phone frame + top bar + tab bar. Every in-app page renders inside <Shell>.
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { ArrowLeft, Bell, Home, LayoutGrid, MessageCircle, Plus, Search, Store, Users, Clapperboard } from "lucide-react";
 import { useApi } from "@/lib/api";
 import { useSession } from "@/lib/session";
@@ -20,22 +21,33 @@ const tabs = [
   { href: "/menu", icon: LayoutGrid, label: "Menu" },
 ];
 
-export function PhoneFrame({ children }: { children: React.ReactNode }) {
+// The desktop "phone on a stage" only makes sense on a wide screen driven by a mouse.
+// Real phones and tablets (coarse pointer) always get the full-bleed app.
+const STAGE_QUERY = "(min-width: 768px) and (hover: hover) and (pointer: fine)";
+export function useDesktopStage() {
   const { frame } = useSession();
-  if (!frame) return <div className="app-viewport h-dvh bg-bg">{children}</div>;
+  const [wide, setWide] = useState(() => typeof window !== "undefined" && window.matchMedia(STAGE_QUERY).matches);
+  useEffect(() => {
+    const mq = window.matchMedia(STAGE_QUERY);
+    const onChange = () => setWide(mq.matches);
+    onChange();
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
+  return frame && wide;
+}
+
+export function PhoneFrame({ children }: { children: React.ReactNode }) {
+  const stage = useDesktopStage();
+  // Render exactly one copy of the app: two copies meant double data fetching and polling.
+  if (!stage) return <div className="app-viewport h-dvh bg-bg">{children}</div>;
   return (
-    <>
-      {/* Mobile: full-bleed. Desktop: phone frame on a dark stage. */}
-      <div className="md:hidden">
-        <div className="app-viewport h-dvh bg-bg">{children}</div>
+    <div className="phone-stage">
+      <div className="phone">
+        <div className="phone-notch" />
+        <div className="app-viewport">{children}</div>
       </div>
-      <div className="phone-stage hidden md:flex">
-        <div className="phone">
-          <div className="phone-notch" />
-          <div className="app-viewport">{children}</div>
-        </div>
-      </div>
-    </>
+    </div>
   );
 }
 
@@ -84,7 +96,7 @@ export function TabBar({ dark }: { dark?: boolean }) {
   const path = usePathname();
   const { data: me } = useMe();
   return (
-    <nav className={cx("sticky bottom-0 z-40 border-t", dark ? "border-white/10 bg-black" : "border-line/60 bg-white")}>
+    <nav className={cx("safe-bottom sticky bottom-0 z-40 border-t", dark ? "border-white/10 bg-black" : "border-line/60 bg-white")}>
       <div className="flex h-[52px] items-stretch">
         {tabs.map((t) => {
           const active = t.href === "/" ? path === "/" : path.startsWith(t.href);
@@ -118,11 +130,12 @@ export function Shell({ children, title, back, right, tabs: showTabs = true, dar
 
 /** Thin status strip rendered under the phone on desktop: who you are + AI activity. */
 export function DemoStrip() {
-  const { userId, frame } = useSession();
+  const { userId } = useSession();
+  const stage = useDesktopStage();
   const { data: ai } = useApi<{ mode: string; calls: number; avgLatency: number }>("/api/ai/status", { poll: 3000 });
-  if (!frame) return null;
+  if (!stage) return null;
   return (
-    <div className="pointer-events-none fixed inset-x-0 bottom-3 z-50 hidden justify-center md:flex">
+    <div className="pointer-events-none fixed inset-x-0 bottom-3 z-50 flex justify-center">
       <div className="pointer-events-auto flex items-center gap-3 rounded-full bg-black/70 px-4 py-1.5 text-[12px] text-white/90 backdrop-blur">
         <span>
           Viewing as <b className="text-white">@{userId}</b>
