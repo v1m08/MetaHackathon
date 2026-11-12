@@ -12,7 +12,7 @@ export const GET = route((_req, { userId }) => {
   const me = requireUser(userId);
   const weekends = Array.from({ length: 8 }, (_, i) => {
     const d = weekendDates(i + 1);
-    return { n: i + 1, start: d[0], end: d[2], label: weekendLabel(i + 1), busy: d.some((x) => me.busyDates?.includes(x)) };
+    return { n: i + 1, start: d[0], end: d[2], label: weekendLabel(i + 1), busy: db().events.some((e) => e.going.includes(userId) && e.city && e.city !== me.city && d.includes(e.startsAt.slice(0, 10))) };
   });
   const taste = tasteFor(userId);
   const nudges = db()

@@ -2,13 +2,15 @@
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
-import { BedDouble, Briefcase, Camera, Compass, GraduationCap, Heart, Home, MapPin, MessageCircle, MoreHorizontal, Pencil, UserPlus, UserCheck, Clock } from "lucide-react";
+import { Briefcase, Camera, Compass, GraduationCap, Heart, Home, MapPin, MessageCircle, MoreHorizontal, Pencil, UserPlus, UserCheck, Clock } from "lucide-react";
 import { ComposerCard } from "@/components/Composer";
 import { PostCard } from "@/components/Post";
 import { Shell } from "@/components/Shell";
 import { Avatar, Button, Photo, Pill, PostSkeleton, cx } from "@/components/ui";
 import { api, refresh, useApi } from "@/lib/api";
 import { useSession } from "@/lib/session";
+import { OpenDoorBadge, OpenDoorEditor } from "@/components/travel/OpenDoor";
+import { TravelStyleCard } from "@/components/travel/TravelStyle";
 import type { HydratedPost } from "@/server/db";
 import type { Reel, User } from "@/types";
 
@@ -30,7 +32,6 @@ export default function ProfilePage() {
   const { userId } = useSession();
   const { data: u, mutate } = useApi<Profile>(`/api/users/${id}`);
   const { data: me } = useApi<User>("/api/me");
-  const [noteDraft, setNoteDraft] = useState<string | null>(null);
   const [tab, setTab] = useState<"posts" | "about" | "photos" | "reels">("posts");
   if (!u) return <Shell back title=""><div className="skeleton h-56" /><PostSkeleton /></Shell>;
   const mine = u.id === userId;
@@ -87,19 +88,13 @@ export default function ProfilePage() {
             {u.hometown && <div className="flex items-center gap-3"><MapPin size={20} className="text-ink-2" /><span>From <b className="font-semibold">{u.hometown}</b></span></div>}
             {u.relationship && <div className="flex items-center gap-3"><Heart size={20} className="text-ink-2" /><span>{u.relationship}</span></div>}
             {mine ? (
-              <div className="rounded-xl bg-[#f0f2f5] p-3">
-                <label className="flex items-center gap-3">
-                  <BedDouble size={20} className="text-ink-2" />
-                  <span className="flex-1"><b className="font-semibold">Open to hosting friends</b><div className="text-[13px] text-ink-2">Only people who turn this on can be suggested as a host. Off by default.</div></span>
-                  <input type="checkbox" checked={!!u.openToHosting} onChange={async (e) => { await api("/api/me/hosting", { method: "POST", json: { openToHosting: e.target.checked } }); mutate(); refresh("/api/me"); }} className="h-5 w-5 accent-fb" />
-                </label>
-                {u.openToHosting && (
-                  <input value={noteDraft ?? u.hostingNote ?? ""} onChange={(e) => setNoteDraft(e.target.value)} onBlur={async () => { if (noteDraft !== null) { await api("/api/me/hosting", { method: "POST", json: { hostingNote: noteDraft } }); mutate(); } }} placeholder="couch, 2 nights, I have a cat…" className="mt-2 w-full rounded-lg border border-line bg-white px-3 py-2 text-[14px] outline-none focus:border-fb" />
-                )}
-              </div>
+              <>
+                <OpenDoorEditor />
+                <TravelStyleCard />
+              </>
             ) : (
               <>
-                {u.openToHosting && <div className="flex items-center gap-3"><BedDouble size={20} className="text-emerald-600" /><span><b className="font-semibold text-emerald-700">Open to hosting friends</b>{u.hostingNote ? <span className="text-ink-2"> · {u.hostingNote}</span> : null}</span></div>}
+                <OpenDoorBadge d={u.openDoor} name={u.name} />
                 {u.city && me?.city && u.city !== me.city && (u.isFriend || u.mutualCount > 0) && (
                   <Link href={`/travel?hint=${encodeURIComponent(`I want to visit ${u.name.split(" ")[0]} in ${u.location}`)}`} className="flex items-center gap-3 rounded-xl border border-fb/30 bg-fb/5 px-3 py-2.5">
                     <span className="flex h-9 w-9 items-center justify-center rounded-full bg-fb text-white"><Compass size={18} /></span>

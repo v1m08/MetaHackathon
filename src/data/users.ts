@@ -165,4 +165,15 @@ for (const [a, b, label] of travelEdges) {
   (ub.friendLabels ??= {})[a] = label;
 }
 
+// ---------- Open Door policies (source of truth for hosting; legacy fields derived) ----------
+import { openDoorPolicies } from "./openDoor";
+for (const u of users) {
+  const d = openDoorPolicies[u.id];
+  if (d) u.openDoor = { ...d };
+  else if (u.openToHosting) u.openDoor = { on: true, policy: u.hostingNote ?? "", tier: "friends", offers: ["couch"], maxGuests: 1 };
+  else u.openDoor = { on: false, policy: "", tier: "friends", offers: ["couch"], maxGuests: 1 };
+  u.openToHosting = u.openDoor.on && u.openDoor.offers.includes("couch");
+  u.hostingNote = u.openDoor.on ? u.openDoor.policy.slice(0, 140) : undefined;
+}
+
 export const userById = (id: string) => users.find((u) => u.id === id);

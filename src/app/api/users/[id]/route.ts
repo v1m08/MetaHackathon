@@ -4,8 +4,10 @@ export const GET = route<{ id: string }>((_req, { userId, params }) => {
   const u = requireUser(params.id);
   const friends = friendsOf(u.id).map(userCard);
   const photos = postsBy(u.id).flatMap((p) => p.images ?? []).slice(0, 9);
+  // Other people see that a door exists and to whom, never the policy text (the host's agent reads that) or busy dates.
+  const pub = u.id === userId ? u : { ...u, openDoor: u.openDoor ? { ...u.openDoor, policy: "" } : undefined, busyDates: undefined };
   return {
-    ...u,
+    ...pub,
     friends,
     mutualCount: u.id === userId ? 0 : mutualFriends(userId, u.id).length,
     isFriend: requireUser(userId).friendIds.includes(u.id),

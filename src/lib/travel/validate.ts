@@ -7,6 +7,7 @@ import type { FBEvent, ID, Ride } from "@/types";
 import { twoPrices, type CostBreakdown, type LodgingMode, type TransportMode } from "./pricing";
 import { cityMediaFor, datesBetween, type ProposedTrip } from "./tools";
 import { canSeeEvent, canSeePost, canSeeReel, canSeeUser, connection } from "./visibility";
+import { quickStatus } from "./availability";
 
 export interface TripPerson {
   id: ID;
@@ -18,6 +19,8 @@ export interface TripPerson {
   openToHosting: boolean;
   hostingNote?: string;
   hasCar: boolean;
+  /** From inferred/quick availability for the trip's dates; "busy" is the only value that blocks a host. */
+  availability: "confirmed" | "likely_free" | "busy" | "unknown";
   freeThatWeekend: boolean;
 }
 export interface Trip {
@@ -53,7 +56,8 @@ export function tripPerson(viewerId: ID, id: ID, dates: string[]): TripPerson | 
   const c = connection(viewerId, id);
   if (!c) return null;
   const via = c.via ? getUser(c.via) : undefined;
-  return { id: u.id, name: u.name, avatar: u.avatar, connection: c.label, degree: c.degree, via: via ? { id: via.id, name: via.name } : undefined, openToHosting: !!u.openToHosting, hostingNote: u.openToHosting ? u.hostingNote : undefined, hasCar: !!u.hasCar, freeThatWeekend: !dates.some((d) => u.busyDates?.includes(d)) };
+  const availability = dates.length ? quickStatus(viewerId, id, dates[0], dates[dates.length - 1]) : "unknown";
+  return { id: u.id, name: u.name, avatar: u.avatar, connection: c.label, degree: c.degree, via: via ? { id: via.id, name: via.name } : undefined, openToHosting: !!u.openToHosting, hostingNote: u.openToHosting ? u.hostingNote : undefined, hasCar: !!u.hasCar, availability, freeThatWeekend: availability !== "busy" };
 }
 
 function overlaps(r: Ride, start: string, end: string) {
@@ -90,7 +94,7 @@ export function validateTrip(viewerId: ID, p: ProposedTrip, ctx: { start: string
     if (!u || !tp) repairs.push(`dropped host ${p.hostId}: not in your network`);
     else if (u.city !== city.id) repairs.push(`dropped host ${u.name}: lives in ${u.city}, not ${city.id}`);
     else if (!u.openToHosting) repairs.push(`dropped host ${u.name}: has not turned on "open to hosting"`);
-    else if (!tp.freeThatWeekend) repairs.push(`dropped host ${u.name}: busy that weekend`);
+    else if (!tp.freeThatWeekend) repairs.push(`dropped host ${u.name}: busy that weekend (from what you can see)`);
     else host = tp;
     if (!host) dropPerson(p.hostId);
   }

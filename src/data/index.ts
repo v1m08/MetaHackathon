@@ -62,16 +62,19 @@ function buildNotifications(): Notification[] {
   return out.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
 }
 
+import { appendSignalMessages, signalPosts } from "./signals";
+const withSignals = <T extends { id: string; participantIds: string[]; messages: import("@/types").Message[] }>(cs: T[]) => { appendSignalMessages(cs); return cs; };
+
 export function buildSeed(): Database {
   return {
     users: structuredClone(users),
-    posts: structuredClone([...feedPosts, ...groupPosts, ...travelPosts, ...travelGroupPosts]).sort((a, b) => b.createdAt.localeCompare(a.createdAt)),
+    posts: structuredClone([...feedPosts, ...groupPosts, ...travelPosts, ...travelGroupPosts, ...signalPosts]).sort((a, b) => b.createdAt.localeCompare(a.createdAt)),
     stories: structuredClone(stories),
     groups: structuredClone([...groups, ...travelGroups]),
     events: structuredClone([...events, ...travelEvents]),
     listings: structuredClone(listings),
     reels: structuredClone([...reels, ...travelReels]),
-    conversations: structuredClone([...conversations, ...travelConversations]),
+    conversations: withSignals(structuredClone([...conversations, ...travelConversations])),
     dating: structuredClone(dating),
     games: structuredClone(games),
     notifications: buildNotifications(),

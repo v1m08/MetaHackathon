@@ -32,9 +32,50 @@ export interface DiscoverRun {
   createdAt: string;
 }
 
-const g = globalThis as unknown as { __travel?: { trips: Map<string, Trip>; runs: DiscoverRun[]; guides: Map<string, unknown> } };
-const fresh = () => ({ trips: new Map<string, Trip>(), runs: [] as DiscoverRun[], guides: new Map<string, unknown>() });
-export const travelStore = () => (g.__travel ??= fresh());
+/** "Your travel style": lines Muse proposed from the user's own content, each with its evidence; user-editable. */
+export interface StyleLine { id: string; label: string; text: string; evidence: string; sourceIds: string[]; edited?: boolean }
+export interface TravelStyle { userId: string; lines: StyleLine[]; generatedAt: string; mode: string; costUsd: number; model: string; consideredIds: string[] }
+
+/** One date's availability for one person as seen by one requester, decided by code from extracted signals. */
+export type DayStatus = "confirmed_free" | "likely_free" | "busy" | "unknown";
+export interface DayAvailability { date: string; status: DayStatus; reason?: string; quote?: string; source?: { kind: "rsvp" | "post" | "chat" | "reply"; id: string }; confidence: "high" | "medium" | "low" }
+export interface Availability { personId: string; requesterId: string; dates: string[]; days: DayAvailability[]; overall: "confirmed" | "likely_free" | "busy" | "unknown"; summary: string; mode: string; costUsd: number; signalCount: number; computedAt: string; key: string }
+
+/** An Open Door request: traveler's agent asked a host's agent; anonymous until both accept. */
+export type RequestStatus = "negotiating" | "proposed" | "declined_by_agent" | "host_accepted" | "traveler_accepted" | "revealed" | "declined";
+export interface NegotiationTurn { i: number; at: number; from: "traveler" | "host" | "code"; kind: "ask" | "answer" | "counter" | "scrub" | "info"; text: string; detail?: string; payload?: unknown }
+export interface OpenDoorRequest {
+  id: string;
+  tripId?: string;
+  travelerId: string;
+  hostId: string;
+  tier: "friends" | "fof" | "network";
+  ask: { start: string; end: string; guests: number; offer: string };
+  status: RequestStatus;
+  decision: "yes" | "conditions" | "no";
+  conditions: string[];
+  alternativeDates?: { start: string; end: string };
+  fit: { reasons: { text: string; side: "host" | "traveler"; evidence: string }[]; score: number };
+  /** What each side sees before the reveal. No names, no avatars. */
+  anon: { forHost: string; forTraveler: string };
+  turns: NegotiationTurn[];
+  hostAccepted?: boolean;
+  travelerAccepted?: boolean;
+  revealedAt?: string;
+  conversationId?: string;
+  mode: string;
+  costUsd: number;
+  createdAt: string;
+}
+
+const g = globalThis as unknown as { __travel?: { trips: Map<string, Trip>; runs: DiscoverRun[]; guides: Map<string, unknown>; styles: Map<string, TravelStyle>; availability: Map<string, Availability>; requests: OpenDoorRequest[] } };
+const fresh = () => ({ trips: new Map<string, Trip>(), runs: [] as DiscoverRun[], guides: new Map<string, unknown>(), styles: new Map<string, TravelStyle>(), availability: new Map<string, Availability>(), requests: [] as OpenDoorRequest[] });
+export const travelStore = () => {
+  const t = (g.__travel ??= fresh());
+  // hot reload can leave an older-shaped store on globalThis; fill in anything missing
+  t.styles ??= new Map(); t.availability ??= new Map(); t.requests ??= []; t.guides ??= new Map();
+  return t;
+};
 export const resetTravelStore = () => (g.__travel = fresh());
 
 export function saveTrips(trips: Trip[]) {

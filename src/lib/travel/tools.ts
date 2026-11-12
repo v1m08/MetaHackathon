@@ -8,6 +8,9 @@ import { db, getUser } from "@/server/db";
 import type { ID, User } from "@/types";
 import { costBreakdown, twoPrices, type LodgingMode, type TransportMode } from "./pricing";
 import { tasteFor } from "./taste";
+import { inferMany, quickStatus } from "./availability";
+import { doorOpenTo, openDoorOf } from "./openDoor";
+import { styleConclusions } from "./style";
 import { canSeeEvent, canSeePost, canSeeReel, canSeeUser, connection } from "./visibility";
 
 export const cityName = (id?: string) => cityById(id ?? "")?.name ?? id ?? "?";
@@ -46,7 +49,7 @@ export function personFor(viewerId: ID, u: User) {
     openToHosting: !!u.openToHosting,
     hostingNote: u.openToHosting ? u.hostingNote : undefined,
     hasCar: !!u.hasCar,
-    busyDates: u.busyDates ?? [],
+    openDoor: openDoorOf(u).on ? { offers: openDoorOf(u).offers, tier: openDoorOf(u).tier, openToYou: doorOpenTo(u.id, viewerId).open } : undefined,
     interests: u.interests.slice(0, 4),
   };
 }
@@ -55,19 +58,19 @@ export const visiblePeople = (viewerId: ID) => db().users.filter((u) => u.id !==
 
 export const getMyTravelProfile: ToolDef<Record<string, never>> = {
   name: "get_my_travel_profile",
-  description: "The user's home city, whether they have a car, dates they are busy, and their taste (built from saved Reels, likes and interests).",
+  description: "The user's home city, whether they have a car, their travel style (lines they approved) and their taste (built from saved Reels, likes and interests).",
   parameters: { type: "object", properties: {} },
   run: (_a, { userId }) => {
     const me = getUser(userId);
     if (!me) return { error: "no such user" };
     const t = tasteFor(userId);
-    return { id: me.id, name: me.name, homeCity: me.city, hasCar: !!me.hasCar, busyDates: me.busyDates ?? [], interests: me.interests, taste: t.top, tasteSummary: t.summary, savedReels: t.savedReelCaptions, friendCount: me.friendIds.length };
+    return { id: me.id, name: me.name, homeCity: me.city, hasCar: !!me.hasCar, travelStyle: styleConclusions(userId), interests: me.interests, taste: t.top, tasteSummary: t.summary, savedReels: t.savedReelCaptions, friendCount: me.friendIds.length };
   },
 };
 
 export const findPeopleByCity: ToolDef<{ city?: string }> = {
   name: "find_people_by_city",
-  description: "People in the user's network (friends, and friends-of-friends through a named mutual) who live in other cities, with hosting status, car, busy dates and how the user knows them. Omit city to see every city at once.",
+  description: "People in the user's network (friends, and friends-of-friends through a named mutual) who live in other cities, with Open Door status (what they offer and whether their door is open to this user), car, and how the user knows them. Omit city to see every city at once.",
   parameters: { type: "object", properties: { city: { type: "string", description: "City id such as 'nashville'. Omit for all cities." } } },
   run: ({ city }, { userId }) => {
     const me = getUser(userId);
@@ -98,23 +101,19 @@ export const getTravelEventsAndRides: ToolDef<{ start: string; end: string }> = 
   },
 };
 
-export const checkAvailability: ToolDef<{ userIds: string[]; start: string; end: string }> = {
-  name: "check_availability",
-  description: "Whether specific people (and the user) are free on each date in a range, from their busy dates.",
+export const inferAvailabilityTool: ToolDef<{ userIds: string[]; start: string; end: string }> = {
+  name: "infer_availability",
+  description: "Whether specific people are around on each date, inferred from real signals the user can already see: their event RSVPs, their visible posts, and the user's own chats with them. Returns confirmed / likely_free / busy / unknown per person with the quoted evidence. Use for your candidate hosts and drivers (up to 8 ids) before proposing. 'unknown' is honest: the app will ask them.",
   parameters: { type: "object", properties: { userIds: { type: "array", items: { type: "string" } }, start: { type: "string" }, end: { type: "string" } }, required: ["userIds", "start", "end"] },
-  run: ({ userIds, start, end }, { userId }) => {
-    const dates = datesBetween(start, end);
-    const ids = [...new Set([userId, ...(userIds ?? [])])].filter((id) => {
+  run: async ({ userIds, start, end }, { userId }) => {
+    const ids = [...new Set(userIds ?? [])].filter((id) => {
       const u = getUser(id);
-      return u && (id === userId || canSeeUser(userId, u));
+      return u && id !== userId && canSeeUser(userId, u);
     });
+    const res = await inferMany(userId, ids, start, end);
     return {
-      dates,
-      people: ids.map((id) => {
-        const u = getUser(id)!;
-        const busy = dates.filter((d) => u.busyDates?.includes(d));
-        return { id, name: u.name, busyOn: busy, free: busy.length === 0 };
-      }),
+      dates: datesBetween(start, end),
+      people: res.map((r) => ({ id: r.personId, name: getUser(r.personId)!.name, status: r.overall, summary: r.summary, free: r.overall !== "busy", days: r.days.map((d) => ({ date: d.date, status: d.status, reason: d.reason, quote: d.quote })), signals: r.signalCount })),
     };
   },
 };
@@ -178,7 +177,7 @@ export const getCityMedia: ToolDef<{ city: string; limit?: number }> = {
 /** One round trip for the whole picture: profile + network by city + events/rides + who's free. */
 export const scanNetwork: ToolDef<{ start: string; end: string }> = {
   name: "scan_network",
-  description: "Everything in one call for a date range: the user's profile and taste, every person they can see in other cities (hosting, car, free that weekend, connection), events their people are going to, and rides with open seats. Start here.",
+  description: "Everything in one call for a date range: the user's profile and taste, every person they can see in other cities (Open Door offers, car, quick availability from RSVPs, connection), events their people are going to, and rides with open seats. Start here.",
   parameters: { type: "object", properties: { start: { type: "string", description: "YYYY-MM-DD" }, end: { type: "string", description: "YYYY-MM-DD" } }, required: ["start", "end"] },
   run: async (a, ctx) => {
     const dates = datesBetween(a.start, a.end);
@@ -186,7 +185,7 @@ export const scanNetwork: ToolDef<{ start: string; end: string }> = {
     const net = (await findPeopleByCity.run({}, ctx)) as { homeCity?: string; cities: { city: string; cityName: string; people: ReturnType<typeof personFor>[]; hostsOpen: number }[] };
     const cities = net.cities.map((c) => ({
       ...c,
-      people: c.people.map((p) => ({ ...p, freeThatWeekend: !dates.some((d) => p.busyDates.includes(d)), busyDates: undefined })),
+      people: c.people.map((p) => { const st = quickStatus(ctx.userId, p.id, a.start, a.end); return { ...p, availability: st, freeThatWeekend: st !== "busy" }; }),
     }));
     const ev = (await getTravelEventsAndRides.run({ start: a.start, end: a.end }, ctx)) as { range: unknown; events: unknown[]; rides: unknown[] };
     return { dates, profile, cities, events: ev.events, rides: ev.rides };
@@ -236,9 +235,9 @@ export function proposeTripsTool(capture: (p: Proposal) => void): ToolDef<Propos
   };
 }
 
-export const discoverTools = (capture: (p: Proposal) => void): ToolDef[] => [scanNetwork as ToolDef, findPeopleByCity as ToolDef, checkAvailability as ToolDef, estimateTripCost as ToolDef, getCityMedia as ToolDef, proposeTripsTool(capture) as ToolDef];
+export const discoverTools = (capture: (p: Proposal) => void): ToolDef[] => [scanNetwork as ToolDef, findPeopleByCity as ToolDef, inferAvailabilityTool as ToolDef, estimateTripCost as ToolDef, getCityMedia as ToolDef, proposeTripsTool(capture) as ToolDef];
 /** Every travel tool, for tests and the Inspector. */
-export const allTravelTools: ToolDef[] = [getMyTravelProfile as ToolDef, findPeopleByCity as ToolDef, getTravelEventsAndRides as ToolDef, checkAvailability as ToolDef, estimateTripCost as ToolDef, getCityMedia as ToolDef, scanNetwork as ToolDef];
+export const allTravelTools: ToolDef[] = [getMyTravelProfile as ToolDef, findPeopleByCity as ToolDef, getTravelEventsAndRides as ToolDef, inferAvailabilityTool as ToolDef, estimateTripCost as ToolDef, getCityMedia as ToolDef, scanNetwork as ToolDef];
 
 // Re-export for other modules
 export { costBreakdown };

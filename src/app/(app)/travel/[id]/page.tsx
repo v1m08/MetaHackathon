@@ -3,16 +3,17 @@
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { Activity, CalendarCheck, Check, ChevronDown, ChevronUp, Eye, MessageCircle, Pencil, Sparkles, Trash2, X } from "lucide-react";
+import { Activity, Bot, CalendarCheck, Check, ChevronDown, ChevronUp, DoorOpen, Eye, MessageCircle, Pencil, Sparkles, Trash2, X } from "lucide-react";
 import { Shell } from "@/components/Shell";
 import { ModeBadge, ReasoningStream } from "@/components/travel/Reasoning";
 import { PersonRow, PriceLine } from "@/components/travel/TripCard";
+import { RequestCard, TurnList, type RequestView } from "@/components/travel/Negotiation";
 import { Avatar, Button, Photo, cx } from "@/components/ui";
 import { api, refresh, useApi } from "@/lib/api";
 import { streamPost } from "@/lib/sse";
 import type { DatesResult, Draft } from "@/lib/travel/coordinate";
 import type { Guide } from "@/lib/travel/guide";
-import type { StreamStep } from "@/lib/travel/store";
+import type { NegotiationTurn, StreamStep } from "@/lib/travel/store";
 import type { Trip } from "@/lib/travel/validate";
 
 const fmt = (iso: string) => new Date(iso + (iso.length === 10 ? "T12:00:00" : "")).toLocaleString("en-US", { weekday: "short", month: "short", day: "numeric" });
@@ -76,6 +77,37 @@ export default function TripPage() {
   const started = useRef(false);
   const [coord, setCoord] = useState<{ dates: DatesResult; drafts: Draft[]; mode?: string } | null>(null);
   const [drafting, setDrafting] = useState(false);
+  const [asking, setAsking] = useState<string | null>(null);
+  const [negoStarted, setNegoStarted] = useState(false);
+  const [negotiating, setNegotiating] = useState(false);
+  const [negoTurns, setNegoTurns] = useState<NegotiationTurn[]>([]);
+  const [negoResult, setNegoResult] = useState<{ mode: string; summary: string; costUsd: number } | null>(null);
+  const [negoRequests, setNegoRequests] = useState<RequestView[]>([]);
+  async function negotiateNow() {
+    setNegoStarted(true);
+    setNegotiating(true);
+    setNegoTurns([]);
+    try {
+      const r = await streamPost<NegotiationTurn, { mode: string; summary: string; costUsd: number; requests: { id: string }[] }>("/api/opendoor/negotiate", { tripId: trip!.id }, (t) => setNegoTurns((p) => [...p, t]));
+      setNegoResult(r);
+      const all = await api<{ requests: RequestView[] }>("/api/opendoor/requests");
+      setNegoRequests(all.requests.filter((x) => r.requests.some((q) => q.id === x.id)));
+      refresh("/api/conversations");
+    } catch (e) {
+      setNegoTurns((p) => [...p, { i: p.length, at: 0, from: "code", kind: "info", text: `Stopped: ${(e as Error).message}` }]);
+    } finally {
+      setNegotiating(false);
+    }
+  }
+  async function ask(personId: string) {
+    setAsking(personId);
+    try {
+      setCoord(await api(`/api/travel/coordinate`, { method: "POST", json: { tripId: trip!.id, action: "confirm", personId } }));
+      refresh("/api/conversations");
+    } finally {
+      setAsking(null);
+    }
+  }
 
   useEffect(() => {
     if (!trip || started.current) return;
@@ -177,12 +209,28 @@ export default function TripPage() {
                 {coord.dates.people.map((p) => (
                   <div key={p.id} className="contents">
                     <div className="flex items-center gap-2 truncate py-1"><Avatar src={p.avatar} name={p.name} size={22} /><span className="truncate">{p.role === "you" ? "You" : first(p.name)} <span className="text-ink-2">· {p.role}</span></span></div>
-                    {coord.dates.dates.map((d) => <div key={d} className={cx("my-1 rounded-md text-center text-[11px] font-semibold leading-6", p.busyOn.includes(d) ? "bg-red-100 text-red-700" : "bg-emerald-100 text-emerald-700")}>{p.busyOn.includes(d) ? "busy" : "free"}</div>)}
+                    {p.days.map((d) => {
+                      const st = d.status;
+                      const cls = st === "busy" ? "bg-red-100 text-red-700" : st === "confirmed_free" ? "bg-emerald-200 text-emerald-800" : st === "likely_free" ? "bg-emerald-50 text-emerald-700" : "bg-[#f0f2f5] text-ink-2";
+                      return <div key={d.date} title={d.reason ? `${d.reason}${d.quote ? ` — "${d.quote}"` : ""}` : "no signal"} className={cx("my-1 rounded-md text-center text-[10.5px] font-semibold leading-6", cls)}>{st === "busy" ? "busy" : st === "confirmed_free" ? "yes" : st === "likely_free" ? "likely" : "?"}</div>;
+                    })}
                   </div>
                 ))}
               </div>
+              <ul className="mt-2 space-y-1 text-[12.5px]">
+                {coord.dates.people.filter((p) => p.role !== "you").map((p) => (
+                  <li key={p.id} className="rounded-lg bg-[#f7f8fa] px-2 py-1.5">
+                    <div className="flex items-center gap-2">
+                      <b className="font-semibold text-ink">{first(p.name)}</b>
+                      <span className={cx("rounded-full px-2 py-0.5 text-[10.5px] font-semibold uppercase", p.status === "busy" ? "bg-red-100 text-red-700" : p.status === "confirmed" ? "bg-emerald-200 text-emerald-800" : p.status === "likely_free" ? "bg-emerald-50 text-emerald-700" : "bg-[#e4e6eb] text-ink-2")}>{p.label}</span>
+                      {p.canAsk && <button disabled={asking === p.id} onClick={() => ask(p.id)} className="ml-auto shrink-0 rounded-full bg-fb px-2.5 py-0.5 text-[11px] font-semibold text-white">{asking === p.id ? "…" : `Ask ${first(p.name)}`}</button>}
+                    </div>
+                    <div className="mt-0.5 text-ink-2">{p.summary}{p.days.find((d) => d.quote) ? <span className="italic"> · &ldquo;{p.days.find((d) => d.quote)!.quote}&rdquo;</span> : null}</div>
+                  </li>
+                ))}
+              </ul>
               <div className="mt-2 text-[13px] text-ink-2">
-                {coord.dates.allFree ? <>Everyone&apos;s free {fmt(trip.start)}–{fmt(trip.end)}.</> : <>Someone&apos;s busy. {coord.dates.alternatives.length ? <>Everyone is free <b className="font-semibold text-ink">{coord.dates.alternatives.map((a) => a.label).join(" or ")}</b>.</> : null}</>}
+                {coord.dates.allFree ? (coord.dates.allKnown ? <>Everyone&apos;s around {fmt(trip.start)}–{fmt(trip.end)}.</> : <>No conflicts seen for {fmt(trip.start)}–{fmt(trip.end)}; &ldquo;Ask&rdquo; sends a one-line check you approve first.</>) : <>Someone&apos;s busy. {coord.dates.alternatives.length ? <>No known conflicts <b className="font-semibold text-ink">{coord.dates.alternatives.map((a) => a.label).join(" or ")}</b>.</> : null}</>}
                 {!coord.dates.allFree && coord.dates.alternatives.length > 0 && (
                   <span className="ml-1">{coord.dates.alternatives.map((a) => <Link key={a.start} href={`/travel?start=${a.start}&end=${a.end}&budget=${trip.budget}&run=1`} className="ml-1 font-semibold text-fb">Try {a.label} →</Link>)}</span>
                 )}
@@ -194,6 +242,25 @@ export default function TripPage() {
                   <div className="text-[12px] text-ink-2">Drafted by the agent, sent only when you approve. They also sit in Messenger.</div>
                   {coord.drafts.map((d) => <DraftCard key={d.id} d={d} onChange={reloadCoord} />)}
                 </div>
+              )}
+            </div>
+          )}
+        </section>
+
+        <section className="rounded-2xl bg-white p-4 shadow-sm">
+          <div className="flex items-center gap-2"><DoorOpen size={16} className="text-emerald-600" /><h2 className="text-[16px] font-bold">Ask their agents</h2>{negoResult && <ModeBadge mode={negoResult.mode} className="ml-auto" />}</div>
+          <p className="mt-1 text-[13px] text-ink-2">Your agent asks the Open Door agents of people in {trip.cityName} whose door is open to you. Nobody&apos;s name is shown to them; theirs isn&apos;t shown to you until you both say yes.</p>
+          {!negoStarted ? (
+            <Button className="mt-3 w-full" onClick={negotiateNow}><Bot size={16} /> Ask their agents, anonymously</Button>
+          ) : (
+            <div className="mt-3 space-y-3">
+              <div className="rounded-xl bg-[#f7f8fa] p-2.5"><TurnList turns={negoTurns} live={negotiating} anonymous={false} /></div>
+              {negoResult && (
+                <>
+                  <div className="text-[13px] text-ink">{negoResult.summary}</div>
+                  {negoRequests.map((r) => <RequestCard key={r.id} r={r} onChange={(nr) => setNegoRequests((list) => list.map((x) => (x.id === nr.id ? nr : x)))} />)}
+                  <Link href="/travel/opendoor" className="inline-flex items-center gap-1 text-[13px] font-semibold text-fb">All your Open Door requests →</Link>
+                </>
               )}
             </div>
           )}

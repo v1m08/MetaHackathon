@@ -34,6 +34,21 @@ export interface User {
   privacy?: "public" | "friends";
   /** How this person knows each friend, by friend id ("UT Design classmates"). */
   friendLabels?: Record<ID, string>;
+  /** Open Door: this person's hosting policy in their own words, plus who it is open to and what they offer.
+   *  `openToHosting`/`hostingNote` are kept in sync from it (couch offered + on) so older code keeps working. */
+  openDoor?: OpenDoor;
+}
+
+export type OpenDoorTier = "friends" | "fof" | "network";
+export type OpenDoorOffer = "couch" | "ride" | "show-around";
+export interface OpenDoor {
+  on: boolean;
+  /** Free text, their words: "Couch open for college friends and their friends. Not during finals. One person max." */
+  policy: string;
+  tier: OpenDoorTier;
+  offers: OpenDoorOffer[];
+  maxGuests: number;
+  updatedAt?: string;
 }
 
 export interface City {
@@ -173,11 +188,13 @@ export interface Message {
   text: string;
   createdAt: string;
   reactions?: Record<ID, string>;
-  attachment?: { type: "image" | "listing" | "event" | "trip"; ref: string };
+  attachment?: { type: "image" | "listing" | "event" | "trip" | "opendoor"; ref: string };
   readBy?: ID[];
   /** Drafts written by the travel agent sit here until the sender approves them. Only the sender sees drafts. */
   status?: "draft" | "sent";
   draftReason?: string;
+  /** Context card written by code when an Open Door match is revealed; rendered as a system line, not a bubble. */
+  system?: boolean;
 }
 
 export interface Conversation {

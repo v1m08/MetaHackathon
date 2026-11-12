@@ -128,6 +128,7 @@ export default function ThreadPage() {
           const lastOfRun = !next || next.senderId !== m.senderId;
           const sender = byId[m.senderId];
           if (m.status === "draft") return <DraftBubble key={m.id} m={m} onDone={() => { mutate(); refresh("/api/conversations"); }} />;
+          if (m.system) return <div key={m.id} className="my-3 rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2 text-center text-[12.5px] leading-snug text-emerald-900">{m.text}</div>;
           return (
             <div key={m.id}>
               {gap && <div className="my-3 text-center text-[11px] font-semibold text-ink-2 uppercase">{messageTime(m.createdAt)}</div>}
