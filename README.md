@@ -8,6 +8,8 @@ cp .env.example .env     # optional; leave MODEL_API_KEY empty for mock mode
 npm run dev              # http://localhost:3000
 ```
 
+> **Hang Again** (the reconnect prototype on the `reconnect-prototype` branch) lives at **Friends → Hangout** (`/friends/hangout`), with demo controls at `/demo`. See [Hang Again](#hang-again-reconnect-prototype) below.
+
 ## What's here
 
 | Surface | Route | Notes |
@@ -178,3 +180,78 @@ npm run typecheck  # tsc --noEmit
 npm run warm       # cache every seed image locally (server must be running)
 npm run reset      # restore the seed data (server must be running)
 ```
+
+## Hang Again (reconnect prototype)
+
+Hang Again helps young adults keep friendships alive after "we should hang out sometime." It's a prototype on seeded mock data: no real Facebook APIs, no scraping, no real chats. Muse models power the AI, but only on the server.
+
+1. **See again.** After an Event or Group meetup you privately pick who you'd want to see again. Only mutual picks are revealed, and each match puts an egg in your Hangout. The egg hatches after your first two-way chat.
+2. **Why you, why now.** When a friend posts, shares a Reel or has a life update, Muse links it to your shared past (tagged photos, places, inside jokes) and suggests one small move. You always write your own message.
+3. **The Hangout.** One critter per close friend, hosted by a (placeholder) Muse sprite. Critters get sleepy when you drift and wake up when you reconnect. They never get sick or die. A toggle swaps critters for plants with the same states.
+
+### Setup
+
+```bash
+npm install
+cp .env.example .env.local   # add your key + model IDs (optional: everything works in cached mode)
+npm run dev                  # http://localhost:3000/friends/hangout  ·  demo controls: /demo
+```
+
+| Env var | What it does |
+|---|---|
+| `META_MODEL_API_KEY` | Meta Model API key. Empty → Hang Again runs in **cached** mode. (Alias of the base app's `MODEL_API_KEY`.) |
+| `META_MODEL_BASE_URL` | OpenAI-compatible base URL, default `https://api.meta.ai/v1`. (Alias of `MODEL_API_BASE_URL`.) |
+| `MUSE_EMBER_MODEL` | Model ID for the high-volume memory builder. Placeholder `muse-ember`. Check the Model API docs or `/dev/ai` → List models. |
+| `MUSE_WONDER_MODEL` | Model ID for why-now, critter designer, plan proposer and keepsake picker. Placeholder `muse-wonder`. |
+| `DEMO_DATE` | Demo "today", default `2026-11-14`. Also settable at runtime from `/demo`. |
+| `HANGOUT_AI_MODE` | `live` or `cached` at boot. Defaults to live when a key is set. Flip any time from `/demo`. |
+
+Keys stay in `.env.local` (git-ignored) and are only read by server code; the browser never sees them.
+
+### Scripts
+
+```
+npm test                         # unit tests: sleep math, guardrails, evidence checks
+npm run eval:moments             # all friend moments through why-now (C) + guardrails (D), prints pass/fail
+npm run eval:moments -- --cached # same, replaying cached responses (checks the code, not the model)
+npm run memory:rebuild           # rebuild every memory file (Ember) + critter design (Wonder) → data/hangout/memory.json
+npm run seed:images              # regenerate placeholder images in public/seed
+npm run hangout:reset            # reset the Hang Again demo state (server must be running)
+```
+
+`eval:moments` and `memory:rebuild` run live when a key is set (`--live` / `--cached` to force). The eval target is at least 4 of the first 5 moments correct before demoing live. The eval also injects a fake evidence ID to prove the code check rejects it.
+
+### Running the demo
+
+Open `/demo` on the presenter laptop. It shows the controls, a live phone and the debug drawer side by side. The phone also works on its own at `/friends/hangout`.
+
+1. **Hangout.** Maya, Jess and Chris are napping, Dev is sleepy, Priya is awake and Alex is in the hammock. Tap a critter for shared places, keepsakes and the last real chat.
+2. **Maya posts from Ramen Ya** (the live Wonder call). A push banner lands, and the sheet shows the reason, the old photo, "Why this?" with the cited evidence, and one action. Tap *Send Maya this photo*, write your own words, and send.
+3. **Maya replies** → her critter wakes up. Tap *Suggest a plan*. Muse checks both calendars and drafts a plan only you can see. *Share in chat*, tap both *Yes* buttons, then *We met up*. The critter celebrates and earns the chopsticks pin.
+4. **See again.** Tap the Saturday Run Club card and pick Sam. **Sam mutual pick** → reveal + egg. Message Sam, then **Sam replies** → the egg hatches and Muse designs Sam's critter.
+5. Show the filters: **Priya** and **Chris** (Muse says no), **Alex** (resting) and **Jordan** (blocked, never reaches the model). There's one nudge per day, so press **+1d** or *Clear today's nudges* between moments.
+6. Time travel with **+3d / +7d** to watch celebrating fade and critters drift. Flip **Plants** to compare themes.
+
+**Live vs cached.** Cached mode replays saved responses, so the demo works if the API or wifi fails. In live mode a failed call also falls back to the cache, and the debug drawer says so (`live→cached`). Every live response that passes its checks is saved to `data/hangout/recorded.json`; anything not recorded yet falls back to the hand-written fixtures in `src/server/hangout/fixtures.ts`. After a good live rehearsal (or `npm run eval:moments` + `npm run memory:rebuild` with a key), commit `data/hangout/*.json` so the demo machine replays that run.
+
+### How it works
+
+```
+src/data/hangout/seed.ts        Cast (you + 8 friends), photos, gatherings, opted-in chats, reactions, calendars, places
+src/data/hangout/scenarios.ts   The friend moments + what the eval expects
+src/lib/hangout/                Pure, shared: types, parts library, zod schemas, sleep math, guardrails, evidence checks (+ tests)
+src/server/hangout/muse.ts      Muse calls on the shared AI layer: model routing, zod validation, retry once, fail safe, cache/record
+src/server/hangout/pipeline.ts  A memory builder · C why-now · D guardrails · E critter designer · F plan proposer · G keepsake picker
+src/server/hangout/store.ts     In-memory demo state (like server/db.ts) + memory files from data/hangout/memory.json
+src/server/hangout/actions.ts   Chat, replies, See again, plans, meetups, resting
+src/app/api/hangout/**          Thin routes · src/app/(app)/friends/hangout/** screens · src/app/demo demo controls
+```
+
+- **A · Memory builder (Ember)** extracts shared places and inside jokes, citing IDs. Code keeps only IDs that exist and include both people, then recomputes counts and dates from them.
+- **B · Sleep math (code)**: rhythm = median gap between two-way chats and meetups, clamped 7–120 (default 30 with fewer than 3). Ratio = days since last real contact / rhythm: under 1 awake, 1–1.5 sleepy, over 1.5 napping. Celebrating for 3 days after a meetup; resting never changes. A two-way chat means both sent a message within 48 hours. Likes and reactions never count. The timeline is computed in code from this rule rather than by the model.
+- **C · Why-now (Wonder)** gets the new post/Reel, the memory file and the candidate evidence with IDs. Every cited ID must exist and include both people, or the nudge is discarded.
+- **D · Guardrails (code)** run **before** C (blocked, unfriended, resting and outside-circle friends are never sent to the model) and **after** it (status again, max one nudge per day, no mood or health words).
+- **E · Critter designer, F · Plan proposer, G · Keepsake picker (Wonder)** pick from fixed libraries. The plan's slot must be free for both people: one retry, then the first mutual free slot. Cost always comes from the places table.
+- Every model response is validated with zod: retry once, then fail safe (no nudge). Every call also shows up in the AI Inspector at `/dev/ai`.
+
+**Swapping in real people.** Edit names in `src/data/hangout/seed.ts` and drop photos your friends agreed to share into `public/seed/photos` and `public/seed/avatars` (same filenames, or point `imagePath` at a `.jpg`). Critter parts live in `src/lib/hangout/parts.ts` and render in `src/components/hangout/Critter.tsx`; preview them all at `/demo/parts`. The Muse host in `src/components/hangout/MuseHost.tsx` is a placeholder. Drop in official assets if the hackathon provides them.
