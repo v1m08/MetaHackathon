@@ -48,7 +48,6 @@ export interface CostBreakdown {
   lodging: LodgingMode;
 }
 
-const r5 = (n: number) => Math.round(n / 5) * 5;
 
 export function transportCost(from: City, to: City, mode: TransportMode, occupants = 2, rideShareUsd?: number): CostLine {
   const miles = milesBetween(from, to);
@@ -87,8 +86,10 @@ export function costBreakdown(input: CostInput): CostBreakdown {
     { label: `food, ${days} days${input.withLocal ? " (local's cheap spots)" : ""}`, usd: days * (input.withLocal ? PRICES.foodPerDayWithLocal : PRICES.foodPerDay) },
     { label: `getting around, ${days} days`, usd: input.lodging === "host" && input.withLocal ? days * PRICES.localTransitPerDay * 0.5 : days * PRICES.localTransitPerDay },
   ];
-  const total = r5(lines.reduce((n, l) => n + l.usd, 0));
-  return { total, lines: lines.map((l) => ({ ...l, usd: Math.round(l.usd) })), transport: input.transport, lodging: input.lodging };
+  // Round each line first, then sum, so the total always equals the lines a judge can add up.
+  const rounded = lines.map((l) => ({ ...l, usd: Math.round(l.usd) }));
+  const total = rounded.reduce((n, l) => n + l.usd, 0);
+  return { total, lines: rounded, transport: input.transport, lodging: input.lodging };
 }
 
 /** The honest pair: plan A if people say yes, plan B if they don't. */

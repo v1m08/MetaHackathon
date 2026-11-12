@@ -13,7 +13,7 @@
   "label": "Nov 20–22",
   "busy": false
  },
- "startedAt": "2026-11-12T11:18:35.419Z",
+ "startedAt": "2026-11-12T11:22:55.196Z",
  "stages": {
   "discover": {
    "steps": [
@@ -26,16 +26,16 @@
     {
      "kind": "model",
      "text": "Deciding what to look at next",
-     "detail": "1598 ms",
+     "detail": "3 ms",
      "i": 1,
-     "at": 1598
+     "at": 4
     },
     {
      "kind": "tool",
      "tool": "scan_network",
      "text": "Mapping your whole network: who lives where, who hosts, who's driving Nov 20–22",
      "i": 2,
-     "at": 1599
+     "at": 4
     },
     {
      "kind": "result",
@@ -58,21 +58,21 @@
       "ride_finn_nola"
      ],
      "i": 3,
-     "at": 1602
+     "at": 6
     },
     {
      "kind": "model",
      "text": "Deciding what to look at next",
-     "detail": "6259 ms",
+     "detail": "1 ms",
      "i": 4,
-     "at": 7861
+     "at": 7
     },
     {
      "kind": "tool",
      "tool": "estimate_trip_cost",
      "text": "Pricing New Orleans: 2 nights, staying with a friend, by a friend's car",
      "i": 5,
-     "at": 7861
+     "at": 7
     },
     {
      "kind": "result",
@@ -80,14 +80,14 @@
      "text": "about $105 if they say yes, about $305 otherwise",
      "detail": "542 mi · 8h drive · hotel + solo would be $525",
      "i": 6,
-     "at": 7861
+     "at": 7
     },
     {
      "kind": "tool",
      "tool": "estimate_trip_cost",
      "text": "Pricing Houston: 2 nights, staying with a friend, by own-car",
      "i": 7,
-     "at": 7861
+     "at": 7
     },
     {
      "kind": "result",
@@ -95,14 +95,14 @@
      "text": "about $80 if they say yes, about $215 otherwise",
      "detail": "173 mi · 2.5h drive · hotel + solo would be $405",
      "i": 8,
-     "at": 7861
+     "at": 7
     },
     {
      "kind": "tool",
      "tool": "estimate_trip_cost",
      "text": "Pricing Dallas: 2 nights, staying with a friend, by own-car",
      "i": 9,
-     "at": 7862
+     "at": 7
     },
     {
      "kind": "result",
@@ -110,21 +110,21 @@
      "text": "about $85 if they say yes, about $225 otherwise",
      "detail": "215 mi · 3.2h drive · hotel + solo would be $420",
      "i": 10,
-     "at": 7862
+     "at": 7
     },
     {
      "kind": "model",
      "text": "Deciding what to look at next",
-     "detail": "2381 ms",
+     "detail": "0 ms",
      "i": 11,
-     "at": 10242
+     "at": 8
     },
     {
      "kind": "tool",
      "tool": "get_city_media",
      "text": "Reading your friends' photos and Reels from New Orleans",
      "i": 12,
-     "at": 10242
+     "at": 8
     },
     {
      "kind": "result",
@@ -132,14 +132,14 @@
      "text": "Read 5 photos from New Orleans",
      "detail": "1 of Beau's, 1 of Elijah's, 1 of Camille's, 1 of Devon's",
      "i": 13,
-     "at": 10243
+     "at": 8
     },
     {
      "kind": "tool",
      "tool": "get_city_media",
      "text": "Reading your friends' photos and Reels from Houston",
      "i": 14,
-     "at": 10243
+     "at": 8
     },
     {
      "kind": "result",
@@ -147,41 +147,41 @@
      "text": "Read 2 photos from Houston",
      "detail": "1 of Raj's, 1 of Layla's",
      "i": 15,
-     "at": 10243
+     "at": 8
     },
     {
      "kind": "model",
      "text": "Deciding what to look at next",
-     "detail": "11627 ms",
+     "detail": "1 ms",
      "i": 16,
-     "at": 21871
+     "at": 9
     },
     {
      "kind": "tool",
      "tool": "propose_trips",
      "text": "Putting together 3 trips",
      "i": 17,
-     "at": 21871
+     "at": 9
     },
     {
      "kind": "info",
      "text": "Checking every person, ride, event and photo against what you can actually see",
      "i": 18,
-     "at": 21871
+     "at": 9
     },
     {
      "kind": "done",
      "text": "3 trips that only exist because of your people",
-     "detail": "21.9s · live · $0.036",
+     "detail": "0.0s · cached",
      "i": 19,
-     "at": 21872
+     "at": 10
     }
    ],
    "result": {
-    "runId": "run_mwdgg99p",
+    "runId": "run_mwdglcui",
     "trips": [
      {
-      "id": "trip_mwdgg99p727x",
+      "id": "trip_mwdglcuixek8",
       "viewerId": "devon",
       "city": "houston",
       "cityName": "Houston",
@@ -316,10 +316,10 @@
       },
       "fitsBudget": true,
       "repairs": [],
-      "createdAt": "2026-11-12T11:18:57.517Z"
+      "createdAt": "2026-11-12T11:22:55.434Z"
      },
      {
-      "id": "trip_mwdgg99p0zae",
+      "id": "trip_mwdglcuidqo5",
       "viewerId": "devon",
       "city": "new-orleans",
       "cityName": "New Orleans",
@@ -631,10 +631,10 @@
       },
       "fitsBudget": true,
       "repairs": [],
-      "createdAt": "2026-11-12T11:18:57.517Z"
+      "createdAt": "2026-11-12T11:22:55.434Z"
      },
      {
-      "id": "trip_mwdgg99pblx2",
+      "id": "trip_mwdglcuixgcn",
       "viewerId": "devon",
       "city": "dallas",
       "cityName": "Dallas",
@@ -765,26 +765,26 @@
       },
       "fitsBudget": true,
       "repairs": [],
-      "createdAt": "2026-11-12T11:18:57.517Z"
+      "createdAt": "2026-11-12T11:22:55.434Z"
      }
     ],
-    "mode": "live",
-    "costUsd": 0.035500000000000004,
-    "latencyMs": 21872,
+    "mode": "cached",
+    "costUsd": 0,
+    "latencyMs": 10,
     "model": "muse-spark-1.3"
    }
   },
   "audit": {
-   "runId": "run_mwdgg99p",
+   "runId": "run_mwdglcui",
    "viewerId": "devon",
    "input": {
     "start": "2026-11-20",
     "end": "2026-11-22",
     "budget": 150
    },
-   "mode": "live",
-   "costUsd": 0.035500000000000004,
-   "latencyMs": 21872,
+   "mode": "cached",
+   "costUsd": 0,
+   "latencyMs": 10,
    "raw": {
     "ids": 11,
     "grounded": 11,
@@ -793,7 +793,7 @@
    },
    "trips": [
     {
-     "tripId": "trip_mwdgg99p727x",
+     "tripId": "trip_mwdglcuixek8",
      "city": "houston",
      "elements": [
       {
@@ -825,7 +825,7 @@
      "fofHasMutual": null
     },
     {
-     "tripId": "trip_mwdgg99p0zae",
+     "tripId": "trip_mwdglcuidqo5",
      "city": "new-orleans",
      "elements": [
       {
@@ -913,7 +913,7 @@
      "fofHasMutual": null
     },
     {
-     "tripId": "trip_mwdgg99pblx2",
+     "tripId": "trip_mwdglcuixgcn",
      "city": "dallas",
      "elements": [
       {
@@ -951,234 +951,207 @@
    "steps": [
     {
      "kind": "info",
-     "text": "Building your Dallas guide from what Diego posted",
+     "text": "Building your Houston guide from what TJ and Raj posted",
      "i": 0,
-     "at": 4
+     "at": 1
     },
     {
      "kind": "model",
      "text": "Deciding what to read next",
-     "detail": "2051 ms",
+     "detail": "1971 ms",
      "i": 1,
-     "at": 2055
+     "at": 1972
     },
     {
      "kind": "tool",
      "tool": "get_my_travel_profile",
      "text": "Reading your taste from saved Reels and likes",
      "i": 2,
-     "at": 2055
+     "at": 1972
     },
     {
      "kind": "result",
      "tool": "get_my_travel_profile",
      "text": "You're into foodies, art people, night owls and music lovers",
      "i": 3,
-     "at": 2057
+     "at": 1974
     },
     {
      "kind": "tool",
      "tool": "get_city_media",
-     "text": "Reading your friends' posts and Reels from Dallas",
+     "text": "Reading your friends' posts and Reels from Houston",
      "i": 4,
-     "at": 2058
+     "at": 1974
     },
     {
      "kind": "result",
      "tool": "get_city_media",
-     "text": "2 photos and captions from Harper, Cole",
+     "text": "2 photos and captions from Raj, Layla",
      "i": 5,
-     "at": 2058
+     "at": 1974
     },
     {
      "kind": "model",
      "text": "Deciding what to read next",
-     "detail": "6602 ms",
+     "detail": "14119 ms",
      "i": 6,
-     "at": 8660
+     "at": 16094
     },
     {
      "kind": "tool",
      "tool": "look_at_photo",
-     "text": "Looking closely at a photo: what's the vibe, crowd, and any price or food details visibl",
+     "text": "Looking closely at a photo: what is the dish in this photo and what does it look like up",
      "ids": [
-      "p_00qh"
+      "p_00ql"
      ],
      "i": 7,
-     "at": 8660
+     "at": 16094
     },
     {
      "kind": "result",
      "tool": "look_at_photo",
-     "text": "Muse saw: sunny state fair vibe, big tex with his arms out, texas flag and the cotton bowl behind him, and just a small crowd down by the cacti. no pr",
-     "detail": "Harper Nguyen's photo · live image understanding",
+     "text": "Muse saw: it's a banh mi split open on white paper in a crusty baguette. up close there's shredded pork, bright orange pickled carrot shreds, long cuc",
+     "detail": "Raj Iyer's photo · live image understanding",
      "i": 8,
-     "at": 10997
-    },
-    {
-     "kind": "tool",
-     "tool": "look_at_photo",
-     "text": "Looking closely at a photo: what's the art vibe here, is it good for photos and a quiet ",
-     "ids": [
-      "p_00q9"
-     ],
-     "i": 9,
-     "at": 10998
-    },
-    {
-     "kind": "result",
-     "tool": "look_at_photo",
-     "text": "Muse saw: yeah, the vibe is sweet — pillars painted with trees and grass that blend into the actual park and trees behind them. definitely good for ph",
-     "detail": "Cole Patterson's photo · live image understanding",
-     "i": 10,
-     "at": 13191
+     "at": 19254
     },
     {
      "kind": "model",
      "text": "Deciding what to read next",
-     "detail": "14159 ms",
-     "i": 11,
-     "at": 27350
+     "detail": "15453 ms",
+     "i": 9,
+     "at": 34708
     },
     {
      "kind": "tool",
      "tool": "propose_guide",
      "text": "Writing 4 recommendations, each credited to a friend",
-     "i": 12,
-     "at": 27350
+     "i": 10,
+     "at": 34708
     },
     {
      "kind": "info",
      "text": "Checking every credit against the real author and what you can see",
-     "i": 13,
-     "at": 27350
+     "i": 11,
+     "at": 34708
     },
     {
      "kind": "done",
      "text": "4 picks, credited to 2 friends",
-     "detail": "27.4s · live · $0.023",
-     "i": 14,
-     "at": 27351
+     "detail": "34.7s · live · $0.022",
+     "i": 12,
+     "at": 34708
     }
    ],
    "result": {
-    "tripId": "trip_mwdgg99pblx2",
-    "intro": "your dallas intel is thin but good — harper + cole basically left you a cheap weekend blueprint. staying with diego, you can do all this on foot + dart.",
+    "tripId": "trip_mwdglcuixek8",
+    "intro": "your houston people are basically: cheap eats + big rockets. raj wants to drive you around, layla knows where the free art is.",
     "items": [
      {
-      "title": "big tex hug",
-      "what": "cotton bowl lawn, big tex with arms out, flag + cacti. go weekday morning, snap the pic harper got, people-watch.",
-      "whyYou": "you're art people + you love a big dumb photo op, this is dallas's version.",
-      "tasteTags": [
-       "art people",
-       "budget travellers"
-      ],
-      "priceHint": "free",
-      "when": "friday morning",
-      "credit": {
-       "id": "harper",
-       "name": "Harper Nguyen",
-       "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D34",
-       "connection": "public post"
-      },
-      "evidence": {
-       "kind": "post",
-       "id": "p_00qh",
-       "authorId": "harper",
-       "image": "/api/img?u=https%3A%2F%2Fthumb.wikimedia.org%2Fwikipedia%2Fcommons%2Fthumb%2F5%2F5c%2FState_Fair_of_Texas_September_2019_15_%2528Big_Tex%2529.jpg%2F1280px-State_Fair_of_Texas_September_2019_15_%2528Big_Tex%2529.jpg",
-       "caption": "big tex standing over the cacti with his arms out like he's about to hug 100k people. cotton bowl behind him, texas flag, the whole fair. fletcher's corny dog is $10 now which is a crime but I paid it. go on a weekday, parking's $25 on weekends, ride the dart instead, $6 all day",
-       "sawLive": "sunny state fair vibe, big tex with his arms out, texas flag and the cotton bowl behind him, and just a small crowd down by the cacti. no price or food signs are visible in the pic — only \"cotton bowl,\" dickies, and \"state fair of texas 2019\" on his belt buckle."
-      }
-     },
-     {
-      "title": "fletcher's $10 corny dog",
-      "what": "the fair classic harper paid $10 for and went back for seconds. get one, split a second if diego comes.",
-      "whyYou": "foodies core — you saved that birria dip reel for exactly this kind of salty pilgrimage.",
+      "title": "the $4.50 banh mi on bellaire",
+      "what": "shredded pork banh mi on bellaire — pickled carrots, cucumber sticks, fistful of cilantro on paper. crusty baguette, confirmed up close.",
+      "whyYou": "you're foodies + you saved that birria dip reel, this is that same cheap-perfect sandwich energy.",
       "tasteTags": [
        "foodies",
        "budget travellers"
       ],
-      "priceHint": "$10",
-      "when": "friday lunch",
+      "priceHint": "$4.50",
+      "when": "friday lunch on arrival",
       "credit": {
-       "id": "harper",
-       "name": "Harper Nguyen",
-       "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D34",
-       "connection": "public post"
+       "id": "raj",
+       "name": "Raj Iyer",
+       "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D71",
+       "connection": "Jordan's friend (Cheap Eats regular)"
       },
       "evidence": {
        "kind": "post",
-       "id": "p_00qh",
-       "authorId": "harper",
-       "image": "/api/img?u=https%3A%2F%2Fthumb.wikimedia.org%2Fwikipedia%2Fcommons%2Fthumb%2F5%2F5c%2FState_Fair_of_Texas_September_2019_15_%2528Big_Tex%2529.jpg%2F1280px-State_Fair_of_Texas_September_2019_15_%2528Big_Tex%2529.jpg",
-       "caption": "big tex standing over the cacti with his arms out like he's about to hug 100k people. cotton bowl behind him, texas flag, the whole fair. fletcher's corny dog is $10 now which is a crime but I paid it. go on a weekday, parking's $25 on weekends, ride the dart instead, $6 all day",
-       "sawLive": "sunny state fair vibe, big tex with his arms out, texas flag and the cotton bowl behind him, and just a small crowd down by the cacti. no price or food signs are visible in the pic — only \"cotton bowl,\" dickies, and \"state fair of texas 2019\" on his belt buckle."
+       "id": "p_00ql",
+       "authorId": "raj",
+       "image": "/api/img?u=https%3A%2F%2Fupload.wikimedia.org%2Fwikipedia%2Fcommons%2Fc%2Fc1%2FB%25C3%25A1nh_m%25C3%25AC_x%25C3%25ADu_m%25E1%25BA%25A1i-meatball-sandwich.jpg",
+       "caption": "the banh mi on bellaire. $4.50. shredded pork, pickled carrots, cucumber sticks, a fistful of cilantro, on paper like it should be. this is the first stop on my official night market tour (the tour is me, driving you, for free). guest room in montrose has a ridiculous number of towels, come use them",
+       "sawLive": "it's a banh mi split open on white paper in a crusty baguette. up close there's shredded pork, bright orange pickled carrot shreds, long cucumber sticks, and lots of fresh cilantro."
       }
      },
      {
-      "title": "dart > $25 parking",
-      "what": "skip the $25 weekend parking harper warned about. $6 dart day pass straight to the fair.",
-      "whyYou": "keeps you inside that $150 total since the trip itself is already ~$110.",
+      "title": "raj's free night market drive",
+      "what": "raj's official night market tour — which is just raj driving you around for free. let him, he's literally there.",
+      "whyYou": "night owls + budget travellers, and raj is in town with you. free ride, free tour.",
       "tasteTags": [
+       "night owls",
+       "foodies",
        "budget travellers"
       ],
-      "priceHint": "$6 all day",
-      "when": "friday + weekend",
+      "priceHint": "free",
+      "when": "friday late night",
       "credit": {
-       "id": "harper",
-       "name": "Harper Nguyen",
-       "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D34",
-       "connection": "public post"
+       "id": "raj",
+       "name": "Raj Iyer",
+       "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D71",
+       "connection": "Jordan's friend (Cheap Eats regular)"
       },
       "evidence": {
        "kind": "post",
-       "id": "p_00qh",
-       "authorId": "harper",
-       "image": "/api/img?u=https%3A%2F%2Fthumb.wikimedia.org%2Fwikipedia%2Fcommons%2Fthumb%2F5%2F5c%2FState_Fair_of_Texas_September_2019_15_%2528Big_Tex%2529.jpg%2F1280px-State_Fair_of_Texas_September_2019_15_%2528Big_Tex%2529.jpg",
-       "caption": "big tex standing over the cacti with his arms out like he's about to hug 100k people. cotton bowl behind him, texas flag, the whole fair. fletcher's corny dog is $10 now which is a crime but I paid it. go on a weekday, parking's $25 on weekends, ride the dart instead, $6 all day",
-       "sawLive": "sunny state fair vibe, big tex with his arms out, texas flag and the cotton bowl behind him, and just a small crowd down by the cacti. no price or food signs are visible in the pic — only \"cotton bowl,\" dickies, and \"state fair of texas 2019\" on his belt buckle."
+       "id": "p_00ql",
+       "authorId": "raj",
+       "image": "/api/img?u=https%3A%2F%2Fupload.wikimedia.org%2Fwikipedia%2Fcommons%2Fc%2Fc1%2FB%25C3%25A1nh_m%25C3%25AC_x%25C3%25ADu_m%25E1%25BA%25A1i-meatball-sandwich.jpg",
+       "caption": "the banh mi on bellaire. $4.50. shredded pork, pickled carrots, cucumber sticks, a fistful of cilantro, on paper like it should be. this is the first stop on my official night market tour (the tour is me, driving you, for free). guest room in montrose has a ridiculous number of towels, come use them",
+       "sawLive": "it's a banh mi split open on white paper in a crusty baguette. up close there's shredded pork, bright orange pickled carrot shreds, long cucumber sticks, and lots of fresh cilantro."
       }
      },
      {
-      "title": "deep ellum sunday quiet",
-      "what": "overpass pillars painted like trees melting into the real park + brick buildings. empty sunday afternoon walk, photos, then stick around for when music starts.",
-      "whyYou": "art people + music lovers + night owls — see it empty, then see it loud later.",
+      "title": "saturn v lying down",
+      "what": "the saturn v stretched out on supports in its hangar, burnt capsule up front. layla says the rocket alone is worth it.",
+      "whyYou": "you're art people, this is sculpture at rocket scale. big, quiet, weirdly beautiful.",
       "tasteTags": [
-       "art people",
-       "music lovers"
+       "art people"
       ],
-      "priceHint": "free",
-      "when": "sunday afternoon",
+      "priceHint": "$30",
+      "when": "saturday afternoon",
       "credit": {
-       "id": "cole",
-       "name": "Cole Patterson",
-       "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D65",
+       "id": "layla",
+       "name": "Layla Haddad",
+       "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D36",
        "connection": "public post"
       },
       "evidence": {
        "kind": "post",
-       "id": "p_00q9",
-       "authorId": "cole",
-       "image": "/api/img?u=https%3A%2F%2Fthumb.wikimedia.org%2Fwikipedia%2Fcommons%2Fthumb%2F9%2F99%2FDeep_Ellum_-_29.jpg%2F1280px-Deep_Ellum_-_29.jpg",
-       "caption": "deep ellum on a sunday afternoon when it's quiet. the overpass pillars painted like trees, then actual trees and grass in the little park past them, brick buildings behind. nobody's out yet. truck's in the lot, spare bedroom in lower greenville's empty, come up",
-       "sawLive": "yeah, the vibe is sweet — pillars painted with trees and grass that blend into the actual park and trees behind them. definitely good for photos and a quiet walk, it looks empty and sunny in the pic."
+       "id": "p_00qr",
+       "authorId": "layla",
+       "image": "/api/img?u=https%3A%2F%2Fthumb.wikimedia.org%2Fwikipedia%2Fcommons%2Fthumb%2F8%2F8d%2FSaturn_V_Rocket_--_Johnson_Space_Center.jpg%2F1280px-Saturn_V_Rocket_--_Johnson_Space_Center.jpg",
+       "caption": "the saturn v lying down in its hangar is the whole museum for me. stages stretched out on black supports, the burnt capsule at the front, info signs on fake grass. it's like $30 to get in which is steep but the rocket alone is worth 20 of it. sundays I'm usually at the museum district instead, half those are free"
+      }
+     },
+     {
+      "title": "museum district free sundays",
+      "what": "museum district on sunday — layla says half those are free on sundays. do that instead of paying twice.",
+      "whyYou": "keeps you around $100 total with everything else free/cheap, and hits your art people side.",
+      "tasteTags": [
+       "art people",
+       "budget travellers"
+      ],
+      "priceHint": "free",
+      "when": "sunday morning",
+      "credit": {
+       "id": "layla",
+       "name": "Layla Haddad",
+       "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D36",
+       "connection": "public post"
+      },
+      "evidence": {
+       "kind": "post",
+       "id": "p_00qr",
+       "authorId": "layla",
+       "image": "/api/img?u=https%3A%2F%2Fthumb.wikimedia.org%2Fwikipedia%2Fcommons%2Fthumb%2F8%2F8d%2FSaturn_V_Rocket_--_Johnson_Space_Center.jpg%2F1280px-Saturn_V_Rocket_--_Johnson_Space_Center.jpg",
+       "caption": "the saturn v lying down in its hangar is the whole museum for me. stages stretched out on black supports, the burnt capsule at the front, info signs on fake grass. it's like $30 to get in which is steep but the rocket alone is worth 20 of it. sundays I'm usually at the museum district instead, half those are free"
       }
      }
     ],
     "looked": [
      {
-      "mediaId": "dal-state-fair",
-      "image": "/api/img?u=https%3A%2F%2Fthumb.wikimedia.org%2Fwikipedia%2Fcommons%2Fthumb%2F5%2F5c%2FState_Fair_of_Texas_September_2019_15_%2528Big_Tex%2529.jpg%2F1280px-State_Fair_of_Texas_September_2019_15_%2528Big_Tex%2529.jpg",
-      "author": "Harper Nguyen",
-      "saw": "sunny state fair vibe, big tex with his arms out, texas flag and the cotton bowl behind him, and just a small crowd down by the cacti. no price or food signs are visible in the pic — only \"cotton bowl,\" dickies, and \"state fair of texas 2019\" on his belt buckle.",
-      "costUsd": 0.0009,
-      "mode": "live"
-     },
-     {
-      "mediaId": "dal-deepellum",
-      "image": "/api/img?u=https%3A%2F%2Fthumb.wikimedia.org%2Fwikipedia%2Fcommons%2Fthumb%2F9%2F99%2FDeep_Ellum_-_29.jpg%2F1280px-Deep_Ellum_-_29.jpg",
-      "author": "Cole Patterson",
-      "saw": "yeah, the vibe is sweet — pillars painted with trees and grass that blend into the actual park and trees behind them. definitely good for photos and a quiet walk, it looks empty and sunny in the pic.",
+      "mediaId": "hou-viet",
+      "image": "/api/img?u=https%3A%2F%2Fupload.wikimedia.org%2Fwikipedia%2Fcommons%2Fc%2Fc1%2FB%25C3%25A1nh_m%25C3%25AC_x%25C3%25ADu_m%25E1%25BA%25A1i-meatball-sandwich.jpg",
+      "author": "Raj Iyer",
+      "saw": "it's a banh mi split open on white paper in a crusty baguette. up close there's shredded pork, bright orange pickled carrot shreds, long cucumber sticks, and lots of fresh cilantro.",
       "costUsd": 0.0006,
       "mode": "live"
      }
@@ -1186,121 +1159,103 @@
     "steps": [
      {
       "kind": "info",
-      "text": "Building your Dallas guide from what Diego posted",
+      "text": "Building your Houston guide from what TJ and Raj posted",
       "i": 0,
-      "at": 4
+      "at": 1
      },
      {
       "kind": "model",
       "text": "Deciding what to read next",
-      "detail": "2051 ms",
+      "detail": "1971 ms",
       "i": 1,
-      "at": 2055
+      "at": 1972
      },
      {
       "kind": "tool",
       "tool": "get_my_travel_profile",
       "text": "Reading your taste from saved Reels and likes",
       "i": 2,
-      "at": 2055
+      "at": 1972
      },
      {
       "kind": "result",
       "tool": "get_my_travel_profile",
       "text": "You're into foodies, art people, night owls and music lovers",
       "i": 3,
-      "at": 2057
+      "at": 1974
      },
      {
       "kind": "tool",
       "tool": "get_city_media",
-      "text": "Reading your friends' posts and Reels from Dallas",
+      "text": "Reading your friends' posts and Reels from Houston",
       "i": 4,
-      "at": 2058
+      "at": 1974
      },
      {
       "kind": "result",
       "tool": "get_city_media",
-      "text": "2 photos and captions from Harper, Cole",
+      "text": "2 photos and captions from Raj, Layla",
       "i": 5,
-      "at": 2058
+      "at": 1974
      },
      {
       "kind": "model",
       "text": "Deciding what to read next",
-      "detail": "6602 ms",
+      "detail": "14119 ms",
       "i": 6,
-      "at": 8660
+      "at": 16094
      },
      {
       "kind": "tool",
       "tool": "look_at_photo",
-      "text": "Looking closely at a photo: what's the vibe, crowd, and any price or food details visibl",
+      "text": "Looking closely at a photo: what is the dish in this photo and what does it look like up",
       "ids": [
-       "p_00qh"
+       "p_00ql"
       ],
       "i": 7,
-      "at": 8660
+      "at": 16094
      },
      {
       "kind": "result",
       "tool": "look_at_photo",
-      "text": "Muse saw: sunny state fair vibe, big tex with his arms out, texas flag and the cotton bowl behind him, and just a small crowd down by the cacti. no pr",
-      "detail": "Harper Nguyen's photo · live image understanding",
+      "text": "Muse saw: it's a banh mi split open on white paper in a crusty baguette. up close there's shredded pork, bright orange pickled carrot shreds, long cuc",
+      "detail": "Raj Iyer's photo · live image understanding",
       "i": 8,
-      "at": 10997
-     },
-     {
-      "kind": "tool",
-      "tool": "look_at_photo",
-      "text": "Looking closely at a photo: what's the art vibe here, is it good for photos and a quiet ",
-      "ids": [
-       "p_00q9"
-      ],
-      "i": 9,
-      "at": 10998
-     },
-     {
-      "kind": "result",
-      "tool": "look_at_photo",
-      "text": "Muse saw: yeah, the vibe is sweet — pillars painted with trees and grass that blend into the actual park and trees behind them. definitely good for ph",
-      "detail": "Cole Patterson's photo · live image understanding",
-      "i": 10,
-      "at": 13191
+      "at": 19254
      },
      {
       "kind": "model",
       "text": "Deciding what to read next",
-      "detail": "14159 ms",
-      "i": 11,
-      "at": 27350
+      "detail": "15453 ms",
+      "i": 9,
+      "at": 34708
      },
      {
       "kind": "tool",
       "tool": "propose_guide",
       "text": "Writing 4 recommendations, each credited to a friend",
-      "i": 12,
-      "at": 27350
+      "i": 10,
+      "at": 34708
      },
      {
       "kind": "info",
       "text": "Checking every credit against the real author and what you can see",
-      "i": 13,
-      "at": 27350
+      "i": 11,
+      "at": 34708
      },
      {
       "kind": "done",
       "text": "4 picks, credited to 2 friends",
-      "detail": "27.4s · live · $0.023",
-      "i": 14,
-      "at": 27351
+      "detail": "34.7s · live · $0.022",
+      "i": 12,
+      "at": 34708
      }
     ],
     "mode": "live",
-    "costUsd": 0.023100000000000002,
-    "latencyMs": 27351,
+    "costUsd": 0.022,
+    "latencyMs": 34708,
     "model": "muse-spark-1.3",
-    "createdAt": "2026-11-12T11:19:28.294Z"
+    "createdAt": "2026-11-12T11:23:34.089Z"
    }
   },
   "coordinate": {
@@ -1320,9 +1275,9 @@
       "free": true
      },
      {
-      "id": "diego",
-      "name": "Diego Morales",
-      "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D62",
+      "id": "tj",
+      "name": "TJ Okafor",
+      "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D72",
       "role": "host",
       "busyOn": [],
       "free": true
@@ -1344,43 +1299,40 @@
    },
    "drafts": [
     {
-     "id": "m_mwdgh2pyrx",
-     "conversationId": "c_mwdgh2pyrw",
+     "id": "m_mwdgmdscrw",
+     "conversationId": "c_mwdgmdscrv",
      "key": "host",
      "to": {
-      "id": "jordan",
-      "name": "Jordan Reyes",
-      "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D12",
-      "connection": "friends"
+      "id": "tj",
+      "name": "TJ Okafor",
+      "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D72",
+      "connection": "2K league"
      },
-     "about": {
-      "id": "diego",
-      "name": "Diego Morales"
-     },
-     "text": "hey jordan!! can you intro me to your cousin diego? i'm gonna be in dallas nov 20-22 and saw his thing about the oak cliff couch + dinner included. would love to ask about crashing, no worries at all if you're not comfy, i'll cook to say thank you",
+     "text": "hey tj!! could i crash with you nov 20-22 for the houston trip + raj's banh mi tour? totally fine to say no if you're booked, i get it. i can cook or cover gas and we gotta run it back in 2k while i'm there",
      "status": "draft",
-     "reason": "Trip: dallas couch crash with diego in oak cliff · ask Jordan to introduce you to Diego so you can ask about staying Nov 20–22"
+     "reason": "Trip: houston with tj + raj's banh mi tour · ask TJ about staying Nov 20–22"
     }
    ],
    "mode": "live",
-   "costUsd": 0.0061
+   "costUsd": 0.0056
   }
  },
- "cost": 0.06640000000000001,
+ "cost": 0.0292,
  "verdict": {
   "looksBroken": [
-   "new orleans $45 gas split for austin to nola doesn't add up for ~500 miles",
-   "all three list host as free that weekend but also list 'says yes to hosting' as a condition, so not actually confirmed",
-   "houston has tj hosting and raj also offering a guest room - unclear who's actually hosting"
+   "new orleans event is SAMANTHA_VR + Colin Byrne but the people list has Sam Rivera — unclear if that's the same person or two different Sams",
+   "houston pitch says raj wants to drive you around bellaire but getting there is listed as you driving your own car",
+   "new orleans list adds Lucas Moreau, Zoe Nakamura and Colin Byrne who aren't mentioned in the reasons for going"
   ],
   "objections": [
-   "diego is a friend-of-friend via jordan so still kinda a stranger",
-   "$85 all-in assumes cheap gas and that dinner thing actually happens",
-   "3 hr drive each way eats into the weekend"
+   "houston price is only $100 if TJ actually says yes to hosting, otherwise $235 which blows the $150 budget",
+   "raj is a friend-of-a-friend I don't really know, and I'd be couch-surfing with TJ from 2k league",
+   "I'd be driving myself 173 mi each way, so no ride backup if plans fall through",
+   "new orleans is a way longer drive and depends on both Elijah and Finn saying yes"
   ],
-  "pickTripIndex": 2,
-  "reason": "dallas is the only one that feels actually doable on $150 without coordinating a whole crew. short drive, couch + dinner covered, and i still get sunday back.",
-  "surprising": 2,
+  "pickTripIndex": 0,
+  "reason": "houston is the only one that feels doable on $150 without a huge drive, and the $4.50 banh mi tour with tj's couch and grill actually sounds fun if he confirms.",
+  "surprising": 4,
   "trustworthy": 3,
   "wouldTake": true
  },
@@ -1389,23 +1341,23 @@
   "decisions": [
    {
     "action": "discard",
-    "draftId": "m_mwdgh2pyrx",
-    "why": "the guide already has me staying with diego, so asking jordan to intro me to his cousin diego to crash is redundant and awkward, and the oak cliff couch/dinner detail and dates aren't in anything i actually have."
+    "draftId": "m_mwdgmdscrw",
+    "why": "tj's just a 2k league friend, not someone i'd ask to crash with in houston"
    }
   ],
-  "guideFeedback": "the guide felt made for me and the credits to harper and cole's public posts made sense."
+  "guideFeedback": "guide felt for me with the cheap eats and free art, and the credits made sense since raj and layla were the actual sources."
  },
  "applied": [
   {
    "action": "discard",
-   "draftId": "m_mwdgh2pyrx",
-   "why": "the guide already has me staying with diego, so asking jordan to intro me to his cousin diego to crash is redundant and awkward, and the oak cliff couch/dinner detail and dates aren't in anything i actually have.",
+   "draftId": "m_mwdgmdscrw",
+   "why": "tj's just a 2k league friend, not someone i'd ask to crash with in houston",
    "result": {
     "ok": true,
     "removed": true
    }
   }
  ],
- "latencyMs": 63635,
- "finishedAt": "2026-11-12T11:19:38.824Z"
+ "latencyMs": 50912,
+ "finishedAt": "2026-11-12T11:23:45.851Z"
 }

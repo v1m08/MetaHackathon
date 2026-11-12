@@ -29,7 +29,7 @@ const DRAFTS = {
 };
 
 export const POST = route(async (_req, { userId, body }) => {
-  const b = (await body()) as { persona: string; stage: "trips" | "drafts"; trips?: unknown; guide?: unknown; drafts?: unknown; budget?: number; weekend?: string };
+  const b = (await body()) as { persona: string; stage: "trips" | "drafts"; trips?: unknown; trip?: unknown; guide?: unknown; drafts?: unknown; budget?: number; weekend?: string };
   const system = `You are role-playing a specific young adult using a Facebook feature called "Where can my people take me?". Stay in character: ${b.persona}\nYou are blunt and specific. You are NOT the product's fan. Judge only what is shown; do not invent facts. This is a simulation for product testing.`;
   if (b.stage === "trips") {
     const { data, trace } = await ai.json(
@@ -39,7 +39,7 @@ export const POST = route(async (_req, { userId, body }) => {
     return { verdict: data, mode: trace.mode, costUsd: trace.costUsd ?? 0 };
   }
   const { data, trace } = await ai.json(
-    `The app built you this guide (JSON): ${JSON.stringify(b.guide).slice(0, 5000)}\n\nIt also drafted these messages for you to approve, edit or discard before anything is sent (JSON): ${JSON.stringify(b.drafts).slice(0, 4000)}\n\nDecide for each draft (by draftId). Approve only what you would really send. Edit if the words aren't you. Discard if you wouldn't ask this person.`,
+    `You picked this trip (JSON): ${JSON.stringify(b.trip).slice(0, 4000)}\n\nThe app built you this guide (JSON): ${JSON.stringify(b.guide).slice(0, 5000)}\n\nIt also drafted these messages for you to approve, edit or discard before anything is sent (JSON): ${JSON.stringify(b.drafts).slice(0, 4000)}\n\nDecide for each draft (by draftId). Approve only what you would really send. Edit if the words aren't you. Discard if you wouldn't ask this person.`,
     { task: "sim.persona.drafts", userId, schema: DRAFTS, model: ai.models.fast(), maxTokens: 1400, temperature: 0.7, cache: false, mock: () => ({ decisions: [], guideFeedback: "(mock)" }) },
   );
   return { decisions: data, mode: trace.mode, costUsd: trace.costUsd ?? 0 };

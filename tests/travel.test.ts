@@ -107,9 +107,7 @@ test("cost math is deterministic, in code, and the two prices make sense", () =>
   const p = twoPrices({ fromCity: "austin", toCity: "dallas", nights: 2, transport: "ride", lodging: "host", carOccupants: 3, withLocal: true });
   assert.ok(p.ifYes.total < p.otherwise.total && p.otherwise.total < p.solo.total, `${p.ifYes.total} < ${p.otherwise.total} < ${p.solo.total}`);
   assert.equal(p.ifYes.lines.find((l) => l.label.startsWith("staying with"))!.usd, 0);
-  assert.equal(p.ifYes.total % 5, 0, "rounded to $5");
-  const sum = Math.round(p.ifYes.lines.reduce((n, l) => n + l.usd, 0) / 5) * 5;
-  assert.ok(Math.abs(sum - p.ifYes.total) <= 5, "total equals the sum of its lines");
+  for (const b of [p.ifYes, p.otherwise, p.solo]) assert.equal(b.total, b.lines.reduce((n, l) => n + l.usd, 0), "total equals the sum of its lines exactly");
   const far = twoPrices({ fromCity: "austin", toCity: "new-york", nights: 2, transport: "flight", lodging: "host", withLocal: true });
   assert.equal(far.otherwise.transport, "flight", "far trips fall back to a flight, not a bus");
   assert.equal(milesBetween(cityById("austin")!, cityById("san-antonio")!) < 120, true);
