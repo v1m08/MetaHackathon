@@ -15,13 +15,16 @@
     "memory:rebuild": "tsx scripts/rebuild-memory.ts",
     "hangout:reset": "curl -s -X POST http://localhost:3000/api/hangout/demo -H 'content-type: application/json' -d '{\"action\":\"reset\"}'",
     "seed:images": "tsx scripts/seed-images.ts",
-    "critters:generate": "tsx scripts/generate-critters.ts"
+    "critters:generate": "tsx scripts/generate-critters.ts",
+    "critters:cutout": "tsx scripts/cutout-critters.ts",
+    "critters:moods": "tsx scripts/critter-moods.ts"
   },
   "dependencies": {
     "lucide-react": "^0.468.0",
     "next": "^15.1.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "sharp": "^0.34.4",
     "swr": "^2.3.0",
     "zod": "^4.1.12"
   },

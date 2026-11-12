@@ -40,13 +40,19 @@
     "insideJokes": [],
     "critter": {
       "body": "noodle",
-      "color": "coral",
+      "color": "peach",
       "accessory": "scarf",
-      "why": "Coral noodle with cozy scarf for nine Ramen Ya ramen nights"
+      "why": "Noodle body and cozy scarf for nine Ramen Ya nights with Maya.",
+      "art": {
+        "animal": "baby otter with whiskers",
+        "color": "soft pastel peach",
+        "detail": "tiny ramen bowl with wiggly noodles",
+        "caption": "A baby otter sharing ramen at Ramen Ya with Maya"
+      }
     },
     "source": "live",
     "model": "muse-ember-1.0",
-    "builtAt": "2026-11-12T18:20:19.658Z"
+    "builtAt": "2026-11-12T19:09:13.102Z"
   },
   "dev": {
     "sharedPlaces": [

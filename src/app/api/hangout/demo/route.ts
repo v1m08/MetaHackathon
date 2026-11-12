@@ -36,10 +36,6 @@ export const POST = route(async (_req, { body }) => {
       if (b.mode !== "live" && b.mode !== "cached") throw bad("mode must be live or cached");
       s.aiMode = b.mode;
       break;
-    case "theme":
-      if (b.theme !== "critters" && b.theme !== "plants") throw bad("theme must be critters or plants");
-      s.theme = b.theme;
-      break;
     case "scenario":
       return { result: await runWhyNow(String(b.id), { fallbackToCache: true }).then((r) => ({ outcome: r.outcome, reason: r.reason })), ...demoView() };
     case "reply":

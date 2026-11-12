@@ -10,7 +10,7 @@ import { monthYear, prettyDate, timeOfDay } from "@/components/hangout/format";
 import { Avatar, Button, Photo, cx } from "@/components/ui";
 import { ApiError, api, refresh, useApi } from "@/lib/api";
 import { keepsakeLabel } from "@/lib/hangout/parts";
-import type { ChatView, HangoutView, NudgeView } from "@/server/hangout/views";
+import type { ChatView, NudgeView } from "@/server/hangout/views";
 
 export default function ChatPage() {
   return (
@@ -40,7 +40,6 @@ function Thread() {
   const params = useSearchParams();
   const router = useRouter();
   const { data: c, mutate } = useApi<ChatView>(`/api/hangout/chat/${id}`, { poll: 1500 });
-  const { data: h } = useApi<HangoutView>("/api/hangout");
   const nudgeId = params.get("nudge");
   const { data: n } = useApi<NudgeView>(nudgeId ? `/api/hangout/nudges/${nudgeId}` : null);
   const [photoId, setPhotoId] = useState<string | null>(params.get("photo"));
@@ -49,7 +48,6 @@ function Thread() {
   const [err, setErr] = useState<string | null>(null);
   const bottom = useRef<HTMLDivElement>(null);
   const input = useRef<HTMLInputElement>(null);
-  const theme = h?.theme ?? "critters";
   const plan = c?.plan ?? null;
 
   const count = c?.messages.length ?? 0;
@@ -105,7 +103,7 @@ function Thread() {
               <span className="relative">
                 <Avatar src={c.friend.avatar} name={c.friend.name} size={36} />
                 <span className="absolute -right-2.5 -bottom-2.5 rounded-full bg-white">
-                  <Critter design={c.critter.design} state={c.critter.state} theme={theme} size={26} showKeepsakes={false} />
+                  <Critter design={c.critter.design} state={c.critter.state} size={26} showKeepsakes={false} />
                 </span>
               </span>
               <span className="ml-1 min-w-0">
@@ -172,7 +170,7 @@ function Thread() {
               )}
               {plan.metUpOn && (
                 <div className="pop mt-3 flex flex-col items-center rounded-xl bg-[#FFF3E2] px-3 pt-1 pb-3 text-center">
-                  <Critter design={c.critter.design} state={c.critter.state} theme={theme} size={110} />
+                  <Critter design={c.critter.design} state={c.critter.state} size={110} />
                   <div className="text-[16px] font-bold">You two met up at {plan.place}!</div>
                   {plan.keepsake && (
                     <div className="mt-1 text-[14px]">

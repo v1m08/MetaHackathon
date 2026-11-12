@@ -8,35 +8,32 @@ import { ago, monthYear, prettyDate, rhythm } from "@/components/hangout/format"
 import { HangPage, STATE_CHIP } from "@/components/hangout/HangPage";
 import { Avatar, Button, Photo, cx } from "@/components/ui";
 import { api, refresh, useApi } from "@/lib/api";
-import { CRITTER_STATE_LABEL, PLANT_STATE_LABEL, keepsakeLabel } from "@/lib/hangout/parts";
-import type { FriendView, HangoutView } from "@/server/hangout/views";
+import { CRITTER_STATE_LABEL, keepsakeLabel } from "@/lib/hangout/parts";
+import type { FriendView } from "@/server/hangout/views";
 
-function stateLine(f: FriendView, plants: boolean) {
-  const noun = plants ? "plant" : "critter";
+function stateLine(f: FriendView) {
   switch (f.state) {
     case "egg":
-      return `${f.first}'s ${plants ? "seed" : "egg"} hatches after your first real chat.`;
+      return `${f.first}'s egg hatches after your first real chat.`;
     case "hatching":
-      return `${f.first}'s ${plants ? "seed is sprouting" : "egg is hatching"}!`;
+      return `${f.first}'s egg is hatching!`;
     case "resting":
-      return `${f.first}'s ${noun} is resting in the hammock. No nudges, no changes.`;
+      return `${f.first}'s critter is resting in the hammock. No nudges, no changes.`;
     case "celebrating":
-      return `You two just hung out. ${f.first}'s ${noun} is ${plants ? "blooming" : "celebrating"}!`;
+      return `You two just hung out. ${f.first}'s critter is celebrating!`;
     case "napping":
-      return `${f.first}'s ${noun} is ${plants ? "dormant" : "napping"}.`;
+      return `${f.first}'s critter is napping.`;
     case "sleepy":
-      return `${f.first}'s ${noun} is ${plants ? "a little thirsty" : "a little sleepy"}.`;
+      return `${f.first}'s critter is a little sleepy.`;
     default:
-      return `${f.first}'s ${noun} is ${plants ? "thriving" : "wide awake"}.`;
+      return `${f.first}'s critter is wide awake.`;
   }
 }
 
 export default function CritterDetail() {
   const { id } = useParams<{ id: string }>();
   const { data: f, mutate } = useApi<FriendView>(`/api/hangout/friends/${id}`, { poll: 3000 });
-  const { data: h } = useApi<HangoutView>("/api/hangout");
-  const plants = h?.theme === "plants";
-  const label = plants ? PLANT_STATE_LABEL : CRITTER_STATE_LABEL;
+  const label = CRITTER_STATE_LABEL;
 
   const rest = async (resting: boolean) => {
     await mutate(await api<FriendView>(`/api/hangout/friends/${id}`, { method: "POST", json: { resting } }), { revalidate: false });
@@ -47,16 +44,16 @@ export default function CritterDetail() {
   const isEgg = f.state === "egg";
   return (
     <HangPage title={f.first}>
-      <section className="relative mx-3 mt-3 overflow-hidden rounded-3xl px-4 pt-4 pb-5 text-center shadow-sm" style={{ background: plants ? "linear-gradient(#EAF6EC, #F6FBF6)" : "linear-gradient(#FFF3E2, #FFFaF3)" }}>
+      <section className="relative mx-3 mt-3 overflow-hidden rounded-3xl px-4 pt-4 pb-5 text-center shadow-sm" style={{ background: "linear-gradient(#FFF3E2, #FFFaF3)" }}>
         <div className="flex items-center justify-center gap-2">
           <Avatar src={f.avatar} name={f.name} size={30} />
           <span className="text-[17px] font-bold">{f.name}</span>
         </div>
         <div className="mt-1 flex justify-center">
-          <Critter design={f.design} state={f.state} theme={plants ? "plants" : "critters"} size={176} label={`${f.first}'s ${plants ? "plant" : "critter"}`} />
+          <Critter design={f.design} state={f.state} size={176} label={`${f.first}'s critter`} />
         </div>
         <span className={cx("inline-block rounded-full px-2.5 py-0.5 text-[12px] font-semibold", STATE_CHIP[f.state])}>{label[f.state]}</span>
-        <p className="mt-2 text-[16px] font-semibold">{stateLine(f, plants)}</p>
+        <p className="mt-2 text-[16px] font-semibold">{stateLine(f)}</p>
         {f.why && !isEgg && <p className="mt-1 text-[13px] text-ink-2">{f.why}</p>}
       </section>
 
@@ -129,7 +126,7 @@ export default function CritterDetail() {
             ))}
           </div>
         ) : (
-          <p className="mt-1 text-[14px] text-ink-2">Meet up in real life to earn pins for {f.first}&apos;s {plants ? "pot" : "critter"}.</p>
+          <p className="mt-1 text-[14px] text-ink-2">Meet up in real life to earn pins for {f.first}&apos;s critter.</p>
         )}
       </div>
 

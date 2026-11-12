@@ -154,11 +154,6 @@ export default function DemoPage() {
               <Btn busy={busy === "clear"} onClick={() => act("clear", { action: "clearNudges" })}>Clear today&apos;s nudges</Btn>
               <Btn onClick={reloadPhone}>Reload phone</Btn>
             </div>
-            <div className="mt-2 flex gap-2">
-              {(["critters", "plants"] as const).map((t) => (
-                <Btn key={t} tone={d?.theme === t ? "primary" : "default"} onClick={() => act(`theme-${t}`, { action: "theme", theme: t })} className="flex-1 justify-center capitalize">{t}</Btn>
-              ))}
-            </div>
           </Section>
 
           <Section title="Friend moments" hint="Max one nudge per day. Use +1d or Clear today's nudges between moments.">

@@ -124,13 +124,19 @@
   "critter:maya": {
     "response": {
       "accessory": "scarf",
+      "art": {
+        "animal": "baby otter with whiskers",
+        "caption": "A baby otter sharing ramen at Ramen Ya with Maya",
+        "color": "soft pastel peach",
+        "detail": "tiny ramen bowl with wiggly noodles"
+      },
       "body": "noodle",
-      "color": "coral",
-      "why": "Coral noodle with cozy scarf for nine Ramen Ya ramen nights"
+      "color": "peach",
+      "why": "Noodle body and cozy scarf for nine Ramen Ya nights with Maya."
     },
     "model": "muse-wonder-1.0",
-    "latencyMs": 4756,
-    "recordedAt": "2026-11-12T18:20:19.657Z"
+    "latencyMs": 10911,
+    "recordedAt": "2026-11-12T19:09:13.102Z"
   },
   "memory:dev": {
     "response": {
@@ -343,5 +349,36 @@
     "model": "muse-wonder-1.0",
     "latencyMs": 2957,
     "recordedAt": "2026-11-12T18:21:01.166Z"
+  },
+  "plan:priya": {
+    "response": {
+      "estCostPerPerson": 7,
+      "place": "Mozart's Coffee",
+      "reason": "Easy coffee catch up at a spot you both already like.",
+      "slotId": "d5_evening"
+    },
+    "model": "muse-wonder-1.0",
+    "latencyMs": 2651,
+    "recordedAt": "2026-11-12T19:07:01.802Z"
+  },
+  "keepsake:Mozart's Coffee": {
+    "response": {
+      "pin": "coffee",
+      "why": "Brew-tiful memories start with great coffee!"
+    },
+    "model": "muse-wonder-1.0",
+    "latencyMs": 2231,
+    "recordedAt": "2026-11-12T19:07:24.583Z"
+  },
+  "plan:maya": {
+    "response": {
+      "estCostPerPerson": 7,
+      "place": "Mozart's Coffee",
+      "reason": "Easy coffee catch up at a spot you both already know and like.",
+      "slotId": "d3_evening"
+    },
+    "model": "muse-wonder-1.0",
+    "latencyMs": 5330,
+    "recordedAt": "2026-11-12T19:13:09.044Z"
   }
 }

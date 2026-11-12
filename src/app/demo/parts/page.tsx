@@ -1,41 +1,79 @@
 "use client";
-// Critter library preview: every body, color, accessory, keepsake and state, in both themes.
-import { useEffect, useState } from "react";
-import { Critter, PIN_EMOJI, type Theme } from "@/components/hangout/Critter";
+// Critter showcase: every friend's Muse-drawn moods (what the Hangout shows for each state), then the SVG
+// parts library the app falls back to when a friend has no art yet.
+import { Critter, PIN_EMOJI } from "@/components/hangout/Critter";
 import { MuseHost } from "@/components/hangout/MuseHost";
-import { ACCESSORIES, BODIES, COLORS, CRITTER_STATE_LABEL, KEEPSAKES, PLANT_STATE_LABEL } from "@/lib/hangout/parts";
+import { useApi } from "@/lib/api";
+import { ACCESSORIES, BODIES, COLORS, CRITTER_STATE_LABEL, KEEPSAKES } from "@/lib/hangout/parts";
 import type { CritterState } from "@/lib/hangout/types";
+import type { HangoutView } from "@/server/hangout/views";
 
 const STATES: CritterState[] = ["awake", "sleepy", "napping", "celebrating", "egg", "hatching", "resting"];
+const MOODS = [
+  { mood: "awake", label: "Awake", when: "You've been in touch" },
+  { mood: "sleepy", label: "Sleepy", when: "Drifting past your usual rhythm" },
+  { mood: "napping", label: "Napping", when: "It's been a long while" },
+  { mood: "celebrating", label: "Celebrating", when: "3 days after you meet up" },
+] as const;
+type Gallery = { friends: { id: string; first: string; caption?: string; base: string; moods: Record<(typeof MOODS)[number]["mood"], string | null> }[] };
 
 export default function PartsPage() {
-  const [theme, setTheme] = useState<Theme>("critters");
-  useEffect(() => {
-    if (new URLSearchParams(window.location.search).get("theme") === "plants") setTheme("plants");
-  }, []);
-  const label = theme === "plants" ? PLANT_STATE_LABEL : CRITTER_STATE_LABEL;
+  const { data } = useApi<Gallery>("/api/hangout/art");
+  const { data: h } = useApi<HangoutView>("/api/hangout");
   return (
     <div className="min-h-dvh bg-[#FFF8EE] p-6 text-ink">
       <div className="flex items-center gap-3">
-        <MuseHost size={48} />
-        <h1 className="text-[22px] font-bold">Critter library</h1>
-        <div className="ml-auto flex rounded-full bg-white p-1 shadow-sm">
-          {(["critters", "plants"] as const).map((t) => (
-            <button key={t} onClick={() => setTheme(t)} className={`rounded-full px-4 py-1.5 text-[14px] font-semibold capitalize ${theme === t ? "bg-fb text-white" : "text-ink-2"}`}>{t}</button>
-          ))}
+        <MuseHost size={56} image={h?.host.image} />
+        <div>
+          <h1 className="text-[22px] font-bold">Critter showcase</h1>
+          <p className="text-[14px] text-ink-2">Each friendship&apos;s animal is picked by Muse Wonder from what you share, then drawn by Muse Image in every mood.</p>
         </div>
       </div>
 
-      <h2 className="mt-6 mb-2 font-bold">States × bodies</h2>
+      <h2 className="mt-6 mb-2 font-bold">Moods, drawn by Muse</h2>
+      <div className="overflow-x-auto">
+        <div className="grid min-w-[760px] gap-2" style={{ gridTemplateColumns: `150px repeat(${MOODS.length}, 1fr)` }}>
+          <span />
+          {MOODS.map((m) => (
+            <span key={m.mood} className="text-center">
+              <span className="block text-[13px] font-semibold">{m.label}</span>
+              <span className="block text-[11px] text-ink-2">{m.when}</span>
+            </span>
+          ))}
+          {data?.friends.map((f) => (
+            <div key={f.id} className="contents">
+              <span className="self-center">
+                <span className="block text-[14px] font-semibold">{f.first}</span>
+                {f.caption && <span className="block text-[11px] leading-snug text-ink-2">{f.caption}</span>}
+              </span>
+              {MOODS.map(({ mood }) => (
+                <div key={mood} className="flex justify-center rounded-xl bg-white py-2">
+                  {f.moods[mood] ? (
+                    <Critter state={mood} design={{ body: "blob", color: "sky", accessory: "none", image: f.moods[mood]!, imageOwn: true }} size={120} label={`${f.first}, ${mood}`} />
+                  ) : (
+                    <div className="flex h-[120px] flex-col items-center justify-center text-center text-[11px] text-ink-2">
+                      <Critter state={mood} design={{ body: "blob", color: "sky", accessory: "none", image: f.base }} size={84} />
+                      not drawn yet
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
+      {data && !data.friends.length && <p className="text-[14px] text-ink-2">No Muse art yet. Run npm run critters:generate -- --style soft, then npm run critters:moods.</p>}
+
+      <h2 className="mt-8 mb-2 font-bold">Fallback: SVG parts library</h2>
       <div className="grid gap-2" style={{ gridTemplateColumns: `120px repeat(${STATES.length}, 1fr)` }}>
         <span />
-        {STATES.map((s) => <span key={s} className="text-center text-[13px] font-semibold text-ink-2">{label[s]}</span>)}
+        {STATES.map((s) => <span key={s} className="text-center text-[13px] font-semibold text-ink-2">{CRITTER_STATE_LABEL[s]}</span>)}
         {BODIES.map((b, i) => (
           <div key={b.id} className="contents">
             <span className="self-center text-[13px] font-semibold">{b.label}</span>
             {STATES.map((s) => (
               <div key={s} className="flex justify-center rounded-xl bg-white py-2">
-                <Critter theme={theme} state={s} design={{ body: b.id, color: COLORS[i % COLORS.length].id, accessory: ACCESSORIES[(i * 2 + 1) % ACCESSORIES.length].id, keepsakes: i === 0 ? ["chopsticks", "coffee"] : [] }} size={92} />
+                <Critter state={s} design={{ body: b.id, color: COLORS[i % COLORS.length].id, accessory: ACCESSORIES[(i * 2 + 1) % ACCESSORIES.length].id, keepsakes: i === 0 ? ["chopsticks", "coffee"] : [] }} size={92} />
               </div>
             ))}
           </div>
@@ -46,7 +84,7 @@ export default function PartsPage() {
       <div className="flex flex-wrap gap-2">
         {ACCESSORIES.map((a, i) => (
           <div key={a.id} className="flex w-[104px] flex-col items-center rounded-xl bg-white py-2">
-            <Critter theme="critters" state="awake" design={{ body: BODIES[i % BODIES.length].id, color: COLORS[i % COLORS.length].id, accessory: a.id }} size={84} />
+            <Critter state="awake" design={{ body: BODIES[i % BODIES.length].id, color: COLORS[i % COLORS.length].id, accessory: a.id }} size={84} />
             <span className="text-[12px] text-ink-2">{a.label}</span>
           </div>
         ))}

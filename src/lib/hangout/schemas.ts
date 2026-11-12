@@ -40,6 +40,15 @@ export const CritterSchema = z.object({
   color: z.enum(COLOR_IDS),
   accessory: z.enum(ACCESSORY_IDS),
   why: z.string().min(1).refine((s) => words(s) <= 16, "max 16 words").refine(NO_EM_DASH, "no em-dashes"),
+  /** The plush-animal look Muse Image draws. Optional so older recorded responses still replay. */
+  art: z
+    .object({
+      animal: z.string().min(1).refine((s) => words(s) <= 6, "max 6 words"),
+      color: z.string().min(1).refine((s) => words(s) <= 4, "max 4 words"),
+      detail: z.string().min(1).refine((s) => words(s) <= 14, "max 14 words"),
+      caption: z.string().min(1).refine((s) => words(s) <= 16, "max 16 words").refine(NO_EM_DASH, "no em-dashes"),
+    })
+    .optional(),
 });
 export type CritterAi = z.infer<typeof CritterSchema>;
 

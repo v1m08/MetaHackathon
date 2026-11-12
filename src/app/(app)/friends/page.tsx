@@ -42,7 +42,7 @@ function HangoutCard() {
         </div>
         <div className="truncate text-[13px] text-ink-2">{h?.host.line ?? "Your close friends, as critters"}</div>
         <div className="mt-1 flex -space-x-3">
-          {peek.map((c) => <Critter key={c.friendId} design={c.design} state={c.state} theme={h?.theme} size={44} showKeepsakes={false} />)}
+          {peek.map((c) => <Critter key={c.friendId} design={c.design} state={c.state} size={44} showKeepsakes={false} />)}
         </div>
       </div>
       <ChevronRight size={20} className="shrink-0 text-ink-2" />

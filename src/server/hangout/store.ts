@@ -40,7 +40,6 @@ export interface PipelineRun {
 export interface HangState {
   demoDate: string;
   aiMode: HangMode;
-  theme: "critters" | "plants";
   friends: Friend[];
   chats: ChatSnippet[];
   gatherings: Gathering[];
@@ -68,7 +67,6 @@ function seedState(): HangState {
   return {
     demoDate: /^\d{4}-\d{2}-\d{2}$/.test(process.env.DEMO_DATE ?? "") ? process.env.DEMO_DATE! : DEFAULT_DEMO_DATE,
     aiMode: defaultMode(),
-    theme: "critters",
     friends: structuredClone(FRIENDS),
     chats: structuredClone(CHATS),
     gatherings: structuredClone(GATHERINGS),
@@ -90,11 +88,11 @@ const g = globalThis as unknown as { __hang?: HangState; __hangMemory?: MemorySt
 export function hang(): HangState {
   return (g.__hang ??= seedState());
 }
-/** Reset the demo. Keeps the AI mode and theme you picked, unless `full`. */
+/** Reset the demo. Keeps the AI mode, date and debug log, unless `full`. */
 export function resetHang(full = false) {
   const prev = g.__hang;
   g.__hang = seedState();
-  if (prev && !full) Object.assign(g.__hang, { aiMode: prev.aiMode, theme: prev.theme, demoDate: prev.demoDate, runs: prev.runs });
+  if (prev && !full) Object.assign(g.__hang, { aiMode: prev.aiMode, demoDate: prev.demoDate, runs: prev.runs });
   return g.__hang;
 }
 

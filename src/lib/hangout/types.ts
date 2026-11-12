@@ -127,6 +127,15 @@ export interface CritterDesign {
   keepsakes: string[];
   /** One short line on why Muse picked these parts. */
   why?: string;
+  /** Muse's plush-animal version of this friendship, drawn by Muse Image. */
+  art?: CritterArtDesign;
+}
+
+export interface CritterArtDesign {
+  animal: string;
+  color: string;
+  detail: string;
+  caption: string;
 }
 
 export interface MemoryFile {

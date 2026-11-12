@@ -187,7 +187,7 @@ Hang Again helps young adults keep friendships alive after "we should hang out s
 
 1. **See again.** After an Event or Group meetup you privately pick who you'd want to see again. Only mutual picks are revealed, and each match puts an egg in your Hangout. The egg hatches after your first two-way chat.
 2. **Why you, why now.** When a friend posts, shares a Reel or has a life update, Muse links it to your shared past (tagged photos, places, inside jokes) and suggests one small move. You always write your own message.
-3. **The Hangout.** One critter per close friend, hosted by a (placeholder) Muse sprite. Critters get sleepy when you drift and wake up when you reconnect. They never get sick or die. A toggle swaps critters for plants with the same states.
+3. **The Hangout.** One critter per close friend, hosted by Muse. Each friendship's animal is picked by Muse Wonder from what you share and drawn by Muse Image in every mood: awake when you've been in touch, sleepy when you drift, napping after a long while, celebrating after a meetup. After a meetup, Muse Image draws the new keepsake pin into the critter. They never get sick or die.
 
 ### Setup
 
@@ -216,6 +216,11 @@ npm run eval:moments             # all friend moments through why-now (C) + guar
 npm run eval:moments -- --cached # same, replaying cached responses (checks the code, not the model)
 npm run memory:rebuild           # rebuild every memory file (Ember) + critter design (Wonder) → data/hangout/memory.json
 npm run seed:images              # regenerate placeholder images in public/seed
+npm run memory:rebuild -- --critters-only [maya …]   # re-run only the critter designer (Muse picks each animal)
+npm run critters:generate -- --style soft [--force] [maya …]   # Muse Image draws each friend's animal
+npm run critters:moods [-- maya …]                    # Muse Image edits it into awake / sleepy / napping / celebrating
+npm run critters:cutout                               # cut backgrounds out → public/seed/critters/art
+npm run critters:generate -- --host                   # original plush host (official art in public/seed/muse/host.png wins)
 npm run hangout:reset            # reset the Hang Again demo state (server must be running)
 ```
 
@@ -230,7 +235,7 @@ Open `/demo` on the presenter laptop. It shows the controls, a live phone and th
 3. **Maya replies** → her critter wakes up. Tap *Suggest a plan*. Muse checks both calendars and drafts a plan only you can see. *Share in chat*, tap both *Yes* buttons, then *We met up*. The critter celebrates and earns the chopsticks pin.
 4. **See again.** Tap the Saturday Run Club card and pick Sam. **Sam mutual pick** → reveal + egg. Message Sam, then **Sam replies** → the egg hatches and Muse designs Sam's critter.
 5. Show the filters: **Priya** and **Chris** (Muse says no), **Alex** (resting) and **Jordan** (blocked, never reaches the model). There's one nudge per day, so press **+1d** or *Clear today's nudges* between moments.
-6. Time travel with **+3d / +7d** to watch celebrating fade and critters drift. Flip **Plants** to compare themes.
+6. Time travel with **+3d / +7d** to watch celebrating fade and critters drift. `/demo/parts` shows every friend's moods side by side.
 
 **Live vs cached.** Cached mode replays saved responses, so the demo works if the API or wifi fails. In live mode a failed call also falls back to the cache, and the debug drawer says so (`live→cached`). Every live response that passes its checks is saved to `data/hangout/recorded.json`; anything not recorded yet falls back to the hand-written fixtures in `src/server/hangout/fixtures.ts`. After a good live rehearsal (or `npm run eval:moments` + `npm run memory:rebuild` with a key), commit `data/hangout/*.json` so the demo machine replays that run.
 
@@ -253,5 +258,7 @@ src/app/api/hangout/**          Thin routes · src/app/(app)/friends/hangout/** 
 - **D · Guardrails (code)** run **before** C (blocked, unfriended, resting and outside-circle friends are never sent to the model) and **after** it (status again, max one nudge per day, no mood or health words).
 - **E · Critter designer, F · Plan proposer, G · Keepsake picker (Wonder)** pick from fixed libraries. The plan's slot must be free for both people: one retry, then the first mutual free slot. Cost always comes from the places table.
 - Every model response is validated with zod: retry once, then fail safe (no nudge). Every call also shows up in the AI Inspector at `/dev/ai`.
+
+**Critter art.** Muse Wonder designs each critter (body/color/accessory for the SVG fallback, plus an `art` block: animal, color, detail, caption). Muse Image draws it and edits it into each mood; `/demo/parts` shows them all. The Hangout picks the image for the critter's current state, falls back to the base drawing, then to SVG parts. Keepsakes drawn after a meetup land in `data/hangout/art` (served by `/api/hangout/art`); commit them so the demo has them offline. Characters are original: the host is a plush star, not Meta's Jolly. Drop official Muse art at `public/seed/muse/host.png` and the Hangout uses it automatically.
 
 **Swapping in real people.** Edit names in `src/data/hangout/seed.ts` and drop photos your friends agreed to share into `public/seed/photos` and `public/seed/avatars` (same filenames, or point `imagePath` at a `.jpg`). Critter parts live in `src/lib/hangout/parts.ts` and render in `src/components/hangout/Critter.tsx`; preview them all at `/demo/parts`. The Muse host in `src/components/hangout/MuseHost.tsx` is a placeholder. Drop in official assets if the hackathon provides them.

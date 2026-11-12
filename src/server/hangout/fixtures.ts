@@ -2,6 +2,7 @@
 // data/hangout/recorded.json first (saved from real live runs) and falls back to these.
 // Once you have a key: run `npm run eval:moments -- --live --record` and `npm run memory:rebuild -- --live --record`.
 import { CHATS, PHOTOS, PLACES } from "@/data/hangout/seed";
+import { ART } from "@/lib/hangout/art";
 import { keepsakeForKind, keepsakeLabel } from "@/lib/hangout/parts";
 import type { CritterAi, KeepsakeAi, MemoryAi, PlanAi, WhyNow } from "@/lib/hangout/schemas";
 
@@ -24,14 +25,15 @@ const memory: Record<string, MemoryAi> = {
   alex: { sharedPlaces: placesFor("alex"), insideJokes: [] },
 };
 
+const art = (key: keyof typeof ART, place: string) => ({ animal: ART[key].species.split(" with ")[0], color: ART[key].color, detail: ART[key].detail, caption: ART[key].caption(place) });
 const critter: Record<string, CritterAi> = {
-  maya: { body: "noodle", color: "butter", accessory: "scarf", why: "Noodle body for all those Ramen Ya nights junior year." },
-  dev: { body: "puff", color: "sky", accessory: "feather", why: "A feather, in honor of the goose incident." },
-  jess: { body: "bean", color: "lilac", accessory: "star_clip", why: "A star clip for Friday night lights at Lincoln High." },
-  sam: { body: "pebble", color: "mint", accessory: "bandana", why: "A sweatband from Saturday Run Club." },
-  priya: { body: "blob", color: "mint", accessory: "glasses", why: "Glasses for movie nights at Alamo Drafthouse." },
-  chris: { body: "pebble", color: "coral", accessory: "cap", why: "A cap from the stats group project at Gregory Gym." },
-  alex: { body: "blob", color: "peach", accessory: "flower", why: "A flower for summers at Barton Springs." },
+  maya: { body: "noodle", color: "butter", accessory: "scarf", why: "Noodle body for all those Ramen Ya nights junior year.", art: art("ramen", "Ramen Ya") },
+  dev: { body: "puff", color: "sky", accessory: "feather", why: "A feather, in honor of the goose incident.", art: art("goose", "") },
+  jess: { body: "bean", color: "lilac", accessory: "star_clip", why: "A star clip for Friday night lights at Lincoln High.", art: art("school", "Lincoln High") },
+  sam: { body: "pebble", color: "mint", accessory: "bandana", why: "A sweatband from Saturday Run Club.", art: art("run", "Lady Bird Lake Trail") },
+  priya: { body: "blob", color: "mint", accessory: "glasses", why: "Glasses for movie nights at Alamo Drafthouse.", art: art("movies", "Alamo Drafthouse") },
+  chris: { body: "pebble", color: "coral", accessory: "cap", why: "A cap from the stats group project at Gregory Gym.", art: art("campus", "Gregory Gym") },
+  alex: { body: "blob", color: "peach", accessory: "flower", why: "A flower for summers at Barton Springs.", art: art("swim", "Barton Springs") },
 };
 
 const NO: WhyNow = { nudge: false, type: null, reason: "", evidenceIds: [], action: null, photoId: null };

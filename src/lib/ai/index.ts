@@ -189,6 +189,43 @@ async function image(prompt: string, opts: CallOptions & { size?: string }): Pro
   }
 }
 
+/** Edit an existing image (POST /images/edits): keep the subject, change what the prompt asks for. */
+async function imageEdit(prompt: string, image: { data: Uint8Array; filename: string; type: string }, opts: CallOptions & { size?: string }): Promise<ImageResult> {
+  const e = env();
+  const model = opts.model ?? e.image;
+  const t = begin("image", opts, { prompt, size: opts.size }, model);
+  const start = performance.now();
+  try {
+    if (t.mode === "mock") {
+      await mockLatency();
+      const url = mockImage(prompt, opts.size);
+      return { url, trace: finish(t, start, { response: url }) };
+    }
+    const form = new FormData();
+    form.set("model", model);
+    form.set("prompt", prompt);
+    form.set("response_format", "b64_json");
+    if (opts.size) form.set("size", opts.size);
+    form.set("image", new Blob([new Uint8Array(image.data)], { type: image.type }), image.filename);
+    const res = await fetch(`${e.base}/images/edits`, { method: "POST", headers: { authorization: `Bearer ${e.key}` }, body: form });
+    const text = await res.text();
+    let data: { data?: { url?: string; b64_json?: string }[]; error?: { message?: string } } | string;
+    try {
+      data = JSON.parse(text);
+    } catch {
+      data = text;
+    }
+    if (!res.ok || typeof data === "string") throw new AIError((typeof data === "object" && data.error?.message) || `Model API ${res.status}`, res.status, data);
+    const d = data.data?.[0];
+    if (!d) throw new AIError("No image in response", res.status, data);
+    const url = d.url ?? `data:image/png;base64,${d.b64_json}`;
+    return { url, trace: finish(t, start, { response: d.url ?? "<b64 image>" }) };
+  } catch (err) {
+    finish(t, start, { error: (err as Error).message });
+    throw err;
+  }
+}
+
 async function tools(input: string | AIMessage[], opts: CallOptions & { tools: ToolDef[]; system?: string; maxSteps?: number }): Promise<ToolsResult> {
   const e = env();
   const model = opts.model ?? e.text;
@@ -252,4 +289,4 @@ async function tools(input: string | AIMessage[], opts: CallOptions & { tools: T
   }
 }
 
-export const ai = { text, json, image, tools, mode: aiMode, status: aiStatus, listModels };
+export const ai = { text, json, image, imageEdit, tools, mode: aiMode, status: aiStatus, listModels };

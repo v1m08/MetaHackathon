@@ -1,14 +1,16 @@
 // npm run critters:generate [-- --force] [-- --style flat|plush|cute|costume|fuzzy|soft] [-- maya dev …]
+// npm run critters:generate -- --host     draws the original plush Hangout host
 // Draws each friend's critter with Muse Image (muse-image-1.0), from their memory file: the body/color/accessory
 // Muse Wonder picked plus a prop from a shared place or inside joke. Saves to public/seed/critters/<id>.<ext>.
 // Existing images are kept unless --force. Blocked friends are never drawn.
-import { existsSync, mkdirSync, readdirSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 for (const f of [".env.local", ".env"]) if (existsSync(f)) process.loadEnvFile(f);
 
 import { PLACES } from "@/data/hangout/seed";
 import { ai } from "@/lib/ai";
 import { ART, artKey } from "@/lib/hangout/art";
+import { cutout, dataUrlToBuffer } from "@/server/hangout/art";
 import { colorById } from "@/lib/hangout/parts";
 import { builtMemory, hang } from "@/server/hangout/store";
 
@@ -97,6 +99,31 @@ function themeKey(m: NonNullable<ReturnType<typeof builtMemory>>) {
   return /lincoln|high/i.test(m.sharedPlaces[0]?.name ?? "") ? "school" : "campus";
 }
 
+/** Soft style uses the animal Muse Wonder designed for this friendship, or the template mapping if it hasn't. */
+function softDesign(m: NonNullable<ReturnType<typeof builtMemory>>) {
+  if (m.critter.art) return { ...m.critter.art, by: "muse" as const };
+  const { key, place } = artKey(m);
+  return { animal: ART[key].species, color: ART[key].color, detail: ART[key].detail, caption: ART[key].caption(place), by: "template" as const };
+}
+
+/** What each soft drawing shows, so the app's caption always matches the art. */
+const MANIFEST = join(process.cwd(), "public", "seed", "critters", "soft", "manifest.json");
+type Manifest = Record<string, { animal: string; color: string; detail: string; caption: string; by: "muse" | "template"; drawnAt: string }>;
+const readManifest = (): Manifest => (existsSync(MANIFEST) ? JSON.parse(readFileSync(MANIFEST, "utf8")) : {});
+
+/** The Hangout host: an original plush character (not Meta's Jolly). Official art in public/seed/muse/host.png wins. */
+const HOST_PROMPT =
+  "An original mascot for a cozy app: a small soft plush star-shaped creature in warm golden yellow with five rounded points, a smooth cream face in the center, two small shiny black dot eyes, soft pink blush, a tiny smile and little nub arms, holding a tiny glowing lantern. Photorealistic 3D render of a soft felted plush, pure white background, soft diffused studio lighting, centered, no text, no logos.";
+async function drawHost() {
+  const dir = join(process.cwd(), "public", "seed", "muse");
+  mkdirSync(dir, { recursive: true });
+  const { url } = await ai.image(HOST_PROMPT, { task: "hangout.hostImage", model: MODEL, size: "1024x1024", mode: "live" });
+  const src = await dataUrlToBuffer(url);
+  writeFileSync(join(dir, "host-plush-source.webp"), src);
+  writeFileSync(join(dir, "host-plush.webp"), await cutout(src));
+  console.log("✓ host → public/seed/muse/host-plush.webp");
+}
+
 function costumeFor(m: NonNullable<ReturnType<typeof builtMemory>>) {
   if (m.insideJokes.some((j) => /goose/i.test(j.phrase))) return COSTUME.goose;
   const kinds = m.sharedPlaces.map((p) => PLACES.find((x) => x.name === p.name)?.kind);
@@ -111,8 +138,8 @@ function promptFor(friendId: string) {
   if (!m) return null;
   const c = colorById(m.critter.color);
   if (STYLE === "soft") {
-    const a = ART[artKey(m).key];
-    return `An original kawaii plush animal character: a ${a.species} in ${a.color}, ${a.detail}. ${STYLE_TEXT.soft}`;
+    const a = softDesign(m);
+    return `An original kawaii plush animal character: a ${a.animal} in ${a.color}, ${a.detail}. ${STYLE_TEXT.soft}`;
   }
   if (STYLE === "fuzzy") {
     const a = ANIMAL[themeKey(m)];
@@ -137,6 +164,7 @@ const extFor = (buf: Buffer) => (buf.subarray(0, 4).toString() === "RIFF" ? "web
 
 async function main() {
   const args = process.argv.slice(2);
+  if (args.includes("--host")) return drawHost();
   const force = args.includes("--force");
   const only = args.filter((a, i) => !a.startsWith("--") && args[i - 1] !== "--style");
   mkdirSync(OUT, { recursive: true });
@@ -155,6 +183,12 @@ async function main() {
         const buf = url.startsWith("data:") ? Buffer.from(url.split(",")[1], "base64") : Buffer.from(await (await fetch(url)).arrayBuffer());
         const file = join(OUT, `${f.id}.${extFor(buf)}`);
         writeFileSync(file, buf);
+        if (STYLE === "soft") {
+          const manifest = readManifest();
+          const { by, ...d } = softDesign(builtMemory(f.id)!);
+          manifest[f.id] = { ...d, by, drawnAt: new Date().toISOString() };
+          writeFileSync(MANIFEST, JSON.stringify(manifest, null, 2) + "\n");
+        }
         console.log(`✓ ${f.id.padEnd(6)} ${String(Date.now() - t0).padStart(6)}ms  ${file.replace(process.cwd() + "/", "")}\n    ${prompt}`);
       } catch (err) {
         console.log(`✗ ${f.id}: ${(err as Error).message}`);

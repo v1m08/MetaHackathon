@@ -104,7 +104,13 @@ Return:
   return pushRun(run);
 }
 
-const CRITTER_SYSTEM = `You design a small friendship critter from a fixed parts library. Pick IDs only from the lists. Base every pick on this friendship's specific shared places or inside jokes. Write one short line on why (max 14 words) that names the place or joke. No em-dashes.`;
+const CRITTER_SYSTEM = `You design a small friendship critter. Base every choice on this friendship's specific shared places or inside jokes. No em-dashes.
+1. Parts: pick body, color and accessory IDs only from the lists, and write one short line on why (max 14 words) that names the place or joke.
+2. art: design its soft plush-animal look for an illustrator.
+   - animal: one cute real or storybook animal that fits this friendship, 2 to 5 words (e.g. "kitten with pointed ears"). Never a mascot, brand or existing character.
+   - color: a soft pastel fur color, 2 or 3 words.
+   - detail: one tiny prop or accessory taken from a specific shared place or inside joke, max 12 words.
+   - caption: one line starting with "A" that names the animal and the place or joke, max 14 words.`;
 
 export async function designCritter(friendId: string, mem: Parameters<typeof memorySummary>[0], opts: RunOpts = {}): Promise<{ design: Omit<CritterDesign, "keepsakes">; step: RunStep }> {
   const f = friendById(friendId)!;
@@ -118,6 +124,23 @@ ACCESSORIES: ${ACCESSORIES.map((a) => `${a.id} (${a.hint})`).join("; ")}`;
   if (opts.record !== false && wasLive(r.log)) recordResponse(`critter:${friendId}`, r.raw, { model: r.log.modelId, latencyMs: r.log.latencyMs });
   const fallback: CritterAi = { body: "blob", color: COLORS[friendId.length % COLORS.length].id, accessory: "none", why: "A fresh critter for a new friendship." };
   return { design: r.data ?? fallback, step: museStep("E · Critter designer (Muse Wonder)", r.log) };
+}
+
+/** Re-run only the critter designer (E) on existing memory files, e.g. after changing what it designs. */
+export async function redesignCritters(opts: RunOpts = {}, only: string[] = []) {
+  const runs: PipelineRun[] = [];
+  for (const f of hang().friends.filter((x) => !x.isBlocked && x.isFriend && (!only.length || only.includes(x.id)))) {
+    const mem = builtMemory(f.id);
+    if (!mem) continue;
+    const run = newRun(`Redesign critter: ${firstName(f.name)}`, f.id);
+    const { design, step } = await designCritter(f.id, mem, opts);
+    run.steps.push(step);
+    saveMemory(f.id, { ...mem, critter: design, builtAt: new Date().toISOString() });
+    run.ok = step.status === "ok";
+    run.outcome = design.art ? `${design.art.animal} · ${design.art.detail}` : `${design.body}/${design.color}/${design.accessory}`;
+    runs.push(pushRun(run));
+  }
+  return runs;
 }
 
 export async function rebuildAllMemory(opts: RunOpts = {}) {

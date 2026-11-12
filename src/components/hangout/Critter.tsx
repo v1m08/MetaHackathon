@@ -1,19 +1,23 @@
 "use client";
-// Friendship critters (and the plant theme) as layered SVG parts. Every part ID comes from lib/hangout/parts.
+// Friendship critters. Muse Image art when a friend has it (one image per mood), otherwise layered SVG parts
+// from lib/hangout/parts.
 // States animate through CSS classes in globals.css (crit-awake, crit-napping…), which respect prefers-reduced-motion.
 // Animated groups never carry a transform attribute (CSS animations would replace it).
 import { colorById } from "@/lib/hangout/parts";
 import type { CritterState } from "@/lib/hangout/types";
 import { cx } from "@/components/ui";
 
-export type Theme = "critters" | "plants";
 export interface DesignLike {
   body: string;
   color: string;
   accessory: string;
   keepsakes?: string[];
-  /** Muse Image art for this friendship. When set, it replaces the SVG body (moods are drawn on top). */
+  /** Muse Image art for this friendship. When set, it replaces the SVG body. */
   image?: string;
+  /** The art was drawn for this mood (no dimming filter needed). */
+  imageOwn?: boolean;
+  /** A keepsake already drawn into the art, so its pin isn't overlaid again. */
+  drawnPin?: string;
 }
 
 const INK = "#2B2B33";
@@ -213,11 +217,11 @@ function Zzz({ x, y }: { x: number; y: number }) {
   );
 }
 
-function Confetti({ petals }: { petals?: boolean }) {
+function Confetti() {
   const bits = [[18, 22, "#FF6B9A"], [34, 10, "#FFD43B"], [52, 18, "#5BC0EB"], [74, 8, "#9BE3C4"], [92, 20, "#7C5CFF"], [104, 12, "#FF9E5E"], [26, 36, "#5BC0EB"], [96, 34, "#FF6B9A"]] as const;
   return (
     <g className="crit-confetti">
-      {bits.map(([x, y, c], i) => (petals ? <ellipse key={i} cx={x} cy={y} rx={3} ry={1.8} fill="#FF9AC8" /> : <rect key={i} x={x} y={y} width={4} height={6} rx={1} fill={c} />))}
+      {bits.map(([x, y, c], i) => <rect key={i} x={x} y={y} width={4} height={6} rx={1} fill={c} />)}
     </g>
   );
 }
@@ -227,8 +231,8 @@ function ImageArt({ design, state, showKeepsakes }: { design: DesignLike; state:
   return (
     <>
       <g className="crit-body">
-        <image href={design.image} x={4} y={2} width={112} height={112} preserveAspectRatio="xMidYMax meet" className="crit-art" />
-        {showKeepsakes && !!design.keepsakes?.length && <Pins ids={design.keepsakes} x={102} y={100} vertical />}
+        <image href={design.image} x={4} y={2} width={112} height={112} preserveAspectRatio="xMidYMax meet" className={cx("crit-art", design.imageOwn && "crit-art-own")} />
+        {showKeepsakes && <Pins ids={(design.keepsakes ?? []).filter((k) => k !== design.drawnPin)} x={102} y={100} vertical />}
       </g>
       {state === "hatching" && <path className="crit-shell" d="M28 90 L36 83 L44 91 L52 83 L60 91 L68 83 L76 91 L84 83 L92 90 C92 105 79 114 60 114 C41 114 28 105 28 90 Z" fill="#FFF6E5" stroke="#EAD9BC" strokeWidth={2} />}
     </>
@@ -272,135 +276,14 @@ function CritterArt({ design, state, showKeepsakes }: { design: DesignLike; stat
   );
 }
 
-const LEAF: Record<string, string> = { awake: "#4DB86A", celebrating: "#4DB86A", hatching: "#7CCB7F", resting: "#6FBF80", sleepy: "#B9C25B", napping: "#A9A189", egg: "#7CCB7F" };
-
-function Foliage({ body, leaf, dark, bloom, flower }: { body: string; leaf: string; dark: string; bloom: boolean; flower: string }) {
-  const Bloom = ({ x, y, r = 4 }: { x: number; y: number; r?: number }) =>
-    bloom ? (
-      <g>
-        {[0, 72, 144, 216, 288].map((d) => (
-          <circle key={d} cx={x + r * 1.2 * Math.cos((d * Math.PI) / 180)} cy={y + r * 1.2 * Math.sin((d * Math.PI) / 180)} r={r} fill={flower} />
-        ))}
-        <circle cx={x} cy={y} r={r * 0.75} fill="#FFD43B" />
-      </g>
-    ) : null;
-  switch (body) {
-    case "noodle": // trailing vine
-      return (
-        <g>
-          <g stroke={dark} strokeWidth={2.2} fill="none" strokeLinecap="round">
-            <path d="M60 78 C50 68 34 70 28 94" />
-            <path d="M60 78 C70 66 88 68 93 94" />
-            <path d="M60 78 C57 64 63 52 60 38" />
-          </g>
-          {[[40, 72], [30, 86], [80, 70], [91, 86], [59, 62], [61, 46], [59, 36]].map(([x, y], i) => (
-            <ellipse key={i} cx={x} cy={y} rx={6} ry={4.4} fill={leaf} stroke={dark} strokeWidth={1} transform={`rotate(${i % 2 ? 30 : -30} ${x} ${y})`} />
-          ))}
-          <Bloom x={60} y={33} />
-          <Bloom x={30} y={92} r={3} />
-        </g>
-      );
-    case "bean": // cactus
-      return (
-        <g fill={leaf} stroke={dark} strokeWidth={1.6}>
-          <rect x={37} y={48} width={9} height={20} rx={4.5} />
-          <rect x={39} y={62} width={14} height={7} rx={3.5} />
-          <rect x={75} y={40} width={9} height={20} rx={4.5} />
-          <rect x={68} y={54} width={14} height={7} rx={3.5} />
-          <rect x={49} y={34} width={22} height={46} rx={11} />
-          <g fill={dark} stroke="none">
-            {[[56, 44], [64, 52], [56, 60], [64, 68], [41, 54], [79, 46]].map(([x, y], i) => <circle key={i} cx={x} cy={y} r={0.9} />)}
-          </g>
-          <Bloom x={60} y={32} />
-        </g>
-      );
-    case "puff": // fern
-      return (
-        <g>
-          {[-66, -44, -22, 0, 22, 44, 66].map((d) => (
-            <ellipse key={d} cx={60} cy={56} rx={4.6} ry={22} fill={leaf} stroke={dark} strokeWidth={1} transform={`rotate(${d} 60 78)`} />
-          ))}
-          <Bloom x={60} y={34} r={3.4} />
-        </g>
-      );
-    case "pebble": // tulip
-      return (
-        <g>
-          <path d="M60 78 Q57 62 60 46" stroke={dark} strokeWidth={3} fill="none" strokeLinecap="round" />
-          <ellipse cx={51} cy={66} rx={5} ry={13} fill={leaf} stroke={dark} strokeWidth={1} transform="rotate(-24 51 66)" />
-          <ellipse cx={69} cy={66} rx={5} ry={13} fill={leaf} stroke={dark} strokeWidth={1} transform="rotate(24 69 66)" />
-          {bloom ? (
-            <path d="M46 34 Q46 52 60 52 Q74 52 74 34 L67 41 L60 28 L53 41 Z" fill={flower} stroke="rgba(0,0,0,.12)" />
-          ) : (
-            <path d="M52 40 Q52 52 60 52 Q68 52 68 40 L64 44 L60 34 L56 44 Z" fill={flower} opacity={0.85} stroke="rgba(0,0,0,.12)" />
-          )}
-        </g>
-      );
-    default: // succulent
-      return (
-        <g>
-          {[-64, -32, 0, 32, 64].map((d) => (
-            <ellipse key={d} cx={60} cy={60} rx={8} ry={17} fill={leaf} stroke={dark} strokeWidth={1.2} transform={`rotate(${d} 60 78)`} />
-          ))}
-          {[-24, 24].map((d) => (
-            <ellipse key={d} cx={60} cy={66} rx={6} ry={11} fill={leaf} stroke={dark} strokeWidth={1} transform={`rotate(${d} 60 78)`} opacity={0.95} />
-          ))}
-          <Bloom x={60} y={44} />
-        </g>
-      );
-  }
-}
-
-function PlantArt({ design, state, showKeepsakes }: { design: DesignLike; state: CritterState; showKeepsakes: boolean }) {
-  const c = colorById(design.color);
-  const face = faceFor(state);
-  const leaf = LEAF[state] ?? LEAF.awake;
-  const dark = state === "napping" ? "#8A846C" : state === "sleepy" ? "#98A043" : "#2F8A4A";
-  // Thirsty plants droop, dormant ones shrink. Static transforms live on an outer group, never the animated one.
-  const pose = state === "sleepy" ? "rotate(7 60 78) translate(0 3)" : state === "napping" ? "translate(60 78) scale(.78) translate(-60 -78)" : undefined;
-  return (
-    <>
-      {state === "egg" ? (
-        <g className="crit-body">
-          <ellipse cx={60} cy={76} rx={11} ry={6} fill="#7A5A41" />
-          <ellipse cx={60} cy={72} rx={4.5} ry={6} fill="#C9A26B" stroke="#9C7A4C" transform="rotate(20 60 72)" />
-        </g>
-      ) : state === "hatching" ? (
-        <g className="crit-body">
-          <path d="M60 79 Q59 70 60 62" stroke="#3E9B57" strokeWidth={2.6} fill="none" strokeLinecap="round" />
-          <ellipse cx={53} cy={61} rx={7.5} ry={4} fill="#7CCB7F" transform="rotate(-25 53 61)" />
-          <ellipse cx={67} cy={60} rx={7.5} ry={4} fill="#7CCB7F" transform="rotate(25 67 60)" />
-        </g>
-      ) : (
-        <g transform={pose}>
-          <g className="crit-body">
-            <Foliage body={design.body} leaf={leaf} dark={dark} bloom={state === "celebrating"} flower={c.cheek} />
-          </g>
-        </g>
-      )}
-      <ellipse cx={60} cy={80} rx={23} ry={3.6} fill="#6B4F3A" />
-      <path d="M36 82 L84 82 L79 106 Q60 110 41 106 Z" fill={c.fill} stroke={c.shade} strokeWidth={1.6} />
-      <rect x={33} y={77} width={54} height={9} rx={4} fill={c.shade} />
-      {state !== "egg" && (
-        <>
-          <Eyes face={face} x={60} y={92} dx={8} r={3} />
-          <Mouth face={face} x={60} y={98} s={0.7} />
-        </>
-      )}
-      {showKeepsakes && !!design.keepsakes?.length && <Pins ids={design.keepsakes} x={88} y={100} vertical />}
-    </>
-  );
-}
-
-export function Critter({ design, state, theme = "critters", size = 96, showKeepsakes = true, className, label }: { design: DesignLike; state: CritterState; theme?: Theme; size?: number; showKeepsakes?: boolean; className?: string; label?: string }) {
-  const plants = theme === "plants";
-  const art = !plants && !!design.image && state !== "egg";
+export function Critter({ design, state, size = 96, showKeepsakes = true, className, label }: { design: DesignLike; state: CritterState; size?: number; showKeepsakes?: boolean; className?: string; label?: string }) {
+  const art = !!design.image && state !== "egg";
   return (
     <svg viewBox="0 0 120 120" width={size} height={size} className={cx("crit overflow-visible", `crit-${state}`, className)} role="img" aria-label={label}>
       {!art && <ellipse cx={60} cy={110} rx={state === "egg" ? 24 : 32} ry={5} fill="rgba(60,40,20,.12)" />}
-      {plants ? <PlantArt design={design} state={state} showKeepsakes={showKeepsakes} /> : art ? <ImageArt design={design} state={state} showKeepsakes={showKeepsakes} /> : <CritterArt design={design} state={state} showKeepsakes={showKeepsakes} />}
-      {(state === "napping" || (state === "resting" && !plants)) && <Zzz x={plants ? 82 : art ? 90 : 86} y={plants ? 50 : art ? 22 : 34} />}
-      {state === "celebrating" && <Confetti petals={plants} />}
+      {art ? <ImageArt design={design} state={state} showKeepsakes={showKeepsakes} /> : <CritterArt design={design} state={state} showKeepsakes={showKeepsakes} />}
+      {(state === "napping" || state === "resting") && <Zzz x={art ? 90 : 86} y={art ? 22 : 34} />}
+      {state === "celebrating" && <Confetti />}
     </svg>
   );
 }

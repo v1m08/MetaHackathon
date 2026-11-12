@@ -1,6 +1,9 @@
 // Everything the Hangout UI and the demo panel can change. API routes stay thin and call these.
 import { GATHERINGS, PEOPLE } from "@/data/hangout/seed";
 import type { NudgeStatus } from "@/lib/hangout/types";
+import { keepsakeLabel } from "@/lib/hangout/parts";
+import { drawKeepsake } from "./art";
+import { hasKey } from "./muse";
 import { designCritter, pickKeepsake, type RunOpts } from "./pipeline";
 import { builtMemory, demoNow, firstName, friendById, hang, hid, pushAlert, pushRun, timelineFor } from "./store";
 
@@ -147,6 +150,13 @@ export async function confirmMeetup(friendId: string) {
   if (!keepsakes.includes(pin)) keepsakes.push(pin);
   plan.metUpOn = s.demoDate;
   plan.keepsake = pin;
+  // Muse Image draws the new pin into the critter's art in the background; the Hangout picks it up on its next poll.
+  const t0 = Date.now();
+  void drawKeepsake(friendId, pin, s.aiMode === "live" && hasKey())
+    .then((made) =>
+      pushRun({ id: hid("run"), at: new Date().toISOString(), label: `Draw ${keepsakeLabel(pin)} into ${firstName(f.name)}'s critter`, friendId, steps: [{ name: "Muse Image edit", status: made.length ? "ok" : "skip", detail: made.length ? `${made.join(", ")} in ${Date.now() - t0}ms` : "already drawn, or cached mode / no key" }], outcome: made.length ? `${made.length} images drawn` : "skipped", ok: true }),
+    )
+    .catch((err) => pushRun({ id: hid("run"), at: new Date().toISOString(), label: `Draw ${keepsakeLabel(pin)} into ${firstName(f.name)}'s critter`, friendId, steps: [{ name: "Muse Image edit", status: "fail", detail: (err as Error).message }], outcome: "failed, pin stays as an overlay", ok: false }));
   return plan;
 }
 

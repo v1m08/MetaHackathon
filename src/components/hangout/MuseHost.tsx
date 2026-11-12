@@ -1,7 +1,8 @@
 "use client";
-// Placeholder host sprite for the Hangout. Deliberately generic, NOT Meta's official Muse avatar.
-// Swap in official assets here if the hackathon provides them.
-export function MuseHost({ size = 64 }: { size?: number }) {
+// Hangout host. Shows public/seed/muse/host.png (official Muse art, if the hackathon provides it), else the
+// original plush host drawn by Muse Image, else this SVG sprite. Never a recreation of Meta's own avatar.
+export function MuseHost({ size = 64, image }: { size?: number; image?: string }) {
+  if (image) return <img src={image} alt="Muse, your Hangout host" width={size} height={size} className="crit-host object-contain" style={{ width: size, height: size }} />;
   return (
     <svg viewBox="0 0 80 80" width={size} height={size} className="crit crit-awake overflow-visible" role="img" aria-label="Muse (placeholder host)">
       <defs>

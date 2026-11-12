@@ -62,6 +62,4 @@ export const keepsakeLabel = (id: string) => KEEPSAKES.find((k) => k.id === id)?
 /** Code fallback when the keepsake picker fails: map the place kind to a pin. */
 export const keepsakeForKind = (kind: string): KeepsakeId => (KEEPSAKES.find((k) => (k.kinds as readonly string[]).includes(kind))?.id ?? "star") as KeepsakeId;
 
-/** Plant theme uses the same states under different names. */
-export const PLANT_STATE_LABEL = { awake: "Thriving", sleepy: "Thirsty", napping: "Dormant", celebrating: "Blooming", egg: "Seed", hatching: "Sprouting", resting: "Resting" } as const;
 export const CRITTER_STATE_LABEL = { awake: "Awake", sleepy: "Sleepy", napping: "Napping", celebrating: "Celebrating", egg: "Egg", hatching: "Hatching", resting: "Resting" } as const;

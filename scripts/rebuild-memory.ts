@@ -1,11 +1,11 @@
-// npm run memory:rebuild [-- --live | --cached] [--no-record]
+// npm run memory:rebuild [-- --live | --cached] [--no-record] [--critters-only [maya dev …]]
 // Rebuilds every friend's memory file (A: Muse Ember) and critter design (E: Muse Wonder) into
 // data/hangout/memory.json. Blocked friends are never processed. Restart or reset the dev server after.
 import { existsSync } from "node:fs";
 for (const f of [".env.local", ".env"]) if (existsSync(f)) process.loadEnvFile(f);
 
 import { hasKey, museModelId, type HangMode } from "@/server/hangout/muse";
-import { rebuildAllMemory } from "@/server/hangout/pipeline";
+import { rebuildAllMemory, redesignCritters } from "@/server/hangout/pipeline";
 import { MEMORY_FILE } from "@/server/hangout/store";
 
 const args = process.argv.slice(2);
@@ -13,7 +13,9 @@ const mode: HangMode = args.includes("--cached") ? "cached" : args.includes("--l
 
 async function main() {
   console.log(`\nRebuilding memory files · ${mode === "live" ? `live · ${museModelId("ember")} + ${museModelId("wonder")}` : "cached"}\n`);
-  const runs = await rebuildAllMemory({ mode, fallbackToCache: false, record: !args.includes("--no-record") });
+  const opts = { mode, fallbackToCache: false, record: !args.includes("--no-record") };
+  // --critters-only: keep the memory files, re-run just the critter designer (E). Optional friend ids after it.
+  const runs = args.includes("--critters-only") ? await redesignCritters(opts, args.filter((a) => !a.startsWith("--"))) : await rebuildAllMemory(opts);
   for (const r of runs) {
     const ms = r.steps.filter((s) => s.muse).map((s) => s.muse!.latencyMs).reduce((a, b) => a + b, 0);
     console.log(`${r.ok ? "✓" : "✗"} ${r.label.replace("Rebuild memory: ", "").padEnd(8)} ${String(ms).padStart(5)}ms  ${r.outcome}`);

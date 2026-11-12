@@ -1,34 +1,35 @@
 // View models for the Hangout screens and the demo panel. Blocked friends never appear in any of these.
 import { CALENDARS, GATHERINGS, ME } from "@/data/hangout/seed";
 import { SCENARIOS } from "@/data/hangout/scenarios";
-import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { artCaption } from "@/lib/hangout/art";
 import type { EvidenceItem } from "@/lib/hangout/evidence";
 import type { CritterState, Friend, Nudge } from "@/lib/hangout/types";
-import { hasKey, museModelId, recordedKeys } from "./muse";
+import { critterArt, hostArt, MOODS, SOURCE_DIR } from "./art";
+import { hasKey, museModelId, readJsonFile, recordedKeys } from "./muse";
 import { slotLabel } from "./pipeline";
 import { builtMemory, critterStateFor, evidenceIndex, firstName, friendById, hang, memoryStore, photoById, visibleFriends } from "./store";
 import { daysBetween } from "@/lib/hangout/sleep";
 
 const notFound = () => Object.assign(new Error("Not found"), { status: 404 });
 
-/** Muse Image critter art for this friend, if it's been drawn (public/seed/critters/art). Falls back to SVG parts. */
-const ART_DIR = "/seed/critters/art";
-export const critterArt = (friendId: string) => (existsSync(join(process.cwd(), "public", ART_DIR, `${friendId}.webp`)) ? `${ART_DIR}/${friendId}.webp` : undefined);
+/** What each Muse drawing shows (written by critters:generate), so captions always match the art. */
+const artManifest = () => readJsonFile<Record<string, { caption: string; animal: string }>>(join(SOURCE_DIR, "manifest.json"), {});
 
 export function critterCard(f: Friend) {
   const s = hang();
   const { state, sleep } = critterStateFor(f.id);
   const mem = builtMemory(f.id);
   const design = s.critters[f.id] ?? mem?.critter ?? { body: "blob", color: "sky", accessory: "none" };
+  const keepsakes = s.keepsakes[f.id] ?? [];
+  const art = critterArt(f.id, state, keepsakes);
   return {
     friendId: f.id,
     name: f.name,
     first: firstName(f.name),
     avatar: f.avatarPhoto,
     state,
-    design: { ...design, keepsakes: s.keepsakes[f.id] ?? [], image: critterArt(f.id) },
+    design: { ...design, keepsakes, image: art?.image, imageOwn: art?.own, drawnPin: art?.drawnPin },
     daysSince: sleep.daysSince,
     rhythmDays: sleep.rhythmDays,
     lastTwoWayChat: sleep.lastTwoWayChat?.date ?? null,
@@ -36,27 +37,22 @@ export function critterCard(f: Friend) {
 }
 export type CritterCard = ReturnType<typeof critterCard>;
 
-const WORDS: Record<"critters" | "plants", Record<CritterState, string>> = {
-  critters: { awake: "awake", sleepy: "a little sleepy", napping: "napping", celebrating: "celebrating", resting: "resting", egg: "egg", hatching: "hatching" },
-  plants: { awake: "thriving", sleepy: "a little thirsty", napping: "dormant", celebrating: "blooming", resting: "resting", egg: "seed", hatching: "sprouting" },
-};
+const WORDS: Record<CritterState, string> = { awake: "awake", sleepy: "a little sleepy", napping: "napping", celebrating: "celebrating", resting: "resting", egg: "egg", hatching: "hatching" };
 
 const names = (cs: CritterCard[]) => (cs.length === 1 ? cs[0].first : `${cs.slice(0, -1).map((c) => c.first).join(", ")} and ${cs.at(-1)!.first}`);
 const poss = (cs: CritterCard[]) => `${names(cs)}'s`;
 
 /** What the Muse host says. Short, warm, never guilt-trippy. */
-export function hostLine(cards: CritterCard[], theme: "critters" | "plants") {
-  const w = WORDS[theme];
-  const noun = theme === "plants" ? "plant" : "critter";
+export function hostLine(cards: CritterCard[]) {
   const by = (st: CritterState) => cards.filter((c) => c.state === st);
-  const many = (cs: CritterCard[]) => (cs.length > 1 ? `${noun}s are` : `${noun} is`);
+  const many = (cs: CritterCard[]) => (cs.length > 1 ? "critters are" : "critter is");
   const lines: string[] = [];
-  if (by("hatching").length) lines.push(`${poss(by("hatching"))} ${theme === "plants" ? "seed is sprouting" : "egg is hatching"}!`);
-  if (by("celebrating").length) lines.push(`${poss(by("celebrating"))} ${many(by("celebrating"))} ${w.celebrating}!`);
-  if (by("egg").length) lines.push(`${poss(by("egg"))} ${w.egg} is waiting for a hello.`);
-  if (by("napping").length) lines.push(`${poss(by("napping"))} ${many(by("napping"))} ${w.napping}.`);
-  if (by("sleepy").length) lines.push(`${poss(by("sleepy"))} ${by("sleepy").length > 1 ? "are" : "is"} ${w.sleepy}.`);
-  return lines.slice(0, 2).join(" ") || (theme === "plants" ? "Everything's thriving. Nice." : "Everyone's awake. Cozy in here.");
+  if (by("hatching").length) lines.push(`${poss(by("hatching"))} egg is hatching!`);
+  if (by("celebrating").length) lines.push(`${poss(by("celebrating"))} ${many(by("celebrating"))} ${WORDS.celebrating}!`);
+  if (by("egg").length) lines.push(`${poss(by("egg"))} egg is waiting for a hello.`);
+  if (by("napping").length) lines.push(`${poss(by("napping"))} ${many(by("napping"))} ${WORDS.napping}.`);
+  if (by("sleepy").length) lines.push(`${poss(by("sleepy"))} ${by("sleepy").length > 1 ? "are" : "is"} ${WORDS.sleepy}.`);
+  return lines.slice(0, 2).join(" ") || "Everyone's awake. Cozy in here.";
 }
 
 export function hangoutView() {
@@ -68,9 +64,8 @@ export function hangoutView() {
   return {
     me: { name: ME.name, avatar: ME.avatarPhoto },
     demoDate: s.demoDate,
-    theme: s.theme,
     aiMode: s.aiMode,
-    host: { line: hostLine(cards, s.theme) },
+    host: { line: hostLine(cards), image: hostArt() },
     critters: cards.filter((c) => c.state !== "egg" && c.state !== "resting"),
     eggs: cards.filter((c) => c.state === "egg"),
     hammock: cards.filter((c) => c.state === "resting"),
@@ -134,7 +129,7 @@ export function friendView(friendId: string) {
     city: f.city,
     isResting: f.isResting,
     isCloseCircle: f.isCloseCircle,
-    why: card.design.image && mem ? artCaption(mem) : card.design.why,
+    why: card.design.image && mem ? (artManifest()[friendId]?.caption ?? artCaption(mem)) : card.design.why,
     sleep: { daysSince: sleep.daysSince, rhythmDays: sleep.rhythmDays, ratio: sleep.ratio, lastRealContact: sleep.lastRealContact?.date ?? null },
     lastChat: last ? { date: last.date.slice(0, 10), daysAgo: daysBetween(last.date.slice(0, 10), s.demoDate), text: last.text, sender: last.sender === "me" ? "You" : card.first } : null,
     sharedPlaces: (mem?.sharedPlaces ?? []).map((p) => ({ ...p, photos: p.photoIds.map(photoById).filter((x) => !!x) })),
@@ -179,7 +174,6 @@ export function demoView() {
   return {
     demoDate: s.demoDate,
     aiMode: s.aiMode,
-    theme: s.theme,
     hasKey: hasKey(),
     models: { ember: museModelId("ember"), wonder: museModelId("wonder") },
     scenarios: SCENARIOS.map((sc) => ({ id: sc.id, label: sc.label, friendId: sc.friendId, expect: sc.expect.outcome === "nudge" ? `${sc.expect.type} nudge` : sc.expect.outcome === "filtered" ? `filtered (${sc.expect.reason})` : "no nudge" })),
@@ -198,3 +192,17 @@ export type FriendView = ReturnType<typeof friendView>;
 export type ChatView = ReturnType<typeof chatView>;
 export type DemoView = ReturnType<typeof demoView>;
 export type AlertView = NonNullable<ReturnType<typeof latestAlert>>;
+
+/** Every friend's Muse-drawn moods, for the showcase grid on /demo/parts. */
+export function artGallery() {
+  const manifest = artManifest();
+  return visibleFriends()
+    .map((f) => ({
+      id: f.id,
+      first: firstName(f.name),
+      caption: manifest[f.id]?.caption,
+      moods: Object.fromEntries(MOODS.map((m) => [m, critterArt(f.id, m)?.own ? critterArt(f.id, m)!.image : null])) as Record<(typeof MOODS)[number], string | null>,
+      base: critterArt(f.id, "awake")?.image ?? null,
+    }))
+    .filter((f) => f.base);
+}
