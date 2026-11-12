@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Where can my people take me?</title>
+<style>
+  :root { --fb:#1877f2; --bg:#0f172a; --ink:#0b1220; --paper:#ffffff; --muted:#9ca3af; --ok:#31a24c; --warn:#f0a000; }
+  html,body { margin:0; height:100%; background:#000; color:#e5e7eb; font-family:-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; }
+  .deck { position:relative; width:100vw; height:100vh; overflow:hidden; }
+  .slide { position:absolute; inset:0; display:none; padding:56px 72px; box-sizing:border-box; background:var(--bg); }
+  .slide.active { display:block; }
+  .slide.light { background:#f0f2f5; color:var(--ink); }
+  h1 { font-size:56px; line-height:1.05; margin:0 0 18px; letter-spacing:-.5px; }
+  h2 { font-size:40px; line-height:1.1; margin:0 0 20px; letter-spacing:-.3px; }
+  .kicker { font-size:14px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--fb); margin-bottom:14px; }
+  .light .kicker { color:var(--fb); }
+  p, li { font-size:22px; line-height:1.35; }
+  .muted { color:var(--muted); }
+  .light .muted { color:#65676b; }
+  .big { font-size:88px; font-weight:800; letter-spacing:-2px; line-height:1; }
+  .grid { display:grid; gap:28px; }
+  .g2 { grid-template-columns:1fr 1fr; } .g3 { grid-template-columns:1fr 1fr 1fr; } .g4 { grid-template-columns:repeat(4,1fr); }
+  .stat { background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1); border-radius:18px; padding:22px 24px; }
+  .light .stat { background:#fff; border-color:#e4e6eb; }
+  .stat b { display:block; font-size:54px; font-weight:800; letter-spacing:-1px; }
+  .stat span { font-size:16px; color:var(--muted); display:block; margin-top:6px; line-height:1.3; }
+  .light .stat span { color:#65676b; }
+  .shots { display:flex; gap:22px; align-items:flex-start; justify-content:center; }
+  .shot { background:#111; border-radius:28px; padding:8px; box-shadow:0 30px 80px rgba(0,0,0,.5); }
+  .shot img { display:block; width:300px; border-radius:22px; }
+  .shot figcaption { text-align:center; font-size:14px; color:var(--muted); margin-top:8px; }
+  .light .shot figcaption { color:#65676b; }
+  iframe { width:1280px; height:720px; border:0; border-radius:16px; transform-origin:top left; }
+  .frame { width:1280px; height:720px; transform:scale(var(--s,0.9)); transform-origin:top left; }
+  .foot { position:absolute; left:72px; right:72px; bottom:22px; display:flex; justify-content:space-between; font-size:13px; color:var(--muted); }
+  .pill { display:inline-block; font-size:13px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; padding:4px 10px; border-radius:999px; background:rgba(240,160,0,.15); color:#fcd34d; border:1px solid rgba(240,160,0,.4); margin-left:10px; vertical-align:middle; }
+  .rule { list-style:none; padding:0; margin:0; }
+  .rule li { padding:14px 0; border-bottom:1px solid rgba(255,255,255,.1); display:flex; gap:16px; align-items:flex-start; }
+  .rule li b { color:#fff; }
+  .rule .n { width:40px; height:40px; border-radius:999px; background:var(--fb); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:800; flex:none; }
+  .quote { font-size:26px; line-height:1.3; border-left:4px solid var(--fb); padding-left:20px; margin:20px 0; }
+  .nav { position:absolute; right:16px; bottom:10px; font-size:12px; color:#475569; }
+  @media print {
+    html,body { background:#fff; }
+    .deck { height:auto; }
+    .slide { display:block !important; position:relative; width:1280px; height:720px; page-break-after:always; inset:auto; }
+    .nav { display:none; }
+    iframe { display:none; }
+    .printshot { display:block !important; }
+  }
+  .printshot { display:none; }
+</style>
+</head>
+<body>
+<div class="deck" id="deck">
+
+<!-- 1 -->
+<section class="slide">
+  <div class="kicker">one young adult, one number</div>
+  <div class="grid g2" style="align-items:center">
+    <div>
+      <h1>Maya has $120 and a free weekend.</h1>
+      <p>23, product designer in Austin, no car. Hasn't left the city since March.</p>
+      <p class="muted">She knows <b style="color:#fff">28 people in 11 other cities</b>, and three of them would put her up tonight. She has no way to know that.</p>
+    </div>
+    <figure class="shot" style="justify-self:center"><img src="shots/01-profile.png" alt="Maya's profile" /><figcaption>her profile · Open to hosting friends is a setting, off by default</figcaption></figure>
+  </div>
+  <div class="foot"><span>Where can my people take me?</span><span>Meta hackathon · young adults · built on Muse</span></div>
+</section>
+
+<!-- 2 -->
+<section class="slide">
+  <div class="kicker">the idea</div>
+  <h1 style="font-size:64px">You give Facebook a weekend and a budget.<br/><span style="color:var(--fb)">Not a destination.</span></h1>
+  <p style="max-width:1000px">A Muse agent reasons over your actual network — who lives where, who opted in to hosting, who's driving there with an empty seat, what your friends posted from there — and proposes trips that only exist because of the people you know. With two honest prices.</p>
+  <div class="quote">"dallas with cole + harper for the deep ellum vintage market — about $75 if Cole says yes and Ravi has a seat, about $290 otherwise."</div>
+  <div class="foot"><span>Discover → Guide → Coordinate</span><span>nothing sends without you</span></div>
+</section>
+
+<!-- 3 -->
+<section class="slide light">
+  <div class="kicker">live demo</div>
+  <h2>Feed nudge → Discover → Guide → Coordinate → Cole's inbox</h2>
+  <div class="shots">
+    <figure class="shot"><img src="shots/02-nudge.png" alt="Feed nudge" /><figcaption>feed nudge</figcaption></figure>
+    <figure class="shot"><img src="shots/03-stream.png" alt="Reasoning stream" /><figcaption>the agent working</figcaption></figure>
+    <figure class="shot"><img src="shots/04-card.png" alt="Trip card" /><figcaption>two prices, every person connected</figcaption></figure>
+    <figure class="shot"><img src="shots/05-guide.png" alt="Guide" /><figcaption>guide, credited · Muse saw</figcaption></figure>
+    <figure class="shot"><img src="shots/06-drafts.png" alt="Drafts" /><figcaption>drafts awaiting approval</figcaption></figure>
+  </div>
+  <div class="foot"><span>stills are the backup; the demo is live</span><span>runbook: pitch/runbook.md</span></div>
+</section>
+
+<!-- 4 -->
+<section class="slide">
+  <div class="kicker">how the agent works · where Muse sits</div>
+  <div class="grid" style="grid-template-columns: 1fr 1.6fr; align-items:start">
+    <div>
+      <ul class="rule">
+        <li><span class="n">1</span><span><b>muse-spark-1.3</b> runs a real tool-calling loop: scan the network, check who's free, price each option, read friends' photos, propose.</span></li>
+        <li><span class="n">2</span><span><b>Tools are viewer-scoped.</b> They only ever return what this person can already see.</span></li>
+        <li><span class="n">3</span><span><b>muse-ember-1.0</b> reads friends' photos (57 indexed, one live per guide) so taste matching is about what's in the picture.</span></li>
+        <li><span class="n">4</span><span><b>Code validates every id</b> and <b>computes every dollar</b> after the model answers.</span></li>
+      </ul>
+    </div>
+    <div style="--s:0.62"><div class="frame"><iframe data-src="animations/agent.html" title="How the agent thinks"></iframe></div><img class="printshot" src="shots/anim-agent.png" alt="agent animation final frame" style="width:800px;border-radius:12px" /></div>
+  </div>
+  <div class="foot"><span>animation replays a recorded real run · press R</span><span>AI Inspector: /dev/ai</span></div>
+</section>
+
+<!-- 5 -->
+<section class="slide light">
+  <div class="kicker">does it hold up? · seeded evaluation, real runs</div>
+  <div class="grid g4">
+    <div class="stat"><b id="n-ground">100%</b><span>of rendered trip elements trace to a real record the viewer can see</span></div>
+    <div class="stat"><b id="n-priv">0</b><span>privacy violations rendered, with restricted profiles seeded to catch them</span></div>
+    <div class="stat"><b id="n-budget">76%</b><span>of trips inside the budget; the rest labelled "$X over"</span></div>
+    <div class="stat"><b id="n-save">70%</b><span>cheaper than the same trip with a hotel and solo transport</span></div>
+  </div>
+  <div class="grid g3" style="margin-top:28px">
+    <div class="stat"><b id="n-guide">92%</b><span>of guide picks on hand-labelled photos describe what's in the photo; credit is always the real author</span></div>
+    <div class="stat"><b id="n-lat">25 s</b><span>live Discover, about $0.05 of Muse per run</span></div>
+    <div class="stat"><b id="n-raw">100%</b><span>of ids the model emitted were real and visible (raw, before validation)</span></div>
+  </div>
+  <p class="muted" style="margin-top:26px;font-size:17px">Limits: seeded people and a seeded price table (the "% cheaper" is arithmetic on it, not market data). Scenarios chosen by us. Full numbers and method: EVAL.md.</p>
+  <div class="foot"><span>npm run eval</span><span>12 scenarios · 5 guides</span></div>
+</section>
+
+<!-- 6 -->
+<section class="slide">
+  <div class="kicker">stress test <span class="pill">simulated users · not user research</span></div>
+  <div class="grid" style="grid-template-columns: 1fr 1.6fr; align-items:start">
+    <div>
+      <p>16 simulated young adults, each played by a Muse agent with its own budget, network, car and taste, used the <b style="color:#fff">real endpoints</b>: pick a trip, read the guide, approve or refuse the drafts.</p>
+      <p class="muted" id="sim-line">Personas give opinions; code checks facts. Top problems they exposed were fixed and the swarm re-run.</p>
+    </div>
+    <div style="--s:0.62"><div class="frame"><iframe data-src="animations/swarm.html" title="The persona swarm"></iframe></div><img class="printshot" src="shots/anim-swarm.png" alt="swarm animation final frame" style="width:800px;border-radius:12px" /></div>
+  </div>
+  <div class="foot"><span>PERSONAS.md · sim/*.json traces</span><span>press R to replay</span></div>
+</section>
+
+<!-- 7 -->
+<section class="slide">
+  <div class="kicker">trust and safety</div>
+  <h2>Three rules the model cannot break</h2>
+  <ul class="rule">
+    <li><span class="n">1</span><span><b>Hosting is opt-in.</b> A profile setting, off by default. Only people who turned it on are ever proposed, and only when they're free.</span></li>
+    <li><span class="n">2</span><span><b>Costs are never model arithmetic.</b> A seeded price table in code produces both numbers; the card is re-priced after validation.</span></li>
+    <li><span class="n">3</span><span><b>Nothing sends without approval.</b> Drafts live in Messenger as <i>awaiting your approval</i>. Friends-of-friends are reached only through the mutual. Recipients never see drafts.</span></li>
+  </ul>
+  <p class="muted" style="margin-top:22px">Plus: every tool takes the viewer's identity; every id in the output is re-checked against the database and the viewer; failures are dropped and logged in the stream ("Fixed 2 things the model got wrong").</p>
+  <div class="foot"><span>src/lib/travel/visibility.ts · validate.ts · pricing.ts</span><span>tests: npm test</span></div>
+</section>
+
+<!-- 8 -->
+<section class="slide light">
+  <div class="kicker">what's next</div>
+  <div class="grid g3">
+    <div class="stat"><b style="font-size:28px">Real availability</b><span>Calendars and real RSVPs instead of a seeded busy list.</span></div>
+    <div class="stat"><b style="font-size:28px">Tie strength</b><span>Rank by actual interaction history, not just degree.</span></div>
+    <div class="stat"><b style="font-size:28px">Hosts' controls</b><span>"Friends only", "not this month", "ask through Priya".</span></div>
+  </div>
+  <h1 style="margin-top:60px;font-size:60px">Where can your people take you?</h1>
+  <p class="muted">The agent doesn't change. The tools get truer.</p>
+  <div class="foot"><span>github: this repo · README, EVAL.md, PERSONAS.md</span><span>[NAMES]</span></div>
+</section>
+
+<div class="nav" id="nav"></div>
+</div>
+<script>
+(function(){
+  const slides=[...document.querySelectorAll('.slide')]; let i=Math.max(0, Math.min(slides.length-1, Number(location.hash.slice(1))-1||0));
+  const nav=document.getElementById('nav');
+  function show(n){ i=(n+slides.length)%slides.length; slides.forEach((s,k)=>s.classList.toggle('active',k===i)); location.hash=String(i+1); nav.textContent=`${i+1} / ${slides.length}`;
+    // start animations when their slide opens
+    slides[i].querySelectorAll('iframe[data-src]').forEach(f=>{ f.src=f.dataset.src+'?t='+Date.now(); });
+    slides.forEach((s,k)=>{ if(k!==i) s.querySelectorAll('iframe').forEach(f=>{ if(f.src) f.removeAttribute('src'); }); });
+  }
+  window.addEventListener('keydown',e=>{ if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown') show(i+1); else if(e.key==='ArrowLeft'||e.key==='PageUp') show(i-1); else if(e.key==='r'||e.key==='R'){ slides[i].querySelectorAll('iframe').forEach(f=>f.contentWindow?.postMessage?.('replay','*') || (f.src=f.dataset.src+'?t='+Date.now())); } });
+  document.addEventListener('click',e=>{ if(e.target.closest('iframe')) return; show(i+1); });
+  show(i);
+})();
+</script>
+</body>
+</html>

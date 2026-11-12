@@ -6,7 +6,7 @@ import { getUser } from "@/server/db";
 import type { ID } from "@/types";
 import { findDiscoverRecording, forceReplay, replaySteps } from "./replay";
 import { recordRun, saveTrips, type DiscoverRun, type StreamStep } from "./store";
-import { cityName, discoverTools, visiblePeople, type Proposal } from "./tools";
+import { cityName, discoverTools, PROPOSE_SCHEMA, visiblePeople, type Proposal } from "./tools";
 import { rankTrips, validateTrip, type Trip } from "./validate";
 
 export interface DiscoverInput {
@@ -42,7 +42,10 @@ export function describeStep(s: TraceStep, prev?: TraceStep): Omit<StreamStep, "
       case "check_availability": return { kind: "tool", tool: s.name, text: `Checking if ${(a.userIds as string[] | undefined)?.map((id) => getUser(id)?.name.split(" ")[0] ?? id).slice(0, 4).join(", ")} are free`, ids: a.userIds as string[] };
       case "estimate_trip_cost": return { kind: "tool", tool: s.name, text: `Pricing ${cityName(String(a.toCity))}: ${a.nights} night${a.nights === 1 ? "" : "s"}, ${a.lodging === "host" ? "staying with a friend" : a.lodging}, by ${a.transport === "ride" ? "a friend's car" : a.transport}` };
       case "get_city_media": return { kind: "tool", tool: s.name, text: `Reading your friends' photos and Reels from ${cityName(String(a.city))}` };
-      case "propose_trips": return { kind: "tool", tool: s.name, text: `Putting together ${(a.trips as unknown[] | undefined)?.length ?? 0} trip${(a.trips as unknown[] | undefined)?.length === 1 ? "" : "s"}` };
+      case "propose_trips": {
+        const n = Array.isArray(a.trips) ? a.trips.length : undefined;
+        return { kind: "tool", tool: s.name, text: n === undefined ? "Putting the trips together" : `Putting together ${n} trip${n === 1 ? "" : "s"}` };
+      }
     }
     return { kind: "tool", tool: s.name, text: `Using ${s.name}` };
   }
@@ -172,7 +175,17 @@ export async function discover(userId: ID, input: DiscoverInput, onStep?: (s: St
   // Mock mode never calls propose_trips: build a code-only proposal from the store so the UI still works.
   if (!proposal && mode === "mock") proposal = mockProposal(userId, input);
   if (!proposal) proposal = { trips: [], declineReason: "the agent finished without proposing a trip" };
-  if (!Array.isArray(proposal.trips)) proposal = { trips: [], declineReason: proposal.declineReason ?? "the agent's proposal was malformed" };
+  if (!Array.isArray(proposal.trips)) {
+    // The model emitted its proposal as broken text (unescaped quotes, truncation). One structured repair call.
+    push({ kind: "info", text: "The proposal came back as broken text; asking Muse to restate it as valid JSON" });
+    try {
+      const { data, trace } = await ai.json<Proposal>(`Restate this trip proposal as valid JSON matching the schema. Keep every id, number and sentence exactly as written; do not add or remove trips.\n\n${String(proposal.trips).slice(0, 12000)}`, { task: "travel.discover.repair", userId, schema: PROPOSE_SCHEMA, maxTokens: 2500, temperature: 0, mock: () => ({ trips: [], declineReason: "mock repair" }) });
+      costUsd += trace.costUsd ?? 0;
+      proposal = Array.isArray(data?.trips) ? data : { trips: [], declineReason: "the agent's proposal was malformed" };
+    } catch {
+      proposal = { trips: [], declineReason: "the agent's proposal was malformed" };
+    }
+  }
 
   push({ kind: "info", text: `Checking every person, ride, event and photo against what you can actually see` });
   const validated = rankTrips(proposal.trips.map((p) => validateTrip(userId, p, input)).filter((t): t is Trip => !!t)).slice(0, 3);
