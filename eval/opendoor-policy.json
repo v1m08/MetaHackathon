@@ -1,0 +1,341 @@
+{
+  "ranAt": "2026-11-12T19:30:23.684Z",
+  "cases": 16,
+  "pass": 16,
+  "rawPass": 16,
+  "offeredAlternative": 0,
+  "altCases": 4,
+  "rows": [
+    {
+      "host": "andre",
+      "trav": "ruben",
+      "w": 3,
+      "guests": 1,
+      "expect": [
+        "no"
+      ],
+      "rule": "tier: andre is friends-only; ruben is not a friend",
+      "weekend": "Dec 4–6",
+      "rawDecision": "no",
+      "decision": "no",
+      "conditions": [],
+      "availability": "busy",
+      "pass": true,
+      "rawPass": true,
+      "note": "Thanks for thinking of Andre, hope you find a great stay!",
+      "mode": "live"
+    },
+    {
+      "host": "nadia",
+      "trav": "mei",
+      "w": 3,
+      "guests": 1,
+      "expect": [
+        "no"
+      ],
+      "rule": "tier: nadia is close-friends only; mei is a friend-of-friend",
+      "weekend": "Dec 4–6",
+      "rawDecision": "no",
+      "decision": "no",
+      "conditions": [],
+      "availability": "busy",
+      "pass": true,
+      "rawPass": true,
+      "note": "Thanks so much for thinking of Nadia, wishing you a great trip!",
+      "mode": "live"
+    },
+    {
+      "host": "theo",
+      "trav": "dani",
+      "w": 3,
+      "guests": 1,
+      "expect": [
+        "no"
+      ],
+      "rule": "tier: theo is UT friends only; dani is fof via sofia",
+      "weekend": "Dec 4–6",
+      "rawDecision": "no",
+      "decision": "no",
+      "conditions": [],
+      "availability": "likely_free",
+      "pass": true,
+      "rawPass": true,
+      "note": "Thanks so much for thinking of Theo, that weekend doesn't work!",
+      "mode": "live"
+    },
+    {
+      "host": "simone",
+      "trav": "maya",
+      "w": 3,
+      "guests": 2,
+      "expect": [
+        "no",
+        "conditions"
+      ],
+      "rule": "guest limit: simone takes one person; two asked",
+      "weekend": "Dec 4–6",
+      "rawDecision": "conditions",
+      "decision": "conditions",
+      "conditions": [
+        "Only one guest can stay"
+      ],
+      "availability": "unknown",
+      "pass": true,
+      "rawPass": true,
+      "note": "Thanks for reaching out, happy to host one guest if that works!",
+      "mode": "live"
+    },
+    {
+      "host": "ivy",
+      "trav": "maya",
+      "w": 3,
+      "guests": 3,
+      "expect": [
+        "no",
+        "conditions"
+      ],
+      "rule": "guest limit: ivy has one couch; three asked",
+      "weekend": "Dec 4–6",
+      "rawDecision": "conditions",
+      "decision": "conditions",
+      "conditions": [
+        "Only 1 guest can stay",
+        "Bring running shoes, we leave at 7"
+      ],
+      "availability": "unknown",
+      "pass": true,
+      "rawPass": true,
+      "note": "Thanks for reaching out, happy to welcome one cousin that weekend!",
+      "mode": "live"
+    },
+    {
+      "host": "arjun",
+      "trav": "maya",
+      "w": 3,
+      "guests": 2,
+      "expect": [
+        "no",
+        "conditions"
+      ],
+      "rule": "guest limit: arjun couch for one; two asked",
+      "weekend": "Dec 4–6",
+      "rawDecision": "no",
+      "decision": "no",
+      "conditions": [],
+      "alternative": {
+        "end": "2026-12-13",
+        "start": "2026-12-11"
+      },
+      "availability": "busy",
+      "pass": true,
+      "rawPass": true,
+      "note": "Thanks for checking, that weekend doesn't work but would love to look at another weekend!",
+      "mode": "live"
+    },
+    {
+      "host": "noah",
+      "trav": "maya",
+      "w": 3,
+      "guests": 1,
+      "expect": [
+        "no"
+      ],
+      "rule": "busy: noah posted he's skiing Dec 4-6",
+      "alt": true,
+      "weekend": "Dec 4–6",
+      "rawDecision": "no",
+      "decision": "no",
+      "conditions": [],
+      "availability": "busy",
+      "pass": true,
+      "rawPass": true,
+      "note": "Thanks for checking — that weekend doesn't work, but happy to look at another weekend!",
+      "mode": "live"
+    },
+    {
+      "host": "cole",
+      "trav": "maya",
+      "w": 5,
+      "guests": 1,
+      "expect": [
+        "no"
+      ],
+      "rule": "busy: cole's chat says Dec 18-20 is his sister's wedding",
+      "alt": true,
+      "weekend": "Dec 18–20",
+      "rawDecision": "no",
+      "decision": "no",
+      "conditions": [],
+      "availability": "busy",
+      "pass": true,
+      "rawPass": true,
+      "note": "Thanks for reaching out, happy to look at another weekend that works!",
+      "mode": "live"
+    },
+    {
+      "host": "theo",
+      "trav": "maya",
+      "w": 2,
+      "guests": 1,
+      "expect": [
+        "no"
+      ],
+      "rule": "busy: theo posted shoot weekend Nov 27-29",
+      "alt": true,
+      "weekend": "Nov 27–29",
+      "rawDecision": "no",
+      "decision": "no",
+      "conditions": [],
+      "availability": "busy",
+      "pass": true,
+      "rawPass": true,
+      "note": "Thanks so much for thinking of Theo — that weekend doesn't work!",
+      "mode": "live"
+    },
+    {
+      "host": "marisol",
+      "trav": "maya",
+      "w": 3,
+      "guests": 1,
+      "expect": [
+        "no"
+      ],
+      "rule": "busy: marisol posted wedding in Birmingham Dec 4-6",
+      "alt": true,
+      "weekend": "Dec 4–6",
+      "rawDecision": "no",
+      "decision": "no",
+      "conditions": [],
+      "availability": "busy",
+      "pass": true,
+      "rawPass": true,
+      "note": "That weekend doesn't work, but happy to look at another weekend!",
+      "mode": "live"
+    },
+    {
+      "host": "nadia",
+      "trav": "maya",
+      "w": 4,
+      "guests": 1,
+      "expect": [
+        "no",
+        "conditions"
+      ],
+      "rule": "policy dates: nadia's policy says not during exams (dec 7-18)",
+      "weekend": "Dec 11–13",
+      "rawDecision": "no",
+      "decision": "no",
+      "conditions": [],
+      "alternative": {
+        "end": "2026-12-06",
+        "start": "2026-12-04"
+      },
+      "availability": "busy",
+      "pass": true,
+      "rawPass": true,
+      "note": "Thanks so much for thinking of Nadia — hoping another weekend works!",
+      "mode": "live"
+    },
+    {
+      "host": "cole",
+      "trav": "maya",
+      "w": 4,
+      "guests": 2,
+      "expect": [
+        "yes",
+        "conditions"
+      ],
+      "rule": "fits: cole takes two, Dec 11-13 he said his room is open",
+      "weekend": "Dec 11–13",
+      "rawDecision": "yes",
+      "decision": "yes",
+      "conditions": [],
+      "availability": "likely_free",
+      "pass": true,
+      "rawPass": true,
+      "note": "Happy to welcome them for Dec 11-13!",
+      "mode": "live"
+    },
+    {
+      "host": "raj",
+      "trav": "maya",
+      "w": 2,
+      "guests": 1,
+      "expect": [
+        "yes",
+        "conditions"
+      ],
+      "rule": "fits: raj's door is open to everyone and he posted he's around",
+      "weekend": "Nov 27–29",
+      "rawDecision": "yes",
+      "decision": "yes",
+      "conditions": [],
+      "availability": "likely_free",
+      "pass": true,
+      "rawPass": true,
+      "note": "Happy to host you Nov 27-29!",
+      "mode": "live"
+    },
+    {
+      "host": "kai",
+      "trav": "maya",
+      "w": 3,
+      "guests": 1,
+      "expect": [
+        "yes",
+        "conditions"
+      ],
+      "rule": "fits: kai, two nights, Dec 4-6 (not his Fort Worth weekend)",
+      "weekend": "Dec 4–6",
+      "rawDecision": "yes",
+      "decision": "yes",
+      "conditions": [],
+      "availability": "likely_free",
+      "pass": true,
+      "rawPass": true,
+      "note": "Kai would love to host you Dec 4-6!",
+      "mode": "live"
+    },
+    {
+      "host": "gabe",
+      "trav": "maya",
+      "w": 2,
+      "guests": 2,
+      "expect": [
+        "yes",
+        "conditions"
+      ],
+      "rule": "fits: gabe takes two; tamales weekend",
+      "weekend": "Nov 27–29",
+      "rawDecision": "yes",
+      "decision": "yes",
+      "conditions": [],
+      "availability": "unknown",
+      "pass": true,
+      "rawPass": true,
+      "note": "Looking forward to hosting you Nov 27-29!",
+      "mode": "live"
+    },
+    {
+      "host": "diego",
+      "trav": "maya",
+      "w": 4,
+      "guests": 1,
+      "expect": [
+        "yes",
+        "conditions",
+        "no"
+      ],
+      "rule": "unknown availability: diego, fof via jordan; any honest answer",
+      "weekend": "Dec 11–13",
+      "rawDecision": "yes",
+      "decision": "yes",
+      "conditions": [],
+      "availability": "unknown",
+      "pass": true,
+      "rawPass": true,
+      "note": "Thanks for reaching out, happy to host your guest!",
+      "mode": "live"
+    }
+  ]
+}

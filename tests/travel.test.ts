@@ -98,7 +98,7 @@ test("validation: a host who did not opt in, or is busy, is never shown as a hos
   assert.equal(unknown?.host?.availability, "unknown");
   // once an inference (from kai's own chat line) says busy, the host is dropped
   const dates = datesBetween(weekend.start, weekend.end);
-  travelStore().availability.set(`maya|kai|${weekend.start}`, { personId: "kai", requesterId: "maya", dates, days: dates.map((date) => ({ date, status: "busy" as const, reason: "in Fort Worth", confidence: "high" as const })), overall: "busy", summary: "busy", mode: "test", costUsd: 0, signalCount: 1, computedAt: "", key: "" });
+  travelStore().availability.set(`maya|kai|${weekend.start}|`, { personId: "kai", requesterId: "maya", dates, days: dates.map((date) => ({ date, status: "busy" as const, reason: "in Fort Worth", confidence: "high" as const })), overall: "busy", summary: "busy", mode: "test", costUsd: 0, signalCount: 1, computedAt: "", key: "" });
   const busy = validateTrip("maya", { city: "nashville", title: "n", pitch: "", hostId: "kai", peopleIds: ["leah"], nights: 2, reasons: [] }, ctx);
   assert.equal(busy?.host, undefined);
   assert.ok(busy?.repairs.some((r) => r.includes("busy")));

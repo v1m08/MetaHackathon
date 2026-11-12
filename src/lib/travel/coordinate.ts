@@ -39,7 +39,7 @@ export async function sharedDates(viewerId: ID, trip: Trip): Promise<DatesResult
   const dates = datesBetween(trip.start, trip.end);
   const people = await Promise.all(involved.map(async ({ id, role }) => {
     const u = getUser(id)!;
-    const av = id === viewerId ? selfAvailability(viewerId, trip.start, trip.end) : await inferAvailability(viewerId, id, trip.start, trip.end);
+    const av = id === viewerId ? selfAvailability(viewerId, trip.start, trip.end) : await inferAvailability(viewerId, id, trip.start, trip.end, { context: trip.city });
     const busyOn = av.days.filter((d) => d.status === "busy").map((d) => d.date);
     return { id, name: id === viewerId ? me.name : u.name, avatar: u.avatar, role, busyOn, free: av.overall !== "busy", status: av.overall, label: LABEL[av.overall], summary: av.summary, days: av.days, mode: av.mode, canAsk: id !== viewerId && connection(viewerId, id)?.degree === 1 && av.overall !== "confirmed" };
   }));
@@ -47,7 +47,7 @@ export async function sharedDates(viewerId: ID, trip: Trip): Promise<DatesResult
   for (let n = 1; n <= 8 && alternatives.length < 2; n++) {
     const ds = weekendDates(n);
     if (ds[0] === trip.start) continue;
-    if (involved.every(({ id }) => (id === viewerId ? selfAvailability(viewerId, ds[0], ds[2]).overall : quickStatus(viewerId, id, ds[0], ds[2])) !== "busy")) alternatives.push({ start: ds[0], end: ds[2], label: weekendLabel(n) });
+    if (involved.every(({ id }) => (id === viewerId ? selfAvailability(viewerId, ds[0], ds[2]).overall : quickStatus(viewerId, id, ds[0], ds[2], trip.city)) !== "busy")) alternatives.push({ start: ds[0], end: ds[2], label: weekendLabel(n) });
   }
   return { dates, people, allFree: people.every((p) => p.free), allKnown: people.every((p) => p.status === "confirmed" || p.status === "likely_free"), alternatives };
 }

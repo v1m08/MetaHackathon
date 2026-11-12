@@ -50,13 +50,13 @@ export interface Trip {
 
 const tripId = () => `trip_${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
 
-export function tripPerson(viewerId: ID, id: ID, dates: string[]): TripPerson | null {
+export function tripPerson(viewerId: ID, id: ID, dates: string[], context?: string): TripPerson | null {
   const u = getUser(id);
   if (!u || !canSeeUser(viewerId, u)) return null;
   const c = connection(viewerId, id);
   if (!c) return null;
   const via = c.via ? getUser(c.via) : undefined;
-  const availability = dates.length ? quickStatus(viewerId, id, dates[0], dates[dates.length - 1]) : "unknown";
+  const availability = dates.length ? quickStatus(viewerId, id, dates[0], dates[dates.length - 1], context) : "unknown";
   return { id: u.id, name: u.name, avatar: u.avatar, connection: c.label, degree: c.degree, via: via ? { id: via.id, name: via.name } : undefined, openToHosting: !!u.openToHosting, hostingNote: u.openToHosting ? u.hostingNote : undefined, hasCar: !!u.hasCar, availability, freeThatWeekend: availability !== "busy" };
 }
 
@@ -90,7 +90,7 @@ export function validateTrip(viewerId: ID, p: ProposedTrip, ctx: { start: string
   let host: TripPerson | undefined;
   if (p.hostId) {
     const u = getUser(p.hostId);
-    const tp = tripPerson(viewerId, p.hostId, dates);
+    const tp = tripPerson(viewerId, p.hostId, dates, city.id);
     if (!u || !tp) repairs.push(`dropped host ${p.hostId}: not in your network`);
     else if (u.city !== city.id) repairs.push(`dropped host ${u.name}: lives in ${u.city}, not ${city.id}`);
     else if (!u.openToHosting) repairs.push(`dropped host ${u.name}: has not turned on "open to hosting"`);
@@ -102,7 +102,7 @@ export function validateTrip(viewerId: ID, p: ProposedTrip, ctx: { start: string
   let ride: Trip["ride"];
   if (p.rideId) {
     const r = db().rides.find((x) => x.id === p.rideId);
-    const driver = r ? tripPerson(viewerId, r.driverId, dates) : null;
+    const driver = r ? tripPerson(viewerId, r.driverId, dates, city.id) : null;
     if (!r || !driver) repairs.push(`dropped ride ${p.rideId}: unknown or driver not in your network`);
     else if (r.toCity !== city.id) repairs.push(`dropped ride ${r.id}: goes to ${r.toCity}`);
     else if (r.fromCity !== me.city) repairs.push(`dropped ride ${r.id}: leaves from ${r.fromCity}, not your city`);
@@ -114,6 +114,16 @@ export function validateTrip(viewerId: ID, p: ProposedTrip, ctx: { start: string
         nights = 0; // day trip: back the same night, nothing to sleep in
         repairs.push("day trip: no lodging charged");
       }
+    }
+  }
+  // no ride proposed, but a friend IS driving there that weekend with a seat: attach it (a friend's seat is the point)
+  if (!ride && !p.rideId && !me.hasCar) {
+    const cands = db().rides.filter((r) => r.toCity === city.id && r.fromCity === me.city && r.seatsOpen > 0 && r.driverId !== viewerId && overlaps(r, ctx.start, ctx.end) && canSeeUser(viewerId, getUser(r.driverId)!) && tripPerson(viewerId, r.driverId, dates, city.id)?.freeThatWeekend);
+    const best = cands.sort((a, b) => (connection(viewerId, a.driverId)?.degree ?? 3) - (connection(viewerId, b.driverId)?.degree ?? 3) || b.seatsOpen - a.seatsOpen)[0];
+    const driver = best ? tripPerson(viewerId, best.driverId, dates, city.id) : null;
+    if (best && driver) {
+      ride = { id: best.id, driver, fromCity: best.fromCity, toCity: best.toCity, departAt: best.departAt, returnAt: best.returnAt, seatsOpen: best.seatsOpen, note: best.note };
+      repairs.push(`attached ${driver.name.split(" ")[0]}'s ride: a seat was open and the model priced it by bus`);
     }
   }
   // event
@@ -144,7 +154,7 @@ export function validateTrip(viewerId: ID, p: ProposedTrip, ctx: { start: string
   for (const id of new Set([...(p.peopleIds ?? []), ...(event?.goingYouKnow.map((g) => g.id) ?? [])])) {
     if (id === host?.id || id === ride?.driver.id) continue;
     const u = getUser(id);
-    const tp = tripPerson(viewerId, id, dates);
+    const tp = tripPerson(viewerId, id, dates, city.id);
     if (!u || !tp) {
       repairs.push(`dropped person ${id}: not in your network`);
       dropPerson(id);

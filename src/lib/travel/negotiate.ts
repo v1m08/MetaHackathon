@@ -171,7 +171,7 @@ export async function negotiate(travelerId: ID, input: { tripId?: string; city?:
   // Candidates are chosen by code: door open to this traveler, offers a couch, lives in the city, not known busy.
   const pool = db().users.filter((u) => u.id !== travelerId && u.city === city && openDoorOf(u).on && openDoorOf(u).offers.includes("couch") && doorOpenTo(u.id, travelerId).open);
   push({ from: "code", kind: "info", text: `${pool.length} door${pool.length === 1 ? "" : "s"} open to you in ${cityById(city ?? "")?.name ?? city}`, detail: pool.map((u) => `${first(u.name)} (${connection(travelerId, u.id)?.label})`).join(" · ") });
-  const avail = await inferMany(travelerId, pool.map((u) => u.id), start, end);
+  const avail = await inferMany(travelerId, pool.map((u) => u.id), start, end, city);
   const ranked = pool
     .map((u) => ({ u, av: avail.find((a) => a.personId === u.id)!, deg: connection(travelerId, u.id)?.degree ?? 3 }))
     .filter((x) => x.av.overall !== "busy")

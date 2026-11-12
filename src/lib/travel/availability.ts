@@ -17,7 +17,8 @@ interface Signal { id: string; kind: "rsvp" | "post" | "chat" | "reply"; when: s
 const fmtDay = (d: string) => new Date(d + "T12:00:00").toLocaleString("en-US", { weekday: "short", month: "short", day: "numeric" });
 
 /** Everything the requester is allowed to read that could say where this person will be. */
-export function gatherSignals(requesterId: ID, personId: ID, dates: string[]): Signal[] {
+/** `context` = the trip's city: an RSVP there is "present", not "away". */
+export function gatherSignals(requesterId: ID, personId: ID, dates: string[], context?: string): Signal[] {
   const person = getUser(personId);
   if (!person) return [];
   const d = db();
@@ -27,7 +28,7 @@ export function gatherSignals(requesterId: ID, personId: ID, dates: string[]): S
     if (!e.going.includes(personId)) continue;
     const evDates = datesBetween(e.startsAt.slice(0, 10), (e.endsAt ?? e.startsAt).slice(0, 10)).filter((x) => dates.includes(x));
     if (!evDates.length) continue;
-    const away = !!e.city && !!person.city && e.city !== person.city;
+    const away = !!e.city && !!person.city && e.city !== person.city && e.city !== context;
     out.push({ id: e.id, kind: "rsvp", when: e.startsAt, text: `RSVP'd going: ${e.title} (${e.location}${e.city ? `, ${cityById(e.city)?.name ?? e.city}` : ""}) on ${fmtDay(e.startsAt.slice(0, 10))}`, dates: evDates, away, eventCity: e.city });
   }
   // 2. The person's own posts the requester can see (home feed rules), newest first, recent only.
@@ -81,22 +82,22 @@ const quoteIn = (q: string, t: string) => { const a = norm(q), b = norm(t); if (
 const sigKey = (sigs: Signal[]) => `${sigs.length}:${sigs.map((s) => s.id).join(",").length}:${sigs[0]?.id ?? ""}`;
 
 /** Code-only quick status (no model): RSVPs and anything already inferred. Used by wide scans; "unknown" is honest. */
-export function quickStatus(requesterId: ID, personId: ID, start: string, end: string): Availability["overall"] {
-  const cached = travelStore().availability.get(`${requesterId}|${personId}|${start}`);
+export function quickStatus(requesterId: ID, personId: ID, start: string, end: string, context?: string): Availability["overall"] {
+  const cached = travelStore().availability.get(`${requesterId}|${personId}|${start}|${context ?? ""}`) ?? travelStore().availability.get(`${requesterId}|${personId}|${start}|`);
   if (cached) return cached.overall;
   const dates = datesBetween(start, end);
-  const rs = gatherSignals(requesterId, personId, dates).filter((s) => s.kind === "rsvp");
+  const rs = gatherSignals(requesterId, personId, dates, context).filter((s) => s.kind === "rsvp");
   if (rs.some((s) => s.away)) return "busy";
   return "unknown";
 }
 
-export async function inferAvailability(requesterId: ID, personId: ID, start: string, end: string, opts: { force?: boolean } = {}): Promise<Availability> {
+export async function inferAvailability(requesterId: ID, personId: ID, start: string, end: string, opts: { force?: boolean; context?: string } = {}): Promise<Availability> {
   const person = getUser(personId);
   if (!person) throw Object.assign(new Error("unknown person"), { status: 404 });
   const dates = datesBetween(start, end);
-  const sigs = gatherSignals(requesterId, personId, dates);
-  const key = sigKey(sigs);
-  const storeKey = `${requesterId}|${personId}|${start}`;
+  const sigs = gatherSignals(requesterId, personId, dates, opts.context);
+  const key = sigKey(sigs) + (opts.context ?? "");
+  const storeKey = `${requesterId}|${personId}|${start}|${opts.context ?? ""}`;
   const cached = travelStore().availability.get(storeKey);
   if (cached && cached.key === key && !opts.force) return cached;
 
@@ -109,7 +110,7 @@ export async function inferAvailability(requesterId: ID, personId: ID, start: st
   };
   // RSVPs: decided by code.
   for (const s of sigs.filter((x) => x.kind === "rsvp")) {
-    for (const d of s.dates ?? []) set(d, s.away ? { date: d, status: "busy", reason: `away: ${s.text.replace(/^RSVP'd going: /, "")}`, quote: s.text, source: { kind: "rsvp", id: s.id }, confidence: "high" } : { date: d, status: "likely_free", reason: `in town for ${s.text.replace(/^RSVP'd going: /, "").split(" (")[0]}`, quote: s.text, source: { kind: "rsvp", id: s.id }, confidence: "medium" });
+    for (const d of s.dates ?? []) set(d, s.away ? { date: d, status: "busy", reason: `away: ${s.text.replace(/^RSVP'd going: /, "")}`, quote: s.text, source: { kind: "rsvp", id: s.id }, confidence: "high" } : { date: d, status: "likely_free", reason: `${s.eventCity && s.eventCity !== person.city ? "going there too" : "in town"}: ${s.text.replace(/^RSVP'd going: /, "").split(" (")[0]}`, quote: s.text, source: { kind: "rsvp", id: s.id }, confidence: "medium" });
   }
   let mode = "code";
   let costUsd = 0;
@@ -117,7 +118,7 @@ export async function inferAvailability(requesterId: ID, personId: ID, start: st
   if (textual.length) {
     const weekends = Array.from({ length: 8 }, (_, i) => `${weekendLabel(i + 1)} = ${weekendDates(i + 1).join(", ")}`).join("; ");
     const { data, trace } = await ai.json<{ statements: { sourceId: string; quote: string; dates: string[]; status: "busy" | "away" | "free"; confidence: "high" | "medium" | "low"; why: string }[] }>(
-      `Does ${person.name.split(" ")[0]} say anything about where they will be on these dates: ${dates.map((d) => `${d} (${fmtDay(d)})`).join(", ")}?\nOnly use statements ${person.name.split(" ")[0]} made about THEMSELVES. Ignore other people's plans. "away"/"busy" = not available to host or travel that date; "free" = they say they are around/free/off. Map phrases like "${weekendLabel(2)}" or "thanksgiving weekend" to the candidate dates using this calendar: ${weekends}. Today is ${new Date().toISOString().slice(0, 10)}. If nothing applies, return an empty list.\n\nSOURCES\n${textual.map((s) => `[${s.id}] (${s.kind}, ${new Date(s.when).toLocaleDateString("en-US", { month: "short", day: "numeric" })}) ${s.text}`).join("\n")}`,
+      `Does ${person.name.split(" ")[0]} say anything about where they will be on these dates: ${dates.map((d) => `${d} (${fmtDay(d)})`).join(", ")}?\nOnly use statements ${person.name.split(" ")[0]} made about THEMSELVES. Ignore other people's plans. "away"/"busy" = not available to host or travel that date; "free" = they say they are around/free/off.${opts.context ? ` The plan in question is a trip to ${cityById(opts.context)?.name ?? opts.context}: if they say they will BE in ${cityById(opts.context)?.name ?? opts.context} (going there, driving there), that is "free" for this purpose, not away.` : ""} Map phrases like "${weekendLabel(2)}" or "thanksgiving weekend" to the candidate dates using this calendar: ${weekends}. Today is ${new Date().toISOString().slice(0, 10)}. If nothing applies, return an empty list.\n\nSOURCES\n${textual.map((s) => `[${s.id}] (${s.kind}, ${new Date(s.when).toLocaleDateString("en-US", { month: "short", day: "numeric" })}) ${s.text}`).join("\n")}`,
       { task: "travel.availability", userId: requesterId, schema: SCHEMA, model: ai.models.fast(), maxTokens: 1500, temperature: 0, mock: () => ({ statements: [] }) },
     );
     mode = trace.mode;
@@ -129,7 +130,9 @@ export async function inferAvailability(requesterId: ID, personId: ID, start: st
       const ds = (Array.isArray(st.dates) ? st.dates : []).filter((d) => dates.includes(d));
       if (!ds.length) continue;
       for (const d of ds) {
-        if (st.status === "free") set(d, { date: d, status: src.kind === "reply" && st.confidence === "high" ? "confirmed_free" : "likely_free", reason: st.why, quote: st.quote, source: { kind: src.kind, id: src.id }, confidence: st.confidence });
+        const ctxName = opts.context ? (cityById(opts.context)?.name ?? opts.context).toLowerCase() : "";
+        const thereAnyway = !!ctxName && (norm(st.quote).includes(norm(ctxName)) || norm(st.why).includes(norm(ctxName))) && st.status === "away"; // "I'll be in Dallas" is presence for a Dallas trip
+        if (st.status === "free" || thereAnyway) set(d, { date: d, status: src.kind === "reply" && st.confidence === "high" ? "confirmed_free" : "likely_free", reason: thereAnyway ? `there that weekend: ${st.why}` : st.why, quote: st.quote, source: { kind: src.kind, id: src.id }, confidence: st.confidence });
         else if (st.confidence !== "low") set(d, { date: d, status: "busy", reason: st.why, quote: st.quote, source: { kind: src.kind, id: src.id }, confidence: st.confidence });
       }
     }
@@ -144,10 +147,10 @@ export async function inferAvailability(requesterId: ID, personId: ID, start: st
 }
 
 /** Several people at once, bounded concurrency. */
-export async function inferMany(requesterId: ID, personIds: ID[], start: string, end: string) {
+export async function inferMany(requesterId: ID, personIds: ID[], start: string, end: string, context?: string) {
   const ids = [...new Set(personIds)].slice(0, 8);
   const out: Availability[] = [];
-  for (let i = 0; i < ids.length; i += 4) out.push(...(await Promise.all(ids.slice(i, i + 4).map((id) => inferAvailability(requesterId, id, start, end)))));
+  for (let i = 0; i < ids.length; i += 4) out.push(...(await Promise.all(ids.slice(i, i + 4).map((id) => inferAvailability(requesterId, id, start, end, { context })))));
   return out;
 }
 

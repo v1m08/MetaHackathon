@@ -101,16 +101,16 @@ export const getTravelEventsAndRides: ToolDef<{ start: string; end: string }> = 
   },
 };
 
-export const inferAvailabilityTool: ToolDef<{ userIds: string[]; start: string; end: string }> = {
+export const inferAvailabilityTool: ToolDef<{ userIds: string[]; start: string; end: string; city?: string }> = {
   name: "infer_availability",
   description: "Whether specific people are around on each date, inferred from real signals the user can already see: their event RSVPs, their visible posts, and the user's own chats with them. Returns confirmed / likely_free / busy / unknown per person with the quoted evidence. Use for your candidate hosts and drivers (up to 8 ids) before proposing. 'unknown' is honest: the app will ask them.",
-  parameters: { type: "object", properties: { userIds: { type: "array", items: { type: "string" } }, start: { type: "string" }, end: { type: "string" } }, required: ["userIds", "start", "end"] },
-  run: async ({ userIds, start, end }, { userId }) => {
+  parameters: { type: "object", properties: { userIds: { type: "array", items: { type: "string" } }, start: { type: "string" }, end: { type: "string" }, city: { type: "string", description: "The trip's city id, so someone RSVP'd to an event THERE counts as present, not away." } }, required: ["userIds", "start", "end"] },
+  run: async ({ userIds, start, end, city }, { userId }) => {
     const ids = [...new Set(userIds ?? [])].filter((id) => {
       const u = getUser(id);
       return u && id !== userId && canSeeUser(userId, u);
     });
-    const res = await inferMany(userId, ids, start, end);
+    const res = await inferMany(userId, ids, start, end, city);
     return {
       dates: datesBetween(start, end),
       people: res.map((r) => ({ id: r.personId, name: getUser(r.personId)!.name, status: r.overall, summary: r.summary, free: r.overall !== "busy", days: r.days.map((d) => ({ date: d.date, status: d.status, reason: d.reason, quote: d.quote })), signals: r.signalCount })),
