@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { Plus } from "lucide-react";
 import { ComposerCard } from "@/components/Composer";
+import { TravelNudge } from "@/components/travel/Nudge";
 import { PostCard } from "@/components/Post";
 import { Shell, useMe } from "@/components/Shell";
 import { Avatar, Photo, PostSkeleton, Sheet } from "@/components/ui";
@@ -62,8 +63,11 @@ export default function FeedPage() {
           <PostSkeleton />
         </>
       )}
-      {posts?.map((p) => (
-        <PostCard key={p.id} post={p} onChange={(np) => mutate(posts.map((x) => (x.id === np.id ? np : x)), { revalidate: false })} />
+      {posts?.map((p, i) => (
+        <div key={p.id}>
+          {i === 2 && <TravelNudge />}
+          <PostCard post={p} onChange={(np) => mutate(posts.map((x) => (x.id === np.id ? np : x)), { revalidate: false })} />
+        </div>
       ))}
       {posts && <div className="py-8 text-center text-[13px] text-ink-2">You&apos;re all caught up</div>}
     </Shell>

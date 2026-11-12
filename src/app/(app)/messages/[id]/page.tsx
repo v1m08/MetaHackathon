@@ -7,9 +7,10 @@ import { Avatar, Photo, cx } from "@/components/ui";
 import { api, refresh, useApi } from "@/lib/api";
 import { messageTime } from "@/lib/format";
 import { useSession } from "@/lib/session";
+import { useMe } from "@/components/Shell";
 import type { Conversation, Listing } from "@/types";
 
-type Card = { id: string; name: string; avatar: string };
+type Card = { id: string; name: string; avatar: string; city?: string; openToHosting?: boolean };
 type Conv = Conversation & { name: string; participants: Card[]; others: Card[] };
 
 function DraftBubble({ m, onDone }: { m: Conversation["messages"][number]; onDone: () => void }) {
@@ -64,6 +65,7 @@ export default function ThreadPage() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
   const { userId } = useSession();
+  const { data: me } = useMe();
   const { data: c, mutate } = useApi<Conv>(`/api/conversations/${id}`, { poll: 1500 });
   const [text, setText] = useState("");
   const [sending, setSending] = useState(false);
@@ -112,6 +114,11 @@ export default function ThreadPage() {
       </header>
 
       <div className="flex-1 px-3 py-3">
+        {c && !c.isGroup && other?.city && me?.city && other.city !== me.city && (
+          <Link href={`/travel?hint=${encodeURIComponent(`I want to visit ${other.name.split(" ")[0]}`)}`} className="mx-auto mb-3 flex w-fit items-center gap-2 rounded-full border border-line bg-[#f0f2f5] px-3 py-1.5 text-[13px]">
+            <Compass size={14} className="text-fb" /> <span><b className="font-semibold">{other.name.split(" ")[0]}</b> lives in another city{other.openToHosting ? " and is open to hosting" : ""} · <span className="font-semibold text-fb">plan a trip</span></span>
+          </Link>
+        )}
         {c?.messages.map((m, i) => {
           const mine = m.senderId === userId;
           const prev = c.messages[i - 1];

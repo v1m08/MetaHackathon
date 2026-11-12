@@ -2,9 +2,9 @@
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState } from "react";
-import { Calendar, Check, MapPin, Share2, Star, Ticket, Users } from "lucide-react";
+import { Calendar, Check, ChevronRight, Compass, MapPin, Share2, Star, Ticket, Users } from "lucide-react";
 import { PostCard } from "@/components/Post";
-import { Shell } from "@/components/Shell";
+import { Shell, useMe } from "@/components/Shell";
 import { Avatar, Button, Photo, cx } from "@/components/ui";
 import { api, useApi } from "@/lib/api";
 import { eventDate, eventDay } from "@/lib/format";
@@ -18,7 +18,19 @@ export default function EventPage() {
   const { id } = useParams<{ id: string }>();
   const { data: e, mutate } = useApi<E>(`/api/events/${id}`);
   const [text, setText] = useState("");
+  const { data: me } = useMe();
   if (!e) return <Shell back title=""><div className="skeleton h-56" /></Shell>;
+  const outOfTown = !!e.city && !!me?.city && e.city !== me.city;
+  const tripHref = (() => {
+    const d = new Date(e.startsAt);
+    const dow = d.getDay();
+    const fri = new Date(d);
+    fri.setDate(d.getDate() - (dow === 6 ? 1 : dow === 0 ? 2 : dow === 5 ? 0 : dow - 5 < 0 ? dow + 2 : 0));
+    const sun = new Date(fri);
+    sun.setDate(fri.getDate() + 2);
+    const ymd = (x: Date) => `${x.getFullYear()}-${String(x.getMonth() + 1).padStart(2, "0")}-${String(x.getDate()).padStart(2, "0")}`;
+    return `/travel?start=${ymd(fri)}&end=${ymd(sun)}&budget=150&run=1&hint=${encodeURIComponent(`I want to go to ${e.title} in ${e.location}`)}`;
+  })();
   const { mon, day } = eventDay(e.startsAt);
   const setStatus = async (status: "going" | "interested" | "none") => {
     await api(`/api/events/${e.id}/rsvp`, { method: "POST", json: { status: e.myStatus === status ? "none" : status } });
@@ -56,6 +68,14 @@ export default function EventPage() {
               <Star size={16} /> Interested
             </Button>
           </div>
+          {outOfTown && (
+            <Link href={tripHref} className="mt-2 flex items-center gap-3 rounded-xl border border-fb/30 bg-fb/5 px-3 py-2.5">
+              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-fb text-white"><Compass size={18} /></span>
+              <span className="min-w-0 flex-1 text-[14px] leading-snug"><b className="font-semibold">Make this a trip.</b> <span className="text-ink-2">See who could host you and who&apos;s driving{e.friendsGoing.length ? ` · ${e.friendsGoing.length} friend${e.friendsGoing.length === 1 ? "" : "s"} going` : ""}.</span></span>
+              <ChevronRight size={16} className="text-ink-2" />
+            </Link>
+          )}
+          <div className="hidden" />
         </div>
         <div className="mt-4 space-y-3 border-t border-line/60 px-4 pt-3 text-[15px]">
           <div className="flex gap-3"><Calendar size={20} className="shrink-0 text-ink-2" /><span>{eventDate(e.startsAt)}{e.endsAt && ` – ${new Date(e.endsAt).toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" })}`}</span></div>

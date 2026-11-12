@@ -183,7 +183,7 @@ export default function TripPage() {
               </div>
               <div className="mt-2 text-[13px] text-ink-2">
                 {coord.dates.allFree ? <>Everyone&apos;s free {fmt(trip.start)}–{fmt(trip.end)}.</> : <>Someone&apos;s busy. {coord.dates.alternatives.length ? <>Everyone is free <b className="font-semibold text-ink">{coord.dates.alternatives.map((a) => a.label).join(" or ")}</b>.</> : null}</>}
-                {coord.dates.alternatives.length > 0 && (
+                {!coord.dates.allFree && coord.dates.alternatives.length > 0 && (
                   <span className="ml-1">{coord.dates.alternatives.map((a) => <Link key={a.start} href={`/travel?start=${a.start}&end=${a.end}&budget=${trip.budget}&run=1`} className="ml-1 font-semibold text-fb">Try {a.label} →</Link>)}</span>
                 )}
               </div>

@@ -29,10 +29,10 @@ export const friendsOf = (id: ID) => requireUser(id).friendIds.map(getUser).filt
 export const mutualFriends = (a: ID, b: ID) => requireUser(a).friendIds.filter((f) => requireUser(b).friendIds.includes(f));
 
 /** Public-safe user card. */
-export const userCard = (u: User) => ({ id: u.id, name: u.name, username: u.username, avatar: u.avatar, pronouns: u.pronouns });
+export const userCard = (u: User) => ({ id: u.id, name: u.name, username: u.username, avatar: u.avatar, pronouns: u.pronouns, city: u.city, openToHosting: !!u.openToHosting });
 export const cardFor = (id: ID) => {
   const u = getUser(id);
-  return u ? userCard(u) : { id, name: "Facebook User", username: id, avatar: "", pronouns: "" };
+  return u ? userCard(u) : { id, name: "Facebook User", username: id, avatar: "", pronouns: "", city: undefined as string | undefined, openToHosting: false };
 };
 
 // ---------- posts ----------

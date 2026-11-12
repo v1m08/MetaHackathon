@@ -10,7 +10,7 @@ export const PRICES = {
   busBase: 12,
   busPerMile: 0.07,
   /** Round-trip flight estimate for the distance band. */
-  flight: (miles: number) => (miles < 400 ? 160 : miles < 900 ? 210 : miles < 1500 ? 260 : 330),
+  flight: (miles: number) => (miles < 400 ? 150 : miles < 1000 ? 180 : miles < 1500 ? 230 : 300),
   /** Food per day when a local is pointing you at cheap places vs. default. */
   foodPerDayWithLocal: 25,
   foodPerDay: 45,
