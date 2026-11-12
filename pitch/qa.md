@@ -28,3 +28,10 @@ Three things we'd do next: (1) real availability from calendars and real RSVPs, 
 
 **Spare: how much does a run cost?**
 About five cents of Muse per Discover and two to three cents per Guide, measured in our ledger with a 1.5× safety margin on third-party prices. The whole build, evaluation and persona study came in under the budget in `PROGRESS.md`.
+
+## Open Door QA (2026-11-12 evening, branch `travel`)
+
+- `node scripts/qa-opendoor.mjs` (reset → travel style → cached Discover → Coordinate labels → live negotiation → traveler accept → host sees only an anonymous card → host accept → reveal with connection facts → host confirm → Messenger context line → third party sees nothing): all checks pass, ≈67 s, ≈$0.03 Muse.
+- Caught and fixed by this script: the host could list a request before the traveler accepted (now hidden until `travelerAccepted`); drivers going to the trip city were read as "away" (availability now knows the trip city); Discover priced Dallas by bus even with Owen's seat open (validator attaches a visible friend's ride).
+- `npm test`: 20 pass. `npx tsc --noEmit`: clean.
+- Not covered: the Inspector view during negotiation (visually checked once), mock mode for negotiation (code path only), the deck still shows the first feature's slides.
