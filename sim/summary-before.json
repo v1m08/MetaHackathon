@@ -1,0 +1,602 @@
+{
+ "ranAt": "2026-11-12T11:38:21.443Z",
+ "rows": [
+  {
+   "id": "maya",
+   "weekend": "Dec 11–13",
+   "budget": 120,
+   "mode": "live",
+   "trips": 3,
+   "declined": false,
+   "picked": "Dallas",
+   "wouldTake": true,
+   "surprising": 4,
+   "trustworthy": 3,
+   "objections": [
+    "dallas only works if both ravi actually has a seat and cole actually says yes, that's two maybes",
+    "215 mi each way is a long ride to rely on someone else's car",
+    "staying with cole i barely know through high school feels a bit awkward"
+   ],
+   "looksBroken": [],
+   "reason": "dallas is the only one that actually fits my $120 budget with a ride and a free place to stay, and harper's market sounds fun. i'd just need to lock in ravi and cole first.",
+   "renderedViolations": 0,
+   "rawGrounding": {
+    "ids": 11,
+    "grounded": 11,
+    "privacyViolationsCaught": 0,
+    "invented": 0
+   },
+   "fitsBudget": 3,
+   "drafts": 3,
+   "approved": 2,
+   "edited": 1,
+   "discarded": 0,
+   "guideFeedback": "guide felt very me with the slow photo walk and cheap food stops, and the credits to cole, harper, and grace made sense for who actually knew each spot.",
+   "costUsd": 0.064,
+   "latencyMs": 66628
+  },
+  {
+   "id": "zoe",
+   "weekend": "Dec 11–13",
+   "budget": 40,
+   "mode": "live",
+   "trips": 1,
+   "declined": false,
+   "picked": null,
+   "wouldTake": false,
+   "surprising": 3,
+   "trustworthy": 4,
+   "objections": [
+    "money — $108 is almost 3x my $40 budget",
+    "staying with raj iyer, who i don't know directly, just via jordan",
+    "long bus trip to houston for one weekend"
+   ],
+   "looksBroken": [
+    "pitch says raj offered free night-market drives but ride is null, so it's unclear if that includes getting there or just around houston"
+   ],
+   "reason": "i'd love the banh mi + night markets but $108 is way over my $40 and i don't actually know raj, so i'd pass for now.",
+   "renderedViolations": 0,
+   "rawGrounding": {
+    "ids": 2,
+    "grounded": 2,
+    "privacyViolationsCaught": 0,
+    "invented": 0
+   },
+   "fitsBudget": 0,
+   "drafts": 0,
+   "approved": 0,
+   "edited": 0,
+   "discarded": 0,
+   "costUsd": 0.019,
+   "latencyMs": 16780
+  },
+  {
+   "id": "ethan",
+   "weekend": "Dec 11–13",
+   "budget": 300,
+   "mode": "live",
+   "trips": 2,
+   "declined": false,
+   "picked": "Dallas",
+   "wouldTake": true,
+   "surprising": 4,
+   "trustworthy": 3,
+   "objections": [
+    "cole hosting isn't actually confirmed yet",
+    "ravi's seat isn't confirmed either so that $75 could jump to $255",
+    "cole's maya's friend, not someone i know directly",
+    "215 mi each way is still a long weekend haul"
+   ],
+   "looksBroken": [],
+   "reason": "dallas is the one i'd actually do — no driving myself, free place to crash, and the vintage market sounds fun. just feels a bit fragile since it needs both ravi and cole to say yes.",
+   "renderedViolations": 0,
+   "rawGrounding": {
+    "ids": 10,
+    "grounded": 10,
+    "privacyViolationsCaught": 0,
+    "invented": 0
+   },
+   "fitsBudget": 2,
+   "drafts": 2,
+   "approved": 2,
+   "edited": 0,
+   "discarded": 0,
+   "guideFeedback": "guide felt pretty for me with the cheap photo walk stuff, but the dart credit was off since the text says owen said it while harper got the credit.",
+   "costUsd": 0.025,
+   "latencyMs": 31828
+  },
+  {
+   "id": "devon",
+   "weekend": "Nov 20–22",
+   "budget": 150,
+   "mode": "live",
+   "trips": 2,
+   "declined": false,
+   "picked": "Houston",
+   "wouldTake": true,
+   "surprising": 3,
+   "trustworthy": 3,
+   "objections": [
+    "both depend on hosts/rides actually confirming, tj and elijah/finn aren't locked in",
+    "nola is a huge drive for just one weekend and sam's set is sunday night",
+    "don't really know tj/elijah that well, crashing on a couch is a lot",
+    "food budget assumes raj and cheap spots actually come through"
+   ],
+   "looksBroken": [
+    "houston pitch says $80 all-in but the breakdown is $100 if tj says yes",
+    "nola gas is $45 for 542 mi each way, that math doesn't work even split",
+    "nola doesn't account for how long that drive actually is after a friday 1pm start"
+   ],
+   "reason": "houston is way more doable for me, short drive and tj + raj make it feel chill. i'd only go if tj actually confirms the couch though.",
+   "renderedViolations": 0,
+   "rawGrounding": {
+    "ids": 10,
+    "grounded": 10,
+    "privacyViolationsCaught": 0,
+    "invented": 0
+   },
+   "fitsBudget": 2,
+   "drafts": 1,
+   "approved": 1,
+   "edited": 0,
+   "discarded": 0,
+   "guideFeedback": "guide mostly felt for me and raj's credits made sense, but the layla museum stuff felt random since she's not part of this trip.",
+   "costUsd": 0.039,
+   "latencyMs": 40770
+  },
+  {
+   "id": "priya",
+   "weekend": "Dec 4–6",
+   "budget": 250,
+   "mode": "live",
+   "trips": 3,
+   "declined": false,
+   "picked": "Houston",
+   "wouldTake": true,
+   "surprising": 3,
+   "trustworthy": 4,
+   "objections": [
+    "all three depend on someone saying yes to free hosting — if raj says no houston jumps to $245",
+    "houston bus time isn't stated, could eat a lot of the weekend",
+    "raj's guest room / towel thing is cute but i don't actually know if he's confirmed, just that he's 'free'",
+    "food estimates assume raj takes me to cheap spots the whole time"
+   ],
+   "looksBroken": [
+    "new orleans bus listed as 542 mi roundtrip / 8hrs — that's roughly the one-way distance from austin, not roundtrip",
+    "crawfish in early december — that's out of season, usually spring/summer",
+    "san antonio is pitched as a saturday day-trip home by 11:30 but priced as 2 nights staying with gabe + 3 days of food",
+    "distances are labeled inconsistently — houston 173 mi and san antonio 87 mi look like one-way distances but are written as roundtrip in the bus prices",
+    "san antonio people list is empty even though the whole pitch depends on tyler and gabe"
+   ],
+   "reason": "houston is the only one where i'd actually go — direct friend, under budget even if it's tight, and the banh mi / night market thing sounds like a real low-key weekend. the others feel like too many maybes stacked on each other.",
+   "renderedViolations": 0,
+   "rawGrounding": {
+    "ids": 10,
+    "grounded": 10,
+    "privacyViolationsCaught": 0,
+    "invented": 0
+   },
+   "fitsBudget": 3,
+   "drafts": 1,
+   "approved": 1,
+   "edited": 0,
+   "discarded": 0,
+   "guideFeedback": "yeah the guide felt made for me — foodie + free art stuff that fits the budget, and the raj/layla credits made sense for who suggested what.",
+   "costUsd": 0.062,
+   "latencyMs": 63064
+  },
+  {
+   "id": "hannah",
+   "weekend": "Nov 27–29",
+   "budget": 60,
+   "mode": "live",
+   "trips": 1,
+   "declined": false,
+   "picked": null,
+   "wouldTake": false,
+   "surprising": 3,
+   "trustworthy": 2,
+   "objections": [
+    "$80 if Gabriel says yes is still over my $60 budget, and $213 if he doesn't",
+    "hosting isn't confirmed, it's just via Maya and depends on Gabriel saying yes",
+    "staying in a spare room with Maya's friend and his abuela downstairs is basically a stranger situation",
+    "87mi each way is a long drive for a $60 weekend"
+   ],
+   "looksBroken": [
+    "math doesn't line up: title/pitch say $10 over budget but priceIfYes is $80, which is $20 over $60, while reasons say ~$70"
+   ],
+   "reason": "i like the southtown/pearl/mission idea and a free room, but it's still over budget and totally depends on gabe actually hosting, so i wouldn't take it as-is.",
+   "renderedViolations": 0,
+   "rawGrounding": {
+    "ids": 4,
+    "grounded": 4,
+    "privacyViolationsCaught": 0,
+    "invented": 0
+   },
+   "fitsBudget": 0,
+   "drafts": 0,
+   "approved": 0,
+   "edited": 0,
+   "discarded": 0,
+   "costUsd": 0.039,
+   "latencyMs": 18924
+  },
+  {
+   "id": "ella",
+   "weekend": "Dec 4–6",
+   "budget": 80,
+   "mode": "live",
+   "trips": 1,
+   "declined": false,
+   "picked": null,
+   "wouldTake": false,
+   "surprising": 4,
+   "trustworthy": 2,
+   "objections": [
+    "$126 is way over my $80 budget, that's $46 over",
+    "tyler is just hannah's friend, so basically a stranger driving me 87 miles each way",
+    "why am i paying for a hostel if it's a day trip back saturday night?",
+    "dates are fri-sun but the actual plan is only saturday"
+   ],
+   "looksBroken": [
+    "people is empty and host is null but the pitch says tyler and the crew are actually going",
+    "it's sold as a dec 5 day trip back that night but still charges a $38 hostel night for a dec 4-6 weekend",
+    "gabe's pearl reel is listed as a reason but gabe isn't in the people list at all"
+   ],
+   "reason": "nah i'd pass on this one, it's over budget and the people part feels made up. like who am i actually going with??",
+   "renderedViolations": 0,
+   "rawGrounding": {
+    "ids": 3,
+    "grounded": 3,
+    "privacyViolationsCaught": 0,
+    "invented": 0
+   },
+   "fitsBudget": 0,
+   "drafts": 0,
+   "approved": 0,
+   "edited": 0,
+   "discarded": 0,
+   "costUsd": 0.036,
+   "latencyMs": 33583
+  },
+  {
+   "id": "grace",
+   "weekend": "Jan 1–3",
+   "budget": 400,
+   "mode": "live",
+   "trips": 3,
+   "declined": false,
+   "picked": "San Antonio",
+   "wouldTake": true,
+   "surprising": 3,
+   "trustworthy": 3,
+   "objections": [
+    "none of the hosts are actually confirmed, it's all 'if they say yes' / 'open to hosting'",
+    "staying with a friend-of-a-friend and his abuela feels like a lot of pressure for a first meet",
+    "jan 1-3 is a holiday weekend so plans with lena/tj/maddie etc feel flaky"
+   ],
+   "looksBroken": [
+    "the totals in the reasons don't match the price breakdowns — san antonio says $70 in reasons but $80 in the breakdown, houston says $80 but is $100, dallas says $85 but is $109"
+   ],
+   "reason": "san antonio is the only one that feels doable on $400 without a 3 hour drive, and tacos + a free place to crash beats the others for me. i'd only go if gabe actually confirms though.",
+   "renderedViolations": 0,
+   "rawGrounding": {
+    "ids": 11,
+    "grounded": 11,
+    "privacyViolationsCaught": 0,
+    "invented": 0
+   },
+   "fitsBudget": 3,
+   "drafts": 1,
+   "approved": 0,
+   "edited": 1,
+   "discarded": 0,
+   "guideFeedback": "the guide felt very me with the night lights, cheap tacos, and stone arches, and the credits to gabe and lena made sense since they basically mapped the weekend.",
+   "costUsd": 0.071,
+   "latencyMs": 77611
+  },
+  {
+   "id": "marcus",
+   "weekend": "Dec 25–27",
+   "budget": 150,
+   "mode": "live",
+   "trips": 2,
+   "declined": false,
+   "picked": "Houston",
+   "wouldTake": true,
+   "surprising": 3,
+   "trustworthy": 2,
+   "objections": [
+    "tj is a stranger via devon, no actual yes yet",
+    "price math doesn't match so i don't trust the $100",
+    "christmas weekend hosting feels flaky and driving 173 mi each way is still a lot"
+   ],
+   "looksBroken": [
+    "houston says $137 total in the pitch/reasons but the itemized priceIfYes adds up to $100",
+    "new orleans says $179 total but the itemized priceIfYes adds up to $184"
+   ],
+   "reason": "houston is the only one actually under budget and the drive is way more doable than new orleans. i'd risk it for the cheap food crawl if devon can get tj to actually confirm first.",
+   "renderedViolations": 0,
+   "rawGrounding": {
+    "ids": 4,
+    "grounded": 4,
+    "privacyViolationsCaught": 0,
+    "invented": 0
+   },
+   "fitsBudget": 1,
+   "drafts": 1,
+   "approved": 1,
+   "edited": 0,
+   "discarded": 0,
+   "guideFeedback": "yeah it felt made for me — cheap food plus free art stuff is my thing, and the raj and layla credits lined up with the posts.",
+   "costUsd": 0.067,
+   "latencyMs": 74565
+  },
+  {
+   "id": "omar",
+   "weekend": "Dec 18–20",
+   "budget": 250,
+   "mode": "live",
+   "trips": 2,
+   "declined": false,
+   "picked": "San Antonio",
+   "wouldTake": true,
+   "surprising": 3,
+   "trustworthy": 4,
+   "objections": [
+    "gabe hasn't actually said yes to hosting yet",
+    "staying in gabe's spare room with his abuela downstairs is a lot of stranger pressure",
+    "marfa is 442 mi each way and depends on both kenji having a seat and june hosting — too much to hinge a weekend on"
+   ],
+   "looksBroken": [
+    "june's note says any weekend except chinati weekend, but the marfa pitch is built around chinati grounds / night sky weekend — she might not be hosting that weekend",
+    "marfa is marked not overbudget but it's $313 otherwise, which is over the $250 budget"
+   ],
+   "reason": "san antonio is actually doable on $250 even if gabe flakes, and an 87 mi bus beats a 442 mi marfa drive for one weekend. i'd only go if gabe confirms the spare room tho",
+   "renderedViolations": 0,
+   "rawGrounding": {
+    "ids": 9,
+    "grounded": 9,
+    "privacyViolationsCaught": 0,
+    "invented": 0
+   },
+   "fitsBudget": 2,
+   "drafts": 1,
+   "approved": 0,
+   "edited": 1,
+   "discarded": 0,
+   "guideFeedback": "yeah the guide was for me, the pearl and mission picks fit my photo brain and the credits to gabe and lena made sense.",
+   "costUsd": 0.072,
+   "latencyMs": 65214
+  },
+  {
+   "id": "sam",
+   "weekend": "Nov 20–22",
+   "budget": 100,
+   "mode": "live",
+   "trips": 1,
+   "declined": false,
+   "picked": null,
+   "wouldTake": false,
+   "surprising": 4,
+   "trustworthy": 2,
+   "objections": [
+    "money: $105 is already over $100 and only if both Finn and Beau say yes",
+    "strangers: crashing at Beau's via Camille and riding with Finn the sound tech, I don't really know either of them",
+    "distance: 542 mi each way from Austin is a long drive to bank on",
+    "people: Elijah Brown is listed but never mentioned in the pitch or plans",
+    "dates: Nov 20-22, 2026 is a long way out to lock in a maybe host and a maybe seat"
+   ],
+   "looksBroken": [
+    "priceIfYes is $105 but budget was about $100 and it's flagged overBudget",
+    "getting around is $6 for 3 days in the cheap version vs $12 otherwise, and food drops from $105 to $54 with no real explanation",
+    "host note says 'bring a bike or borrow mine' but it's not clear if that's Beau or Camille talking"
+   ],
+   "reason": "sounds fun with camille, colin, lucas and zoe going, but it's not actually confirmed at all and i'm not driving 542 mi hoping beau says yes while already over budget.",
+   "renderedViolations": 0,
+   "rawGrounding": {
+    "ids": 7,
+    "grounded": 7,
+    "privacyViolationsCaught": 0,
+    "invented": 0
+   },
+   "fitsBudget": 0,
+   "drafts": 0,
+   "approved": 0,
+   "edited": 0,
+   "discarded": 0,
+   "costUsd": 0.034,
+   "latencyMs": 27498
+  },
+  {
+   "id": "aisha",
+   "weekend": "Dec 25–27",
+   "budget": 120,
+   "mode": "live",
+   "trips": 2,
+   "declined": false,
+   "picked": "San Antonio",
+   "wouldTake": true,
+   "surprising": 3,
+   "trustworthy": 3,
+   "objections": [
+    "hosting isn't actually confirmed yet, it's only if gabe says yes",
+    "staying with a friend-of-a-friend feels a bit stranger-risky",
+    "$54 for food for 3 days is tight even with cheap spots",
+    "christmas weekend bus will probably be packed"
+   ],
+   "looksBroken": [],
+   "reason": "san antonio is closer, cheaper, and way simpler than adding raj + maddie + tj into the mix. i'd still need gabe to actually confirm before i'd get my hopes up.",
+   "renderedViolations": 0,
+   "rawGrounding": {
+    "ids": 6,
+    "grounded": 6,
+    "privacyViolationsCaught": 0,
+    "invented": 0
+   },
+   "fitsBudget": 2,
+   "drafts": 1,
+   "approved": 1,
+   "edited": 0,
+   "discarded": 0,
+   "guideFeedback": "yeah the guide felt like me with the pearl at night and free missions, and the gabe and lena credits made sense with the trip.",
+   "costUsd": 0.079,
+   "latencyMs": 79414
+  },
+  {
+   "id": "tyler",
+   "weekend": "Dec 4–6",
+   "budget": 200,
+   "mode": "live",
+   "trips": 2,
+   "declined": false,
+   "picked": "San Antonio",
+   "wouldTake": true,
+   "surprising": 4,
+   "trustworthy": 3,
+   "objections": [
+    "gabe is only lena's friend, i don't actually know him and hosting isn't confirmed yet, it's just 'if he says yes'",
+    "if gabe says no it's $213, so over my $200 budget",
+    "houston is way farther and raj is a total stranger via jordan, tj is also just devon's friend",
+    "dec 4-6 is locked in for both, no flexibility if either host flakes"
+   ],
+   "looksBroken": [
+    "food goes from $54 to $105 in the no-host price with no real explanation for the jump"
+   ],
+   "reason": "san antonio one feels way more my vibe and it's only $80 if gabe actually says yes, plus lena's someone i know. still kinda trusting a friend-of-a-friend for a spare room tho",
+   "renderedViolations": 0,
+   "rawGrounding": {
+    "ids": 7,
+    "grounded": 7,
+    "privacyViolationsCaught": 0,
+    "invented": 0
+   },
+   "fitsBudget": 2,
+   "drafts": 2,
+   "approved": 1,
+   "edited": 0,
+   "discarded": 1,
+   "guideFeedback": "the guide felt very for me and the credits to gabe and lena made sense since they're the ones who mapped the spots.",
+   "costUsd": 0.068,
+   "latencyMs": 68881
+  },
+  {
+   "id": "nina",
+   "weekend": "Nov 27–29",
+   "budget": 90,
+   "mode": "live",
+   "trips": 2,
+   "declined": false,
+   "picked": null,
+   "wouldTake": false,
+   "surprising": 4,
+   "trustworthy": 2,
+   "objections": [
+    "both are over my ~$90 budget even with a free couch: $100 for houston, $109 for dallas",
+    "neither host has actually said yes yet, price depends on that",
+    "dallas is a longer drive and diego is a friend-of-a-friend i don't really know",
+    "houston is closer and tj is family, but still over budget"
+   ],
+   "looksBroken": [
+    "trip 0 reasons say $80 total fits $90 but priceIfYes is $100",
+    "trip 1 reasons say $85 total fits $90 but priceIfYes is $109",
+    "trip 0 breakdown is $40 gas + $54 food + $6 getting around = $100, not $80 as pitched"
+   ],
+   "reason": "houston is the better option and tj being my sibling makes that part feel real, but both are over $90 and the pitch math doesn't match the actual prices so i wouldn't lock either in yet.",
+   "renderedViolations": 0,
+   "rawGrounding": {
+    "ids": 8,
+    "grounded": 8,
+    "privacyViolationsCaught": 0,
+    "invented": 0
+   },
+   "fitsBudget": 0,
+   "drafts": 0,
+   "approved": 0,
+   "edited": 0,
+   "discarded": 0,
+   "costUsd": 0.026,
+   "latencyMs": 26140
+  },
+  {
+   "id": "lucas",
+   "weekend": "Dec 18–20",
+   "budget": 180,
+   "mode": "live",
+   "trips": 2,
+   "declined": false,
+   "picked": "Houston",
+   "wouldTake": true,
+   "surprising": 3,
+   "trustworthy": 2,
+   "objections": [
+    "marfa is 442 mi each way, that's a brutal drive for one weekend",
+    "both trips depend on maya's friends i don't know - june, kenji, raj, silas - staying at a stranger's casita/guest room feels risky",
+    "marfa price only works if june says yes AND kenji has a seat, otherwise it's $313 and over my $180 budget",
+    "houston is cheaper and closer but still relies on raj actually hosting and driving me around"
+   ],
+   "looksBroken": [
+    "june's note says 'any weekend except Chinati Weekend' but the whole marfa pitch is for Chinati / Night Sky Weekend that same weekend, so she can't actually be free that weekend",
+    "layla is listed as 'Omar's friend (siblings)' which doesn't make sense as a connection",
+    "raj's host note is just 'always. I have a ridiculous number of towels.' which doesn't actually confirm he's free dec 18-20"
+   ],
+   "reason": "i'd take houston, it's way closer and actually in budget without a 9-hour drive. marfa sounds cool but june literally can't host that weekend per her own note so that whole plan falls apart.",
+   "renderedViolations": 0,
+   "rawGrounding": {
+    "ids": 8,
+    "grounded": 8,
+    "privacyViolationsCaught": 0,
+    "invented": 0
+   },
+   "fitsBudget": 2,
+   "drafts": 1,
+   "approved": 1,
+   "edited": 0,
+   "discarded": 0,
+   "guideFeedback": "yeah the guide felt made for me, raj and layla credits line up with the trip and the cheap/free prices make sense.",
+   "costUsd": 0.069,
+   "latencyMs": 68686
+  },
+  {
+   "id": "kenji",
+   "weekend": "Dec 18–20",
+   "budget": 150,
+   "mode": "live",
+   "trips": 3,
+   "declined": false,
+   "picked": "San Antonio",
+   "wouldTake": true,
+   "surprising": 3,
+   "trustworthy": 4,
+   "objections": [
+    "marfa is 442 mi each way / 6.5hr drive and $161 even if june hosts, so over budget",
+    "san antonio and houston hosts are both via maya, not direct friends, so i don't actually know them",
+    "staying with gabe means his abuela downstairs, could be awkward but also sweet",
+    "all three still need the host to actually say yes, prices jump if they don't"
+   ],
+   "looksBroken": [
+    "marfa reasons say $111 total but priceIfYes is $161, and that $161 is already over the $150 budget",
+    "san antonio reasons say $70 total but priceIfYes is $80",
+    "houston reasons say $80 total but priceIfYes is $100",
+    "marfa star party is listed as $25 in reasons but doesn't appear in the $161 breakdown",
+    "june's note says any weekend except Chinati Weekend while the trip is built around a Marfa weekend event, unclear if that conflicts"
+   ],
+   "reason": "san antonio is the only one that feels doable for me, cheap, close, and free stuff i'd actually do. i'd still be nervous crashing with a via-maya friend though.",
+   "renderedViolations": 0,
+   "rawGrounding": {
+    "ids": 8,
+    "grounded": 8,
+    "privacyViolationsCaught": 0,
+    "invented": 0
+   },
+   "fitsBudget": 2,
+   "drafts": 1,
+   "approved": 0,
+   "edited": 1,
+   "discarded": 0,
+   "guideFeedback": "the guide felt very me with the night-owl, architecture and cheap-food picks, and the credits mostly made sense with pearl and the missions tied to gabe.",
+   "costUsd": 0.074,
+   "latencyMs": 72784
+  }
+ ]
+}

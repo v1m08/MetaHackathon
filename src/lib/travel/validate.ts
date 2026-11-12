@@ -80,7 +80,7 @@ export function validateTrip(viewerId: ID, p: ProposedTrip, ctx: { start: string
   };
   if (!me || !city || city.id === me.city) return null;
   const dates = datesBetween(ctx.start, ctx.end);
-  const nights = Math.max(1, Math.min(7, Math.round(p.nights || dates.length - 1)));
+  let nights = Math.max(1, Math.min(7, Math.round(p.nights || dates.length - 1)));
 
   // host: must exist, be visible, live there, have opted in, and be free
   let host: TripPerson | undefined;
@@ -104,7 +104,13 @@ export function validateTrip(viewerId: ID, p: ProposedTrip, ctx: { start: string
     else if (r.fromCity !== me.city) repairs.push(`dropped ride ${r.id}: leaves from ${r.fromCity}, not your city`);
     else if (r.seatsOpen <= 0) repairs.push(`dropped ride ${r.id}: no seats open`);
     else if (!overlaps(r, ctx.start, ctx.end)) repairs.push(`dropped ride ${r.id}: wrong dates`);
-    else ride = { id: r.id, driver, fromCity: r.fromCity, toCity: r.toCity, departAt: r.departAt, returnAt: r.returnAt, seatsOpen: r.seatsOpen, note: r.note };
+    else {
+      ride = { id: r.id, driver, fromCity: r.fromCity, toCity: r.toCity, departAt: r.departAt, returnAt: r.returnAt, seatsOpen: r.seatsOpen, note: r.note };
+      if (r.departAt.slice(0, 10) === r.returnAt.slice(0, 10)) {
+        nights = 0; // day trip: back the same night, nothing to sleep in
+        repairs.push("day trip: no lodging charged");
+      }
+    }
   }
   // event
   let event: Trip["event"];
@@ -162,12 +168,20 @@ export function validateTrip(viewerId: ID, p: ProposedTrip, ctx: { start: string
   }
   const keptNames = new Set([host, ride?.driver, ...people, ...(event?.goingYouKnow ?? [])].filter(Boolean).map((x) => x!.name.split(" ")[0].toLowerCase()));
   const scrub = droppedNames.filter((n) => !keptNames.has(n));
-  const reasons = (p.reasons ?? []).filter((r) => !scrub.some((n) => new RegExp(`\\b${n}\\b`, "i").test(r))).slice(0, 5);
+  const MONEY = /\$\s?\d|\b\d+\s?(dollars|bucks)\b/i;
+  const reasons = (p.reasons ?? []).filter((r) => !scrub.some((n) => new RegExp(`\\b${n}\\b`, "i").test(r))).filter((r) => {
+    // model-written dollar figures can disagree with the card; drop those reasons rather than show two numbers
+    if (MONEY.test(r)) repairs.push(`dropped a reason with a model-written price: "${r.slice(0, 60)}"`);
+    return !MONEY.test(r);
+  }).slice(0, 5);
+  const pitchSentences = (p.pitch ?? "").split(/(?<=[.!?])\s+/);
+  const pitch = pitchSentences.filter((x) => !MONEY.test(x)).join(" ").trim() || pitchSentences[0] ?? "";
+  if (pitch !== (p.pitch ?? "").trim()) repairs.push("removed a model-written price from the pitch");
 
   // prices, in code
   const miles = milesBetween(cityById(me.city!)!, city);
   const transportIfYes: TransportMode = ride ? "ride" : me.hasCar ? "own-car" : miles > 600 ? "flight" : "bus";
-  const lodgingIfYes: LodgingMode = host ? "host" : "hostel";
+  const lodgingIfYes: LodgingMode = nights === 0 ? "host" : host ? "host" : "hostel";
   const occupants = ride ? 2 + ride.seatsOpen - 1 + 0 : 1;
   const rideRec = ride ? db().rides.find((r) => r.id === ride!.id) : undefined;
   const prices = twoPrices({ fromCity: me.city!, toCity: city.id, nights, transport: transportIfYes, lodging: lodgingIfYes, carOccupants: rideRec ? Math.max(2, 1 + rideRec.riderIds.length + 1) : occupants, withLocal: !!host || people.length > 0, rideShareUsd: rideRec?.costShareUsd });
@@ -175,7 +189,7 @@ export function validateTrip(viewerId: ID, p: ProposedTrip, ctx: { start: string
 
   return {
     id: tripId(), viewerId, city: city.id, cityName: city.name, state: city.state, start: ctx.start, end: ctx.end, nights, budget: ctx.budget,
-    title: p.title?.trim() || `${city.name.toLowerCase()} with ${(host ?? ride?.driver ?? people[0])?.name.split(" ")[0] ?? "your people"}`, pitch: p.pitch ?? "", reasons, host, ride, event, people, evidence,
+    title: (p.title?.trim() || `${city.name.toLowerCase()} with ${(host ?? ride?.driver ?? people[0])?.name.split(" ")[0] ?? "your people"}`).replace(/\$\s?\d+/g, "").replace(/\s{2,}/g, " ").trim(), pitch, reasons, host, ride, event, people, evidence,
     prices: { ...prices, transportIfYes, lodgingIfYes, conditions },
     fitsBudget: prices.ifYes.total <= ctx.budget, repairs, createdAt: new Date().toISOString(),
   };

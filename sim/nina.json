@@ -1,0 +1,655 @@
+{
+ "persona": {
+  "id": "nina",
+  "weekend": 2,
+  "budget": 90,
+  "car": true,
+  "persona": "Nina, 23, nursing student, has a car, plants, baking, reality TV. Her brother lives in Houston. Prefers family or very close friends; would not stay with a friend-of-a-friend."
+ },
+ "weekend": {
+  "n": 2,
+  "start": "2026-11-27",
+  "end": "2026-11-29",
+  "label": "Nov 27–29",
+  "busy": false
+ },
+ "startedAt": "2026-11-12T11:35:34.066Z",
+ "stages": {
+  "discover": {
+   "steps": [
+    {
+     "kind": "info",
+     "text": "Starting from Austin, Nov 27–29, about $90",
+     "i": 0,
+     "at": 0
+    },
+    {
+     "kind": "model",
+     "text": "Deciding what to look at next",
+     "detail": "2062 ms",
+     "i": 1,
+     "at": 2063
+    },
+    {
+     "kind": "tool",
+     "tool": "scan_network",
+     "text": "Mapping your whole network: who lives where, who hosts, who's driving Nov 27–29",
+     "i": 2,
+     "at": 2063
+    },
+    {
+     "kind": "result",
+     "tool": "scan_network",
+     "text": "9 people in 6 cities · 6 hosts free that weekend · 1 event · 0 rides with seats",
+     "detail": "you're into foodies, art people, coffee people and night owls · Montrose Night Market (Houston)",
+     "ids": [
+      "ruben",
+      "simone",
+      "elijah",
+      "ava",
+      "diego",
+      "sienna",
+      "tj",
+      "raj",
+      "maddie",
+      "e_hou_night_market"
+     ],
+     "i": 3,
+     "at": 2065
+    },
+    {
+     "kind": "model",
+     "text": "Deciding what to look at next",
+     "detail": "6549 ms",
+     "i": 4,
+     "at": 8615
+    },
+    {
+     "kind": "tool",
+     "tool": "estimate_trip_cost",
+     "text": "Pricing Houston: 2 nights, staying with a friend, by own-car",
+     "i": 5,
+     "at": 8615
+    },
+    {
+     "kind": "result",
+     "tool": "estimate_trip_cost",
+     "text": "about $80 if they say yes, about $217 otherwise",
+     "detail": "173 mi · 2.5h drive · hotel + solo would be $405",
+     "i": 6,
+     "at": 8615
+    },
+    {
+     "kind": "tool",
+     "tool": "estimate_trip_cost",
+     "text": "Pricing Dallas: 2 nights, staying with a friend, by own-car",
+     "i": 7,
+     "at": 8615
+    },
+    {
+     "kind": "result",
+     "tool": "estimate_trip_cost",
+     "text": "about $85 if they say yes, about $226 otherwise",
+     "detail": "215 mi · 3.2h drive · hotel + solo would be $421",
+     "i": 8,
+     "at": 8615
+    },
+    {
+     "kind": "model",
+     "text": "Deciding what to look at next",
+     "detail": "3147 ms",
+     "i": 9,
+     "at": 11762
+    },
+    {
+     "kind": "tool",
+     "tool": "get_city_media",
+     "text": "Reading your friends' photos and Reels from Houston",
+     "i": 10,
+     "at": 11762
+    },
+    {
+     "kind": "result",
+     "tool": "get_city_media",
+     "text": "Read 2 photos from Houston",
+     "detail": "1 of Raj's, 1 of Layla's",
+     "i": 11,
+     "at": 11763
+    },
+    {
+     "kind": "tool",
+     "tool": "get_city_media",
+     "text": "Reading your friends' photos and Reels from Dallas",
+     "i": 12,
+     "at": 11763
+    },
+    {
+     "kind": "result",
+     "tool": "get_city_media",
+     "text": "Read 3 photos from Dallas",
+     "detail": "1 of Harper's, 1 of Cole's, 1 of Grace's",
+     "i": 13,
+     "at": 11763
+    },
+    {
+     "kind": "model",
+     "text": "Deciding what to look at next",
+     "detail": "10487 ms",
+     "i": 14,
+     "at": 22251
+    },
+    {
+     "kind": "tool",
+     "tool": "propose_trips",
+     "text": "Putting together 2 trips",
+     "i": 15,
+     "at": 22251
+    },
+    {
+     "kind": "info",
+     "text": "Checking every person, ride, event and photo against what you can actually see",
+     "i": 16,
+     "at": 22251
+    },
+    {
+     "kind": "done",
+     "text": "2 trips that only exist because of your people",
+     "detail": "22.3s · live · $0.025",
+     "i": 17,
+     "at": 22251
+    }
+   ],
+   "result": {
+    "runId": "run_mwdh23k5",
+    "trips": [
+     {
+      "id": "trip_mwdh23k5vl7l",
+      "viewerId": "nina",
+      "city": "houston",
+      "cityName": "Houston",
+      "state": "TX",
+      "start": "2026-11-27",
+      "end": "2026-11-29",
+      "nights": 2,
+      "budget": 90,
+      "title": "houston with tj for montrose night market",
+      "pitch": "your brother's couch is free and raj is already going to the night market that weekend. cheap drive, free crash, $4.50 banh mi tour.",
+      "reasons": [
+       "tj (your sibling) is free nov 27-29 and open to hosting",
+       "raj + tj + maddie are all going to montrose night market nov 29",
+       "raj posted the $4.50 bellaire banh mi + free driving tour",
+       "drive yourself ~2.5hr, $80 total fits your $90"
+      ],
+      "host": {
+       "id": "tj",
+       "name": "TJ Okafor",
+       "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D72",
+       "connection": "siblings",
+       "degree": 1,
+       "openToHosting": true,
+       "hostingNote": "couch, and my grill. Rodeo weekends I'm booked.",
+       "hasCar": true,
+       "freeThatWeekend": true
+      },
+      "event": {
+       "id": "e_hou_night_market",
+       "title": "Montrose Night Market",
+       "startsAt": "2026-11-29T02:00:00.000Z",
+       "location": "Montrose Collective (parking lot + courtyard)",
+       "price": "Free entry, bring cash",
+       "goingYouKnow": [
+        {
+         "id": "raj",
+         "name": "Raj Iyer",
+         "username": "raj.iyer",
+         "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D71",
+         "pronouns": "he/him",
+         "city": "houston",
+         "openToHosting": true,
+         "connection": "Jordan's friend (Cheap Eats regular)"
+        },
+        {
+         "id": "tj",
+         "name": "TJ Okafor",
+         "username": "tj.okafor",
+         "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D72",
+         "pronouns": "he/him",
+         "city": "houston",
+         "openToHosting": true,
+         "connection": "siblings"
+        },
+        {
+         "id": "maddie",
+         "name": "Maddie Price",
+         "username": "maddie.price",
+         "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D37",
+         "pronouns": "she/her",
+         "city": "houston",
+         "openToHosting": false,
+         "connection": "Aisha's friend (high school best friends)"
+        },
+        {
+         "id": "priya",
+         "name": "Priya Natarajan",
+         "username": "priyan",
+         "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D44",
+         "pronouns": "she/her",
+         "city": "austin",
+         "openToHosting": false,
+         "connection": "Aisha's friend"
+        }
+       ]
+      },
+      "people": [
+       {
+        "id": "raj",
+        "name": "Raj Iyer",
+        "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D71",
+        "connection": "Jordan's friend (Cheap Eats regular)",
+        "degree": 2,
+        "via": {
+         "id": "jordan",
+         "name": "Jordan Reyes"
+        },
+        "openToHosting": true,
+        "hostingNote": "guest room in Montrose. always. I have a ridiculous number of towels.",
+        "hasCar": true,
+        "freeThatWeekend": true
+       },
+       {
+        "id": "maddie",
+        "name": "Maddie Price",
+        "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D37",
+        "connection": "Aisha's friend (high school best friends)",
+        "degree": 2,
+        "via": {
+         "id": "aisha",
+         "name": "Aisha Bello"
+        },
+        "openToHosting": false,
+        "hasCar": true,
+        "freeThatWeekend": true
+       },
+       {
+        "id": "priya",
+        "name": "Priya Natarajan",
+        "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D44",
+        "connection": "Aisha's friend",
+        "degree": 2,
+        "via": {
+         "id": "aisha",
+         "name": "Aisha Bello"
+        },
+        "openToHosting": false,
+        "hasCar": false,
+        "freeThatWeekend": true
+       }
+      ],
+      "evidence": [
+       {
+        "kind": "post",
+        "id": "p_00ql",
+        "authorId": "raj",
+        "author": "Raj Iyer",
+        "image": "/api/img?u=https%3A%2F%2Fupload.wikimedia.org%2Fwikipedia%2Fcommons%2Fc%2Fc1%2FB%25C3%25A1nh_m%25C3%25AC_x%25C3%25ADu_m%25E1%25BA%25A1i-meatball-sandwich.jpg",
+        "caption": "the banh mi on bellaire. $4.50. shredded pork, pickled carrots, cucumber sticks, a fistful of cilantro, on paper like it should be. this is the first stop on my official night market tour (the tour is me, driving you, for free). guest room in montrose has a ridiculous number of towels, come use them"
+       }
+      ],
+      "prices": {
+       "ifYes": {
+        "total": 100,
+        "lines": [
+         {
+          "label": "gas, driving yourself (173 mi each way)",
+          "usd": 40
+         },
+         {
+          "label": "staying with a friend (2 nights)",
+          "usd": 0
+         },
+         {
+          "label": "food, 3 days (local's cheap spots)",
+          "usd": 54
+         },
+         {
+          "label": "getting around, 3 days",
+          "usd": 6
+         }
+        ],
+        "transport": "own-car",
+        "lodging": "host"
+       },
+       "otherwise": {
+        "total": 237,
+        "lines": [
+         {
+          "label": "gas, driving yourself (173 mi each way)",
+          "usd": 40
+         },
+         {
+          "label": "hostel, 2 nights × $40",
+          "usd": 80
+         },
+         {
+          "label": "food, 3 days",
+          "usd": 105
+         },
+         {
+          "label": "getting around, 3 days",
+          "usd": 12
+         }
+        ],
+        "transport": "own-car",
+        "lodging": "hostel"
+       },
+       "solo": {
+        "total": 405,
+        "lines": [
+         {
+          "label": "bus, round trip (173 mi)",
+          "usd": 48
+         },
+         {
+          "label": "hotel, 2 nights × $120",
+          "usd": 240
+         },
+         {
+          "label": "food, 3 days",
+          "usd": 105
+         },
+         {
+          "label": "getting around, 3 days",
+          "usd": 12
+         }
+        ],
+        "transport": "bus",
+        "lodging": "hotel"
+       },
+       "miles": 173,
+       "driveHours": 2.5,
+       "transportIfYes": "own-car",
+       "lodgingIfYes": "host",
+       "conditions": [
+        "TJ says yes to hosting"
+       ]
+      },
+      "fitsBudget": false,
+      "repairs": [],
+      "createdAt": "2026-11-12T11:35:56.549Z"
+     },
+     {
+      "id": "trip_mwdh23k5dqku",
+      "viewerId": "nina",
+      "city": "dallas",
+      "cityName": "Dallas",
+      "state": "TX",
+      "start": "2026-11-27",
+      "end": "2026-11-29",
+      "nights": 2,
+      "budget": 90,
+      "title": "dallas with diego, oak cliff couch + dinner",
+      "pitch": "diego's couch in oak cliff with dinner included, and he's free that weekend. sienna's up there too for brunch + food trucks.",
+      "reasons": [
+       "diego (via jordan) is free nov 27-29 and open to hosting",
+       "sienna's also in dallas and free that weekend",
+       "grace posted sienna's brunch then klyde warren food trucks hang",
+       "drive yourself ~3.2hr, $85 total fits your $90"
+      ],
+      "host": {
+       "id": "diego",
+       "name": "Diego Morales",
+       "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D62",
+       "connection": "Jordan's friend (cousins)",
+       "degree": 2,
+       "via": {
+        "id": "jordan",
+        "name": "Jordan Reyes"
+       },
+       "openToHosting": true,
+       "hostingNote": "couch in Oak Cliff, dinner included",
+       "hasCar": true,
+       "freeThatWeekend": true
+      },
+      "people": [
+       {
+        "id": "sienna",
+        "name": "Sienna Walsh",
+        "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D35",
+        "connection": "Grace's friend (UT Advertising classmates)",
+        "degree": 2,
+        "via": {
+         "id": "grace",
+         "name": "Grace Liu"
+        },
+        "openToHosting": false,
+        "hasCar": true,
+        "freeThatWeekend": true
+       }
+      ],
+      "evidence": [
+       {
+        "kind": "post",
+        "id": "p_00qd",
+        "authorId": "grace",
+        "author": "Grace Liu",
+        "image": "/api/img?u=https%3A%2F%2Fthumb.wikimedia.org%2Fwikipedia%2Fcommons%2Fthumb%2F7%2F78%2FKlyde_Warren_Park.jpg%2F1280px-Klyde_Warren_Park.jpg",
+        "caption": "sienna made brunch at hers and then we walked to the park downtown with the food trucks lined up on the lawn and the glass towers behind. january so the trees were bare but it was 65 out bc texas. $9 for a second lunch from the trucks because brunch is a personality but so is a snack"
+       }
+      ],
+      "prices": {
+       "ifYes": {
+        "total": 109,
+        "lines": [
+         {
+          "label": "gas, driving yourself (215 mi each way)",
+          "usd": 49
+         },
+         {
+          "label": "staying with a friend (2 nights)",
+          "usd": 0
+         },
+         {
+          "label": "food, 3 days (local's cheap spots)",
+          "usd": 54
+         },
+         {
+          "label": "getting around, 3 days",
+          "usd": 6
+         }
+        ],
+        "transport": "own-car",
+        "lodging": "host"
+       },
+       "otherwise": {
+        "total": 250,
+        "lines": [
+         {
+          "label": "gas, driving yourself (215 mi each way)",
+          "usd": 49
+         },
+         {
+          "label": "hostel, 2 nights × $42",
+          "usd": 84
+         },
+         {
+          "label": "food, 3 days",
+          "usd": 105
+         },
+         {
+          "label": "getting around, 3 days",
+          "usd": 12
+         }
+        ],
+        "transport": "own-car",
+        "lodging": "hostel"
+       },
+       "solo": {
+        "total": 421,
+        "lines": [
+         {
+          "label": "bus, round trip (215 mi)",
+          "usd": 54
+         },
+         {
+          "label": "hotel, 2 nights × $125",
+          "usd": 250
+         },
+         {
+          "label": "food, 3 days",
+          "usd": 105
+         },
+         {
+          "label": "getting around, 3 days",
+          "usd": 12
+         }
+        ],
+        "transport": "bus",
+        "lodging": "hotel"
+       },
+       "miles": 215,
+       "driveHours": 3.2,
+       "transportIfYes": "own-car",
+       "lodgingIfYes": "host",
+       "conditions": [
+        "Diego says yes to hosting"
+       ]
+      },
+      "fitsBudget": false,
+      "repairs": [],
+      "createdAt": "2026-11-12T11:35:56.549Z"
+     }
+    ],
+    "mode": "live",
+    "costUsd": 0.0245,
+    "latencyMs": 22251,
+    "model": "muse-spark-1.3"
+   }
+  },
+  "audit": {
+   "runId": "run_mwdh23k5",
+   "viewerId": "nina",
+   "input": {
+    "start": "2026-11-27",
+    "end": "2026-11-29",
+    "budget": 90
+   },
+   "mode": "live",
+   "costUsd": 0.0245,
+   "latencyMs": 22251,
+   "raw": {
+    "ids": 8,
+    "grounded": 8,
+    "privacyViolationsCaught": 0,
+    "invented": 0
+   },
+   "trips": [
+    {
+     "tripId": "trip_mwdh23k5vl7l",
+     "city": "houston",
+     "elements": [
+      {
+       "kind": "host",
+       "id": "tj",
+       "exists": true,
+       "visible": true
+      },
+      {
+       "kind": "event",
+       "id": "e_hou_night_market",
+       "exists": true,
+       "visible": true,
+       "inDates": true
+      },
+      {
+       "kind": "person",
+       "id": "raj",
+       "exists": true,
+       "visible": true
+      },
+      {
+       "kind": "person",
+       "id": "maddie",
+       "exists": true,
+       "visible": true
+      },
+      {
+       "kind": "person",
+       "id": "priya",
+       "exists": true,
+       "visible": true
+      },
+      {
+       "kind": "post",
+       "id": "p_00ql",
+       "exists": true,
+       "visible": true
+      }
+     ],
+     "renderedViolations": 0,
+     "fitsBudget": false,
+     "ifYes": 100,
+     "otherwise": 237,
+     "solo": 405,
+     "hostOptedIn": true,
+     "hostDegree": 1,
+     "fofHasMutual": null
+    },
+    {
+     "tripId": "trip_mwdh23k5dqku",
+     "city": "dallas",
+     "elements": [
+      {
+       "kind": "host",
+       "id": "diego",
+       "exists": true,
+       "visible": true
+      },
+      {
+       "kind": "person",
+       "id": "sienna",
+       "exists": true,
+       "visible": true
+      },
+      {
+       "kind": "post",
+       "id": "p_00qd",
+       "exists": true,
+       "visible": true
+      }
+     ],
+     "renderedViolations": 0,
+     "fitsBudget": false,
+     "ifYes": 109,
+     "otherwise": 250,
+     "solo": 421,
+     "hostOptedIn": true,
+     "hostDegree": 2,
+     "fofHasMutual": true
+    }
+   ],
+   "declined": false
+  }
+ },
+ "cost": 0.025500000000000002,
+ "verdict": {
+  "looksBroken": [
+   "trip 0 reasons say $80 total fits $90 but priceIfYes is $100",
+   "trip 1 reasons say $85 total fits $90 but priceIfYes is $109",
+   "trip 0 breakdown is $40 gas + $54 food + $6 getting around = $100, not $80 as pitched"
+  ],
+  "objections": [
+   "both are over my ~$90 budget even with a free couch: $100 for houston, $109 for dallas",
+   "neither host has actually said yes yet, price depends on that",
+   "dallas is a longer drive and diego is a friend-of-a-friend i don't really know",
+   "houston is closer and tj is family, but still over budget"
+  ],
+  "pickTripIndex": -1,
+  "reason": "houston is the better option and tj being my sibling makes that part feel real, but both are over $90 and the pitch math doesn't match the actual prices so i wouldn't lock either in yet.",
+  "surprising": 4,
+  "trustworthy": 2,
+  "wouldTake": false
+ },
+ "verdictMode": "live",
+ "latencyMs": 26140,
+ "finishedAt": "2026-11-12T11:35:59.970Z"
+}

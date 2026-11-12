@@ -1,0 +1,431 @@
+{
+ "persona": {
+  "id": "hannah",
+  "weekend": 2,
+  "budget": 60,
+  "car": true,
+  "persona": "Hannah, 22, first-year teacher, has a car, budgets to the dollar, crochet, romance novels, early nights. Thanksgiving weekend is family-first; would only go somewhere very cheap and very easy."
+ },
+ "weekend": {
+  "n": 2,
+  "start": "2026-11-27",
+  "end": "2026-11-29",
+  "label": "Nov 27–29",
+  "busy": false
+ },
+ "startedAt": "2026-11-12T11:28:08.380Z",
+ "stages": {
+  "discover": {
+   "steps": [
+    {
+     "kind": "info",
+     "text": "Starting from Austin, Nov 27–29, about $60",
+     "i": 0,
+     "at": 1
+    },
+    {
+     "kind": "model",
+     "text": "Deciding what to look at next",
+     "detail": "1407 ms",
+     "i": 1,
+     "at": 1408
+    },
+    {
+     "kind": "tool",
+     "tool": "scan_network",
+     "text": "Mapping your whole network: who lives where, who hosts, who's driving Nov 27–29",
+     "i": 2,
+     "at": 1408
+    },
+    {
+     "kind": "result",
+     "tool": "scan_network",
+     "text": "23 people in 11 cities · 13 hosts free that weekend · 1 event · 1 ride with seats",
+     "detail": "you're into foodies, art people, budget travellers and night owls · Montrose Night Market (Houston) · → Houston, 3 seats",
+     "ids": [
+      "kai",
+      "marisol",
+      "tess",
+      "andre",
+      "simone",
+      "bri",
+      "noah",
+      "ivy",
+      "arjun",
+      "nadia",
+      "beau",
+      "theo",
+      "ava",
+      "wes",
+      "cole",
+      "harper",
+      "sienna",
+      "raj",
+      "tj",
+      "maddie",
+      "gabe",
+      "lena",
+      "june",
+      "e_hou_night_market",
+      "ride_yara_hou"
+     ],
+     "i": 3,
+     "at": 1411
+    },
+    {
+     "kind": "model",
+     "text": "Deciding what to look at next",
+     "detail": "5105 ms",
+     "i": 4,
+     "at": 6515
+    },
+    {
+     "kind": "tool",
+     "tool": "estimate_trip_cost",
+     "text": "Pricing Houston: 2 nights, staying with a friend, by a friend's car",
+     "i": 5,
+     "at": 6516
+    },
+    {
+     "kind": "result",
+     "tool": "estimate_trip_cost",
+     "text": "about $75 if they say yes, about $245 otherwise",
+     "detail": "173 mi · 2.5h drive · hotel + solo would be $405",
+     "i": 6,
+     "at": 6516
+    },
+    {
+     "kind": "tool",
+     "tool": "estimate_trip_cost",
+     "text": "Pricing San Antonio: 2 nights, staying with a friend, by own-car",
+     "i": 7,
+     "at": 6516
+    },
+    {
+     "kind": "result",
+     "tool": "estimate_trip_cost",
+     "text": "about $70 if they say yes, about $203 otherwise",
+     "detail": "87 mi · 1.3h drive · hotel + solo would be $383",
+     "i": 8,
+     "at": 6516
+    },
+    {
+     "kind": "tool",
+     "tool": "estimate_trip_cost",
+     "text": "Pricing Dallas: 2 nights, staying with a friend, by own-car",
+     "i": 9,
+     "at": 6516
+    },
+    {
+     "kind": "result",
+     "tool": "estimate_trip_cost",
+     "text": "about $85 if they say yes, about $226 otherwise",
+     "detail": "215 mi · 3.2h drive · hotel + solo would be $421",
+     "i": 10,
+     "at": 6516
+    },
+    {
+     "kind": "model",
+     "text": "Deciding what to look at next",
+     "detail": "3055 ms",
+     "i": 11,
+     "at": 9571
+    },
+    {
+     "kind": "tool",
+     "tool": "get_city_media",
+     "text": "Reading your friends' photos and Reels from San Antonio",
+     "i": 12,
+     "at": 9572
+    },
+    {
+     "kind": "result",
+     "tool": "get_city_media",
+     "text": "Read 3 photos from San Antonio",
+     "detail": "2 of Gabriel's, 1 of Lena's",
+     "i": 13,
+     "at": 9572
+    },
+    {
+     "kind": "tool",
+     "tool": "get_city_media",
+     "text": "Reading your friends' photos and Reels from Houston",
+     "i": 14,
+     "at": 9572
+    },
+    {
+     "kind": "result",
+     "tool": "get_city_media",
+     "text": "Read 2 photos from Houston",
+     "detail": "1 of Raj's, 1 of Layla's",
+     "i": 15,
+     "at": 9572
+    },
+    {
+     "kind": "model",
+     "text": "Deciding what to look at next",
+     "detail": "6116 ms",
+     "i": 16,
+     "at": 15689
+    },
+    {
+     "kind": "tool",
+     "tool": "propose_trips",
+     "text": "Putting together 1 trip",
+     "i": 17,
+     "at": 15689
+    },
+    {
+     "kind": "info",
+     "text": "Checking every person, ride, event and photo against what you can actually see",
+     "i": 18,
+     "at": 15689
+    },
+    {
+     "kind": "done",
+     "text": "1 trip that only exist because of your people",
+     "detail": "15.7s · live · $0.039",
+     "i": 19,
+     "at": 15689
+    }
+   ],
+   "result": {
+    "runId": "run_mwdgselm",
+    "trips": [
+     {
+      "id": "trip_mwdgselmr4l3",
+      "viewerId": "hannah",
+      "city": "san-antonio",
+      "cityName": "San Antonio",
+      "state": "TX",
+      "start": "2026-11-27",
+      "end": "2026-11-29",
+      "nights": 2,
+      "budget": 60,
+      "title": "san antonio with gabe, $10 over",
+      "pitch": "closest i can get you is southtown with gabe. he's free, spare room's open, and his abuela downstairs will absolutely feed you.",
+      "reasons": [
+       "gabe (via maya) is open to hosting and free nov 27-29, spare room in southtown",
+       "you have a car, it's 87mi each way so gas is only ~$10",
+       "gabe posted the pearl fountains at dusk + mission san josé, both free to wander",
+       "honest math: ~$70 with his couch, so $10 over your $60"
+      ],
+      "host": {
+       "id": "gabe",
+       "name": "Gabriel Flores",
+       "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D40",
+       "connection": "Maya's friend (UT Design cohort)",
+       "degree": 2,
+       "via": {
+        "id": "maya",
+        "name": "Maya Chen"
+       },
+       "openToHosting": true,
+       "hostingNote": "spare room at my place in Southtown. abuela lives downstairs and will cook.",
+       "hasCar": true,
+       "freeThatWeekend": true
+      },
+      "people": [
+       {
+        "id": "lena",
+        "name": "Lena Schultz",
+        "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D41",
+        "connection": "Tyler's friend (pickleball league)",
+        "degree": 2,
+        "via": {
+         "id": "tyler",
+         "name": "Tyler Brooks"
+        },
+        "openToHosting": false,
+        "hasCar": true,
+        "freeThatWeekend": true
+       }
+      ],
+      "evidence": [
+       {
+        "kind": "reel",
+        "id": "tr_pearl",
+        "authorId": "gabe",
+        "author": "Gabriel Flores",
+        "image": "/api/img?u=https%3A%2F%2Fupload.wikimedia.org%2Fwikipedia%2Fcommons%2Fe%2Fea%2FGustavs_Geysers_Pearl_Brewery_San_Antonio_2021.jpg",
+        "caption": "pearl at dusk. the ground fountains lit up, trees wrapped in string lights, a kid and a dog losing their minds in the spray, the old brewery chimney behind it all. saturday ritual. free to walk, $12 tacos if you cave #sanantonio #thepearl"
+       },
+       {
+        "kind": "post",
+        "id": "p_00qz",
+        "authorId": "gabe",
+        "author": "Gabriel Flores",
+        "image": "/api/img?u=https%3A%2F%2Fthumb.wikimedia.org%2Fwikipedia%2Fcommons%2Fthumb%2Fb%2Fb3%2FMission_San_Jos%25C3%25A9_y_San_Miguel_de_Aguayo%252C_San_Antonio%252C_Texas_arches.jpg%2F1280px-Mission_San_Jos%25C3%25A9_y_San_Miguel_de_Aguayo%252C_San_Antonio%252C_Texas_arches.jpg",
+        "caption": "mission san josé with abuela on a cloudy sunday. the long wall of stone arches, two rows, green bushes in front, weathered like it's been there 300 years because it has. free. national park. she lit a candle and then made me drive her to h-e-b. spare room in southtown is open, she WILL cook for you"
+       }
+      ],
+      "prices": {
+       "ifYes": {
+        "total": 80,
+        "lines": [
+         {
+          "label": "gas, driving yourself (87 mi each way)",
+          "usd": 20
+         },
+         {
+          "label": "staying with a friend (2 nights)",
+          "usd": 0
+         },
+         {
+          "label": "food, 3 days (local's cheap spots)",
+          "usd": 54
+         },
+         {
+          "label": "getting around, 3 days",
+          "usd": 6
+         }
+        ],
+        "transport": "own-car",
+        "lodging": "host"
+       },
+       "otherwise": {
+        "total": 213,
+        "lines": [
+         {
+          "label": "gas, driving yourself (87 mi each way)",
+          "usd": 20
+         },
+         {
+          "label": "hostel, 2 nights × $38",
+          "usd": 76
+         },
+         {
+          "label": "food, 3 days",
+          "usd": 105
+         },
+         {
+          "label": "getting around, 3 days",
+          "usd": 12
+         }
+        ],
+        "transport": "own-car",
+        "lodging": "hostel"
+       },
+       "solo": {
+        "total": 383,
+        "lines": [
+         {
+          "label": "bus, round trip (87 mi)",
+          "usd": 36
+         },
+         {
+          "label": "hotel, 2 nights × $115",
+          "usd": 230
+         },
+         {
+          "label": "food, 3 days",
+          "usd": 105
+         },
+         {
+          "label": "getting around, 3 days",
+          "usd": 12
+         }
+        ],
+        "transport": "bus",
+        "lodging": "hotel"
+       },
+       "miles": 87,
+       "driveHours": 1.3,
+       "transportIfYes": "own-car",
+       "lodgingIfYes": "host",
+       "conditions": [
+        "Gabriel says yes to hosting"
+       ]
+      },
+      "fitsBudget": false,
+      "repairs": [],
+      "createdAt": "2026-11-12T11:28:24.298Z"
+     }
+    ],
+    "mode": "live",
+    "costUsd": 0.038599999999999995,
+    "latencyMs": 15689,
+    "model": "muse-spark-1.3"
+   }
+  },
+  "audit": {
+   "runId": "run_mwdgselm",
+   "viewerId": "hannah",
+   "input": {
+    "start": "2026-11-27",
+    "end": "2026-11-29",
+    "budget": 60
+   },
+   "mode": "live",
+   "costUsd": 0.038599999999999995,
+   "latencyMs": 15689,
+   "raw": {
+    "ids": 4,
+    "grounded": 4,
+    "privacyViolationsCaught": 0,
+    "invented": 0
+   },
+   "trips": [
+    {
+     "tripId": "trip_mwdgselmr4l3",
+     "city": "san-antonio",
+     "elements": [
+      {
+       "kind": "host",
+       "id": "gabe",
+       "exists": true,
+       "visible": true
+      },
+      {
+       "kind": "person",
+       "id": "lena",
+       "exists": true,
+       "visible": true
+      },
+      {
+       "kind": "reel",
+       "id": "tr_pearl",
+       "exists": true,
+       "visible": true
+      },
+      {
+       "kind": "post",
+       "id": "p_00qz",
+       "exists": true,
+       "visible": true
+      }
+     ],
+     "renderedViolations": 0,
+     "fitsBudget": false,
+     "ifYes": 80,
+     "otherwise": 213,
+     "solo": 383,
+     "hostOptedIn": true,
+     "hostDegree": 2,
+     "fofHasMutual": true
+    }
+   ],
+   "declined": false
+  }
+ },
+ "cost": 0.039299999999999995,
+ "verdict": {
+  "looksBroken": [
+   "math doesn't line up: title/pitch say $10 over budget but priceIfYes is $80, which is $20 over $60, while reasons say ~$70"
+  ],
+  "objections": [
+   "$80 if Gabriel says yes is still over my $60 budget, and $213 if he doesn't",
+   "hosting isn't confirmed, it's just via Maya and depends on Gabriel saying yes",
+   "staying in a spare room with Maya's friend and his abuela downstairs is basically a stranger situation",
+   "87mi each way is a long drive for a $60 weekend"
+  ],
+  "pickTripIndex": -1,
+  "reason": "i like the southtown/pearl/mission idea and a free room, but it's still over budget and totally depends on gabe actually hosting, so i wouldn't take it as-is.",
+  "surprising": 3,
+  "trustworthy": 2,
+  "wouldTake": false
+ },
+ "verdictMode": "live",
+ "latencyMs": 18924,
+ "finishedAt": "2026-11-12T11:28:27.059Z"
+}

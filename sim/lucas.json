@@ -1,0 +1,1133 @@
+{
+ "persona": {
+  "id": "lucas",
+  "weekend": 5,
+  "budget": 180,
+  "car": false,
+  "persona": "Lucas, 24, French barista and film photographer, no car, cycles everywhere, will go anywhere with good light and good coffee. Easygoing about couches if the person is interesting."
+ },
+ "weekend": {
+  "n": 5,
+  "start": "2026-12-18",
+  "end": "2026-12-20",
+  "label": "Dec 18–20",
+  "busy": false
+ },
+ "startedAt": "2026-11-12T11:36:00.223Z",
+ "stages": {
+  "discover": {
+   "steps": [
+    {
+     "kind": "info",
+     "text": "Starting from Austin, Dec 18–20, about $180",
+     "i": 0,
+     "at": 1
+    },
+    {
+     "kind": "model",
+     "text": "Deciding what to look at next",
+     "detail": "1187 ms",
+     "i": 1,
+     "at": 1187
+    },
+    {
+     "kind": "tool",
+     "tool": "scan_network",
+     "text": "Mapping your whole network: who lives where, who hosts, who's driving Dec 18–20",
+     "i": 2,
+     "at": 1188
+    },
+    {
+     "kind": "result",
+     "tool": "scan_network",
+     "text": "29 people in 11 cities · 14 hosts free that weekend · 2 events · 1 ride with seats",
+     "detail": "you're into foodies, art people, night owls and music lovers, no car · Marfa Night Sky Weekend (Chinati grounds + McDonald Observatory star party) (Marfa) · Shelby Bottoms trail run + hot chicken after (Nashville) · → Marfa, 3 seats",
+     "ids": [
+      "kai",
+      "marisol",
+      "tess",
+      "leah",
+      "andre",
+      "bri",
+      "noah",
+      "ivy",
+      "jules",
+      "mateo",
+      "arjun",
+      "nadia",
+      "colin",
+      "beau",
+      "camille",
+      "rosa",
+      "dani",
+      "theo",
+      "ava",
+      "wes",
+      "ibrahim",
+      "cole",
+      "harper",
+      "sienna",
+      "raj",
+      "layla",
+      "gabe",
+      "silas",
+      "june",
+      "e_marfa_sky",
+      "e_nash_run",
+      "ride_kenji_marfa"
+     ],
+     "i": 3,
+     "at": 1191
+    },
+    {
+     "kind": "model",
+     "text": "Deciding what to look at next",
+     "detail": "6128 ms",
+     "i": 4,
+     "at": 7319
+    },
+    {
+     "kind": "tool",
+     "tool": "estimate_trip_cost",
+     "text": "Pricing Marfa: 2 nights, staying with a friend, by a friend's car",
+     "i": 5,
+     "at": 7319
+    },
+    {
+     "kind": "result",
+     "tool": "estimate_trip_cost",
+     "text": "about $100 if they say yes, about $313 otherwise",
+     "detail": "442 mi · 6.5h drive · hotel + solo would be $523",
+     "i": 6,
+     "at": 7319
+    },
+    {
+     "kind": "tool",
+     "tool": "estimate_trip_cost",
+     "text": "Pricing Houston: 2 nights, staying with a friend, by bus",
+     "i": 7,
+     "at": 7319
+    },
+    {
+     "kind": "result",
+     "tool": "estimate_trip_cost",
+     "text": "about $108 if they say yes, about $245 otherwise",
+     "detail": "173 mi · 2.5h drive · hotel + solo would be $405",
+     "i": 8,
+     "at": 7319
+    },
+    {
+     "kind": "tool",
+     "tool": "estimate_trip_cost",
+     "text": "Pricing San Antonio: 2 nights, staying with a friend, by bus",
+     "i": 9,
+     "at": 7319
+    },
+    {
+     "kind": "result",
+     "tool": "estimate_trip_cost",
+     "text": "about $96 if they say yes, about $229 otherwise",
+     "detail": "87 mi · 1.3h drive · hotel + solo would be $383",
+     "i": 10,
+     "at": 7319
+    },
+    {
+     "kind": "model",
+     "text": "Deciding what to look at next",
+     "detail": "2780 ms",
+     "i": 11,
+     "at": 10099
+    },
+    {
+     "kind": "tool",
+     "tool": "get_city_media",
+     "text": "Reading your friends' photos and Reels from Marfa",
+     "i": 12,
+     "at": 10099
+    },
+    {
+     "kind": "result",
+     "tool": "get_city_media",
+     "text": "Read 2 photos from Marfa",
+     "detail": "1 of Kenji's, 1 of Lucas's",
+     "i": 13,
+     "at": 10099
+    },
+    {
+     "kind": "tool",
+     "tool": "get_city_media",
+     "text": "Reading your friends' photos and Reels from Houston",
+     "i": 14,
+     "at": 10099
+    },
+    {
+     "kind": "result",
+     "tool": "get_city_media",
+     "text": "Read 2 photos from Houston",
+     "detail": "1 of Raj's, 1 of Layla's",
+     "i": 15,
+     "at": 10099
+    },
+    {
+     "kind": "model",
+     "text": "Deciding what to look at next",
+     "detail": "9068 ms",
+     "i": 16,
+     "at": 19167
+    },
+    {
+     "kind": "tool",
+     "tool": "propose_trips",
+     "text": "Putting together 2 trips",
+     "i": 17,
+     "at": 19167
+    },
+    {
+     "kind": "info",
+     "text": "Checking every person, ride, event and photo against what you can actually see",
+     "i": 18,
+     "at": 19168
+    },
+    {
+     "kind": "done",
+     "text": "2 trips that only exist because of your people",
+     "detail": "19.2s · live · $0.035",
+     "i": 19,
+     "at": 19168
+    }
+   ],
+   "result": {
+    "runId": "run_mwdh2lde",
+    "trips": [
+     {
+      "id": "trip_mwdh2lde0iw4",
+      "viewerId": "lucas",
+      "city": "marfa",
+      "cityName": "Marfa",
+      "state": "TX",
+      "start": "2026-12-18",
+      "end": "2026-12-20",
+      "nights": 2,
+      "budget": 180,
+      "title": "marfa with kenji for the night sky weekend",
+      "pitch": "kenji's driving out friday and has a seat with your name on it. june's casita is free and you'll be shooting stars with silas by saturday.",
+      "reasons": [
+       "ride with kenji from austin friday, $40 gas split, 3 seats open",
+       "crash in june's casita behind the house, she's free and hosting",
+       "night sky weekend with june + silas + kenji at chinati / mcdonald observatory",
+       "kenji's prada marfa at night tip: pull over, lights off, just stars"
+      ],
+      "host": {
+       "id": "june",
+       "name": "June Whitaker",
+       "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D42",
+       "connection": "Maya's friend (pottery class at Clay Studio ATX)",
+       "degree": 2,
+       "via": {
+        "id": "maya",
+        "name": "Maya Chen"
+       },
+       "openToHosting": true,
+       "hostingNote": "casita behind the house. bring water and a jacket, it gets cold. any weekend except Chinati Weekend.",
+       "hasCar": true,
+       "freeThatWeekend": true
+      },
+      "ride": {
+       "id": "ride_kenji_marfa",
+       "driver": {
+        "id": "kenji",
+        "name": "Kenji Watanabe",
+        "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D14",
+        "connection": "Maya's friend (Plano East + UT)",
+        "degree": 2,
+        "via": {
+         "id": "maya",
+         "name": "Maya Chen"
+        },
+        "openToHosting": false,
+        "hasCar": true,
+        "freeThatWeekend": true
+       },
+       "fromCity": "austin",
+       "toCity": "marfa",
+       "departAt": "2026-12-18T21:00:00.000Z",
+       "returnAt": "2026-12-21T00:00:00.000Z",
+       "seatsOpen": 3,
+       "note": "the subaru's 7th marfa trip. 6.5 hrs, leaving east austin 1pm friday, stop in fredericksburg and fort stockton. lucas is in with a camera bag that counts as a person. gas ~$40 each round trip. bring a blanket for the car, I run the AC like a psycho."
+      },
+      "event": {
+       "id": "e_marfa_sky",
+       "title": "Marfa Night Sky Weekend (Chinati grounds + McDonald Observatory star party)",
+       "startsAt": "2026-12-19T02:00:00.000Z",
+       "location": "June's casita → Chinati → McDonald Observatory",
+       "price": "Star party $25 · Chinati self-guided free",
+       "goingYouKnow": [
+        {
+         "id": "june",
+         "name": "June Whitaker",
+         "username": "june.whitaker",
+         "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D42",
+         "pronouns": "she/her",
+         "city": "marfa",
+         "openToHosting": true,
+         "connection": "Maya's friend (pottery class at Clay Studio ATX)"
+        },
+        {
+         "id": "silas",
+         "name": "Silas Reed",
+         "username": "silas.reed",
+         "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D43",
+         "pronouns": "he/him",
+         "city": "marfa",
+         "openToHosting": false,
+         "connection": "film photography"
+        },
+        {
+         "id": "kenji",
+         "name": "Kenji Watanabe",
+         "username": "kenji.w",
+         "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D14",
+         "pronouns": "he/him",
+         "city": "austin",
+         "openToHosting": false,
+         "connection": "Maya's friend (Plano East + UT)"
+        }
+       ]
+      },
+      "people": [
+       {
+        "id": "silas",
+        "name": "Silas Reed",
+        "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D43",
+        "connection": "film photography",
+        "degree": 1,
+        "openToHosting": false,
+        "hasCar": true,
+        "freeThatWeekend": true
+       }
+      ],
+      "evidence": [
+       {
+        "kind": "post",
+        "id": "p_00pn",
+        "authorId": "kenji",
+        "author": "Kenji Watanabe",
+        "image": "/api/img?u=https%3A%2F%2Fthumb.wikimedia.org%2Fwikipedia%2Fcommons%2Fthumb%2Fe%2Fec%2F2015-09-06_Prada_Marfa_%2528Valentine%252C_Texas%2529.jpg%2F1280px-2015-09-06_Prada_Marfa_%2528Valentine%252C_Texas%2529.jpg",
+        "caption": "6th time at the prada store that isn't a store. there was a guy in a tie dye shirt just standing next to it, which is the most marfa thing possible. 6.5 hrs from austin, subaru did fine, split gas 4 ways and it's $35 each. go at night after for the stars, pull over anywhere, turn off the headlights"
+       }
+      ],
+      "prices": {
+       "ifYes": {
+        "total": 100,
+        "lines": [
+         {
+          "label": "gas split, what the driver asked (442 mi each way)",
+          "usd": 40
+         },
+         {
+          "label": "staying with a friend (2 nights)",
+          "usd": 0
+         },
+         {
+          "label": "food, 3 days (local's cheap spots)",
+          "usd": 54
+         },
+         {
+          "label": "getting around, 3 days",
+          "usd": 6
+         }
+        ],
+        "transport": "ride",
+        "lodging": "host"
+       },
+       "otherwise": {
+        "total": 313,
+        "lines": [
+         {
+          "label": "bus, round trip (442 mi)",
+          "usd": 86
+         },
+         {
+          "label": "hostel, 2 nights × $55",
+          "usd": 110
+         },
+         {
+          "label": "food, 3 days",
+          "usd": 105
+         },
+         {
+          "label": "getting around, 3 days",
+          "usd": 12
+         }
+        ],
+        "transport": "bus",
+        "lodging": "hostel"
+       },
+       "solo": {
+        "total": 523,
+        "lines": [
+         {
+          "label": "bus, round trip (442 mi)",
+          "usd": 86
+         },
+         {
+          "label": "hotel, 2 nights × $160",
+          "usd": 320
+         },
+         {
+          "label": "food, 3 days",
+          "usd": 105
+         },
+         {
+          "label": "getting around, 3 days",
+          "usd": 12
+         }
+        ],
+        "transport": "bus",
+        "lodging": "hotel"
+       },
+       "miles": 442,
+       "driveHours": 6.5,
+       "transportIfYes": "ride",
+       "lodgingIfYes": "host",
+       "conditions": [
+        "June says yes to hosting",
+        "Kenji has a seat"
+       ]
+      },
+      "fitsBudget": true,
+      "repairs": [],
+      "createdAt": "2026-11-12T11:36:19.634Z"
+     },
+     {
+      "id": "trip_mwdh2lde6ocf",
+      "viewerId": "lucas",
+      "city": "houston",
+      "cityName": "Houston",
+      "state": "TX",
+      "start": "2026-12-18",
+      "end": "2026-12-20",
+      "nights": 2,
+      "budget": 180,
+      "title": "houston with raj for banh mi + night markets",
+      "pitch": "raj has the montrose guest room and wants to drive you to bellaire for $4.50 banh mi. layla's around too for museum district wandering.",
+      "reasons": [
+       "stay with raj in montrose, free, he's free that weekend",
+       "raj's night market tour - he drives, you eat",
+       "see layla for museums, she's into architecture + cycling like you",
+       "cheap bus down, ~$108 all-in with raj showing cheap spots"
+      ],
+      "host": {
+       "id": "raj",
+       "name": "Raj Iyer",
+       "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D71",
+       "connection": "Maya's friend (freshman dorm floor at UT)",
+       "degree": 2,
+       "via": {
+        "id": "maya",
+        "name": "Maya Chen"
+       },
+       "openToHosting": true,
+       "hostingNote": "guest room in Montrose. always. I have a ridiculous number of towels.",
+       "hasCar": true,
+       "freeThatWeekend": true
+      },
+      "people": [
+       {
+        "id": "layla",
+        "name": "Layla Haddad",
+        "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D36",
+        "connection": "Omar's friend (siblings)",
+        "degree": 2,
+        "via": {
+         "id": "omar",
+         "name": "Omar Haddad"
+        },
+        "openToHosting": false,
+        "hasCar": false,
+        "freeThatWeekend": true
+       }
+      ],
+      "evidence": [
+       {
+        "kind": "post",
+        "id": "p_00ql",
+        "authorId": "raj",
+        "author": "Raj Iyer",
+        "image": "/api/img?u=https%3A%2F%2Fupload.wikimedia.org%2Fwikipedia%2Fcommons%2Fc%2Fc1%2FB%25C3%25A1nh_m%25C3%25AC_x%25C3%25ADu_m%25E1%25BA%25A1i-meatball-sandwich.jpg",
+        "caption": "the banh mi on bellaire. $4.50. shredded pork, pickled carrots, cucumber sticks, a fistful of cilantro, on paper like it should be. this is the first stop on my official night market tour (the tour is me, driving you, for free). guest room in montrose has a ridiculous number of towels, come use them"
+       }
+      ],
+      "prices": {
+       "ifYes": {
+        "total": 108,
+        "lines": [
+         {
+          "label": "bus, round trip (173 mi)",
+          "usd": 48
+         },
+         {
+          "label": "staying with a friend (2 nights)",
+          "usd": 0
+         },
+         {
+          "label": "food, 3 days (local's cheap spots)",
+          "usd": 54
+         },
+         {
+          "label": "getting around, 3 days",
+          "usd": 6
+         }
+        ],
+        "transport": "bus",
+        "lodging": "host"
+       },
+       "otherwise": {
+        "total": 245,
+        "lines": [
+         {
+          "label": "bus, round trip (173 mi)",
+          "usd": 48
+         },
+         {
+          "label": "hostel, 2 nights × $40",
+          "usd": 80
+         },
+         {
+          "label": "food, 3 days",
+          "usd": 105
+         },
+         {
+          "label": "getting around, 3 days",
+          "usd": 12
+         }
+        ],
+        "transport": "bus",
+        "lodging": "hostel"
+       },
+       "solo": {
+        "total": 405,
+        "lines": [
+         {
+          "label": "bus, round trip (173 mi)",
+          "usd": 48
+         },
+         {
+          "label": "hotel, 2 nights × $120",
+          "usd": 240
+         },
+         {
+          "label": "food, 3 days",
+          "usd": 105
+         },
+         {
+          "label": "getting around, 3 days",
+          "usd": 12
+         }
+        ],
+        "transport": "bus",
+        "lodging": "hotel"
+       },
+       "miles": 173,
+       "driveHours": 2.5,
+       "transportIfYes": "bus",
+       "lodgingIfYes": "host",
+       "conditions": [
+        "Raj says yes to hosting"
+       ]
+      },
+      "fitsBudget": true,
+      "repairs": [],
+      "createdAt": "2026-11-12T11:36:19.634Z"
+     }
+    ],
+    "mode": "live",
+    "costUsd": 0.0346,
+    "latencyMs": 19168,
+    "model": "muse-spark-1.3"
+   }
+  },
+  "audit": {
+   "runId": "run_mwdh2lde",
+   "viewerId": "lucas",
+   "input": {
+    "start": "2026-12-18",
+    "end": "2026-12-20",
+    "budget": 180
+   },
+   "mode": "live",
+   "costUsd": 0.0346,
+   "latencyMs": 19168,
+   "raw": {
+    "ids": 8,
+    "grounded": 8,
+    "privacyViolationsCaught": 0,
+    "invented": 0
+   },
+   "trips": [
+    {
+     "tripId": "trip_mwdh2lde0iw4",
+     "city": "marfa",
+     "elements": [
+      {
+       "kind": "host",
+       "id": "june",
+       "exists": true,
+       "visible": true
+      },
+      {
+       "kind": "ride",
+       "id": "ride_kenji_marfa",
+       "exists": true,
+       "visible": true,
+       "inDates": true
+      },
+      {
+       "kind": "driver",
+       "id": "kenji",
+       "exists": true,
+       "visible": true
+      },
+      {
+       "kind": "event",
+       "id": "e_marfa_sky",
+       "exists": true,
+       "visible": true,
+       "inDates": true
+      },
+      {
+       "kind": "person",
+       "id": "silas",
+       "exists": true,
+       "visible": true
+      },
+      {
+       "kind": "post",
+       "id": "p_00pn",
+       "exists": true,
+       "visible": true
+      }
+     ],
+     "renderedViolations": 0,
+     "fitsBudget": true,
+     "ifYes": 100,
+     "otherwise": 313,
+     "solo": 523,
+     "hostOptedIn": true,
+     "hostDegree": 2,
+     "fofHasMutual": true
+    },
+    {
+     "tripId": "trip_mwdh2lde6ocf",
+     "city": "houston",
+     "elements": [
+      {
+       "kind": "host",
+       "id": "raj",
+       "exists": true,
+       "visible": true
+      },
+      {
+       "kind": "person",
+       "id": "layla",
+       "exists": true,
+       "visible": true
+      },
+      {
+       "kind": "post",
+       "id": "p_00ql",
+       "exists": true,
+       "visible": true
+      }
+     ],
+     "renderedViolations": 0,
+     "fitsBudget": true,
+     "ifYes": 108,
+     "otherwise": 245,
+     "solo": 405,
+     "hostOptedIn": true,
+     "hostDegree": 2,
+     "fofHasMutual": true
+    }
+   ],
+   "declined": false
+  },
+  "guide": {
+   "steps": [
+    {
+     "kind": "info",
+     "text": "Building your Houston guide from what Raj and Layla posted",
+     "i": 0,
+     "at": 2
+    },
+    {
+     "kind": "model",
+     "text": "Deciding what to read next",
+     "detail": "2490 ms",
+     "i": 1,
+     "at": 2492
+    },
+    {
+     "kind": "tool",
+     "tool": "get_my_travel_profile",
+     "text": "Reading your taste from saved Reels and likes",
+     "i": 2,
+     "at": 2492
+    },
+    {
+     "kind": "result",
+     "tool": "get_my_travel_profile",
+     "text": "You're into foodies, art people, night owls and music lovers",
+     "i": 3,
+     "at": 2494
+    },
+    {
+     "kind": "tool",
+     "tool": "get_city_media",
+     "text": "Reading your friends' posts and Reels from Houston",
+     "i": 4,
+     "at": 2494
+    },
+    {
+     "kind": "result",
+     "tool": "get_city_media",
+     "text": "2 photos and captions from Raj, Layla",
+     "i": 5,
+     "at": 2495
+    },
+    {
+     "kind": "model",
+     "text": "Deciding what to read next",
+     "detail": "9851 ms",
+     "i": 6,
+     "at": 12346
+    },
+    {
+     "kind": "tool",
+     "tool": "look_at_photo",
+     "text": "Looking closely at a photo: what is the dish and vibe? any price or place details visibl",
+     "ids": [
+      "p_00ql"
+     ],
+     "i": 7,
+     "at": 12346
+    },
+    {
+     "kind": "result",
+     "tool": "look_at_photo",
+     "text": "Muse saw: it's a banh mi on bellaire for $4.50 — shredded pork, pickled carrots, cucumber sticks, and a fistful of cilantro on paper. vibe is casual f",
+     "detail": "Raj Iyer's photo · live image understanding",
+     "i": 8,
+     "at": 15611
+    },
+    {
+     "kind": "tool",
+     "tool": "look_at_photo",
+     "text": "Looking closely at a photo: describe the exhibit vibe, crowding, and what makes it photo",
+     "ids": [
+      "p_00qr"
+     ],
+     "i": 9,
+     "at": 15611
+    },
+    {
+     "kind": "result",
+     "tool": "look_at_photo",
+     "text": "Muse saw: looks totally empty in the hangar, just the rocket lying on black supports over fake grass. it's photo-worthy cause it stretches way back an",
+     "detail": "Layla Haddad's photo · live image understanding",
+     "i": 10,
+     "at": 18116
+    },
+    {
+     "kind": "model",
+     "text": "Deciding what to read next",
+     "detail": "14301 ms",
+     "i": 11,
+     "at": 32418
+    },
+    {
+     "kind": "tool",
+     "tool": "propose_guide",
+     "text": "Writing 4 recommendations, each credited to a friend",
+     "i": 12,
+     "at": 32418
+    },
+    {
+     "kind": "info",
+     "text": "Checking every credit against the real author and what you can see",
+     "i": 13,
+     "at": 32418
+    },
+    {
+     "kind": "done",
+     "text": "4 picks, credited to 2 friends",
+     "detail": "32.4s · live · $0.025",
+     "i": 14,
+     "at": 32418
+    }
+   ],
+   "result": {
+    "tripId": "trip_mwdh2lde6ocf",
+    "intro": "raj + layla already left you the cheat sheet. cheap eats, late drives, big rockets. staying with raj so you're set.",
+    "items": [
+     {
+      "title": "the $4.50 banh mi on bellaire",
+      "what": "shredded pork, pickled carrots, cucumber + fistful of cilantro on paper. raj calls it stop one, go hungry.",
+      "whyYou": "you're foodies-coded and this is exactly your late-night cheap-eats thing.",
+      "tasteTags": [
+       "foodies",
+       "night owls"
+      ],
+      "priceHint": "$4.50",
+      "when": "friday night landing fuel",
+      "credit": {
+       "id": "raj",
+       "name": "Raj Iyer",
+       "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D71",
+       "connection": "Maya's friend (freshman dorm floor at UT)"
+      },
+      "evidence": {
+       "kind": "post",
+       "id": "p_00ql",
+       "authorId": "raj",
+       "image": "/api/img?u=https%3A%2F%2Fupload.wikimedia.org%2Fwikipedia%2Fcommons%2Fc%2Fc1%2FB%25C3%25A1nh_m%25C3%25AC_x%25C3%25ADu_m%25E1%25BA%25A1i-meatball-sandwich.jpg",
+       "caption": "the banh mi on bellaire. $4.50. shredded pork, pickled carrots, cucumber sticks, a fistful of cilantro, on paper like it should be. this is the first stop on my official night market tour (the tour is me, driving you, for free). guest room in montrose has a ridiculous number of towels, come use them",
+       "sawLive": "it's a banh mi on bellaire for $4.50 — shredded pork, pickled carrots, cucumber sticks, and a fistful of cilantro on paper. vibe is casual first stop on a night market tour, with a free ride offer and a montrose guest room plug."
+      }
+     },
+     {
+      "title": "raj's night market tour",
+      "what": "raj driving you around bellaire at night, his words. free ride, just roll with him.",
+      "whyYou": "you're a night owl with no car in houston — built-in driver who actually wants to go.",
+      "tasteTags": [
+       "night owls",
+       "foodies"
+      ],
+      "priceHint": "free",
+      "when": "friday late",
+      "credit": {
+       "id": "raj",
+       "name": "Raj Iyer",
+       "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D71",
+       "connection": "Maya's friend (freshman dorm floor at UT)"
+      },
+      "evidence": {
+       "kind": "post",
+       "id": "p_00ql",
+       "authorId": "raj",
+       "image": "/api/img?u=https%3A%2F%2Fupload.wikimedia.org%2Fwikipedia%2Fcommons%2Fc%2Fc1%2FB%25C3%25A1nh_m%25C3%25AC_x%25C3%25ADu_m%25E1%25BA%25A1i-meatball-sandwich.jpg",
+       "caption": "the banh mi on bellaire. $4.50. shredded pork, pickled carrots, cucumber sticks, a fistful of cilantro, on paper like it should be. this is the first stop on my official night market tour (the tour is me, driving you, for free). guest room in montrose has a ridiculous number of towels, come use them",
+       "sawLive": "it's a banh mi on bellaire for $4.50 — shredded pork, pickled carrots, cucumber sticks, and a fistful of cilantro on paper. vibe is casual first stop on a night market tour, with a free ride offer and a montrose guest room plug."
+      }
+     },
+     {
+      "title": "saturn v lying down",
+      "what": "full rocket stretched out on black supports in the hangar, burnt capsule up front. empty, quiet, stupid photogenic.",
+      "whyYou": "you save film-photography stuff and layla says the rocket alone is worth it — go shoot it.",
+      "tasteTags": [
+       "photographers",
+       "art people"
+      ],
+      "priceHint": "$30",
+      "when": "saturday daytime",
+      "credit": {
+       "id": "layla",
+       "name": "Layla Haddad",
+       "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D36",
+       "connection": "Omar's friend (siblings)"
+      },
+      "evidence": {
+       "kind": "post",
+       "id": "p_00qr",
+       "authorId": "layla",
+       "image": "/api/img?u=https%3A%2F%2Fthumb.wikimedia.org%2Fwikipedia%2Fcommons%2Fthumb%2F8%2F8d%2FSaturn_V_Rocket_--_Johnson_Space_Center.jpg%2F1280px-Saturn_V_Rocket_--_Johnson_Space_Center.jpg",
+       "caption": "the saturn v lying down in its hangar is the whole museum for me. stages stretched out on black supports, the burnt capsule at the front, info signs on fake grass. it's like $30 to get in which is steep but the rocket alone is worth 20 of it. sundays I'm usually at the museum district instead, half those are free",
+       "sawLive": "looks totally empty in the hangar, just the rocket lying on black supports over fake grass. it's photo-worthy cause it stretches way back and the burnt capsule up front contrasts the white and yellow stages."
+      }
+     },
+     {
+      "title": "museum district sundays",
+      "what": "layla's usual sunday move — half the museums in the district are free. wander, no ticket stress.",
+      "whyYou": "keeps you in that $180 lane and hits your art-people side without spending.",
+      "tasteTags": [
+       "art people",
+       "music lovers"
+      ],
+      "priceHint": "free",
+      "when": "sunday morning",
+      "credit": {
+       "id": "layla",
+       "name": "Layla Haddad",
+       "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D36",
+       "connection": "Omar's friend (siblings)"
+      },
+      "evidence": {
+       "kind": "post",
+       "id": "p_00qr",
+       "authorId": "layla",
+       "image": "/api/img?u=https%3A%2F%2Fthumb.wikimedia.org%2Fwikipedia%2Fcommons%2Fthumb%2F8%2F8d%2FSaturn_V_Rocket_--_Johnson_Space_Center.jpg%2F1280px-Saturn_V_Rocket_--_Johnson_Space_Center.jpg",
+       "caption": "the saturn v lying down in its hangar is the whole museum for me. stages stretched out on black supports, the burnt capsule at the front, info signs on fake grass. it's like $30 to get in which is steep but the rocket alone is worth 20 of it. sundays I'm usually at the museum district instead, half those are free",
+       "sawLive": "looks totally empty in the hangar, just the rocket lying on black supports over fake grass. it's photo-worthy cause it stretches way back and the burnt capsule up front contrasts the white and yellow stages."
+      }
+     }
+    ],
+    "looked": [
+     {
+      "mediaId": "hou-viet",
+      "image": "/api/img?u=https%3A%2F%2Fupload.wikimedia.org%2Fwikipedia%2Fcommons%2Fc%2Fc1%2FB%25C3%25A1nh_m%25C3%25AC_x%25C3%25ADu_m%25E1%25BA%25A1i-meatball-sandwich.jpg",
+      "author": "Raj Iyer",
+      "saw": "it's a banh mi on bellaire for $4.50 — shredded pork, pickled carrots, cucumber sticks, and a fistful of cilantro on paper. vibe is casual first stop on a night market tour, with a free ride offer and a montrose guest room plug.",
+      "costUsd": 0.0005,
+      "mode": "live"
+     },
+     {
+      "mediaId": "hou-space",
+      "image": "/api/img?u=https%3A%2F%2Fthumb.wikimedia.org%2Fwikipedia%2Fcommons%2Fthumb%2F8%2F8d%2FSaturn_V_Rocket_--_Johnson_Space_Center.jpg%2F1280px-Saturn_V_Rocket_--_Johnson_Space_Center.jpg",
+      "author": "Layla Haddad",
+      "saw": "looks totally empty in the hangar, just the rocket lying on black supports over fake grass. it's photo-worthy cause it stretches way back and the burnt capsule up front contrasts the white and yellow stages.",
+      "costUsd": 0.0006,
+      "mode": "live"
+     }
+    ],
+    "steps": [
+     {
+      "kind": "info",
+      "text": "Building your Houston guide from what Raj and Layla posted",
+      "i": 0,
+      "at": 2
+     },
+     {
+      "kind": "model",
+      "text": "Deciding what to read next",
+      "detail": "2490 ms",
+      "i": 1,
+      "at": 2492
+     },
+     {
+      "kind": "tool",
+      "tool": "get_my_travel_profile",
+      "text": "Reading your taste from saved Reels and likes",
+      "i": 2,
+      "at": 2492
+     },
+     {
+      "kind": "result",
+      "tool": "get_my_travel_profile",
+      "text": "You're into foodies, art people, night owls and music lovers",
+      "i": 3,
+      "at": 2494
+     },
+     {
+      "kind": "tool",
+      "tool": "get_city_media",
+      "text": "Reading your friends' posts and Reels from Houston",
+      "i": 4,
+      "at": 2494
+     },
+     {
+      "kind": "result",
+      "tool": "get_city_media",
+      "text": "2 photos and captions from Raj, Layla",
+      "i": 5,
+      "at": 2495
+     },
+     {
+      "kind": "model",
+      "text": "Deciding what to read next",
+      "detail": "9851 ms",
+      "i": 6,
+      "at": 12346
+     },
+     {
+      "kind": "tool",
+      "tool": "look_at_photo",
+      "text": "Looking closely at a photo: what is the dish and vibe? any price or place details visibl",
+      "ids": [
+       "p_00ql"
+      ],
+      "i": 7,
+      "at": 12346
+     },
+     {
+      "kind": "result",
+      "tool": "look_at_photo",
+      "text": "Muse saw: it's a banh mi on bellaire for $4.50 — shredded pork, pickled carrots, cucumber sticks, and a fistful of cilantro on paper. vibe is casual f",
+      "detail": "Raj Iyer's photo · live image understanding",
+      "i": 8,
+      "at": 15611
+     },
+     {
+      "kind": "tool",
+      "tool": "look_at_photo",
+      "text": "Looking closely at a photo: describe the exhibit vibe, crowding, and what makes it photo",
+      "ids": [
+       "p_00qr"
+      ],
+      "i": 9,
+      "at": 15611
+     },
+     {
+      "kind": "result",
+      "tool": "look_at_photo",
+      "text": "Muse saw: looks totally empty in the hangar, just the rocket lying on black supports over fake grass. it's photo-worthy cause it stretches way back an",
+      "detail": "Layla Haddad's photo · live image understanding",
+      "i": 10,
+      "at": 18116
+     },
+     {
+      "kind": "model",
+      "text": "Deciding what to read next",
+      "detail": "14301 ms",
+      "i": 11,
+      "at": 32418
+     },
+     {
+      "kind": "tool",
+      "tool": "propose_guide",
+      "text": "Writing 4 recommendations, each credited to a friend",
+      "i": 12,
+      "at": 32418
+     },
+     {
+      "kind": "info",
+      "text": "Checking every credit against the real author and what you can see",
+      "i": 13,
+      "at": 32418
+     },
+     {
+      "kind": "done",
+      "text": "4 picks, credited to 2 friends",
+      "detail": "32.4s · live · $0.025",
+      "i": 14,
+      "at": 32418
+     }
+    ],
+    "mode": "live",
+    "costUsd": 0.0253,
+    "latencyMs": 32418,
+    "model": "muse-spark-1.3",
+    "createdAt": "2026-11-12T11:36:54.908Z"
+   }
+  },
+  "coordinate": {
+   "dates": {
+    "dates": [
+     "2026-12-18",
+     "2026-12-19",
+     "2026-12-20"
+    ],
+    "people": [
+     {
+      "id": "lucas",
+      "name": "Lucas Moreau",
+      "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D33",
+      "role": "you",
+      "busyOn": [],
+      "free": true
+     },
+     {
+      "id": "raj",
+      "name": "Raj Iyer",
+      "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D71",
+      "role": "host",
+      "busyOn": [],
+      "free": true
+     }
+    ],
+    "allFree": true,
+    "alternatives": [
+     {
+      "start": "2026-11-20",
+      "end": "2026-11-22",
+      "label": "Nov 20–22"
+     },
+     {
+      "start": "2026-11-27",
+      "end": "2026-11-29",
+      "label": "Nov 27–29"
+     }
+    ]
+   },
+   "drafts": [
+    {
+     "id": "m_mwdh3lgksg",
+     "conversationId": "c_maya_lucas",
+     "key": "host",
+     "to": {
+      "id": "maya",
+      "name": "Maya Chen",
+      "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D47",
+      "connection": "friends"
+     },
+     "about": {
+      "id": "raj",
+      "name": "Raj Iyer"
+     },
+     "text": "hey maya, hope you're doing good! would you be comfy introducing me to raj? i'm thinking houston dec 18-20 for banh mi + night markets and wanted to ask him directly about his montrose spot, totally okay if not at all",
+     "status": "draft",
+     "reason": "Trip: houston with raj for banh mi + night markets · ask Maya to introduce you to Raj so you can ask about staying Dec 18–20"
+    }
+   ],
+   "mode": "live",
+   "costUsd": 0.0077
+  }
+ },
+ "cost": 0.06910000000000001,
+ "verdict": {
+  "looksBroken": [
+   "june's note says 'any weekend except Chinati Weekend' but the whole marfa pitch is for Chinati / Night Sky Weekend that same weekend, so she can't actually be free that weekend",
+   "layla is listed as 'Omar's friend (siblings)' which doesn't make sense as a connection",
+   "raj's host note is just 'always. I have a ridiculous number of towels.' which doesn't actually confirm he's free dec 18-20"
+  ],
+  "objections": [
+   "marfa is 442 mi each way, that's a brutal drive for one weekend",
+   "both trips depend on maya's friends i don't know - june, kenji, raj, silas - staying at a stranger's casita/guest room feels risky",
+   "marfa price only works if june says yes AND kenji has a seat, otherwise it's $313 and over my $180 budget",
+   "houston is cheaper and closer but still relies on raj actually hosting and driving me around"
+  ],
+  "pickTripIndex": 1,
+  "reason": "i'd take houston, it's way closer and actually in budget without a 9-hour drive. marfa sounds cool but june literally can't host that weekend per her own note so that whole plan falls apart.",
+  "surprising": 3,
+  "trustworthy": 2,
+  "wouldTake": true
+ },
+ "verdictMode": "live",
+ "draftDecisions": {
+  "decisions": [
+   {
+    "action": "approve",
+    "draftId": "m_mwdh3lgksg",
+    "why": "sounds like me and maya's the right person to ask since raj came via her"
+   }
+  ],
+  "guideFeedback": "yeah the guide felt made for me, raj and layla credits line up with the trip and the cheap/free prices make sense."
+ },
+ "applied": [
+  {
+   "action": "approve",
+   "draftId": "m_mwdh3lgksg",
+   "why": "sounds like me and maya's the right person to ask since raj came via her",
+   "result": {
+    "ok": true,
+    "message": {
+     "id": "m_mwdh3lgksg",
+     "senderId": "lucas",
+     "text": "hey maya, hope you're doing good! would you be comfy introducing me to raj? i'm thinking houston dec 18-20 for banh mi + night markets and wanted to ask him directly about his montrose spot, totally okay if not at all",
+     "createdAt": "2026-11-12T11:37:08.656Z",
+     "readBy": [
+      "lucas"
+     ],
+     "status": "sent",
+     "draftReason": "Trip: houston with raj for banh mi + night markets · ask Maya to introduce you to Raj so you can ask about staying Dec 18–20",
+     "attachment": {
+      "type": "trip",
+      "ref": "trip_mwdh2lde6ocf"
+     }
+    },
+    "conversationId": "c_maya_lucas"
+   }
+  }
+ ],
+ "latencyMs": 68686,
+ "finishedAt": "2026-11-12T11:37:08.657Z"
+}

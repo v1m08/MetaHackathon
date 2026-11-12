@@ -57,17 +57,17 @@ export function transportCost(from: City, to: City, mode: TransportMode, occupan
       if (rideShareUsd !== undefined) return { label: `gas split, what the driver asked (${miles} mi each way)`, usd: rideShareUsd };
       return { label: `ride share of gas (${miles} mi each way, ${occupants} in the car)`, usd: (gasRoundTrip * PRICES.rideShare) / Math.max(1, occupants - 1) };
     case "own-car":
-      return { label: `gas, driving yourself (${miles} mi each way)`, usd: gasRoundTrip / Math.max(1, occupants) };
+      return { label: `gas, driving yourself (${miles} mi each way, round trip)`, usd: gasRoundTrip / Math.max(1, occupants) };
     case "bus":
-      return { label: `bus, round trip (${miles} mi)`, usd: 2 * (PRICES.busBase + miles * PRICES.busPerMile) };
+      return { label: `bus, round trip (${miles} mi each way)`, usd: 2 * (PRICES.busBase + miles * PRICES.busPerMile) };
     case "flight":
-      return { label: `flight, round trip (~${miles} mi)`, usd: PRICES.flight(miles) };
+      return { label: `flight, round trip (~${miles} mi each way)`, usd: PRICES.flight(miles) };
   }
 }
 export function lodgingCost(to: City, mode: LodgingMode, nights: number): CostLine {
   switch (mode) {
     case "host":
-      return { label: `staying with a friend (${nights} night${nights === 1 ? "" : "s"})`, usd: 0 };
+      return nights === 0 ? { label: "day trip, no overnight", usd: 0 } : { label: `staying with a friend (${nights} night${nights === 1 ? "" : "s"})`, usd: 0 };
     case "hostel":
       return { label: `hostel, ${nights} night${nights === 1 ? "" : "s"} × $${to.hostelNight}`, usd: to.hostelNight * nights };
     case "hotel":
@@ -99,7 +99,7 @@ export function twoPrices(input: CostInput) {
   const to = cityById(input.toCity)!;
   const miles = milesBetween(from, to);
   const fallbackTransport: TransportMode = input.transport === "own-car" ? "own-car" : miles > 600 ? "flight" : "bus";
-  const otherwise = costBreakdown({ ...input, transport: fallbackTransport, lodging: input.lodging === "host" ? "hostel" : input.lodging, withLocal: false });
+  const otherwise = costBreakdown({ ...input, transport: fallbackTransport, lodging: input.nights === 0 ? "host" : input.lodging === "host" ? "hostel" : input.lodging, withLocal: false });
   // What the same trip costs with no network at all: hotel + solo transport.
   const solo = costBreakdown({ ...input, transport: miles > 600 ? "flight" : "bus", lodging: "hotel", withLocal: false });
   return { ifYes, otherwise, solo, miles, driveHours: Math.round((miles / 68) * 10) / 10 };

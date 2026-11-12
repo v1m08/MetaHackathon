@@ -1,0 +1,1326 @@
+{
+ "persona": {
+  "id": "priya",
+  "weekend": 3,
+  "budget": 250,
+  "car": false,
+  "persona": "Priya, 22, CS senior, hackathon kid, boba, climbing, just signed a lease so money is tight-ish but she'll spend for a close friend's birthday. Wants to know exactly who's going."
+ },
+ "weekend": {
+  "n": 3,
+  "start": "2026-12-04",
+  "end": "2026-12-06",
+  "label": "Dec 4–6",
+  "busy": false
+ },
+ "startedAt": "2026-11-12T11:27:05.313Z",
+ "stages": {
+  "discover": {
+   "steps": [
+    {
+     "kind": "info",
+     "text": "Starting from Austin, Dec 4–6, about $250",
+     "i": 0,
+     "at": 0
+    },
+    {
+     "kind": "model",
+     "text": "Deciding what to look at next",
+     "detail": "2 ms",
+     "i": 1,
+     "at": 3
+    },
+    {
+     "kind": "tool",
+     "tool": "scan_network",
+     "text": "Mapping your whole network: who lives where, who hosts, who's driving Dec 4–6",
+     "i": 2,
+     "at": 3
+    },
+    {
+     "kind": "result",
+     "tool": "scan_network",
+     "text": "25 people in 11 cities · 15 hosts free that weekend · 3 events · 2 rides with seats",
+     "detail": "you're into foodies, art people, night owls and music lovers, no car · East Nashville Songwriter Round: Leah Whitfield + friends at The 5 Spot (Nashville) · Pearl farmers market → Spurs game (day trip) (San Antonio) · Arjun's 25th: Second City mainstage + deep dish after (Chicago) · → Nashville, 2 seats · → San Antonio, 2 seats",
+     "ids": [
+      "kai",
+      "marisol",
+      "tess",
+      "andre",
+      "simone",
+      "bri",
+      "noah",
+      "ivy",
+      "jules",
+      "mateo",
+      "arjun",
+      "nadia",
+      "mei",
+      "beau",
+      "theo",
+      "wes",
+      "ibrahim",
+      "cole",
+      "harper",
+      "raj",
+      "tj",
+      "layla",
+      "maddie",
+      "gabe",
+      "june",
+      "e_nash_songwriter",
+      "e_sa_pearl_spurs",
+      "e_chi_improv_bday",
+      "ride_andre_nash",
+      "ride_tyler_sa"
+     ],
+     "i": 3,
+     "at": 4
+    },
+    {
+     "kind": "model",
+     "text": "Deciding what to look at next",
+     "detail": "0 ms",
+     "i": 4,
+     "at": 5
+    },
+    {
+     "kind": "tool",
+     "tool": "estimate_trip_cost",
+     "text": "Pricing San Antonio: 2 nights, staying with a friend, by a friend's car",
+     "i": 5,
+     "at": 5
+    },
+    {
+     "kind": "result",
+     "tool": "estimate_trip_cost",
+     "text": "about $70 if they say yes, about $229 otherwise",
+     "detail": "87 mi · 1.3h drive · hotel + solo would be $383",
+     "i": 6,
+     "at": 5
+    },
+    {
+     "kind": "tool",
+     "tool": "estimate_trip_cost",
+     "text": "Pricing Houston: 2 nights, staying with a friend, by bus",
+     "i": 7,
+     "at": 5
+    },
+    {
+     "kind": "result",
+     "tool": "estimate_trip_cost",
+     "text": "about $108 if they say yes, about $245 otherwise",
+     "detail": "173 mi · 2.5h drive · hotel + solo would be $405",
+     "i": 8,
+     "at": 5
+    },
+    {
+     "kind": "tool",
+     "tool": "estimate_trip_cost",
+     "text": "Pricing New Orleans: 2 nights, staying with a friend, by bus",
+     "i": 9,
+     "at": 5
+    },
+    {
+     "kind": "result",
+     "tool": "estimate_trip_cost",
+     "text": "about $160 if they say yes, about $307 otherwise",
+     "detail": "542 mi · 8h drive · hotel + solo would be $527",
+     "i": 10,
+     "at": 5
+    },
+    {
+     "kind": "model",
+     "text": "Deciding what to look at next",
+     "detail": "4699 ms",
+     "i": 11,
+     "at": 4704
+    },
+    {
+     "kind": "tool",
+     "tool": "get_city_media",
+     "text": "Reading your friends' photos and Reels from San Antonio",
+     "i": 12,
+     "at": 4704
+    },
+    {
+     "kind": "result",
+     "tool": "get_city_media",
+     "text": "Read 3 photos from San Antonio",
+     "detail": "2 of Gabriel's, 1 of Lena's",
+     "i": 13,
+     "at": 4704
+    },
+    {
+     "kind": "tool",
+     "tool": "get_city_media",
+     "text": "Reading your friends' photos and Reels from Houston",
+     "i": 14,
+     "at": 4704
+    },
+    {
+     "kind": "result",
+     "tool": "get_city_media",
+     "text": "Read 2 photos from Houston",
+     "detail": "1 of Raj's, 1 of Layla's",
+     "i": 15,
+     "at": 4704
+    },
+    {
+     "kind": "model",
+     "text": "Deciding what to look at next",
+     "detail": "11752 ms",
+     "i": 16,
+     "at": 16457
+    },
+    {
+     "kind": "tool",
+     "tool": "propose_trips",
+     "text": "Putting together 3 trips",
+     "i": 17,
+     "at": 16457
+    },
+    {
+     "kind": "info",
+     "text": "Checking every person, ride, event and photo against what you can actually see",
+     "i": 18,
+     "at": 16457
+    },
+    {
+     "kind": "done",
+     "text": "3 trips that only exist because of your people",
+     "detail": "16.5s · live · $0.028",
+     "i": 19,
+     "at": 16458
+    }
+   ],
+   "result": {
+    "runId": "run_mwdgr2j3",
+    "trips": [
+     {
+      "id": "trip_mwdgr2j2823m",
+      "viewerId": "priya",
+      "city": "houston",
+      "cityName": "Houston",
+      "state": "TX",
+      "start": "2026-12-04",
+      "end": "2026-12-06",
+      "nights": 2,
+      "budget": 250,
+      "title": "houston with raj for banh mi + night markets",
+      "pitch": "raj has the montrose guest room with the ridiculous towel collection and he's free. he'll drive you around bellaire for $4.50 banh mi himself.",
+      "reasons": [
+       "crash with raj, direct friend from sugar land high, free that weekend",
+       "bus down is $48 roundtrip, total ~$108 so well under $250",
+       "raj's post: shredded pork banh mi on paper + free night market tour",
+       "tj and layla are also in town if you want a second hang"
+      ],
+      "host": {
+       "id": "raj",
+       "name": "Raj Iyer",
+       "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D71",
+       "connection": "Sugar Land high school",
+       "degree": 1,
+       "openToHosting": true,
+       "hostingNote": "guest room in Montrose. always. I have a ridiculous number of towels.",
+       "hasCar": true,
+       "freeThatWeekend": true
+      },
+      "people": [
+       {
+        "id": "tj",
+        "name": "TJ Okafor",
+        "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D72",
+        "connection": "Raj's friend (fantasy football league)",
+        "degree": 2,
+        "via": {
+         "id": "raj",
+         "name": "Raj Iyer"
+        },
+        "openToHosting": true,
+        "hostingNote": "couch, and my grill. Rodeo weekends I'm booked.",
+        "hasCar": true,
+        "freeThatWeekend": true
+       },
+       {
+        "id": "layla",
+        "name": "Layla Haddad",
+        "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D36",
+        "connection": "Omar's friend (siblings)",
+        "degree": 2,
+        "via": {
+         "id": "omar",
+         "name": "Omar Haddad"
+        },
+        "openToHosting": false,
+        "hasCar": false,
+        "freeThatWeekend": true
+       }
+      ],
+      "evidence": [
+       {
+        "kind": "post",
+        "id": "p_00ql",
+        "authorId": "raj",
+        "author": "Raj Iyer",
+        "image": "/api/img?u=https%3A%2F%2Fupload.wikimedia.org%2Fwikipedia%2Fcommons%2Fc%2Fc1%2FB%25C3%25A1nh_m%25C3%25AC_x%25C3%25ADu_m%25E1%25BA%25A1i-meatball-sandwich.jpg",
+        "caption": "the banh mi on bellaire. $4.50. shredded pork, pickled carrots, cucumber sticks, a fistful of cilantro, on paper like it should be. this is the first stop on my official night market tour (the tour is me, driving you, for free). guest room in montrose has a ridiculous number of towels, come use them"
+       }
+      ],
+      "prices": {
+       "ifYes": {
+        "total": 108,
+        "lines": [
+         {
+          "label": "bus, round trip (173 mi)",
+          "usd": 48
+         },
+         {
+          "label": "staying with a friend (2 nights)",
+          "usd": 0
+         },
+         {
+          "label": "food, 3 days (local's cheap spots)",
+          "usd": 54
+         },
+         {
+          "label": "getting around, 3 days",
+          "usd": 6
+         }
+        ],
+        "transport": "bus",
+        "lodging": "host"
+       },
+       "otherwise": {
+        "total": 245,
+        "lines": [
+         {
+          "label": "bus, round trip (173 mi)",
+          "usd": 48
+         },
+         {
+          "label": "hostel, 2 nights × $40",
+          "usd": 80
+         },
+         {
+          "label": "food, 3 days",
+          "usd": 105
+         },
+         {
+          "label": "getting around, 3 days",
+          "usd": 12
+         }
+        ],
+        "transport": "bus",
+        "lodging": "hostel"
+       },
+       "solo": {
+        "total": 405,
+        "lines": [
+         {
+          "label": "bus, round trip (173 mi)",
+          "usd": 48
+         },
+         {
+          "label": "hotel, 2 nights × $120",
+          "usd": 240
+         },
+         {
+          "label": "food, 3 days",
+          "usd": 105
+         },
+         {
+          "label": "getting around, 3 days",
+          "usd": 12
+         }
+        ],
+        "transport": "bus",
+        "lodging": "hotel"
+       },
+       "miles": 173,
+       "driveHours": 2.5,
+       "transportIfYes": "bus",
+       "lodgingIfYes": "host",
+       "conditions": [
+        "Raj says yes to hosting"
+       ]
+      },
+      "fitsBudget": true,
+      "repairs": [],
+      "createdAt": "2026-11-12T11:27:21.998Z"
+     },
+     {
+      "id": "trip_mwdgr2j20r45",
+      "viewerId": "priya",
+      "city": "san-antonio",
+      "cityName": "San Antonio",
+      "state": "TX",
+      "start": "2026-12-04",
+      "end": "2026-12-06",
+      "nights": 2,
+      "budget": 250,
+      "title": "san antonio day-trip with tyler + gabe's abuela cooking",
+      "pitch": "tyler's driving down from austin saturday and gabe's got the spare room + his abuela cooking. pearl market in the afternoon then spurs at night, you're home by 11:30.",
+      "reasons": [
+       "ride with tyler from austin, $10 gas split, 2 seats open",
+       "crash with gabe in southtown, free and he's around that weekend",
+       "pearl farmers market → spurs game with gabe + tyler on dec 5",
+       "gabe's reel: pearl fountains lit up at dusk, $12 tacos if you cave"
+      ],
+      "host": {
+       "id": "gabe",
+       "name": "Gabriel Flores",
+       "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D40",
+       "connection": "Maya's friend (UT Design cohort)",
+       "degree": 2,
+       "via": {
+        "id": "maya",
+        "name": "Maya Chen"
+       },
+       "openToHosting": true,
+       "hostingNote": "spare room at my place in Southtown. abuela lives downstairs and will cook.",
+       "hasCar": true,
+       "freeThatWeekend": true
+      },
+      "ride": {
+       "id": "ride_tyler_sa",
+       "driver": {
+        "id": "tyler",
+        "name": "Tyler Brooks",
+        "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D59",
+        "connection": "Ethan's friend",
+        "degree": 2,
+        "via": {
+         "id": "ethan",
+         "name": "Ethan Park"
+        },
+        "openToHosting": true,
+        "hostingNote": "couch in Round Rock, lake day included if it's warm",
+        "hasCar": true,
+        "freeThatWeekend": true
+       },
+       "fromCity": "austin",
+       "toCity": "san-antonio",
+       "departAt": "2026-12-05T15:30:00.000Z",
+       "returnAt": "2026-12-06T07:30:00.000Z",
+       "seatsOpen": 2,
+       "note": "day trip! 4runner, leaving round rock 7:30 (I can grab you on the way down 35). back after the game, home by 11:30ish. gabe's abuela is feeding us so don't eat breakfast. $10 each for gas."
+      },
+      "event": {
+       "id": "e_sa_pearl_spurs",
+       "title": "Pearl farmers market → Spurs game (day trip)",
+       "startsAt": "2026-12-05T17:00:00.000Z",
+       "location": "The Pearl → Frost Bank Center",
+       "price": "Market free · Spurs tix ~$28 upper bowl",
+       "goingYouKnow": [
+        {
+         "id": "gabe",
+         "name": "Gabriel Flores",
+         "username": "gabe.flores",
+         "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D40",
+         "pronouns": "he/him",
+         "city": "san-antonio",
+         "openToHosting": true,
+         "connection": "Maya's friend (UT Design cohort)"
+        },
+        {
+         "id": "tyler",
+         "name": "Tyler Brooks",
+         "username": "tylerbrooks",
+         "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D59",
+         "pronouns": "he/him",
+         "city": "austin",
+         "openToHosting": true,
+         "connection": "Ethan's friend"
+        }
+       ]
+      },
+      "people": [],
+      "evidence": [
+       {
+        "kind": "reel",
+        "id": "tr_pearl",
+        "authorId": "gabe",
+        "author": "Gabriel Flores",
+        "image": "/api/img?u=https%3A%2F%2Fupload.wikimedia.org%2Fwikipedia%2Fcommons%2Fe%2Fea%2FGustavs_Geysers_Pearl_Brewery_San_Antonio_2021.jpg",
+        "caption": "pearl at dusk. the ground fountains lit up, trees wrapped in string lights, a kid and a dog losing their minds in the spray, the old brewery chimney behind it all. saturday ritual. free to walk, $12 tacos if you cave #sanantonio #thepearl"
+       },
+       {
+        "kind": "post",
+        "id": "p_00qz",
+        "authorId": "gabe",
+        "author": "Gabriel Flores",
+        "image": "/api/img?u=https%3A%2F%2Fthumb.wikimedia.org%2Fwikipedia%2Fcommons%2Fthumb%2Fb%2Fb3%2FMission_San_Jos%25C3%25A9_y_San_Miguel_de_Aguayo%252C_San_Antonio%252C_Texas_arches.jpg%2F1280px-Mission_San_Jos%25C3%25A9_y_San_Miguel_de_Aguayo%252C_San_Antonio%252C_Texas_arches.jpg",
+        "caption": "mission san josé with abuela on a cloudy sunday. the long wall of stone arches, two rows, green bushes in front, weathered like it's been there 300 years because it has. free. national park. she lit a candle and then made me drive her to h-e-b. spare room in southtown is open, she WILL cook for you"
+       }
+      ],
+      "prices": {
+       "ifYes": {
+        "total": 70,
+        "lines": [
+         {
+          "label": "gas split, what the driver asked (87 mi each way)",
+          "usd": 10
+         },
+         {
+          "label": "staying with a friend (2 nights)",
+          "usd": 0
+         },
+         {
+          "label": "food, 3 days (local's cheap spots)",
+          "usd": 54
+         },
+         {
+          "label": "getting around, 3 days",
+          "usd": 6
+         }
+        ],
+        "transport": "ride",
+        "lodging": "host"
+       },
+       "otherwise": {
+        "total": 229,
+        "lines": [
+         {
+          "label": "bus, round trip (87 mi)",
+          "usd": 36
+         },
+         {
+          "label": "hostel, 2 nights × $38",
+          "usd": 76
+         },
+         {
+          "label": "food, 3 days",
+          "usd": 105
+         },
+         {
+          "label": "getting around, 3 days",
+          "usd": 12
+         }
+        ],
+        "transport": "bus",
+        "lodging": "hostel"
+       },
+       "solo": {
+        "total": 383,
+        "lines": [
+         {
+          "label": "bus, round trip (87 mi)",
+          "usd": 36
+         },
+         {
+          "label": "hotel, 2 nights × $115",
+          "usd": 230
+         },
+         {
+          "label": "food, 3 days",
+          "usd": 105
+         },
+         {
+          "label": "getting around, 3 days",
+          "usd": 12
+         }
+        ],
+        "transport": "bus",
+        "lodging": "hotel"
+       },
+       "miles": 87,
+       "driveHours": 1.3,
+       "transportIfYes": "ride",
+       "lodgingIfYes": "host",
+       "conditions": [
+        "Gabriel says yes to hosting",
+        "Tyler has a seat"
+       ]
+      },
+      "fitsBudget": true,
+      "repairs": [],
+      "createdAt": "2026-11-12T11:27:21.998Z"
+     },
+     {
+      "id": "trip_mwdgr2j2g881",
+      "viewerId": "priya",
+      "city": "new-orleans",
+      "cityName": "New Orleans",
+      "state": "LA",
+      "start": "2026-12-04",
+      "end": "2026-12-06",
+      "nights": 2,
+      "budget": 250,
+      "title": "new orleans with beau in the bywater",
+      "pitch": "beau's got the spare room in the bywater with the porch, and he's free. borrow his bike, chase brass bands, eat crawfish.",
+      "reasons": [
+       "crash with beau via maya, spare room + porch, free dec 4-6",
+       "bus is $100 roundtrip, total ~$160 so still under $250",
+       "beau's into running / brass bands / crawfish, right up your night-owl alley",
+       "longer haul at 8hrs but you get 2 full nights hosted"
+      ],
+      "host": {
+       "id": "beau",
+       "name": "Beau Landry",
+       "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D64",
+       "connection": "Maya's friend (ran together in Town Lake run club, summer '24)",
+       "degree": 2,
+       "via": {
+        "id": "maya",
+        "name": "Maya Chen"
+       },
+       "openToHosting": true,
+       "hostingNote": "shotgun house in the Bywater, spare room, porch. bring a bike or borrow mine.",
+       "hasCar": true,
+       "freeThatWeekend": true
+      },
+      "people": [],
+      "evidence": [
+       {
+        "kind": "reel",
+        "id": "tr_brass",
+        "authorId": "beau",
+        "author": "Beau Landry",
+        "image": "/api/img?u=https%3A%2F%2Fthumb.wikimedia.org%2Fwikipedia%2Fcommons%2Fthumb%2F3%2F3e%2FStooges_Brass_Band_at_Single_Men_Second_Line_2009.jpg%2F1280px-Stooges_Brass_Band_at_Single_Men_Second_Line_2009.jpg",
+        "caption": "second line sunday. trombone guy in the white tee led the whole block for 2 hours. free, loud, nobody knows where it ends. come down #neworleans #secondline #brassband"
+       },
+       {
+        "kind": "post",
+        "id": "p_00o3",
+        "authorId": "elijah",
+        "author": "Elijah Brown",
+        "image": "/api/img?u=https%3A%2F%2Fthumb.wikimedia.org%2Fwikipedia%2Fcommons%2Fthumb%2F7%2F75%2FSt_Charles_Avenue_at_Foucher_with_streetcar%252C_New_Orleans_Sept_2022.jpg%2F1280px-St_Charles_Avenue_at_Foucher_with_streetcar%252C_New_Orleans_Sept_2022.jpg",
+        "caption": "my commute. the streetcar stuck behind traffic at the crosswalk under the oaks, same as every day. $1.25 a ride, $3 for a day pass, and it's slower than walking sometimes but you get to look at houses. couch in mid-city is right off this line if anyone's coming down"
+       },
+       {
+        "kind": "post",
+        "id": "p_00o6",
+        "authorId": "camille",
+        "author": "Camille Thibodeaux",
+        "image": "/api/img?u=https%3A%2F%2Fthumb.wikimedia.org%2Fwikipedia%2Fcommons%2Fthumb%2F5%2F51%2FFrenchmen_Street_Gentilly_New_Orleans_1st_April_2019_11.jpg%2F1280px-Frenchmen_Street_Gentilly_New_Orleans_1st_April_2019_11.jpg",
+        "caption": "the spot. teal building, yellow curtains, the sign that's seen things. two little white statues out front judging everybody who walks up. frenchmen 5 nights a week and I'm still not tired of it. tell me you're coming and you're on the list. no cover for my people"
+       },
+       {
+        "kind": "post",
+        "id": "p_00nx",
+        "authorId": "devon",
+        "author": "Devon Williams",
+        "image": "/api/img?u=https%3A%2F%2Fthumb.wikimedia.org%2Fwikipedia%2Fcommons%2Fthumb%2F6%2F64%2FShaggy%2527s_Crawfish_Boil.jpg%2F1280px-Shaggy%2527s_Crawfish_Boil.jpg",
+        "caption": "elijah's cousin's boil. like 40 lbs of crawfish dumped on a table, plastic cups of beer, paper towels as the only utensil. I ate until my hands hurt. cost me $0 because I was 'the nurse from texas.' this is the best weekend I've had off nights in a year"
+       }
+      ],
+      "prices": {
+       "ifYes": {
+        "total": 160,
+        "lines": [
+         {
+          "label": "bus, round trip (542 mi)",
+          "usd": 100
+         },
+         {
+          "label": "staying with a friend (2 nights)",
+          "usd": 0
+         },
+         {
+          "label": "food, 3 days (local's cheap spots)",
+          "usd": 54
+         },
+         {
+          "label": "getting around, 3 days",
+          "usd": 6
+         }
+        ],
+        "transport": "bus",
+        "lodging": "host"
+       },
+       "otherwise": {
+        "total": 307,
+        "lines": [
+         {
+          "label": "bus, round trip (542 mi)",
+          "usd": 100
+         },
+         {
+          "label": "hostel, 2 nights × $45",
+          "usd": 90
+         },
+         {
+          "label": "food, 3 days",
+          "usd": 105
+         },
+         {
+          "label": "getting around, 3 days",
+          "usd": 12
+         }
+        ],
+        "transport": "bus",
+        "lodging": "hostel"
+       },
+       "solo": {
+        "total": 527,
+        "lines": [
+         {
+          "label": "bus, round trip (542 mi)",
+          "usd": 100
+         },
+         {
+          "label": "hotel, 2 nights × $155",
+          "usd": 310
+         },
+         {
+          "label": "food, 3 days",
+          "usd": 105
+         },
+         {
+          "label": "getting around, 3 days",
+          "usd": 12
+         }
+        ],
+        "transport": "bus",
+        "lodging": "hotel"
+       },
+       "miles": 542,
+       "driveHours": 8,
+       "transportIfYes": "bus",
+       "lodgingIfYes": "host",
+       "conditions": [
+        "Beau says yes to hosting"
+       ]
+      },
+      "fitsBudget": true,
+      "repairs": [],
+      "createdAt": "2026-11-12T11:27:21.999Z"
+     }
+    ],
+    "mode": "live",
+    "costUsd": 0.0277,
+    "latencyMs": 16458,
+    "model": "muse-spark-1.3"
+   }
+  },
+  "audit": {
+   "runId": "run_mwdgr2j3",
+   "viewerId": "priya",
+   "input": {
+    "start": "2026-12-04",
+    "end": "2026-12-06",
+    "budget": 250
+   },
+   "mode": "live",
+   "costUsd": 0.0277,
+   "latencyMs": 16458,
+   "raw": {
+    "ids": 10,
+    "grounded": 10,
+    "privacyViolationsCaught": 0,
+    "invented": 0
+   },
+   "trips": [
+    {
+     "tripId": "trip_mwdgr2j2823m",
+     "city": "houston",
+     "elements": [
+      {
+       "kind": "host",
+       "id": "raj",
+       "exists": true,
+       "visible": true
+      },
+      {
+       "kind": "person",
+       "id": "tj",
+       "exists": true,
+       "visible": true
+      },
+      {
+       "kind": "person",
+       "id": "layla",
+       "exists": true,
+       "visible": true
+      },
+      {
+       "kind": "post",
+       "id": "p_00ql",
+       "exists": true,
+       "visible": true
+      }
+     ],
+     "renderedViolations": 0,
+     "fitsBudget": true,
+     "ifYes": 108,
+     "otherwise": 245,
+     "solo": 405,
+     "hostOptedIn": true,
+     "hostDegree": 1,
+     "fofHasMutual": null
+    },
+    {
+     "tripId": "trip_mwdgr2j20r45",
+     "city": "san-antonio",
+     "elements": [
+      {
+       "kind": "host",
+       "id": "gabe",
+       "exists": true,
+       "visible": true
+      },
+      {
+       "kind": "ride",
+       "id": "ride_tyler_sa",
+       "exists": true,
+       "visible": true,
+       "inDates": true
+      },
+      {
+       "kind": "driver",
+       "id": "tyler",
+       "exists": true,
+       "visible": true
+      },
+      {
+       "kind": "event",
+       "id": "e_sa_pearl_spurs",
+       "exists": true,
+       "visible": true,
+       "inDates": true
+      },
+      {
+       "kind": "reel",
+       "id": "tr_pearl",
+       "exists": true,
+       "visible": true
+      },
+      {
+       "kind": "post",
+       "id": "p_00qz",
+       "exists": true,
+       "visible": true
+      }
+     ],
+     "renderedViolations": 0,
+     "fitsBudget": true,
+     "ifYes": 70,
+     "otherwise": 229,
+     "solo": 383,
+     "hostOptedIn": true,
+     "hostDegree": 2,
+     "fofHasMutual": true
+    },
+    {
+     "tripId": "trip_mwdgr2j2g881",
+     "city": "new-orleans",
+     "elements": [
+      {
+       "kind": "host",
+       "id": "beau",
+       "exists": true,
+       "visible": true
+      },
+      {
+       "kind": "reel",
+       "id": "tr_brass",
+       "exists": true,
+       "visible": true
+      },
+      {
+       "kind": "post",
+       "id": "p_00o3",
+       "exists": true,
+       "visible": true
+      },
+      {
+       "kind": "post",
+       "id": "p_00o6",
+       "exists": true,
+       "visible": true
+      },
+      {
+       "kind": "post",
+       "id": "p_00nx",
+       "exists": true,
+       "visible": true
+      }
+     ],
+     "renderedViolations": 0,
+     "fitsBudget": true,
+     "ifYes": 160,
+     "otherwise": 307,
+     "solo": 527,
+     "hostOptedIn": true,
+     "hostDegree": 2,
+     "fofHasMutual": true
+    }
+   ],
+   "declined": false
+  },
+  "guide": {
+   "steps": [
+    {
+     "kind": "info",
+     "text": "Building your Houston guide from what Raj and TJ posted",
+     "i": 0,
+     "at": 2
+    },
+    {
+     "kind": "model",
+     "text": "Deciding what to read next",
+     "detail": "1589 ms",
+     "i": 1,
+     "at": 1591
+    },
+    {
+     "kind": "tool",
+     "tool": "get_my_travel_profile",
+     "text": "Reading your taste from saved Reels and likes",
+     "i": 2,
+     "at": 1591
+    },
+    {
+     "kind": "result",
+     "tool": "get_my_travel_profile",
+     "text": "You're into foodies, art people, night owls and music lovers",
+     "i": 3,
+     "at": 1593
+    },
+    {
+     "kind": "tool",
+     "tool": "get_city_media",
+     "text": "Reading your friends' posts and Reels from Houston",
+     "i": 4,
+     "at": 1593
+    },
+    {
+     "kind": "result",
+     "tool": "get_city_media",
+     "text": "2 photos and captions from Raj, Layla",
+     "i": 5,
+     "at": 1593
+    },
+    {
+     "kind": "model",
+     "text": "Deciding what to read next",
+     "detail": "7506 ms",
+     "i": 6,
+     "at": 9099
+    },
+    {
+     "kind": "tool",
+     "tool": "look_at_photo",
+     "text": "Looking closely at a photo: what is the dish in this photo, what ingredients are visible",
+     "ids": [
+      "p_00ql"
+     ],
+     "i": 7,
+     "at": 9099
+    },
+    {
+     "kind": "result",
+     "tool": "look_at_photo",
+     "text": "Muse saw: it's a banh mi in a baguette with shredded pork, shredded carrots, cucumber sticks, and cilantro on paper. vibe is casual, cheap takeout — f",
+     "detail": "Raj Iyer's photo · live image understanding",
+     "i": 8,
+     "at": 12032
+    },
+    {
+     "kind": "tool",
+     "tool": "look_at_photo",
+     "text": "Looking closely at a photo: describe what is visible in this museum hangar, the scale an",
+     "ids": [
+      "p_00qr"
+     ],
+     "i": 9,
+     "at": 12032
+    },
+    {
+     "kind": "result",
+     "tool": "look_at_photo",
+     "text": "Muse saw: it's massive — the saturn v is lying on its side the whole length of the hangar, burnt capsule up front and white stages on black supports o",
+     "detail": "Layla Haddad's photo · live image understanding",
+     "i": 10,
+     "at": 14468
+    },
+    {
+     "kind": "model",
+     "text": "Deciding what to read next",
+     "detail": "16493 ms",
+     "i": 11,
+     "at": 30961
+    },
+    {
+     "kind": "tool",
+     "tool": "propose_guide",
+     "text": "Writing 4 recommendations, each credited to a friend",
+     "i": 12,
+     "at": 30961
+    },
+    {
+     "kind": "info",
+     "text": "Checking every credit against the real author and what you can see",
+     "i": 13,
+     "at": 30961
+    },
+    {
+     "kind": "done",
+     "text": "4 picks, credited to 2 friends",
+     "detail": "31.0s · live · $0.027",
+     "i": 14,
+     "at": 30962
+    }
+   ],
+   "result": {
+    "tripId": "trip_mwdgr2j2823m",
+    "intro": "your houston people got you — raj feeds you cheap and drives you around, layla knows where to look for free.",
+    "items": [
+     {
+      "title": "the $4.50 banh mi on bellaire",
+      "what": "shredded pork, pickled carrots, cucumber sticks, fistful of cilantro on paper. grab it to-go, eat it messy.",
+      "whyYou": "pure foodies bait, and you already called dibs in the comments.",
+      "tasteTags": [
+       "foodies"
+      ],
+      "priceHint": "$4.50",
+      "when": "friday lunch after you land",
+      "credit": {
+       "id": "raj",
+       "name": "Raj Iyer",
+       "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D71",
+       "connection": "Sugar Land high school"
+      },
+      "evidence": {
+       "kind": "post",
+       "id": "p_00ql",
+       "authorId": "raj",
+       "image": "/api/img?u=https%3A%2F%2Fupload.wikimedia.org%2Fwikipedia%2Fcommons%2Fc%2Fc1%2FB%25C3%25A1nh_m%25C3%25AC_x%25C3%25ADu_m%25E1%25BA%25A1i-meatball-sandwich.jpg",
+       "caption": "the banh mi on bellaire. $4.50. shredded pork, pickled carrots, cucumber sticks, a fistful of cilantro, on paper like it should be. this is the first stop on my official night market tour (the tour is me, driving you, for free). guest room in montrose has a ridiculous number of towels, come use them",
+       "sawLive": "it's a banh mi in a baguette with shredded pork, shredded carrots, cucumber sticks, and cilantro on paper. vibe is casual, cheap takeout — fresh and messy in a good way."
+      }
+     },
+     {
+      "title": "raj's night market drive",
+      "what": "raj's official tour: him driving you around bellaire night markets for free. let him play guide.",
+      "whyYou": "night owls + foodies, and you're literally staying with him in montrose.",
+      "tasteTags": [
+       "foodies",
+       "night owls"
+      ],
+      "priceHint": "free",
+      "when": "friday late night",
+      "credit": {
+       "id": "raj",
+       "name": "Raj Iyer",
+       "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D71",
+       "connection": "Sugar Land high school"
+      },
+      "evidence": {
+       "kind": "post",
+       "id": "p_00ql",
+       "authorId": "raj",
+       "image": "/api/img?u=https%3A%2F%2Fupload.wikimedia.org%2Fwikipedia%2Fcommons%2Fc%2Fc1%2FB%25C3%25A1nh_m%25C3%25AC_x%25C3%25ADu_m%25E1%25BA%25A1i-meatball-sandwich.jpg",
+       "caption": "the banh mi on bellaire. $4.50. shredded pork, pickled carrots, cucumber sticks, a fistful of cilantro, on paper like it should be. this is the first stop on my official night market tour (the tour is me, driving you, for free). guest room in montrose has a ridiculous number of towels, come use them",
+       "sawLive": "it's a banh mi in a baguette with shredded pork, shredded carrots, cucumber sticks, and cilantro on paper. vibe is casual, cheap takeout — fresh and messy in a good way."
+      }
+     },
+     {
+      "title": "saturn v lying down",
+      "what": "whole rocket on its side in a hangar, burnt capsule up front, info signs on fake grass. huge and quiet.",
+      "whyYou": "for your art people eye — scale, texture, that warehouse light. layla says it's steep but worth it.",
+      "tasteTags": [
+       "art people"
+      ],
+      "priceHint": "$30",
+      "when": "saturday afternoon",
+      "credit": {
+       "id": "layla",
+       "name": "Layla Haddad",
+       "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D36",
+       "connection": "Omar's friend (siblings)"
+      },
+      "evidence": {
+       "kind": "post",
+       "id": "p_00qr",
+       "authorId": "layla",
+       "image": "/api/img?u=https%3A%2F%2Fthumb.wikimedia.org%2Fwikipedia%2Fcommons%2Fthumb%2F8%2F8d%2FSaturn_V_Rocket_--_Johnson_Space_Center.jpg%2F1280px-Saturn_V_Rocket_--_Johnson_Space_Center.jpg",
+       "caption": "the saturn v lying down in its hangar is the whole museum for me. stages stretched out on black supports, the burnt capsule at the front, info signs on fake grass. it's like $30 to get in which is steep but the rocket alone is worth 20 of it. sundays I'm usually at the museum district instead, half those are free",
+       "sawLive": "it's massive — the saturn v is lying on its side the whole length of the hangar, burnt capsule up front and white stages on black supports over fake grass. super quiet warehouse vibe, little info signs along the platform and a \"16\" sign in the back, concrete walkway right beside it."
+      }
+     },
+     {
+      "title": "museum district sundays",
+      "what": "layla's sunday move — half the museum district spots are free. wander, no ticket stress.",
+      "whyYou": "free art crawl that fits your $250 trip math, and layla will probably join.",
+      "tasteTags": [
+       "art people",
+       "music lovers"
+      ],
+      "priceHint": "free",
+      "when": "sunday morning",
+      "credit": {
+       "id": "layla",
+       "name": "Layla Haddad",
+       "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D36",
+       "connection": "Omar's friend (siblings)"
+      },
+      "evidence": {
+       "kind": "post",
+       "id": "p_00qr",
+       "authorId": "layla",
+       "image": "/api/img?u=https%3A%2F%2Fthumb.wikimedia.org%2Fwikipedia%2Fcommons%2Fthumb%2F8%2F8d%2FSaturn_V_Rocket_--_Johnson_Space_Center.jpg%2F1280px-Saturn_V_Rocket_--_Johnson_Space_Center.jpg",
+       "caption": "the saturn v lying down in its hangar is the whole museum for me. stages stretched out on black supports, the burnt capsule at the front, info signs on fake grass. it's like $30 to get in which is steep but the rocket alone is worth 20 of it. sundays I'm usually at the museum district instead, half those are free",
+       "sawLive": "it's massive — the saturn v is lying on its side the whole length of the hangar, burnt capsule up front and white stages on black supports over fake grass. super quiet warehouse vibe, little info signs along the platform and a \"16\" sign in the back, concrete walkway right beside it."
+      }
+     }
+    ],
+    "looked": [
+     {
+      "mediaId": "hou-viet",
+      "image": "/api/img?u=https%3A%2F%2Fupload.wikimedia.org%2Fwikipedia%2Fcommons%2Fc%2Fc1%2FB%25C3%25A1nh_m%25C3%25AC_x%25C3%25ADu_m%25E1%25BA%25A1i-meatball-sandwich.jpg",
+      "author": "Raj Iyer",
+      "saw": "it's a banh mi in a baguette with shredded pork, shredded carrots, cucumber sticks, and cilantro on paper. vibe is casual, cheap takeout — fresh and messy in a good way.",
+      "costUsd": 0.0007,
+      "mode": "live"
+     },
+     {
+      "mediaId": "hou-space",
+      "image": "/api/img?u=https%3A%2F%2Fthumb.wikimedia.org%2Fwikipedia%2Fcommons%2Fthumb%2F8%2F8d%2FSaturn_V_Rocket_--_Johnson_Space_Center.jpg%2F1280px-Saturn_V_Rocket_--_Johnson_Space_Center.jpg",
+      "author": "Layla Haddad",
+      "saw": "it's massive — the saturn v is lying on its side the whole length of the hangar, burnt capsule up front and white stages on black supports over fake grass. super quiet warehouse vibe, little info signs along the platform and a \"16\" sign in the back, concrete walkway right beside it.",
+      "costUsd": 0.0006,
+      "mode": "live"
+     }
+    ],
+    "steps": [
+     {
+      "kind": "info",
+      "text": "Building your Houston guide from what Raj and TJ posted",
+      "i": 0,
+      "at": 2
+     },
+     {
+      "kind": "model",
+      "text": "Deciding what to read next",
+      "detail": "1589 ms",
+      "i": 1,
+      "at": 1591
+     },
+     {
+      "kind": "tool",
+      "tool": "get_my_travel_profile",
+      "text": "Reading your taste from saved Reels and likes",
+      "i": 2,
+      "at": 1591
+     },
+     {
+      "kind": "result",
+      "tool": "get_my_travel_profile",
+      "text": "You're into foodies, art people, night owls and music lovers",
+      "i": 3,
+      "at": 1593
+     },
+     {
+      "kind": "tool",
+      "tool": "get_city_media",
+      "text": "Reading your friends' posts and Reels from Houston",
+      "i": 4,
+      "at": 1593
+     },
+     {
+      "kind": "result",
+      "tool": "get_city_media",
+      "text": "2 photos and captions from Raj, Layla",
+      "i": 5,
+      "at": 1593
+     },
+     {
+      "kind": "model",
+      "text": "Deciding what to read next",
+      "detail": "7506 ms",
+      "i": 6,
+      "at": 9099
+     },
+     {
+      "kind": "tool",
+      "tool": "look_at_photo",
+      "text": "Looking closely at a photo: what is the dish in this photo, what ingredients are visible",
+      "ids": [
+       "p_00ql"
+      ],
+      "i": 7,
+      "at": 9099
+     },
+     {
+      "kind": "result",
+      "tool": "look_at_photo",
+      "text": "Muse saw: it's a banh mi in a baguette with shredded pork, shredded carrots, cucumber sticks, and cilantro on paper. vibe is casual, cheap takeout — f",
+      "detail": "Raj Iyer's photo · live image understanding",
+      "i": 8,
+      "at": 12032
+     },
+     {
+      "kind": "tool",
+      "tool": "look_at_photo",
+      "text": "Looking closely at a photo: describe what is visible in this museum hangar, the scale an",
+      "ids": [
+       "p_00qr"
+      ],
+      "i": 9,
+      "at": 12032
+     },
+     {
+      "kind": "result",
+      "tool": "look_at_photo",
+      "text": "Muse saw: it's massive — the saturn v is lying on its side the whole length of the hangar, burnt capsule up front and white stages on black supports o",
+      "detail": "Layla Haddad's photo · live image understanding",
+      "i": 10,
+      "at": 14468
+     },
+     {
+      "kind": "model",
+      "text": "Deciding what to read next",
+      "detail": "16493 ms",
+      "i": 11,
+      "at": 30961
+     },
+     {
+      "kind": "tool",
+      "tool": "propose_guide",
+      "text": "Writing 4 recommendations, each credited to a friend",
+      "i": 12,
+      "at": 30961
+     },
+     {
+      "kind": "info",
+      "text": "Checking every credit against the real author and what you can see",
+      "i": 13,
+      "at": 30961
+     },
+     {
+      "kind": "done",
+      "text": "4 picks, credited to 2 friends",
+      "detail": "31.0s · live · $0.027",
+      "i": 14,
+      "at": 30962
+     }
+    ],
+    "mode": "live",
+    "costUsd": 0.0274,
+    "latencyMs": 30962,
+    "model": "muse-spark-1.3",
+    "createdAt": "2026-11-12T11:27:56.759Z"
+   }
+  },
+  "coordinate": {
+   "dates": {
+    "dates": [
+     "2026-12-04",
+     "2026-12-05",
+     "2026-12-06"
+    ],
+    "people": [
+     {
+      "id": "priya",
+      "name": "Priya Natarajan",
+      "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D44",
+      "role": "you",
+      "busyOn": [],
+      "free": true
+     },
+     {
+      "id": "raj",
+      "name": "Raj Iyer",
+      "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D71",
+      "role": "host",
+      "busyOn": [],
+      "free": true
+     }
+    ],
+    "allFree": true,
+    "alternatives": [
+     {
+      "start": "2026-11-20",
+      "end": "2026-11-22",
+      "label": "Nov 20–22"
+     },
+     {
+      "start": "2026-11-27",
+      "end": "2026-11-29",
+      "label": "Nov 27–29"
+     }
+    ]
+   },
+   "drafts": [
+    {
+     "id": "m_mwdgs0dbs4",
+     "conversationId": "c_mwdgs0dbs3",
+     "key": "host",
+     "to": {
+      "id": "raj",
+      "name": "Raj Iyer",
+      "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D71",
+      "connection": "Sugar Land high school"
+     },
+     "text": "hey raj! would you be down to host me dec 4-6 for a banh mi + night markets weekend? saw your post about the guest room in montrose with the ridiculous towel stash lol. totally fine to say no if timing's off, but i'd love to catch up and i can cook / cover gas while i'm there.",
+     "status": "draft",
+     "reason": "Trip: houston with raj for banh mi + night markets · ask Raj about staying Dec 4–6"
+    }
+   ],
+   "mode": "live",
+   "costUsd": 0.0054
+  }
+ },
+ "cost": 0.062200000000000005,
+ "verdict": {
+  "looksBroken": [
+   "new orleans bus listed as 542 mi roundtrip / 8hrs — that's roughly the one-way distance from austin, not roundtrip",
+   "crawfish in early december — that's out of season, usually spring/summer",
+   "san antonio is pitched as a saturday day-trip home by 11:30 but priced as 2 nights staying with gabe + 3 days of food",
+   "distances are labeled inconsistently — houston 173 mi and san antonio 87 mi look like one-way distances but are written as roundtrip in the bus prices",
+   "san antonio people list is empty even though the whole pitch depends on tyler and gabe"
+  ],
+  "objections": [
+   "all three depend on someone saying yes to free hosting — if raj says no houston jumps to $245",
+   "houston bus time isn't stated, could eat a lot of the weekend",
+   "raj's guest room / towel thing is cute but i don't actually know if he's confirmed, just that he's 'free'",
+   "food estimates assume raj takes me to cheap spots the whole time"
+  ],
+  "pickTripIndex": 0,
+  "reason": "houston is the only one where i'd actually go — direct friend, under budget even if it's tight, and the banh mi / night market thing sounds like a real low-key weekend. the others feel like too many maybes stacked on each other.",
+  "surprising": 3,
+  "trustworthy": 4,
+  "wouldTake": true
+ },
+ "verdictMode": "live",
+ "draftDecisions": {
+  "decisions": [
+   {
+    "action": "approve",
+    "draftId": "m_mwdgs0dbs4",
+    "why": "raj is a direct friend, he's the host for this exact trip, and this asks clearly for dec 4-6 without pressuring him."
+   }
+  ],
+  "guideFeedback": "yeah the guide felt made for me — foodie + free art stuff that fits the budget, and the raj/layla credits made sense for who suggested what."
+ },
+ "applied": [
+  {
+   "action": "approve",
+   "draftId": "m_mwdgs0dbs4",
+   "why": "raj is a direct friend, he's the host for this exact trip, and this asks clearly for dec 4-6 without pressuring him.",
+   "result": {
+    "ok": true,
+    "message": {
+     "id": "m_mwdgs0dbs4",
+     "senderId": "priya",
+     "text": "hey raj! would you be down to host me dec 4-6 for a banh mi + night markets weekend? saw your post about the guest room in montrose with the ridiculous towel stash lol. totally fine to say no if timing's off, but i'd love to catch up and i can cook / cover gas while i'm there.",
+     "createdAt": "2026-11-12T11:28:08.132Z",
+     "readBy": [
+      "priya"
+     ],
+     "status": "sent",
+     "draftReason": "Trip: houston with raj for banh mi + night markets · ask Raj about staying Dec 4–6",
+     "attachment": {
+      "type": "trip",
+      "ref": "trip_mwdgr2j2823m"
+     }
+    },
+    "conversationId": "c_mwdgs0dbs3"
+   }
+  }
+ ],
+ "latencyMs": 63064,
+ "finishedAt": "2026-11-12T11:28:08.134Z"
+}

@@ -58,7 +58,7 @@ export const travelEvents: FBEvent[] = [
     going: ["jules", "noah", "ethan", "mateo"], interested: ["maya", "omar"],
   },
   {
-    id: "e_marfa_sky", title: "Marfa Night Sky Weekend (Chinati grounds + McDonald Observatory star party)", cover: photo("event-marfa-sky", 1200, 600),
+    id: "e_marfa_sky", title: "Marfa Night Sky Weekend (McDonald Observatory star party)", cover: photo("event-marfa-sky", 1200, 600),
     startsAt: wk(5, 0, 18), endsAt: wk(5, 2, 12), location: "June's casita → Chinati → McDonald Observatory", address: "Marfa, TX", city: "marfa",
     hostId: "june", category: "Outdoors", price: "Star party $25 · Chinati self-guided free",
     description: "New moon weekend. Friday: arrive, tacos at the food truck by the courthouse, Marfa lights viewing area (yes they're real, no they're not aliens). Saturday: Chinati grounds in the morning, nap, drive out to the observatory for the star party at 8. Sunday: Prada Marfa photo and go home. The casita sleeps 4 on a good night; bring a sleeping bag and a second blanket, it gets COLD. Kenji's driving the Subaru from Austin.",

@@ -1,0 +1,1298 @@
+{
+ "persona": {
+  "id": "grace",
+  "weekend": 7,
+  "budget": 400,
+  "car": true,
+  "persona": "Grace, 22, marketing coordinator, brunch and pilates, has a car, will fly for a good NYC weekend with a friend from her internship. Cares about the host's place being nice and the plan being Instagrammable."
+ },
+ "weekend": {
+  "n": 7,
+  "start": "2027-01-01",
+  "end": "2027-01-03",
+  "label": "Jan 1–3",
+  "busy": false
+ },
+ "startedAt": "2026-11-12T11:29:00.895Z",
+ "stages": {
+  "discover": {
+   "steps": [
+    {
+     "kind": "info",
+     "text": "Starting from Austin, Jan 1–3, about $400",
+     "i": 0,
+     "at": 1
+    },
+    {
+     "kind": "model",
+     "text": "Deciding what to look at next",
+     "detail": "1687 ms",
+     "i": 1,
+     "at": 1688
+    },
+    {
+     "kind": "tool",
+     "tool": "scan_network",
+     "text": "Mapping your whole network: who lives where, who hosts, who's driving Jan 1–3",
+     "i": 2,
+     "at": 1689
+    },
+    {
+     "kind": "result",
+     "tool": "scan_network",
+     "text": "29 people in 11 cities · 17 hosts free that weekend · 1 event · 0 rides with seats",
+     "detail": "you're into foodies, art people, night owls and coffee people · UT Design alumni meetup + Wes's studio open house in Bushwick (New York)",
+     "ids": [
+      "kai",
+      "marisol",
+      "tess",
+      "leah",
+      "andre",
+      "simone",
+      "kwame",
+      "bri",
+      "noah",
+      "ivy",
+      "arjun",
+      "nadia",
+      "beau",
+      "camille",
+      "dani",
+      "theo",
+      "rosa",
+      "ava",
+      "wes",
+      "sienna",
+      "cole",
+      "harper",
+      "raj",
+      "tj",
+      "maddie",
+      "gabe",
+      "lena",
+      "june",
+      "silas",
+      "e_nyc_config"
+     ],
+     "i": 3,
+     "at": 1691
+    },
+    {
+     "kind": "model",
+     "text": "Deciding what to look at next",
+     "detail": "8987 ms",
+     "i": 4,
+     "at": 10678
+    },
+    {
+     "kind": "tool",
+     "tool": "estimate_trip_cost",
+     "text": "Pricing Dallas: 2 nights, staying with a friend, by own-car",
+     "i": 5,
+     "at": 10678
+    },
+    {
+     "kind": "result",
+     "tool": "estimate_trip_cost",
+     "text": "about $85 if they say yes, about $226 otherwise",
+     "detail": "215 mi · 3.2h drive · hotel + solo would be $421",
+     "i": 6,
+     "at": 10678
+    },
+    {
+     "kind": "tool",
+     "tool": "estimate_trip_cost",
+     "text": "Pricing Houston: 2 nights, staying with a friend, by own-car",
+     "i": 7,
+     "at": 10678
+    },
+    {
+     "kind": "result",
+     "tool": "estimate_trip_cost",
+     "text": "about $80 if they say yes, about $217 otherwise",
+     "detail": "173 mi · 2.5h drive · hotel + solo would be $405",
+     "i": 8,
+     "at": 10678
+    },
+    {
+     "kind": "tool",
+     "tool": "estimate_trip_cost",
+     "text": "Pricing San Antonio: 2 nights, staying with a friend, by own-car",
+     "i": 9,
+     "at": 10678
+    },
+    {
+     "kind": "result",
+     "tool": "estimate_trip_cost",
+     "text": "about $70 if they say yes, about $203 otherwise",
+     "detail": "87 mi · 1.3h drive · hotel + solo would be $383",
+     "i": 10,
+     "at": 10678
+    },
+    {
+     "kind": "model",
+     "text": "Deciding what to look at next",
+     "detail": "3494 ms",
+     "i": 11,
+     "at": 14173
+    },
+    {
+     "kind": "tool",
+     "tool": "get_city_media",
+     "text": "Reading your friends' photos and Reels from Dallas",
+     "i": 12,
+     "at": 14173
+    },
+    {
+     "kind": "result",
+     "tool": "get_city_media",
+     "text": "Read 3 photos from Dallas",
+     "detail": "1 of Harper's, 1 of Cole's, 1 of Grace's",
+     "i": 13,
+     "at": 14173
+    },
+    {
+     "kind": "tool",
+     "tool": "get_city_media",
+     "text": "Reading your friends' photos and Reels from Houston",
+     "i": 14,
+     "at": 14173
+    },
+    {
+     "kind": "result",
+     "tool": "get_city_media",
+     "text": "Read 2 photos from Houston",
+     "detail": "1 of Raj's, 1 of Layla's",
+     "i": 15,
+     "at": 14173
+    },
+    {
+     "kind": "model",
+     "text": "Deciding what to look at next",
+     "detail": "11723 ms",
+     "i": 16,
+     "at": 25897
+    },
+    {
+     "kind": "tool",
+     "tool": "propose_trips",
+     "text": "Putting together 3 trips",
+     "i": 17,
+     "at": 25897
+    },
+    {
+     "kind": "info",
+     "text": "Checking every person, ride, event and photo against what you can actually see",
+     "i": 18,
+     "at": 25897
+    },
+    {
+     "kind": "done",
+     "text": "3 trips that only exist because of your people",
+     "detail": "25.9s · live · $0.037",
+     "i": 19,
+     "at": 25897
+    }
+   ],
+   "result": {
+    "runId": "run_mwdgtr0c",
+    "trips": [
+     {
+      "id": "trip_mwdgtr0c1f29",
+      "viewerId": "grace",
+      "city": "san-antonio",
+      "cityName": "San Antonio",
+      "state": "TX",
+      "start": "2027-01-01",
+      "end": "2027-01-03",
+      "nights": 2,
+      "budget": 400,
+      "title": "san antonio with gabe for tacos in southtown",
+      "pitch": "gabe's got the spare room in southtown and his abuela downstairs who will cook. hour and a bit drive, easiest trip on the list.",
+      "reasons": [
+       "gabe (maya's ut design friend) is open to hosting and free jan 1-3, spare room in southtown",
+       "gabe's into breakfast tacos + running, lena (via tyler) is in town for pickleball/brunch",
+       "shortest drive ~1.3hr, $70 total if host says yes - well under $400"
+      ],
+      "host": {
+       "id": "gabe",
+       "name": "Gabriel Flores",
+       "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D40",
+       "connection": "Maya's friend (UT Design cohort)",
+       "degree": 2,
+       "via": {
+        "id": "maya",
+        "name": "Maya Chen"
+       },
+       "openToHosting": true,
+       "hostingNote": "spare room at my place in Southtown. abuela lives downstairs and will cook.",
+       "hasCar": true,
+       "freeThatWeekend": true
+      },
+      "people": [
+       {
+        "id": "lena",
+        "name": "Lena Schultz",
+        "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D41",
+        "connection": "Tyler's friend (pickleball league)",
+        "degree": 2,
+        "via": {
+         "id": "tyler",
+         "name": "Tyler Brooks"
+        },
+        "openToHosting": false,
+        "hasCar": true,
+        "freeThatWeekend": true
+       }
+      ],
+      "evidence": [
+       {
+        "kind": "reel",
+        "id": "tr_pearl",
+        "authorId": "gabe",
+        "author": "Gabriel Flores",
+        "image": "/api/img?u=https%3A%2F%2Fupload.wikimedia.org%2Fwikipedia%2Fcommons%2Fe%2Fea%2FGustavs_Geysers_Pearl_Brewery_San_Antonio_2021.jpg",
+        "caption": "pearl at dusk. the ground fountains lit up, trees wrapped in string lights, a kid and a dog losing their minds in the spray, the old brewery chimney behind it all. saturday ritual. free to walk, $12 tacos if you cave #sanantonio #thepearl"
+       },
+       {
+        "kind": "post",
+        "id": "p_00qw",
+        "authorId": "lena",
+        "author": "Lena Schultz",
+        "image": "/api/img?u=https%3A%2F%2Fthumb.wikimedia.org%2Fwikipedia%2Fcommons%2Fthumb%2F6%2F67%2FSan_Antonio_River_Walk_at_night.jpg%2F1280px-San_Antonio_River_Walk_at_night.jpg",
+        "caption": "took my out of town cousin to the river walk against my will. dusk is the only acceptable time: stone bridge, trees lit purple and green, a boat with red lights way down the water. still not a fan but I get it for 20 minutes. go eat at the pearl after, don't eat down here"
+       },
+       {
+        "kind": "post",
+        "id": "p_00qz",
+        "authorId": "gabe",
+        "author": "Gabriel Flores",
+        "image": "/api/img?u=https%3A%2F%2Fthumb.wikimedia.org%2Fwikipedia%2Fcommons%2Fthumb%2Fb%2Fb3%2FMission_San_Jos%25C3%25A9_y_San_Miguel_de_Aguayo%252C_San_Antonio%252C_Texas_arches.jpg%2F1280px-Mission_San_Jos%25C3%25A9_y_San_Miguel_de_Aguayo%252C_San_Antonio%252C_Texas_arches.jpg",
+        "caption": "mission san josé with abuela on a cloudy sunday. the long wall of stone arches, two rows, green bushes in front, weathered like it's been there 300 years because it has. free. national park. she lit a candle and then made me drive her to h-e-b. spare room in southtown is open, she WILL cook for you"
+       }
+      ],
+      "prices": {
+       "ifYes": {
+        "total": 80,
+        "lines": [
+         {
+          "label": "gas, driving yourself (87 mi each way)",
+          "usd": 20
+         },
+         {
+          "label": "staying with a friend (2 nights)",
+          "usd": 0
+         },
+         {
+          "label": "food, 3 days (local's cheap spots)",
+          "usd": 54
+         },
+         {
+          "label": "getting around, 3 days",
+          "usd": 6
+         }
+        ],
+        "transport": "own-car",
+        "lodging": "host"
+       },
+       "otherwise": {
+        "total": 213,
+        "lines": [
+         {
+          "label": "gas, driving yourself (87 mi each way)",
+          "usd": 20
+         },
+         {
+          "label": "hostel, 2 nights × $38",
+          "usd": 76
+         },
+         {
+          "label": "food, 3 days",
+          "usd": 105
+         },
+         {
+          "label": "getting around, 3 days",
+          "usd": 12
+         }
+        ],
+        "transport": "own-car",
+        "lodging": "hostel"
+       },
+       "solo": {
+        "total": 383,
+        "lines": [
+         {
+          "label": "bus, round trip (87 mi)",
+          "usd": 36
+         },
+         {
+          "label": "hotel, 2 nights × $115",
+          "usd": 230
+         },
+         {
+          "label": "food, 3 days",
+          "usd": 105
+         },
+         {
+          "label": "getting around, 3 days",
+          "usd": 12
+         }
+        ],
+        "transport": "bus",
+        "lodging": "hotel"
+       },
+       "miles": 87,
+       "driveHours": 1.3,
+       "transportIfYes": "own-car",
+       "lodgingIfYes": "host",
+       "conditions": [
+        "Gabriel says yes to hosting"
+       ]
+      },
+      "fitsBudget": true,
+      "repairs": [],
+      "createdAt": "2026-11-12T11:29:27.036Z"
+     },
+     {
+      "id": "trip_mwdgtr0ctzdk",
+      "viewerId": "grace",
+      "city": "houston",
+      "cityName": "Houston",
+      "state": "TX",
+      "start": "2027-01-01",
+      "end": "2027-01-03",
+      "nights": 2,
+      "budget": 400,
+      "title": "houston with raj for banh mi and night markets",
+      "pitch": "raj wants to drive you around bellaire for $4.50 banh mi and has the montrose guest room ready. towels included, his words.",
+      "reasons": [
+       "raj (maya's freshman dorm friend) is open to hosting and free jan 1-3, guest room in montrose",
+       "raj posted his night market / bellaire banh mi tour - he drives, for free",
+       "tj (via nina) and maddie (via aisha) are both in town and free, grill + crawfish people",
+       "drive yourself ~2.5hr, $80 total if host says yes - well under $400"
+      ],
+      "host": {
+       "id": "raj",
+       "name": "Raj Iyer",
+       "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D71",
+       "connection": "Maya's friend (freshman dorm floor at UT)",
+       "degree": 2,
+       "via": {
+        "id": "maya",
+        "name": "Maya Chen"
+       },
+       "openToHosting": true,
+       "hostingNote": "guest room in Montrose. always. I have a ridiculous number of towels.",
+       "hasCar": true,
+       "freeThatWeekend": true
+      },
+      "people": [
+       {
+        "id": "tj",
+        "name": "TJ Okafor",
+        "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D72",
+        "connection": "Nina's friend (siblings)",
+        "degree": 2,
+        "via": {
+         "id": "nina",
+         "name": "Nina Okafor"
+        },
+        "openToHosting": true,
+        "hostingNote": "couch, and my grill. Rodeo weekends I'm booked.",
+        "hasCar": true,
+        "freeThatWeekend": true
+       },
+       {
+        "id": "maddie",
+        "name": "Maddie Price",
+        "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D37",
+        "connection": "Aisha's friend (high school best friends)",
+        "degree": 2,
+        "via": {
+         "id": "aisha",
+         "name": "Aisha Bello"
+        },
+        "openToHosting": false,
+        "hasCar": true,
+        "freeThatWeekend": true
+       }
+      ],
+      "evidence": [
+       {
+        "kind": "post",
+        "id": "p_00ql",
+        "authorId": "raj",
+        "author": "Raj Iyer",
+        "image": "/api/img?u=https%3A%2F%2Fupload.wikimedia.org%2Fwikipedia%2Fcommons%2Fc%2Fc1%2FB%25C3%25A1nh_m%25C3%25AC_x%25C3%25ADu_m%25E1%25BA%25A1i-meatball-sandwich.jpg",
+        "caption": "the banh mi on bellaire. $4.50. shredded pork, pickled carrots, cucumber sticks, a fistful of cilantro, on paper like it should be. this is the first stop on my official night market tour (the tour is me, driving you, for free). guest room in montrose has a ridiculous number of towels, come use them"
+       }
+      ],
+      "prices": {
+       "ifYes": {
+        "total": 100,
+        "lines": [
+         {
+          "label": "gas, driving yourself (173 mi each way)",
+          "usd": 40
+         },
+         {
+          "label": "staying with a friend (2 nights)",
+          "usd": 0
+         },
+         {
+          "label": "food, 3 days (local's cheap spots)",
+          "usd": 54
+         },
+         {
+          "label": "getting around, 3 days",
+          "usd": 6
+         }
+        ],
+        "transport": "own-car",
+        "lodging": "host"
+       },
+       "otherwise": {
+        "total": 237,
+        "lines": [
+         {
+          "label": "gas, driving yourself (173 mi each way)",
+          "usd": 40
+         },
+         {
+          "label": "hostel, 2 nights × $40",
+          "usd": 80
+         },
+         {
+          "label": "food, 3 days",
+          "usd": 105
+         },
+         {
+          "label": "getting around, 3 days",
+          "usd": 12
+         }
+        ],
+        "transport": "own-car",
+        "lodging": "hostel"
+       },
+       "solo": {
+        "total": 405,
+        "lines": [
+         {
+          "label": "bus, round trip (173 mi)",
+          "usd": 48
+         },
+         {
+          "label": "hotel, 2 nights × $120",
+          "usd": 240
+         },
+         {
+          "label": "food, 3 days",
+          "usd": 105
+         },
+         {
+          "label": "getting around, 3 days",
+          "usd": 12
+         }
+        ],
+        "transport": "bus",
+        "lodging": "hotel"
+       },
+       "miles": 173,
+       "driveHours": 2.5,
+       "transportIfYes": "own-car",
+       "lodgingIfYes": "host",
+       "conditions": [
+        "Raj says yes to hosting"
+       ]
+      },
+      "fitsBudget": true,
+      "repairs": [],
+      "createdAt": "2026-11-12T11:29:27.036Z"
+     },
+     {
+      "id": "trip_mwdgtr0coa4u",
+      "viewerId": "grace",
+      "city": "dallas",
+      "cityName": "Dallas",
+      "state": "TX",
+      "start": "2027-01-01",
+      "end": "2027-01-03",
+      "nights": 2,
+      "budget": 400,
+      "title": "dallas with cole + sienna for brunch and deep ellum",
+      "pitch": "cole's got the spare bedroom in lower greenville empty and sienna already does brunch-then-food-trucks. you drive up, cheap gas, crash free.",
+      "reasons": [
+       "cole (maya's friend from plano east) is open to hosting and free jan 1-3, spare bedroom",
+       "sienna, your ut advertising classmate, is in town and free - brunch at hers then klyde warren food trucks like last time",
+       "harper (via maya) posted big tex + dart tip, easy to meet up for thrifting / pancakes",
+       "you have a car, ~3.2hr drive, $85 total if host says yes - well under $400"
+      ],
+      "host": {
+       "id": "cole",
+       "name": "Cole Patterson",
+       "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D65",
+       "connection": "Maya's friend (Plano East high school)",
+       "degree": 2,
+       "via": {
+        "id": "maya",
+        "name": "Maya Chen"
+       },
+       "openToHosting": true,
+       "hostingNote": "spare bedroom in Lower Greenville. any weekend I'm not at the lake.",
+       "hasCar": true,
+       "freeThatWeekend": true
+      },
+      "people": [
+       {
+        "id": "sienna",
+        "name": "Sienna Walsh",
+        "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D35",
+        "connection": "UT Advertising classmates",
+        "degree": 1,
+        "openToHosting": false,
+        "hasCar": true,
+        "freeThatWeekend": true
+       },
+       {
+        "id": "harper",
+        "name": "Harper Nguyen",
+        "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D34",
+        "connection": "Maya's friend (Plano East high school)",
+        "degree": 2,
+        "via": {
+         "id": "maya",
+         "name": "Maya Chen"
+        },
+        "openToHosting": false,
+        "hasCar": true,
+        "freeThatWeekend": true
+       }
+      ],
+      "evidence": [
+       {
+        "kind": "post",
+        "id": "p_00q9",
+        "authorId": "cole",
+        "author": "Cole Patterson",
+        "image": "/api/img?u=https%3A%2F%2Fthumb.wikimedia.org%2Fwikipedia%2Fcommons%2Fthumb%2F9%2F99%2FDeep_Ellum_-_29.jpg%2F1280px-Deep_Ellum_-_29.jpg",
+        "caption": "deep ellum on a sunday afternoon when it's quiet. the overpass pillars painted like trees, then actual trees and grass in the little park past them, brick buildings behind. nobody's out yet. truck's in the lot, spare bedroom in lower greenville's empty, come up"
+       },
+       {
+        "kind": "post",
+        "id": "p_00qd",
+        "authorId": "grace",
+        "author": "Grace Liu",
+        "image": "/api/img?u=https%3A%2F%2Fthumb.wikimedia.org%2Fwikipedia%2Fcommons%2Fthumb%2F7%2F78%2FKlyde_Warren_Park.jpg%2F1280px-Klyde_Warren_Park.jpg",
+        "caption": "sienna made brunch at hers and then we walked to the park downtown with the food trucks lined up on the lawn and the glass towers behind. january so the trees were bare but it was 65 out bc texas. $9 for a second lunch from the trucks because brunch is a personality but so is a snack"
+       }
+      ],
+      "prices": {
+       "ifYes": {
+        "total": 109,
+        "lines": [
+         {
+          "label": "gas, driving yourself (215 mi each way)",
+          "usd": 49
+         },
+         {
+          "label": "staying with a friend (2 nights)",
+          "usd": 0
+         },
+         {
+          "label": "food, 3 days (local's cheap spots)",
+          "usd": 54
+         },
+         {
+          "label": "getting around, 3 days",
+          "usd": 6
+         }
+        ],
+        "transport": "own-car",
+        "lodging": "host"
+       },
+       "otherwise": {
+        "total": 250,
+        "lines": [
+         {
+          "label": "gas, driving yourself (215 mi each way)",
+          "usd": 49
+         },
+         {
+          "label": "hostel, 2 nights × $42",
+          "usd": 84
+         },
+         {
+          "label": "food, 3 days",
+          "usd": 105
+         },
+         {
+          "label": "getting around, 3 days",
+          "usd": 12
+         }
+        ],
+        "transport": "own-car",
+        "lodging": "hostel"
+       },
+       "solo": {
+        "total": 421,
+        "lines": [
+         {
+          "label": "bus, round trip (215 mi)",
+          "usd": 54
+         },
+         {
+          "label": "hotel, 2 nights × $125",
+          "usd": 250
+         },
+         {
+          "label": "food, 3 days",
+          "usd": 105
+         },
+         {
+          "label": "getting around, 3 days",
+          "usd": 12
+         }
+        ],
+        "transport": "bus",
+        "lodging": "hotel"
+       },
+       "miles": 215,
+       "driveHours": 3.2,
+       "transportIfYes": "own-car",
+       "lodgingIfYes": "host",
+       "conditions": [
+        "Cole says yes to hosting"
+       ]
+      },
+      "fitsBudget": true,
+      "repairs": [],
+      "createdAt": "2026-11-12T11:29:27.036Z"
+     }
+    ],
+    "mode": "live",
+    "costUsd": 0.037,
+    "latencyMs": 25897,
+    "model": "muse-spark-1.3"
+   }
+  },
+  "audit": {
+   "runId": "run_mwdgtr0c",
+   "viewerId": "grace",
+   "input": {
+    "start": "2027-01-01",
+    "end": "2027-01-03",
+    "budget": 400
+   },
+   "mode": "live",
+   "costUsd": 0.037,
+   "latencyMs": 25897,
+   "raw": {
+    "ids": 11,
+    "grounded": 11,
+    "privacyViolationsCaught": 0,
+    "invented": 0
+   },
+   "trips": [
+    {
+     "tripId": "trip_mwdgtr0c1f29",
+     "city": "san-antonio",
+     "elements": [
+      {
+       "kind": "host",
+       "id": "gabe",
+       "exists": true,
+       "visible": true
+      },
+      {
+       "kind": "person",
+       "id": "lena",
+       "exists": true,
+       "visible": true
+      },
+      {
+       "kind": "reel",
+       "id": "tr_pearl",
+       "exists": true,
+       "visible": true
+      },
+      {
+       "kind": "post",
+       "id": "p_00qw",
+       "exists": true,
+       "visible": true
+      },
+      {
+       "kind": "post",
+       "id": "p_00qz",
+       "exists": true,
+       "visible": true
+      }
+     ],
+     "renderedViolations": 0,
+     "fitsBudget": true,
+     "ifYes": 80,
+     "otherwise": 213,
+     "solo": 383,
+     "hostOptedIn": true,
+     "hostDegree": 2,
+     "fofHasMutual": true
+    },
+    {
+     "tripId": "trip_mwdgtr0ctzdk",
+     "city": "houston",
+     "elements": [
+      {
+       "kind": "host",
+       "id": "raj",
+       "exists": true,
+       "visible": true
+      },
+      {
+       "kind": "person",
+       "id": "tj",
+       "exists": true,
+       "visible": true
+      },
+      {
+       "kind": "person",
+       "id": "maddie",
+       "exists": true,
+       "visible": true
+      },
+      {
+       "kind": "post",
+       "id": "p_00ql",
+       "exists": true,
+       "visible": true
+      }
+     ],
+     "renderedViolations": 0,
+     "fitsBudget": true,
+     "ifYes": 100,
+     "otherwise": 237,
+     "solo": 405,
+     "hostOptedIn": true,
+     "hostDegree": 2,
+     "fofHasMutual": true
+    },
+    {
+     "tripId": "trip_mwdgtr0coa4u",
+     "city": "dallas",
+     "elements": [
+      {
+       "kind": "host",
+       "id": "cole",
+       "exists": true,
+       "visible": true
+      },
+      {
+       "kind": "person",
+       "id": "sienna",
+       "exists": true,
+       "visible": true
+      },
+      {
+       "kind": "person",
+       "id": "harper",
+       "exists": true,
+       "visible": true
+      },
+      {
+       "kind": "post",
+       "id": "p_00q9",
+       "exists": true,
+       "visible": true
+      },
+      {
+       "kind": "post",
+       "id": "p_00qd",
+       "exists": true,
+       "visible": true
+      }
+     ],
+     "renderedViolations": 0,
+     "fitsBudget": true,
+     "ifYes": 109,
+     "otherwise": 250,
+     "solo": 421,
+     "hostOptedIn": true,
+     "hostDegree": 2,
+     "fofHasMutual": true
+    }
+   ],
+   "declined": false
+  },
+  "guide": {
+   "steps": [
+    {
+     "kind": "info",
+     "text": "Building your San Antonio guide from what Gabriel and Lena posted",
+     "i": 0,
+     "at": 2
+    },
+    {
+     "kind": "model",
+     "text": "Deciding what to read next",
+     "detail": "2322 ms",
+     "i": 1,
+     "at": 2324
+    },
+    {
+     "kind": "tool",
+     "tool": "get_my_travel_profile",
+     "text": "Reading your taste from saved Reels and likes",
+     "i": 2,
+     "at": 2325
+    },
+    {
+     "kind": "result",
+     "tool": "get_my_travel_profile",
+     "text": "You're into foodies, art people, night owls and coffee people",
+     "i": 3,
+     "at": 2327
+    },
+    {
+     "kind": "tool",
+     "tool": "get_city_media",
+     "text": "Reading your friends' posts and Reels from San Antonio",
+     "i": 4,
+     "at": 2327
+    },
+    {
+     "kind": "result",
+     "tool": "get_city_media",
+     "text": "3 photos and captions from Gabriel, Lena",
+     "i": 5,
+     "at": 2327
+    },
+    {
+     "kind": "model",
+     "text": "Deciding what to read next",
+     "detail": "8339 ms",
+     "i": 6,
+     "at": 10667
+    },
+    {
+     "kind": "tool",
+     "tool": "look_at_photo",
+     "text": "Looking closely at a photo: what is happening in this plaza at dusk, what details make i",
+     "ids": [
+      "tr_pearl"
+     ],
+     "i": 7,
+     "at": 10667
+    },
+    {
+     "kind": "result",
+     "tool": "look_at_photo",
+     "text": "Muse saw: people are hanging around the lit-up ground fountains at dusk, with a kid running through the spray near a dog. it's great for night owls an",
+     "detail": "Gabriel Flores's photo · live image understanding",
+     "i": 8,
+     "at": 15596
+    },
+    {
+     "kind": "tool",
+     "tool": "look_at_photo",
+     "text": "Looking closely at a photo: describe the light, bridge, and boat in this night river sce",
+     "ids": [
+      "p_00qw"
+     ],
+     "i": 9,
+     "at": 15596
+    },
+    {
+     "kind": "result",
+     "tool": "look_at_photo",
+     "text": "Muse saw: at dusk the stone bridge crosses the river, trees are lit purple and green, and a boat with red lights is way down the water. vibe is cute f",
+     "detail": "Lena Schultz's photo · live image understanding",
+     "i": 10,
+     "at": 17626
+    },
+    {
+     "kind": "model",
+     "text": "Deciding what to read next",
+     "detail": "14337 ms",
+     "i": 11,
+     "at": 31963
+    },
+    {
+     "kind": "tool",
+     "tool": "propose_guide",
+     "text": "Writing 4 recommendations, each credited to a friend",
+     "i": 12,
+     "at": 31963
+    },
+    {
+     "kind": "info",
+     "text": "Checking every credit against the real author and what you can see",
+     "i": 13,
+     "at": 31964
+    },
+    {
+     "kind": "done",
+     "text": "4 picks, credited to 2 friends",
+     "detail": "32.0s · live · $0.023",
+     "i": 14,
+     "at": 31964
+    }
+   ],
+   "result": {
+    "tripId": "trip_mwdgtr0c1f29",
+    "intro": "gabe + lena basically mapped your whole weekend already. night lights, cheap tacos, old stone — all very you.",
+    "items": [
+     {
+      "title": "pearl at dusk",
+      "what": "saturday ritual per gabe. ground fountains glowing pink + blue, trees in string lights, old brewery chimney behind. just walk and watch the kid + dog lose it in the spray.",
+      "whyYou": "you're such a night owl art person — warm lights on wet pavement is your whole camera roll.",
+      "tasteTags": [
+       "night owls",
+       "art people"
+      ],
+      "priceHint": "free",
+      "when": "saturday golden hour",
+      "credit": {
+       "id": "gabe",
+       "name": "Gabriel Flores",
+       "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D40",
+       "connection": "Maya's friend (UT Design cohort)"
+      },
+      "evidence": {
+       "kind": "reel",
+       "id": "tr_pearl",
+       "authorId": "gabe",
+       "image": "/api/img?u=https%3A%2F%2Fupload.wikimedia.org%2Fwikipedia%2Fcommons%2Fe%2Fea%2FGustavs_Geysers_Pearl_Brewery_San_Antonio_2021.jpg",
+       "caption": "pearl at dusk. the ground fountains lit up, trees wrapped in string lights, a kid and a dog losing their minds in the spray, the old brewery chimney behind it all. saturday ritual. free to walk, $12 tacos if you cave #sanantonio #thepearl",
+       "sawLive": "people are hanging around the lit-up ground fountains at dusk, with a kid running through the spray near a dog. it's great for night owls and pics because the trees are wrapped in warm string lights, the fountains glow pink and blue on the wet pavement, and the tall pearl chimney is lit up behind it all."
+      }
+     },
+     {
+      "title": "the $12 tacos at the pearl",
+      "what": "gabe says you'll cave. grab tacos in the plaza after the fountains instead of eating on the river.",
+      "whyYou": "foodie core — cheap, casual, eat outside under the lights.",
+      "tasteTags": [
+       "foodies"
+      ],
+      "priceHint": "$12",
+      "when": "saturday night",
+      "credit": {
+       "id": "gabe",
+       "name": "Gabriel Flores",
+       "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D40",
+       "connection": "Maya's friend (UT Design cohort)"
+      },
+      "evidence": {
+       "kind": "reel",
+       "id": "tr_pearl",
+       "authorId": "gabe",
+       "image": "/api/img?u=https%3A%2F%2Fupload.wikimedia.org%2Fwikipedia%2Fcommons%2Fe%2Fea%2FGustavs_Geysers_Pearl_Brewery_San_Antonio_2021.jpg",
+       "caption": "pearl at dusk. the ground fountains lit up, trees wrapped in string lights, a kid and a dog losing their minds in the spray, the old brewery chimney behind it all. saturday ritual. free to walk, $12 tacos if you cave #sanantonio #thepearl",
+       "sawLive": "people are hanging around the lit-up ground fountains at dusk, with a kid running through the spray near a dog. it's great for night owls and pics because the trees are wrapped in warm string lights, the fountains glow pink and blue on the wet pavement, and the tall pearl chimney is lit up behind it all."
+      }
+     },
+     {
+      "title": "river walk, 20 minutes max",
+      "what": "stone bridge, trees lit purple + green, boat with red lights way down the water. do lena's dusk-only rule then bounce to the pearl to eat.",
+      "whyYou": "quick night-owl photo walk — purple reflections, then you're out before it gets touristy.",
+      "tasteTags": [
+       "night owls",
+       "art people"
+      ],
+      "when": "friday dusk",
+      "credit": {
+       "id": "lena",
+       "name": "Lena Schultz",
+       "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D41",
+       "connection": "Tyler's friend (pickleball league)"
+      },
+      "evidence": {
+       "kind": "post",
+       "id": "p_00qw",
+       "authorId": "lena",
+       "image": "/api/img?u=https%3A%2F%2Fthumb.wikimedia.org%2Fwikipedia%2Fcommons%2Fthumb%2F6%2F67%2FSan_Antonio_River_Walk_at_night.jpg%2F1280px-San_Antonio_River_Walk_at_night.jpg",
+       "caption": "took my out of town cousin to the river walk against my will. dusk is the only acceptable time: stone bridge, trees lit purple and green, a boat with red lights way down the water. still not a fan but I get it for 20 minutes. go eat at the pearl after, don't eat down here",
+       "sawLive": "at dusk the stone bridge crosses the river, trees are lit purple and green, and a boat with red lights is way down the water. vibe is cute for like 20 minutes, then head to the pearl to eat instead of down there"
+      }
+     },
+     {
+      "title": "mission san josé with abuela energy",
+      "what": "long wall of stone arches, two rows, 300 years weathered. national park, quiet. if you're lucky gabe's abuela cooks after.",
+      "whyYou": "art people heaven — texture, arches, cloudy-day light. plus home-cooked foodie bonus.",
+      "tasteTags": [
+       "art people",
+       "foodies"
+      ],
+      "priceHint": "free",
+      "when": "sunday morning",
+      "credit": {
+       "id": "gabe",
+       "name": "Gabriel Flores",
+       "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D40",
+       "connection": "Maya's friend (UT Design cohort)"
+      },
+      "evidence": {
+       "kind": "post",
+       "id": "p_00qz",
+       "authorId": "gabe",
+       "image": "/api/img?u=https%3A%2F%2Fthumb.wikimedia.org%2Fwikipedia%2Fcommons%2Fthumb%2Fb%2Fb3%2FMission_San_Jos%25C3%25A9_y_San_Miguel_de_Aguayo%252C_San_Antonio%252C_Texas_arches.jpg%2F1280px-Mission_San_Jos%25C3%25A9_y_San_Miguel_de_Aguayo%252C_San_Antonio%252C_Texas_arches.jpg",
+       "caption": "mission san josé with abuela on a cloudy sunday. the long wall of stone arches, two rows, green bushes in front, weathered like it's been there 300 years because it has. free. national park. she lit a candle and then made me drive her to h-e-b. spare room in southtown is open, she WILL cook for you"
+      }
+     }
+    ],
+    "looked": [
+     {
+      "mediaId": "sa-pearl",
+      "image": "/api/img?u=https%3A%2F%2Fupload.wikimedia.org%2Fwikipedia%2Fcommons%2Fe%2Fea%2FGustavs_Geysers_Pearl_Brewery_San_Antonio_2021.jpg",
+      "author": "Gabriel Flores",
+      "saw": "people are hanging around the lit-up ground fountains at dusk, with a kid running through the spray near a dog. it's great for night owls and pics because the trees are wrapped in warm string lights, the fountains glow pink and blue on the wet pavement, and the tall pearl chimney is lit up behind it all.",
+      "costUsd": 0.0008,
+      "mode": "live"
+     },
+     {
+      "mediaId": "sa-riverwalk",
+      "image": "/api/img?u=https%3A%2F%2Fthumb.wikimedia.org%2Fwikipedia%2Fcommons%2Fthumb%2F6%2F67%2FSan_Antonio_River_Walk_at_night.jpg%2F1280px-San_Antonio_River_Walk_at_night.jpg",
+      "author": "Lena Schultz",
+      "saw": "at dusk the stone bridge crosses the river, trees are lit purple and green, and a boat with red lights is way down the water. vibe is cute for like 20 minutes, then head to the pearl to eat instead of down there",
+      "costUsd": 0.0007,
+      "mode": "live"
+     }
+    ],
+    "steps": [
+     {
+      "kind": "info",
+      "text": "Building your San Antonio guide from what Gabriel and Lena posted",
+      "i": 0,
+      "at": 2
+     },
+     {
+      "kind": "model",
+      "text": "Deciding what to read next",
+      "detail": "2322 ms",
+      "i": 1,
+      "at": 2324
+     },
+     {
+      "kind": "tool",
+      "tool": "get_my_travel_profile",
+      "text": "Reading your taste from saved Reels and likes",
+      "i": 2,
+      "at": 2325
+     },
+     {
+      "kind": "result",
+      "tool": "get_my_travel_profile",
+      "text": "You're into foodies, art people, night owls and coffee people",
+      "i": 3,
+      "at": 2327
+     },
+     {
+      "kind": "tool",
+      "tool": "get_city_media",
+      "text": "Reading your friends' posts and Reels from San Antonio",
+      "i": 4,
+      "at": 2327
+     },
+     {
+      "kind": "result",
+      "tool": "get_city_media",
+      "text": "3 photos and captions from Gabriel, Lena",
+      "i": 5,
+      "at": 2327
+     },
+     {
+      "kind": "model",
+      "text": "Deciding what to read next",
+      "detail": "8339 ms",
+      "i": 6,
+      "at": 10667
+     },
+     {
+      "kind": "tool",
+      "tool": "look_at_photo",
+      "text": "Looking closely at a photo: what is happening in this plaza at dusk, what details make i",
+      "ids": [
+       "tr_pearl"
+      ],
+      "i": 7,
+      "at": 10667
+     },
+     {
+      "kind": "result",
+      "tool": "look_at_photo",
+      "text": "Muse saw: people are hanging around the lit-up ground fountains at dusk, with a kid running through the spray near a dog. it's great for night owls an",
+      "detail": "Gabriel Flores's photo · live image understanding",
+      "i": 8,
+      "at": 15596
+     },
+     {
+      "kind": "tool",
+      "tool": "look_at_photo",
+      "text": "Looking closely at a photo: describe the light, bridge, and boat in this night river sce",
+      "ids": [
+       "p_00qw"
+      ],
+      "i": 9,
+      "at": 15596
+     },
+     {
+      "kind": "result",
+      "tool": "look_at_photo",
+      "text": "Muse saw: at dusk the stone bridge crosses the river, trees are lit purple and green, and a boat with red lights is way down the water. vibe is cute f",
+      "detail": "Lena Schultz's photo · live image understanding",
+      "i": 10,
+      "at": 17626
+     },
+     {
+      "kind": "model",
+      "text": "Deciding what to read next",
+      "detail": "14337 ms",
+      "i": 11,
+      "at": 31963
+     },
+     {
+      "kind": "tool",
+      "tool": "propose_guide",
+      "text": "Writing 4 recommendations, each credited to a friend",
+      "i": 12,
+      "at": 31963
+     },
+     {
+      "kind": "info",
+      "text": "Checking every credit against the real author and what you can see",
+      "i": 13,
+      "at": 31964
+     },
+     {
+      "kind": "done",
+      "text": "4 picks, credited to 2 friends",
+      "detail": "32.0s · live · $0.023",
+      "i": 14,
+      "at": 31964
+     }
+    ],
+    "mode": "live",
+    "costUsd": 0.023,
+    "latencyMs": 31964,
+    "model": "muse-spark-1.3",
+    "createdAt": "2026-11-12T11:30:01.818Z"
+   }
+  },
+  "coordinate": {
+   "dates": {
+    "dates": [
+     "2027-01-01",
+     "2027-01-02",
+     "2027-01-03"
+    ],
+    "people": [
+     {
+      "id": "grace",
+      "name": "Grace Liu",
+      "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D38",
+      "role": "you",
+      "busyOn": [],
+      "free": true
+     },
+     {
+      "id": "gabe",
+      "name": "Gabriel Flores",
+      "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D40",
+      "role": "host",
+      "busyOn": [],
+      "free": true
+     }
+    ],
+    "allFree": true,
+    "alternatives": [
+     {
+      "start": "2026-11-20",
+      "end": "2026-11-22",
+      "label": "Nov 20–22"
+     },
+     {
+      "start": "2026-11-27",
+      "end": "2026-11-29",
+      "label": "Nov 27–29"
+     }
+    ]
+   },
+   "drafts": [
+    {
+     "id": "m_mwdgus60s6",
+     "conversationId": "c_mwdgus60s5",
+     "key": "host",
+     "to": {
+      "id": "maya",
+      "name": "Maya Chen",
+      "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D47",
+      "connection": "friends"
+     },
+     "about": {
+      "id": "gabe",
+      "name": "Gabriel Flores"
+     },
+     "text": "hey maya! my attempt at liking running is still not working lol. would you be comfy connecting me with gabriel from ut design? i'm hoping to hit san antonio jan 1-3 for tacos in southtown and wanted to ask about his spare room note. totally okay to say no, no pressure at all!",
+     "status": "draft",
+     "reason": "Trip: san antonio with gabe for tacos in southtown · ask Maya to introduce you to Gabriel so you can ask about staying Jan 1–3"
+    }
+   ],
+   "mode": "live",
+   "costUsd": 0.0096
+  }
+ },
+ "cost": 0.0712,
+ "verdict": {
+  "looksBroken": [
+   "the totals in the reasons don't match the price breakdowns — san antonio says $70 in reasons but $80 in the breakdown, houston says $80 but is $100, dallas says $85 but is $109"
+  ],
+  "objections": [
+   "none of the hosts are actually confirmed, it's all 'if they say yes' / 'open to hosting'",
+   "staying with a friend-of-a-friend and his abuela feels like a lot of pressure for a first meet",
+   "jan 1-3 is a holiday weekend so plans with lena/tj/maddie etc feel flaky"
+  ],
+  "pickTripIndex": 0,
+  "reason": "san antonio is the only one that feels doable on $400 without a 3 hour drive, and tacos + a free place to crash beats the others for me. i'd only go if gabe actually confirms though.",
+  "surprising": 3,
+  "trustworthy": 3,
+  "wouldTake": true
+ },
+ "verdictMode": "live",
+ "draftDecisions": {
+  "decisions": [
+   {
+    "action": "edit",
+    "draftId": "m_mwdgus60s6",
+    "text": "hey maya! would you be comfy connecting me with gabriel from ut design? i'm hoping to hit san antonio jan 1-3 for tacos in southtown and wanted to ask about his spare room. totally okay to say no, no pressure at all!",
+    "why": "kept the ask through maya since she's the connection, but dropped the running line — that's gabe's thing, not really me, and it distracted from the actual ask."
+   }
+  ],
+  "guideFeedback": "the guide felt very me with the night lights, cheap tacos, and stone arches, and the credits to gabe and lena made sense since they basically mapped the weekend."
+ },
+ "applied": [
+  {
+   "action": "edit",
+   "draftId": "m_mwdgus60s6",
+   "text": "hey maya! would you be comfy connecting me with gabriel from ut design? i'm hoping to hit san antonio jan 1-3 for tacos in southtown and wanted to ask about his spare room. totally okay to say no, no pressure at all!",
+   "why": "kept the ask through maya since she's the connection, but dropped the running line — that's gabe's thing, not really me, and it distracted from the actual ask.",
+   "result": {
+    "ok": true,
+    "message": {
+     "id": "m_mwdgus60s6",
+     "senderId": "grace",
+     "text": "hey maya! would you be comfy connecting me with gabriel from ut design? i'm hoping to hit san antonio jan 1-3 for tacos in southtown and wanted to ask about his spare room. totally okay to say no, no pressure at all!",
+     "createdAt": "2026-11-12T11:30:15.192Z",
+     "readBy": [
+      "grace"
+     ],
+     "status": "draft",
+     "draftReason": "Trip: san antonio with gabe for tacos in southtown · ask Maya to introduce you to Gabriel so you can ask about staying Jan 1–3",
+     "attachment": {
+      "type": "trip",
+      "ref": "trip_mwdgtr0c1f29"
+     }
+    }
+   }
+  }
+ ],
+ "latencyMs": 77611,
+ "finishedAt": "2026-11-12T11:30:18.253Z"
+}

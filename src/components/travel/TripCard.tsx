@@ -57,7 +57,7 @@ export function TripCard({ trip, compact }: { trip: Trip; compact?: boolean }) {
         </div>
       )}
       <div className="px-4 pt-3">
-        <div className="flex items-center gap-1.5 text-[12px] font-semibold uppercase tracking-wide text-fb"><Calendar size={12} /> {fmt(trip.start)} – {fmt(trip.end)} · {trip.nights} night{trip.nights === 1 ? "" : "s"}</div>
+        <div className="flex items-center gap-1.5 text-[12px] font-semibold uppercase tracking-wide text-fb"><Calendar size={12} /> {trip.nights === 0 ? `${fmt(trip.start)} · day trip` : `${fmt(trip.start)} – ${fmt(trip.end)} · ${trip.nights} night${trip.nights === 1 ? "" : "s"}`}</div>
         <h3 className="mt-0.5 text-[19px] font-bold leading-tight">{trip.title}</h3>
         {!compact && <p className="mt-1.5 text-[14.5px] leading-snug text-ink">{trip.pitch}</p>}
         <div className="mt-3"><PriceLine trip={trip} /></div>
@@ -92,7 +92,7 @@ export function TripCard({ trip, compact }: { trip: Trip; compact?: boolean }) {
           </div>
         )}
         <div className="mt-3 flex items-center gap-3 border-t border-line/60 py-2.5 text-[12px] text-ink-2">
-          <span className="flex items-center gap-1"><Home size={13} /> {trip.host ? `stay with ${first(trip.host.name)}` : "hostel"}</span>
+          <span className="flex items-center gap-1"><Home size={13} /> {trip.nights === 0 ? "back the same night" : trip.host ? `stay with ${first(trip.host.name)}` : "hostel"}</span>
           <span className="flex items-center gap-1"><Car size={13} /> {trip.prices.transportIfYes === "ride" ? `ride with ${first(trip.ride!.driver.name)}` : trip.prices.transportIfYes}</span>
           <span className="flex items-center gap-1"><Users size={13} /> {trip.people.length + (trip.host ? 1 : 0) + (trip.ride ? 1 : 0)} people you know</span>
           <span className="ml-auto flex items-center gap-1"><BedDouble size={13} /> {trip.prices.miles} mi</span>
