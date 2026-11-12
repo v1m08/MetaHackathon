@@ -85,3 +85,8 @@ body { background: var(--color-bg); color: var(--color-ink); font-family: var(--
 }
 .hang-banner-pos { top: calc(env(safe-area-inset-top, 0px) + 8px); }
 .phone .hang-banner-pos { top: 50px; }
+/* Muse Image critters: moods as filters on top of the drawn art */
+.crit-art { transition: filter .4s ease; }
+.crit-napping .crit-art { filter: saturate(.72) brightness(.98); }
+.crit-sleepy .crit-art { filter: saturate(.88); }
+.crit-resting .crit-art { filter: saturate(.85); }

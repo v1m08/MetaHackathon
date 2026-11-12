@@ -1,6 +1,9 @@
 // View models for the Hangout screens and the demo panel. Blocked friends never appear in any of these.
 import { CALENDARS, GATHERINGS, ME } from "@/data/hangout/seed";
 import { SCENARIOS } from "@/data/hangout/scenarios";
+import { existsSync } from "node:fs";
+import { join } from "node:path";
+import { artCaption } from "@/lib/hangout/art";
 import type { EvidenceItem } from "@/lib/hangout/evidence";
 import type { CritterState, Friend, Nudge } from "@/lib/hangout/types";
 import { hasKey, museModelId, recordedKeys } from "./muse";
@@ -9,6 +12,10 @@ import { builtMemory, critterStateFor, evidenceIndex, firstName, friendById, han
 import { daysBetween } from "@/lib/hangout/sleep";
 
 const notFound = () => Object.assign(new Error("Not found"), { status: 404 });
+
+/** Muse Image critter art for this friend, if it's been drawn (public/seed/critters/art). Falls back to SVG parts. */
+const ART_DIR = "/seed/critters/art";
+export const critterArt = (friendId: string) => (existsSync(join(process.cwd(), "public", ART_DIR, `${friendId}.webp`)) ? `${ART_DIR}/${friendId}.webp` : undefined);
 
 export function critterCard(f: Friend) {
   const s = hang();
@@ -21,7 +28,7 @@ export function critterCard(f: Friend) {
     first: firstName(f.name),
     avatar: f.avatarPhoto,
     state,
-    design: { ...design, keepsakes: s.keepsakes[f.id] ?? [] },
+    design: { ...design, keepsakes: s.keepsakes[f.id] ?? [], image: critterArt(f.id) },
     daysSince: sleep.daysSince,
     rhythmDays: sleep.rhythmDays,
     lastTwoWayChat: sleep.lastTwoWayChat?.date ?? null,
@@ -127,7 +134,7 @@ export function friendView(friendId: string) {
     city: f.city,
     isResting: f.isResting,
     isCloseCircle: f.isCloseCircle,
-    why: card.design.why,
+    why: card.design.image && mem ? artCaption(mem) : card.design.why,
     sleep: { daysSince: sleep.daysSince, rhythmDays: sleep.rhythmDays, ratio: sleep.ratio, lastRealContact: sleep.lastRealContact?.date ?? null },
     lastChat: last ? { date: last.date.slice(0, 10), daysAgo: daysBetween(last.date.slice(0, 10), s.demoDate), text: last.text, sender: last.sender === "me" ? "You" : card.first } : null,
     sharedPlaces: (mem?.sharedPlaces ?? []).map((p) => ({ ...p, photos: p.photoIds.map(photoById).filter((x) => !!x) })),

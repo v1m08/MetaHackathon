@@ -8,6 +8,7 @@ for (const f of [".env.local", ".env"]) if (existsSync(f)) process.loadEnvFile(f
 
 import { PLACES } from "@/data/hangout/seed";
 import { ai } from "@/lib/ai";
+import { ART, artKey } from "@/lib/hangout/art";
 import { colorById } from "@/lib/hangout/parts";
 import { builtMemory, hang } from "@/server/hangout/store";
 
@@ -88,17 +89,6 @@ const ANIMAL: Record<string, { species: string; detail: string }> = {
   campus: { species: "penguin", detail: "wearing a tiny backpack" },
 };
 
-/** Soft style: cleaner and rounder, natural muted pastels, one tiny detail per friendship. */
-const SOFT: Record<string, { species: string; color: string; detail: string }> = {
-  ramen: { species: "kitten with little pointed ears", color: "soft coral-pink", detail: "holding a tiny bowl of ramen" },
-  goose: { species: "baby goose with a small orange beak", color: "soft dove-grey", detail: "with a tiny white feather tucked behind one wing" },
-  school: { species: "bunny with tall ears", color: "soft butter-yellow", detail: "with a tiny star clip on one ear" },
-  run: { species: "fox with a fluffy cream-tipped tail", color: "soft peach-orange", detail: "wearing a tiny red sweatband" },
-  movies: { species: "bear cub with round ears", color: "warm honey-tan", detail: "wearing tiny round glasses" },
-  swim: { species: "round baby seal with whiskers", color: "pale sky-blue", detail: "with a tiny pink flower on its head" },
-  campus: { species: "penguin with a cream belly and a small yellow beak", color: "soft lilac", detail: "wearing a tiny backpack" },
-};
-
 function themeKey(m: NonNullable<ReturnType<typeof builtMemory>>) {
   if (m.insideJokes.some((j) => /goose/i.test(j.phrase))) return "goose";
   const kinds = m.sharedPlaces.map((p) => PLACES.find((x) => x.name === p.name)?.kind);
@@ -121,7 +111,7 @@ function promptFor(friendId: string) {
   if (!m) return null;
   const c = colorById(m.critter.color);
   if (STYLE === "soft") {
-    const a = SOFT[themeKey(m)];
+    const a = ART[artKey(m).key];
     return `An original kawaii plush animal character: a ${a.species} in ${a.color}, ${a.detail}. ${STYLE_TEXT.soft}`;
   }
   if (STYLE === "fuzzy") {

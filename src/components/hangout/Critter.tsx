@@ -12,6 +12,8 @@ export interface DesignLike {
   color: string;
   accessory: string;
   keepsakes?: string[];
+  /** Muse Image art for this friendship. When set, it replaces the SVG body (moods are drawn on top). */
+  image?: string;
 }
 
 const INK = "#2B2B33";
@@ -220,6 +222,19 @@ function Confetti({ petals }: { petals?: boolean }) {
   );
 }
 
+/** Muse Image critter: the drawn character with the same mood animations, plus a dim for napping. */
+function ImageArt({ design, state, showKeepsakes }: { design: DesignLike; state: CritterState; showKeepsakes: boolean }) {
+  return (
+    <>
+      <g className="crit-body">
+        <image href={design.image} x={4} y={2} width={112} height={112} preserveAspectRatio="xMidYMax meet" className="crit-art" />
+        {showKeepsakes && !!design.keepsakes?.length && <Pins ids={design.keepsakes} x={102} y={100} vertical />}
+      </g>
+      {state === "hatching" && <path className="crit-shell" d="M28 90 L36 83 L44 91 L52 83 L60 91 L68 83 L76 91 L84 83 L92 90 C92 105 79 114 60 114 C41 114 28 105 28 90 Z" fill="#FFF6E5" stroke="#EAD9BC" strokeWidth={2} />}
+    </>
+  );
+}
+
 function CritterArt({ design, state, showKeepsakes }: { design: DesignLike; state: CritterState; showKeepsakes: boolean }) {
   const c = colorById(design.color);
   const a = ANCHOR[design.body] ?? ANCHOR.blob;
@@ -379,11 +394,12 @@ function PlantArt({ design, state, showKeepsakes }: { design: DesignLike; state:
 
 export function Critter({ design, state, theme = "critters", size = 96, showKeepsakes = true, className, label }: { design: DesignLike; state: CritterState; theme?: Theme; size?: number; showKeepsakes?: boolean; className?: string; label?: string }) {
   const plants = theme === "plants";
+  const art = !plants && !!design.image && state !== "egg";
   return (
     <svg viewBox="0 0 120 120" width={size} height={size} className={cx("crit overflow-visible", `crit-${state}`, className)} role="img" aria-label={label}>
-      <ellipse cx={60} cy={110} rx={state === "egg" ? 24 : 32} ry={5} fill="rgba(60,40,20,.12)" />
-      {plants ? <PlantArt design={design} state={state} showKeepsakes={showKeepsakes} /> : <CritterArt design={design} state={state} showKeepsakes={showKeepsakes} />}
-      {(state === "napping" || (state === "resting" && !plants)) && <Zzz x={plants ? 82 : 86} y={plants ? 50 : 34} />}
+      {!art && <ellipse cx={60} cy={110} rx={state === "egg" ? 24 : 32} ry={5} fill="rgba(60,40,20,.12)" />}
+      {plants ? <PlantArt design={design} state={state} showKeepsakes={showKeepsakes} /> : art ? <ImageArt design={design} state={state} showKeepsakes={showKeepsakes} /> : <CritterArt design={design} state={state} showKeepsakes={showKeepsakes} />}
+      {(state === "napping" || (state === "resting" && !plants)) && <Zzz x={plants ? 82 : art ? 90 : 86} y={plants ? 50 : art ? 22 : 34} />}
       {state === "celebrating" && <Confetti petals={plants} />}
     </svg>
   );
