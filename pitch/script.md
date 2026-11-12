@@ -23,3 +23,17 @@ Numbers in brackets come from `EVAL.md` / `PERSONAS.md`; read the final files be
 - If the stream shows "replaying a recorded run", say "the API blinked, so it's replaying a real run from this morning, re-checked against today's data" and keep going. The badge says REPLAY; don't hide it.
 - Animations: agent ≈ 18 s, swarm ≈ 17 s. Never both back to back without a sentence between them.
 - Persona study: one or two sentences, always with the word "simulated".
+
+## Open Door (the paradigm shift; replaces slides 3–7 if you demo it)
+
+**Line:** "Your agent asks so you don't have to. Then you talk."
+
+| Time | Say | Do |
+|---|---|---|
+| 0:00–0:25 | "Asking someone you barely know 'can I crash at yours' is awkward enough that most people never ask. So they book a hotel or don't go. Open Door makes the ask effortless, and it does it without anyone over-sharing." | Slide: the line. |
+| 0:25–0:55 | "Gabriel wrote this: spare room in Southtown, abuela cooks, UT design people and friends, two people. That's the whole interface. His agent can only act inside it." | Window B: Gabriel's profile, Open Door card. |
+| 0:55–1:50 | "Maya gives a weekend and a budget. The agent maps her network, then reads what people actually said about those dates: RSVPs, posts, her own chats with them. No seeded calendar. Cole: likely free, with the quote. Gabriel: unknown, so we'll ask." | Window A: Discover → cards → Make it happen grid. |
+| 1:50–2:50 | "Now her agent asks their agents. It never sends her name; code strips it. Gabriel's agent answers yes, no or conditions, from the policy. The shield line is the disclosure check: anything beyond the policy is removed before it comes back. Both sides get a fit, grounded in their own words." | Window A: Ask their agents → transcript → fit card → Yes, ask them. |
+| 2:50–3:30 | "Gabriel sees: a friend of yours wants to stay Dec 11–13, your agent says it fits. Not who. He chooses to look. Both revealed, with how they know each other, and he decides last. Then a real chat opens and the agents are gone." | Window B: See who → reveal → Yes, open the chat. Window A: Messenger. |
+| 3:30–4:00 | "We threw 30 adversarial probes at the host agents: schedule questions, addresses, relationships, prompt injections. [X] leaked after the code scrubber. 16 policy cases: [Y] respected. Numbers in EVAL-OPENDOOR.md." | Numbers slide. |
+| 4:00–4:20 | "Change the policy and the answer changes. The policy is the product. Where can your people take you?" | Optional: edit Gabriel's tier, re-run. |

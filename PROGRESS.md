@@ -1,5 +1,7 @@
 # PROGRESS
 
+Running Muse spend (ledger, with 1.5× margin): **≈$6.9** at 19:30 PST after the Open Door build (negotiations, availability inference, styles, Open Door evals). Earlier: ≈$6.0 at the end of the first feature.
+
 Running Muse spend (ledger, with 1.5× margin): **≈$5.2** at 04:15 PST (see `npm run ledger`; final eval $0.61, two 16-persona swarms $0.84 + $0.99, judge review, QA inputs ≈$0.4)
 
 Earlier: **$1.46** at 03:17 PST (probes ≈$0.03 by hand + ledger; baseline eval $0.55; judge review ≈$0.12)
@@ -66,6 +68,11 @@ Earlier: **$0.26** at 02:50 PST (probes ≈$0.03 by hand + ledger $0.23: media i
 - Replay (offline) mode: `npm run replay:on` → Discover answers in 7s from a recorded real run, badge REPLAY, trips re-validated; `replay:off` restores live. Fully offline was not tested with the network physically off; every non-Muse dependency (images, prices, seed) is local and the image cache was warmed (`npm run warm`; a handful of picsum URLs time out intermittently and fall back to gradients).
 - `npm test` 14/14, `npm run typecheck` clean, `npm run build` clean.
 - Browser-driven checks of the full flow as Maya with Cole's and Raj's inboxes in a second identity: done repeatedly during the build (screenshots in `pitch/shots/`); `pitch/demo-backup.gif` is a 36-frame recording of the whole path.
+
+## Milestone 14 — Open Door (branch `travel`) ✔ (19:30 PST)
+- Done, in priority order: (1) Open Door intake: policy in own words + tier + offers + max guests on Profile, 38 seeded policies, event "Driving, N seats" creates a real ride; (2) Travel style card from own content with verified evidence, edit/delete/refresh, conclusions-only to other agents; (3) `infer_availability` from RSVPs, visible posts and the requester's own chats, calibrated labels in the grid, one-tap "Ask" drafted for approval, seeded signal posts/chat lines, `busyDates` no longer read; (4) agent-to-agent negotiation: traveler tool loop ↔ host agents behind a strict schema + code scrubber, parallel asks, live transcript on the trip page and in the Inspector; (5) anonymous fit → traveler accept → host "See who" → reveal with connection facts → host's final yes opens a Messenger chat with a context line; (6) `scripts/eval-opendoor.mjs`: 30 privacy probes, 16 policy-compliance cases, 10-traveler blind match set → `EVAL-OPENDOOR.md`.
+- Verified: two-window flow in the browser (Maya ↔ Gabriel): negotiation 25 s / $0.03, reveal, chat; 20 tests pass; typecheck clean; live Discover with the new tool 37 s / $0.055.
+- Known issues: Discover sometimes prices Dallas by bus even when Owen/Ravi rides exist (agent choice; the earlier prompt picked rides more often); `main` still needs its force-reset to the mockup commit by a human; deck/animations still describe the first feature (script.md has an Open Door section).
 
 ## Not done / cut
 - Recap (post-trip story) was the stretch goal and was not built; everything in the Definition of Done ahead of it is.

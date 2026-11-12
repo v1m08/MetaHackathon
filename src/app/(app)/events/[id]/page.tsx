@@ -2,17 +2,17 @@
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState } from "react";
-import { Calendar, Check, ChevronRight, Compass, MapPin, Share2, Star, Ticket, Users } from "lucide-react";
+import { Calendar, Car, Check, ChevronRight, Compass, MapPin, Share2, Star, Ticket, Users } from "lucide-react";
 import { PostCard } from "@/components/Post";
 import { Shell, useMe } from "@/components/Shell";
 import { Avatar, Button, Photo, cx } from "@/components/ui";
-import { api, useApi } from "@/lib/api";
+import { api, refresh, useApi } from "@/lib/api";
 import { eventDate, eventDay } from "@/lib/format";
 import type { HydratedPost } from "@/server/db";
 import type { FBEvent, Group } from "@/types";
 
 type Card = { id: string; name: string; avatar: string };
-type E = FBEvent & { host?: Card; hostGroup?: Group; myStatus: "going" | "interested" | "none"; goingUsers: Card[]; interestedUsers: Card[]; friendsGoing: Card[]; posts: HydratedPost[] };
+type E = FBEvent & { host?: Card; hostGroup?: Group; myStatus: "going" | "interested" | "none"; goingUsers: Card[]; interestedUsers: Card[]; friendsGoing: Card[]; posts: HydratedPost[]; myRide: { id: string; seatsOpen: number } | null; outOfTownForMe: boolean };
 
 export default function EventPage() {
   const { id } = useParams<{ id: string }>();
@@ -68,6 +68,16 @@ export default function EventPage() {
               <Star size={16} /> Interested
             </Button>
           </div>
+          {e.outOfTownForMe && (
+            <div className="mt-2 flex items-center gap-2 rounded-xl bg-[#f0f2f5] px-3 py-2 text-[13.5px]">
+              <Car size={16} className="text-fb" />
+              <span className="flex-1">{e.myRide ? <><b className="font-semibold">You&apos;re driving</b> · {e.myRide.seatsOpen} seat{e.myRide.seatsOpen === 1 ? "" : "s"} open. Friends&apos; agents can ask for one.</> : <><b className="font-semibold">Driving there?</b> <span className="text-ink-2">Share your empty seats with your people.</span></>}</span>
+              <select value={e.myRide?.seatsOpen ?? 0} onChange={async (ev) => { await api(`/api/events/${e.id}/rsvp`, { method: "POST", json: { drivingSeats: Number(ev.target.value) } }); mutate(); refresh("/api/travel/options"); }} className="rounded-lg border border-line bg-white px-2 py-1 text-[13px]">
+                <option value={0}>not driving</option>
+                {[1, 2, 3, 4].map((n) => <option key={n} value={n}>{n} seat{n === 1 ? "" : "s"}</option>)}
+              </select>
+            </div>
+          )}
           {outOfTown && (
             <Link href={tripHref} className="mt-2 flex items-center gap-3 rounded-xl border border-fb/30 bg-fb/5 px-3 py-2.5">
               <span className="flex h-9 w-9 items-center justify-center rounded-full bg-fb text-white"><Compass size={18} /></span>

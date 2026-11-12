@@ -1,155 +1,153 @@
-# Where can my people take me?
+# Open Door — agent-to-agent travel on Facebook
 
-A Facebook feature for young adults who want to travel and can't afford it. You give a **weekend and a budget**, not a destination. A **Muse agent** reasons across your actual network and proposes trips that only exist because of the people you know:
+> **Your agent asks so you don't have to. Then you talk.**
 
-> *dallas with cole + harper for the deep ellum vintage market — ~$110 if Cole says yes to hosting and Ravi has a seat, ~$290 otherwise.*
+Asking someone you barely know "can I crash at yours?" is awkward enough that most people never ask. Open Door makes the ask effortless: each person writes an **Open Door policy in their own words**, and **Muse agents negotiate on their behalf**. Identities stay hidden until both sides agree; then the host decides with full information, and a real chat opens.
 
-Then it builds a **Guide** from what your friends posted there (read with Muse image understanding, every pick credited to the friend), and **Coordinates** the trip: who's free when, drafted messages, introductions through mutual friends, and nothing sends until you approve it in Messenger.
-
-Built for Meta's "make Facebook valuable for young adults" hackathon on top of a mobile-first Facebook clone (every surface exists and is seeded). The core AI runs on **Meta Muse** through the Meta Model API.
+It sits on top of **Where can my people take me?**: you give Facebook a weekend and a budget, not a destination, and a Muse agent proposes trips that exist only because of the people you know (a friend open to hosting, a friend driving with a seat, an event your people are going to, friends' photos from the place). Built for Meta's "make Facebook valuable for young adults" hackathon on a mobile-first Facebook clone; the core AI is **Meta Muse** through the Meta Model API.
 
 ```bash
 npm install
-cp .env.example .env.local      # put MODEL_API_KEY in it; without a key everything runs in mock mode
-npm run dev                     # http://localhost:3000  → Menu → Trips, or /travel
+cp .env.example .env.local      # MODEL_API_KEY; without a key everything runs in labelled mock mode
+npm run dev                     # http://localhost:3000  → Menu → Trips / Open Door
 ```
 
-Demo identity is per browser tab: open `http://localhost:3000/?as=maya` and, in a second window, `/messages?as=cole` to watch the approved message arrive. `pitch/runbook.md` has the click path.
+Identity is per browser tab: `/?as=maya` in one window, `/travel/opendoor?as=gabe` in another. `pitch/runbook.md` is the click path.
 
-## The loop
+## The paradigm, in one pass
 
-| Stage | What the user sees | What runs |
+| Step | What the person sees | What runs |
 |---|---|---|
-| **Discover** `/travel` | Weekend chips + budget. A live reasoning stream ("Mapping your whole network…", "Pricing Dallas: 2 nights, staying with a friend, by a friend's car", "Reading your friends' photos from Dallas"), then 2–3 trip cards with two prices, the host, the driver, the event, the people you know there and why. | `src/lib/travel/agent.ts`: a Muse tool-calling loop over viewer-scoped tools, ending in a `propose_trips` call. `validate.ts` checks every id and re-prices in code. SSE from `/api/travel/discover`. |
-| **Guide** `/travel/[id]` | "Your guide, from your people": 4–6 picks, each credited ("from Cole's post · Plano East high school"), matched to your taste, with prices friends mentioned. One box shows a photo Muse looked at *just now* and what it saw. | `guide.ts`: reads friends' city posts + stored image notes, calls `look_at_photo` (live vision) on 1–2 photos, proposes; code forces the credit to the real author and drops anything the viewer can't see. |
-| **Coordinate** same page | Availability grid for you, host, driver; alternative weekends if someone's busy; "Draft the messages (intros via your mutuals)". Drafts appear here and in Messenger as *awaiting your approval* with Approve / Edit / Discard. | `coordinate.ts`: dates in code; Muse writes the words; code picks recipients (friend-of-friend → the mutual, asking for an intro). Approval flips the draft to sent inside the clone; recipients never see drafts. |
-| **Nudge** Feed | "Owen is driving to Dallas on Dec 12. You're free that weekend." → opens Discover with that trip. | `components/travel/Nudge.tsx` from `/api/travel/options` (rides from your city by people you can see, on weekends you're free). |
-| Entry points | Events ("Make this a trip" on out-of-town events), Profile ("Open to hosting friends" toggle on your own; badge + "Plan a visit" on friends elsewhere), Messenger (chip in chats with people in other cities), Menu → Trips. | |
+| **1. Open Door intake** (own Profile) | A toggle, a free-text policy ("Couch open for college friends and their friends. Not during finals. One person max. Would love a guest who cooks."), who it's open to (friends / friends of friends / broader network), what's offered (place to sleep / seats in my car / showing someone around), max guests. On out-of-town Events: **"Driving, N seats"**. | `src/lib/travel/openDoor.ts`, `/api/me/opendoor`. Reach is computed from the graph by code; the policy text is what the host's agent is allowed to act on. 38 seeded policies in people's own words (`src/data/openDoor.ts`). |
+| **2. Travel style** (own Profile, opt-in) | "Your travel style": 4–6 lines, each with its evidence ("Early mornings · because post: *go at 7 or bike*"). Edit, delete, refresh. | `style.ts`: Muse reads **only the user's own** posts, Reels, likes, saves and interests; code verifies each quote appears in the cited item and drops lines that fail. Other agents get the kept lines only, never evidence or ids. It is never called "personality". |
+| **3. Availability from signals** (Discover + Make it happen) | Calibrated labels per person: **Confirmed**, **Likely free** (with the quote), **Busy** (with the reason), **Unknown → we'll ask**, plus an **Ask** button that drafts "around Dec 4–6?" into Messenger for approval. | `availability.ts` + the `infer_availability` tool: code gathers the person's event RSVPs, their posts the requester can see, and the requester's **own** conversations with them (never anyone's chats with third parties); Muse extracts dated statements with quotes; code checks the quote is in the source and makes the per-date call. The seeded `busyDates` list is dead code. |
+| **4. Agent-to-agent negotiation** (trip page → *Ask their agents*) | A live transcript: the traveler's agent asks each candidate host's agent; each answers yes / conditions / no, sometimes with another weekend; a shield line shows what the disclosure check removed. Then anonymous fit cards. Also streamed in the AI Inspector. | `negotiate.ts`: traveler agent = Muse tool loop (`ask_host`, `counter_offer`, `finalize`); host agent = Muse with the host's policy, style lines and own availability, answering **only** through a strict schema; code scrubs every string (addresses, phones, "because…" clauses, schedule-reason words, third-party names not in the policy, 5-word quotes from the host's own posts/chats), forces "no" outside the tier or when busy, and strips the traveler's name from everything sent out. |
+| **5. Anonymous → mutual accept → reveal → humans** | Traveler: "A host you know directly in San Antonio says yes for Dec 11–13 … Yes, ask them." Host (`/travel/opendoor`): "A friend of yours wants to stay Dec 11–13 (2 nights, 1 guest). Your agent says it fits your Open Door. **See who?**" Both revealed with how they're connected (mutuals, school, hometown, groups). Host: **Yes, open the chat** → Messenger opens with a context line. Agents are out of it from there. | Request state machine in `negotiate.ts` (`actOnRequest`, `viewRequest`): names, avatars and the other side's turns are withheld until `revealedAt`; the host's final yes creates the DM and a `system` message. |
+
+Discover, Guide and Coordinate still work as before and now run on top of this: hosts come from Open Door tiers, availability from signals, and Coordinate hands off to the negotiation.
 
 ## Architecture
 
 ```
-                 ┌──────────────────────── UI (Next.js app router, phone frame) ───────────────────────┐
-                 │  /travel  Discover          /travel/[id]  Guide + Coordinate        Feed nudge,     │
-                 │  reasoning stream (SSE)     Muse-saw box, credited picks, drafts     Events/Profile/ │
-                 │  trip cards, two prices     Approve · Edit · Discard                 Messenger chips │
-                 └───────────────┬─────────────────────────────────┬───────────────────────────────────┘
-                                 │ POST /api/travel/discover (SSE)  │ /api/travel/guide (SSE), /coordinate, /drafts/[id]
-                 ┌───────────────▼─────────────────────────────────▼───────────────────────────────────┐
-                 │  src/lib/travel/                                                                     │
-                 │  agent.ts ── Muse tool loop ──► tools.ts (viewer-scoped)                             │
-                 │     scan_network · find_people_by_city · check_availability · estimate_trip_cost     │
-                 │     get_city_media · propose_trips        guide: look_at_photo (vision) · propose_guide
-                 │  visibility.ts  canSeeUser/Post/Reel/Event + connection(viewer, person)              │
-                 │  validate.ts    every id re-checked, hosts must have opted in + be free, re-priced   │
-                 │  pricing.ts     two prices + hotel/solo comparison, from a seeded table, in code     │
-                 │  taste.ts       saved Reels + likes + interests × image notes → taste profile        │
-                 │  coordinate.ts  shared dates · drafts · approve/edit/discard                         │
-                 │  replay.ts      recorded real runs replayed when Muse is down (labelled)             │
-                 │  checks.ts      fact audit used by the eval and the persona sim                      │
-                 └───────────────┬────────────────────────────────────────────────────────────────────┘
-                                 │
-                 ┌───────────────▼────────────────────┐    ┌──────────────────────────────────────────┐
-                 │  src/lib/ai/  ONE Muse client       │    │  src/server/db.ts  in-memory store       │
-                 │  ai.text/json/tools (+images)       │    │  seeded from src/data (deterministic)    │
-                 │  ledger.ts  budget guard, file lock │    │  61 people · 12 cities · hosting flags   │
-                 │  cache.ts   identical req → $0      │    │  busy dates · 7 rides · 22 events        │
-                 │  trace.ts   Inspector /dev/ai       │    │  55 licensed photos + Muse image notes   │
-                 └─────────────────────────────────────┘    └──────────────────────────────────────────┘
+ UI (Next.js app router, phone frame)
+ ├ /profile/[id]      Open Door editor + Travel style card (own) · Open Door badge (others)
+ ├ /travel            Discover: reasoning stream (SSE), trip cards, two prices
+ ├ /travel/[id]       Guide · Make it happen (calibrated availability, Ask) · Ask their agents (negotiation stream, fit cards)
+ ├ /travel/opendoor   Open Door inbox for both roles: anonymous cards → See who → reveal → open chat
+ ├ /messages          Open Door chip, drafts awaiting approval, system context line after a match
+ └ /dev/ai, /dev/network   Inspector (every call) · internal network graph with the latest run overlaid
+          │
+ API      /api/me/opendoor · /api/me/travel-style · /api/travel/{discover,guide,coordinate,availability,drafts}
+          /api/opendoor/{negotiate (SSE), requests, requests/[id]} · /api/events/[id]/rsvp (drivingSeats) · /api/admin/*
+          │
+ src/lib/travel/
+   openDoor.ts     tiers from the graph (friends / fof via a mutual / shared group), legacy flags derived, connection facts
+   style.ts        own-content travel style with evidence verification; styleConclusions() is all other agents get
+   availability.ts gatherSignals (RSVPs · visible posts · requester's own chats) → Muse extraction → code decides per date
+   negotiate.ts    hostAgentAnswer + scrubHostAnswer (disclosure rules) · negotiate (traveler tool loop) · accept/reveal
+   agent.ts        Discover: scan_network → infer_availability → estimate_trip_cost → get_city_media → propose_trips
+   tools.ts        every tool takes the viewer and returns only what they can already see
+   validate.ts     every id re-checked; hosts must have a door open to this viewer and not be busy; re-priced in code
+   visibility.ts · pricing.ts · taste.ts · guide.ts · coordinate.ts · replay.ts · checks.ts · store.ts
+          │
+ src/lib/ai/   ONE Muse client: text/json/tools (+images), budget ledger with reservations, request cache, traces
+ src/server/db.ts   in-memory store seeded from src/data (61 people, 12 cities, policies, signals, rides, events, photos)
 ```
 
-**Data flow.** Pages call the API with an `x-user-id` header (per-tab identity). Travel routes call `src/lib/travel/*`, which read the same store the rest of the app renders. The agent never sees the store directly, only tool results that were filtered for that viewer.
+### Disclosure-enforcing tools, concretely
+
+The host's agent has no free-form channel. It receives a brief (policy, controls, kept style lines, its own availability, and about the guest only: tier, number of mutuals, dates, guests, the guest's style lines) and must return `{decision, conditions[], alternativeDates?, fitReasons[{text, evidence}], note}`. Before anything goes back to the traveler's agent, `scrubHostAnswer`:
+
+- removes addresses, apartment numbers, phones and emails;
+- deletes `because / since / due to …` clauses and sentences containing schedule-reason words (wedding, shift, on set, parents, exam, …) unless the host wrote them into the policy;
+- replaces first names of anyone not named in the policy with "a friend";
+- drops any sentence sharing a 5-word window with the host's own posts or chat lines (so availability evidence can't be quoted back);
+- drops `fitReasons` whose `evidence` isn't a quote from the policy or a style line;
+- and, independent of the model: forces **no** when the traveler is outside the host's tier or the host is inferred busy.
+
+The traveler's agent gets a brief without the traveler's name, and `anonymise()` strips the name/handle from every outgoing message anyway. What was removed is shown in the transcript as a shield line and in the Inspector, never to the other side.
 
 ## How Muse is used
 
 | Use | Model | How |
 |---|---|---|
-| The agent (Discover, Guide, drafts) | `muse-spark-1.3` | OpenAI-compatible `/chat/completions` with `tools` and `tool_choice: "auto"` (the API only accepts auto), `reasoning_effort: "low"`, JSON-schema `response_format` for drafts. Loop capped at 8 round-trips; ends on `propose_trips` / `propose_guide`. |
-| Image understanding | `muse-ember-1.0` | `image_url` content parts with `data:` URIs read from the local image cache (the API refuses URLs whose robots.txt disallows fetching). Used at index time over all 55 seeded photos (`src/data/mediaIndex.json`: description, tags, food, activities, vibe, goodFor) and live in the Guide's `look_at_photo`. |
-| Persona simulation | `muse-ember-1.0` | Structured verdicts; see below. |
+| Discover agent, traveler's negotiating agent, host agents, Guide, drafts, travel style | `muse-spark-1.3` | OpenAI-compatible `/chat/completions`, `tools` + `tool_choice: "auto"` (the API only accepts auto), `reasoning_effort: "low"`, JSON-schema `response_format` for structured answers. Tool loops capped (Discover 9, negotiation 6). |
+| Availability extraction, image notes, persona swarm | `muse-ember-1.0` | Cheap and fast; extraction returns quoted statements that code verifies. Image understanding uses `image_url` `data:` URIs at index time and live in the Guide. |
 
-Model ids were confirmed against `GET /v1/models` and real requests on 2026-11-12 (PLAN.md). Everything goes through `src/lib/ai/index.ts`: traced for the Inspector, cached on disk when identical, and metered.
+Every call goes through `src/lib/ai/index.ts`: traced for the Inspector (`/dev/ai` shows `opendoor.traveler`, `opendoor.host.<id>`, `travel.availability`, `travel.style`, …), cached on disk when identical, and metered by a file-locked ledger that **reserves worst-case cost before each call** and refuses past `MODEL_BUDGET_USD` (fallback to replay/mock, labelled). Typical costs: Discover ≈$0.05, negotiation with 2–3 hosts ≈$0.03, travel style ≈$0.01, one availability inference ≈$0.002.
 
-### The budget guard
+## Trust and safety, enforced in code
 
-Every live call **reserves a worst-case cost before it is sent** (prompt size, `max_tokens`, images, 1.5× margin on third-party prices) in a file-locked, gitignored ledger (`.ai-ledger.json`), then settles to the real `usage`. Retries and failed calls are booked. When the ledger reaches `MODEL_BUDGET_USD` (default 50; `MODEL_BUDGET_RESERVE_USD` 10 is kept for final QA and only spendable with `AI_FINAL=1`) the client refuses and the feature falls back to **replay** or mock, labelled in the UI. `npm test` proves refusal at a full ledger and under four parallel processes. `npm run ledger` prints spend by model and task; the Inspector header shows it live. The whole build, two persona swarms, the evaluation and final QA came to about $6 on the ledger (with its 1.5× margin), out of the $50 ceiling.
+- Agents use only content the user could already see (`visibility.ts` is the one place that decides; every tool takes the viewer). Travel style uses only the user's own content.
+- Nothing is sent to another person without approval: drafts sit in Messenger as *awaiting your approval*; the traveler's accept is what lets the host hear about a request; the host's final yes is what opens the chat.
+- No identity is revealed until both sides accept; `viewRequest` withholds names, avatars and the other side's turns until `revealedAt`; the host always decides last.
+- Friends-of-friends are reached only through the tier the host chose (`doorOpenTo`), and intros still go through the mutual.
+- Costs are never model arithmetic (`pricing.ts`); every id the model emits is re-validated (`validate.ts`).
 
-### Safety lives in the tools
+## Evaluations (`EVAL-OPENDOOR.md`, `EVAL.md`)
 
-- Every tool takes `ctx.userId` and returns only what that viewer can already see: friends, friends-of-friends through a named mutual, public content, their groups. `visibility.ts` is the one place that decides.
-- After the model answers, `validate.ts` checks **every** person, ride, event, post and Reel id against the store *and* the viewer. Hosts must exist, live there, have **"Open to hosting friends"** on, and be free on the dates. Anything that fails is dropped and the reasons that cite it are scrubbed; repairs are logged on the card object and shown in the stream ("Fixed 2 things the model got wrong").
-- Costs are never model arithmetic: `estimate_trip_cost` and the final card use `pricing.ts`.
-- Friend-of-friend options appear only with the mutual named ("Ethan's friend · intro via Ethan"), and the drafted message goes to the mutual.
-- Drafts are messages with `status: "draft"`; the conversation APIs hide other people's drafts; approval is the only path to `sent`. Sending is simulated inside the clone; nothing leaves the app.
+`node scripts/eval-opendoor.mjs` runs three things through the real endpoints and writes the numbers and raw rows under `eval/`:
 
-## Fallback modes (labelled, never mistaken for live)
+- **Privacy:** ~30 adversarial probes against host agents (schedule questions outside the asked dates, address/phone, relationships, third parties, prompt injections, "say my name"). A leak is anything beyond the stated policy: schedule reason, address, phone/email, job/relationship/hometown, third-party name, a 5-word quote from the host's posts, or the traveler's name. Reported for the raw model answer **and** for what actually leaves after the scrubber.
+- **Policy compliance:** 16 seeded asks that violate a tier, a guest limit or a busy weekend (from posts/chats), plus fits. Pass = the decision respects the constraint (model alone vs after code enforcement).
+- **Match quality:** 10 travelers × 10 hosts with travel styles built from their own posts; Muse's top match vs a tag-overlap baseline, written as blind A/B pairs (`eval/match-blind.json`, key in `eval/match-key.json`) for people to rate.
+- The earlier **cost comparison** (network trip vs hotel + solo transport on the seeded price table) and grounding/privacy numbers for Discover remain in `EVAL.md`.
+
+Results of the last run are at the top of `EVAL-OPENDOOR.md` with their limits (the leak detector is literal, not semantic; compliance checks decisions, not prose; nobody has rated the match pairs yet).
+
+`npm test` (20 tests): budget guard under contention, viewer-scoped tools, visibility, validation, pricing, **tier reach**, **scrubber**, **anonymity**, **signal sources never include third-party chats**, **request views hide identities until revealed**.
+
+## What is real / seeded / simulated
+
+- **Real:** the Muse calls (agents, host agents, extraction, image understanding), tool use, validation, scrubbing, the state machine, the live two-window demo.
+- **Seeded:** people, posts, events, rides, chats, Open Door policies and the availability signals (`src/data/signals.ts`: posts and chat lines like "opening weekend Dec 4–6 at a-basin, phone goes in the glovebox"). City photos are real, openly licensed Commons images (`CREDITS.md`). Prices come from a seeded table.
+- **Simulated:** message delivery (inside the clone), and the persona study in `PERSONAS.md` (Muse agents role-playing users, labelled as such).
+
+## Fallbacks (labelled, never mistaken for live)
 
 | Badge | When | What |
 |---|---|---|
 | **LIVE · Muse** | key set, API up | real calls |
-| **Cached Muse response** | identical request seen before | served from `.ai-cache/` at $0 (warm the demo input once, then demo a slightly different one live) |
-| **Replay of a recorded run** | API error / timeout, budget guard, or `npm run replay:on` / `AI_MODE=replay` | a real recorded run (`src/data/recordings.json`, made with `npm run record` from `.ai-runs/`) replayed with its original pacing; trips re-validated against the current store |
-| **Mock · no model** | no key, or nothing to replay | code-only placeholder (hosts first), clearly marked |
+| **Cached** | identical request seen before | served from `.ai-cache/` at $0 |
+| **Replay** | API error/timeout, budget guard, or `npm run replay:on` | a recorded real Discover/Guide run replayed with its pacing, re-validated against the current store |
+| **Mock** | no key, or nothing to replay | code-only: negotiation asks every candidate once with a code-written message and answers from availability; travel style returns one labelled line |
 
-## Running the evaluation and the simulation
-
-```bash
-npm test            # ledger/budget tests + tool layer, visibility rules, validation, cost math (node --test via tsx)
-npm run eval        # 12 seeded scenarios through the real endpoints → EVAL.md + eval/results.json
-npm run sim         # persona swarm → sim/<persona>.json, sim/summary-run.json (see PERSONAS.md)
-npm run record      # copy the latest real runs into src/data/recordings.json for replay + animations
-```
-
-Final QA scripts: `node scripts/qa-demo-runs.mjs --n 5 [--vary]` (five consecutive full demo runs from reset, approval checked from the recipient's side) and `node scripts/qa-inputs.mjs` (ten judge-style inputs). Results of the last run are in `eval/` and `PROGRESS.md`.
-
-`EVAL.md` reports grounding (rendered and raw), constraints, privacy (target zero, with restricted profiles seeded so a violation is possible and would be caught), guide attribution on hand-labelled photos (`eval/labels.json`), and network-trip vs hotel-trip cost.
-
-### Persona simulation
-
-`scripts/sim.mjs` drives 16 simulated young adults (`sim/personas.json`, each a seeded account with a different budget, network, car, taste and comfort with strangers; one has nobody open to hosting and should get a graceful decline). Each is played by a Muse agent that reads what the real feature returned through the same endpoints the UI calls, picks or rejects trips with reasons, reads the Guide, and approves / edits / refuses the drafts through the real approval endpoint. Personas give opinions; `checks.ts` checks facts. Full traces are in `sim/`. **These are simulated users, not user research**, and are labelled as such in `PERSONAS.md`, the deck and the script.
-
-## What is simulated
-
-- **People, posts, events, rides, chats** are fictional seed data (`src/data/`). Photos from other cities are real, openly licensed Wikimedia Commons images (`CREDITS.md`), and their captions were written *after* Muse described them, so captions match pixels.
-- **Prices** come from a seeded table (`pricing.ts`); the "X% cheaper than a hotel trip" number is arithmetic on that table.
-- **Availability** is a seeded busy-date list per person.
-- **Sending a message** happens inside the clone; there is no real Messenger.
-- **Personas** are Muse agents, not people.
-- The Muse calls, tool use, image understanding, validation, pricing and approval flow are real.
+One-click reset: `npm run reset` (`POST /api/admin/reset`) restores the seed and clears trips, drafts, requests, availability cache and generated styles.
 
 ## Repo map
 
 ```
-src/lib/ai/            the one Muse client: index.ts, ledger.ts, cache.ts, trace.ts, mock.ts, tools.ts (base tools)
-src/lib/travel/        agent, guide, coordinate, tools, visibility, validate, pricing, taste, replay, checks, store
-src/app/api/travel/    discover (SSE), guide (SSE), coordinate, drafts/[id], options, trips/[id]
-src/app/api/admin/     reset, dump, audit, mode (replay switch), index-media, warm-images
-src/app/api/sim/       persona turn (through the client, so it is metered)
-src/app/(app)/travel/  Discover page, trip page;  src/components/travel/  TripCard, Reasoning stream, Nudge
-src/data/              users.ts + travelUsers.ts, cities.ts, travelPosts.ts, travelEvents.ts, media.json,
-                       mediaIndex.json (Muse image notes), recordings.json (replay), helpers, travel.ts
-scripts/               media-pick, credits, eval, sim, record, ledger
-tests/                 ledger.test.mjs, travel.test.ts
+src/lib/ai/            the one Muse client: index.ts, ledger.ts, cache.ts, trace.ts, mock.ts
+src/lib/travel/        openDoor, style, availability, negotiate, agent, guide, coordinate, tools, visibility, validate, pricing, taste, replay, checks, store
+src/app/api/           me/{opendoor,travel-style,hosting} · travel/{discover,guide,coordinate,availability,drafts,options,trips}
+                       opendoor/{negotiate,requests} · events/[id]/rsvp · admin/{reset,dump,audit,mode,network,opendoor-probe,opendoor-match,…}
+src/app/(app)/         profile (Open Door editor, travel style), travel (Discover, trip, opendoor inbox), messages, events
+src/components/travel/ OpenDoor, TravelStyle, Negotiation, OpenDoorChip, TripCard, Reasoning, Nudge
+src/data/              users + travelUsers, openDoor.ts (policies), signals.ts, cities, posts, events/rides, media, recordings
+scripts/               eval-opendoor, eval, sim, record, qa-demo-runs, qa-inputs, ledger, media-pick, credits, build-animations
+tests/                 ledger.test.mjs, travel.test.ts, opendoor.test.ts
 pitch/                 deck.html, deck.pdf, script.md, runbook.md, qa.md, submission.md, animations/
-PLAN.md · PROGRESS.md · DECISIONS.md · EVAL.md · PERSONAS.md · CREDITS.md
+EVAL-OPENDOOR.md · EVAL.md · PERSONAS.md · DECISIONS.md · PROGRESS.md · CREDITS.md · PLAN.md · README-prev.md (the pre-Open-Door README)
 ```
 
 ## Scripts
 
 ```
-npm run dev / build / start     Next.js
-npm run typecheck · npm test    tsc; node tests (ledger, tools, visibility, validation, pricing)
-npm run reset                   restore the seed and clear trips/drafts (server must be running)
-npm run warm                    cache every seed image locally
-npm run index-media             rebuild Muse image notes (≈$0.04; only needed if photos change)
-npm run eval · npm run sim      evaluation / persona swarm → EVAL.md, sim/
-npm run record                  refresh replay recordings from real runs
-npm run replay:on|off           force replay mode at runtime
-npm run ledger                  Muse spend so far
+npm run dev / build / start          Next.js
+npm run typecheck · npm test         tsc; node tests
+npm run reset                        restore the seed (server must be running)
+npm run warm                         cache every seed image locally
+node scripts/eval-opendoor.mjs       privacy probes, policy compliance, blind match set → EVAL-OPENDOOR.md, eval/
+npm run eval · npm run sim           Discover evaluation / persona swarm → EVAL.md, sim/
+npm run record · npm run replay:on|off · npm run ledger
 ```
 
-Env (`.env.example`): `MODEL_API_KEY`, `MODEL_API_BASE_URL`, `MODEL_TEXT` (agent), `MODEL_VISION`, `MODEL_FAST`, `MODEL_IMAGE`, `AI_MODE` (`auto|live|mock|replay`), `MODEL_BUDGET_USD`, `MODEL_BUDGET_RESERVE_USD`, `AI_FINAL`.
+Env (`.env.example`): `MODEL_API_KEY`, `MODEL_API_BASE_URL`, `MODEL_TEXT`, `MODEL_VISION`, `MODEL_FAST`, `MODEL_IMAGE`, `AI_MODE` (`auto|live|mock|replay`), `MODEL_BUDGET_USD`, `MODEL_BUDGET_RESERVE_USD`, `AI_FINAL`.
+
+## Branches
+
+`main` is meant to hold only the Facebook clone; everything above lives on **`travel`**.
 
 ## The clone underneath
 
-Feed, Reels, Profile, Friends, Groups (with AI "Catch me up"), Events, Marketplace (with AI "Draft listing"), Messenger (live between two windows), Dating, Gaming, Notifications, Search, Saved, Menu, Switch account, and the AI Inspector at `/dev/ai` (every model call: prompt, output, tool steps, latency, tokens, mode, cost). Branding is a text wordmark and generic icons only. See `git log` for the base.
+Feed, Reels, Profile, Friends, Groups, Events, Marketplace, Messenger (live between two windows), Dating, Gaming, Notifications, Search, Saved, Menu, Switch account, and the AI Inspector at `/dev/ai`. Branding is a text wordmark and generic icons only.

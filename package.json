@@ -20,7 +20,8 @@
     "eval": "node scripts/eval.mjs",
     "credits": "node scripts/credits.mjs",
     "sim": "node scripts/sim.mjs",
-    "animations": "node scripts/build-animations.mjs"
+    "animations": "node scripts/build-animations.mjs",
+    "eval:opendoor": "node scripts/eval-opendoor.mjs"
   },
   "dependencies": {
     "lucide-react": "^0.468.0",

@@ -2,7 +2,7 @@
 // Every mutation the UI needs lives here so API routes stay thin and AI tools can reuse them.
 import { buildSeed } from "@/data";
 import { photoUrl } from "@/lib/img";
-import type { Comment, Conversation, Database, FBEvent, Group, ID, Listing, Message, Notification, Post, ReactionType, User } from "@/types";
+import type { Comment, Conversation, Database, FBEvent, Group, ID, Listing, Message, Notification, Post, ReactionType, Ride, User } from "@/types";
 
 const g = globalThis as unknown as { __fbdb?: Database };
 export function db(): Database {
@@ -119,6 +119,25 @@ export function rsvp(eventId: ID, userId: ID, status: "going" | "interested" | "
   if (status === "going") e.going.push(userId);
   if (status === "interested") e.interested.push(userId);
   return e;
+}
+
+/** Event RSVP "Driving, N seats": creates or updates a ride for this driver to the event (0 seats removes it). */
+export function declareRide(eventId: ID, userId: ID, seats: number) {
+  const e = getEvent(eventId);
+  const me = requireUser(userId);
+  if (!e) throw Object.assign(new Error("Event not found"), { status: 404 });
+  const existing = db().rides.find((r) => r.eventId === eventId && r.driverId === userId);
+  if (seats <= 0) {
+    if (existing) db().rides.splice(db().rides.indexOf(existing), 1);
+    return null;
+  }
+  const dep = new Date(e.startsAt); dep.setHours(9, 0, 0, 0);
+  const ret = new Date(e.endsAt ?? e.startsAt); ret.setDate(ret.getDate() + 1); ret.setHours(17, 0, 0, 0);
+  if (existing) { existing.seatsOpen = Math.min(6, Math.round(seats)); return existing; }
+  const r: Ride = { id: newId("ride"), driverId: userId, eventId, fromCity: me.city ?? "austin", toCity: e.city ?? me.city ?? "austin", departAt: dep.toISOString(), returnAt: ret.toISOString(), seatsOpen: Math.min(6, Math.round(seats)), riderIds: [], note: `driving to ${e.title}` };
+  db().rides.push(r);
+  if (!e.going.includes(userId)) rsvp(eventId, userId, "going");
+  return r;
 }
 
 // ---------- marketplace / reels ----------
