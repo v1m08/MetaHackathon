@@ -175,7 +175,7 @@ export function validateTrip(viewerId: ID, p: ProposedTrip, ctx: { start: string
     return !MONEY.test(r);
   }).slice(0, 5);
   const pitchSentences = (p.pitch ?? "").split(/(?<=[.!?])\s+/);
-  const pitch = pitchSentences.filter((x) => !MONEY.test(x)).join(" ").trim() || pitchSentences[0] ?? "";
+  const pitch = pitchSentences.filter((x) => !MONEY.test(x)).join(" ").trim() || (pitchSentences[0] ?? "");
   if (pitch !== (p.pitch ?? "").trim()) repairs.push("removed a model-written price from the pitch");
 
   // prices, in code
