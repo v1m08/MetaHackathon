@@ -123,7 +123,7 @@ export default function DemoPage() {
             <div className="mt-1 flex flex-wrap gap-3 text-[12px] text-white/60">
               <Link href="/dev/ai" className="flex items-center gap-1 hover:text-white"><Bug size={12} /> AI Inspector</Link>
               <Link href="/demo/parts" className="hover:text-white">Critter library</Link>
-              <a href="/friends/hangout" target="_blank" className="flex items-center gap-1 hover:text-white">Open phone <ExternalLink size={11} /></a>
+              <a href="/" target="_blank" className="flex items-center gap-1 hover:text-white">Open phone <ExternalLink size={11} /></a>
             </div>
           </div>
           {err && <div className="rounded-lg bg-rose-500/15 px-3 py-2 text-[12px] text-rose-200">{err}</div>}
@@ -194,7 +194,7 @@ export default function DemoPage() {
 
         {/* Phone */}
         <div className="flex shrink-0 justify-center">
-          <iframe ref={phone} src="/friends/hangout" title="Phone" className="h-[864px] w-[410px] rounded-[44px] border-[10px] border-[#111827] bg-white shadow-[0_0_0_2px_#374151,0_30px_80px_rgba(0,0,0,.6)]" />
+          <iframe ref={phone} src="/" title="Phone" className="h-[864px] w-[410px] rounded-[44px] border-[10px] border-[#111827] bg-white shadow-[0_0_0_2px_#374151,0_30px_80px_rgba(0,0,0,.6)]" />
         </div>
 
         {/* Debug drawer */}
