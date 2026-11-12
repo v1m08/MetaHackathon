@@ -5,7 +5,7 @@ import { Avatar, Photo, cx } from "@/components/ui";
 import type { Trip, TripPerson } from "@/lib/travel/validate";
 
 const first = (n: string) => n.split(" ")[0];
-const fmt = (iso: string) => new Date(iso).toLocaleString("en-US", { weekday: "short", month: "short", day: "numeric" });
+const fmt = (iso: string) => new Date(iso.length === 10 ? iso + "T12:00:00" : iso).toLocaleString("en-US", { weekday: "short", month: "short", day: "numeric" });
 const fmtTime = (iso: string) => new Date(iso).toLocaleString("en-US", { weekday: "short", hour: "numeric", minute: "2-digit" });
 
 export function PersonRow({ p, role, note }: { p: TripPerson; role: string; note?: string }) {

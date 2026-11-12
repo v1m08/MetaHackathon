@@ -1,5 +1,5 @@
 {
-  "ranAt": "2026-11-12T11:14:07.588Z",
+  "ranAt": "2026-11-12T12:05:09.788Z",
   "rows": [
     {
       "user": "maya",
@@ -7,53 +7,55 @@
       "budget": 120,
       "expect": "Dallas: Cole hosts, Ravi/Owen seats, vintage market",
       "weekend": "Dec 11–13",
-      "runId": "run_mwdg1c3q",
+      "runId": "run_mwdhu34m",
       "mode": "live",
-      "latencyMs": 24927,
-      "costUsd": 0.047599999999999996,
-      "steps": 20,
+      "latencyMs": 27140,
+      "costUsd": 0.0356,
+      "steps": 21,
       "trips": [
         {
-          "id": "trip_mwdg1c3pqvvb",
+          "id": "trip_mwdhu34m4rqa",
           "city": "Dallas",
           "title": "dallas with cole for the deep ellum vintage market",
           "host": "Cole Patterson",
           "hostDegree": 1,
           "ride": "Ravi Shah",
           "event": "Deep Ellum Vintage Market (winter edition)",
-          "ifYes": 110,
-          "otherwise": 290,
-          "solo": 455,
+          "ifYes": 57,
+          "otherwise": 178,
+          "solo": 261,
           "fitsBudget": true,
-          "repairs": []
+          "repairs": [
+            "dates follow Ravi's car: 2026-12-12 → 2026-12-13"
+          ]
         },
         {
-          "id": "trip_mwdg1c3pdcd0",
+          "id": "trip_mwdhu34m32ff",
           "city": "San Antonio",
-          "title": "san antonio with gabe, pearl lights + abuela food",
+          "title": "southtown weekend with gabe in san antonio",
           "host": "Gabriel Flores",
           "hostDegree": 1,
-          "ifYes": 120,
-          "otherwise": 265,
-          "solo": 420,
+          "ifYes": 99,
+          "otherwise": 235,
+          "solo": 389,
           "fitsBudget": true,
           "repairs": []
         },
         {
-          "id": "trip_mwdg1c3q5go3",
+          "id": "trip_mwdhu34meeaj",
           "city": "Houston",
-          "title": "houston with raj, montrose crash (a little over)",
+          "title": "houston with raj for night markets + towels",
           "host": "Raj Iyer",
           "hostDegree": 1,
-          "ifYes": 130,
-          "otherwise": 280,
-          "solo": 440,
-          "fitsBudget": false,
+          "ifYes": 111,
+          "otherwise": 251,
+          "solo": 411,
+          "fitsBudget": true,
           "repairs": []
         }
       ],
       "audit": {
-        "runId": "run_mwdg1c3q",
+        "runId": "run_mwdhu34m",
         "viewerId": "maya",
         "input": {
           "start": "2026-12-11",
@@ -61,8 +63,8 @@
           "budget": 120
         },
         "mode": "live",
-        "costUsd": 0.047599999999999996,
-        "latencyMs": 24927,
+        "costUsd": 0.0356,
+        "latencyMs": 27140,
         "raw": {
           "ids": 13,
           "grounded": 13,
@@ -71,7 +73,7 @@
         },
         "trips": [
           {
-            "tripId": "trip_mwdg1c3pqvvb",
+            "tripId": "trip_mwdhu34m4rqa",
             "city": "dallas",
             "elements": [
               {
@@ -125,12 +127,6 @@
                 "visible": true
               },
               {
-                "kind": "person",
-                "id": "ravi",
-                "exists": true,
-                "visible": true
-              },
-              {
                 "kind": "post",
                 "id": "p_00q9",
                 "exists": true,
@@ -145,15 +141,15 @@
             ],
             "renderedViolations": 0,
             "fitsBudget": true,
-            "ifYes": 110,
-            "otherwise": 290,
-            "solo": 455,
+            "ifYes": 57,
+            "otherwise": 178,
+            "solo": 261,
             "hostOptedIn": true,
             "hostDegree": 1,
             "fofHasMutual": null
           },
           {
-            "tripId": "trip_mwdg1c3pdcd0",
+            "tripId": "trip_mwdhu34m32ff",
             "city": "san-antonio",
             "elements": [
               {
@@ -176,6 +172,12 @@
               },
               {
                 "kind": "post",
+                "id": "p_00qw",
+                "exists": true,
+                "visible": true
+              },
+              {
+                "kind": "post",
                 "id": "p_00qz",
                 "exists": true,
                 "visible": true
@@ -183,15 +185,15 @@
             ],
             "renderedViolations": 0,
             "fitsBudget": true,
-            "ifYes": 120,
-            "otherwise": 265,
-            "solo": 420,
+            "ifYes": 99,
+            "otherwise": 235,
+            "solo": 389,
             "hostOptedIn": true,
             "hostDegree": 1,
             "fofHasMutual": null
           },
           {
-            "tripId": "trip_mwdg1c3q5go3",
+            "tripId": "trip_mwdhu34meeaj",
             "city": "houston",
             "elements": [
               {
@@ -207,23 +209,23 @@
                 "visible": true
               },
               {
-                "kind": "post",
-                "id": "p_00ql",
+                "kind": "person",
+                "id": "layla",
                 "exists": true,
                 "visible": true
               },
               {
                 "kind": "post",
-                "id": "p_00qr",
+                "id": "p_00ql",
                 "exists": true,
                 "visible": true
               }
             ],
             "renderedViolations": 0,
-            "fitsBudget": false,
-            "ifYes": 130,
-            "otherwise": 280,
-            "solo": 440,
+            "fitsBudget": true,
+            "ifYes": 111,
+            "otherwise": 251,
+            "solo": 411,
             "hostOptedIn": true,
             "hostDegree": 1,
             "fofHasMutual": null
@@ -238,41 +240,55 @@
       "budget": 150,
       "expect": "Nashville (Kai hosts, Sofia flying) or SA/Houston day trips",
       "weekend": "Dec 4–6",
-      "runId": "run_mwdg23u2",
+      "runId": "run_mwdhvavw",
       "mode": "live",
-      "latencyMs": 22145,
-      "costUsd": 0.0388,
-      "steps": 20,
+      "latencyMs": 28493,
+      "costUsd": 0.0482,
+      "steps": 21,
       "trips": [
         {
-          "id": "trip_mwdg23u2z1a8",
+          "id": "trip_mwdhvavv9fr8",
           "city": "San Antonio",
-          "title": "san antonio with gabe for pearl market + spurs",
+          "title": "san antonio with gabe for pearl market to spurs",
           "host": "Gabriel Flores",
           "hostDegree": 1,
           "ride": "Tyler Brooks",
           "event": "Pearl farmers market → Spurs game (day trip)",
-          "ifYes": 90,
-          "otherwise": 265,
-          "solo": 420,
+          "ifYes": 52,
+          "otherwise": 156,
+          "solo": 233,
+          "fitsBudget": true,
+          "repairs": [
+            "dates follow Tyler's car: 2026-12-05 → 2026-12-06"
+          ]
+        },
+        {
+          "id": "trip_mwdhvavve9kf",
+          "city": "Houston",
+          "title": "houston with raj for banh mi and night markets",
+          "host": "Raj Iyer",
+          "hostDegree": 1,
+          "ifYes": 111,
+          "otherwise": 251,
+          "solo": 411,
           "fitsBudget": true,
           "repairs": []
         },
         {
-          "id": "trip_mwdg23u2rk31",
-          "city": "Houston",
-          "title": "houston with raj for banh mi + night markets",
-          "host": "Raj Iyer",
+          "id": "trip_mwdhvavwbw9g",
+          "city": "Dallas",
+          "title": "dallas with cole for low-key music weekend",
+          "host": "Cole Patterson",
           "hostDegree": 1,
-          "ifYes": 130,
-          "otherwise": 280,
-          "solo": 440,
+          "ifYes": 117,
+          "otherwise": 261,
+          "solo": 427,
           "fitsBudget": true,
           "repairs": []
         }
       ],
       "audit": {
-        "runId": "run_mwdg23u2",
+        "runId": "run_mwdhvavw",
         "viewerId": "maya",
         "input": {
           "start": "2026-12-04",
@@ -280,17 +296,17 @@
           "budget": 150
         },
         "mode": "live",
-        "costUsd": 0.0388,
-        "latencyMs": 22145,
+        "costUsd": 0.0482,
+        "latencyMs": 28493,
         "raw": {
-          "ids": 9,
-          "grounded": 9,
+          "ids": 11,
+          "grounded": 11,
           "privacyViolationsCaught": 0,
           "invented": 0
         },
         "trips": [
           {
-            "tripId": "trip_mwdg23u2z1a8",
+            "tripId": "trip_mwdhvavv9fr8",
             "city": "san-antonio",
             "elements": [
               {
@@ -327,12 +343,6 @@
               },
               {
                 "kind": "person",
-                "id": "tyler",
-                "exists": true,
-                "visible": true
-              },
-              {
-                "kind": "person",
                 "id": "owen",
                 "exists": true,
                 "visible": true
@@ -352,15 +362,15 @@
             ],
             "renderedViolations": 0,
             "fitsBudget": true,
-            "ifYes": 90,
-            "otherwise": 265,
-            "solo": 420,
+            "ifYes": 52,
+            "otherwise": 156,
+            "solo": 233,
             "hostOptedIn": true,
             "hostDegree": 1,
             "fofHasMutual": null
           },
           {
-            "tripId": "trip_mwdg23u2rk31",
+            "tripId": "trip_mwdhvavve9kf",
             "city": "houston",
             "elements": [
               {
@@ -371,7 +381,7 @@
               },
               {
                 "kind": "person",
-                "id": "layla",
+                "id": "tj",
                 "exists": true,
                 "visible": true
               },
@@ -384,9 +394,53 @@
             ],
             "renderedViolations": 0,
             "fitsBudget": true,
-            "ifYes": 130,
-            "otherwise": 280,
-            "solo": 440,
+            "ifYes": 111,
+            "otherwise": 251,
+            "solo": 411,
+            "hostOptedIn": true,
+            "hostDegree": 1,
+            "fofHasMutual": null
+          },
+          {
+            "tripId": "trip_mwdhvavwbw9g",
+            "city": "dallas",
+            "elements": [
+              {
+                "kind": "host",
+                "id": "cole",
+                "exists": true,
+                "visible": true
+              },
+              {
+                "kind": "person",
+                "id": "harper",
+                "exists": true,
+                "visible": true
+              },
+              {
+                "kind": "post",
+                "id": "p_00qh",
+                "exists": true,
+                "visible": true
+              },
+              {
+                "kind": "post",
+                "id": "p_00q9",
+                "exists": true,
+                "visible": true
+              },
+              {
+                "kind": "post",
+                "id": "p_00qd",
+                "exists": true,
+                "visible": true
+              }
+            ],
+            "renderedViolations": 0,
+            "fitsBudget": true,
+            "ifYes": 117,
+            "otherwise": 261,
+            "solo": 427,
             "hostOptedIn": true,
             "hostDegree": 1,
             "fofHasMutual": null
@@ -401,53 +455,53 @@
       "budget": 200,
       "expect": "Marfa with Kenji's car + June's casita",
       "weekend": "Dec 18–20",
-      "runId": "run_mwdg36e2",
+      "runId": "run_mwdhwdxg",
       "mode": "live",
-      "latencyMs": 25098,
-      "costUsd": 0.0484,
+      "latencyMs": 22655,
+      "costUsd": 0.0469,
       "steps": 20,
       "trips": [
         {
-          "id": "trip_mwdg36e2v72c",
+          "id": "trip_mwdhwdxgfbdd",
+          "city": "San Antonio",
+          "title": "southtown crash with gabe, tacos included",
+          "host": "Gabriel Flores",
+          "hostDegree": 1,
+          "ifYes": 99,
+          "otherwise": 235,
+          "solo": 389,
+          "fitsBudget": true,
+          "repairs": []
+        },
+        {
+          "id": "trip_mwdhwdxgnaf0",
           "city": "Marfa",
-          "title": "marfa with kenji + june for night sky weekend",
+          "title": "marfa with kenji + june for the night sky",
           "host": "June Whitaker",
           "hostDegree": 1,
           "ride": "Kenji Watanabe",
-          "event": "Marfa Night Sky Weekend (Chinati grounds + McDonald Observatory star party)",
-          "ifYes": 110,
-          "otherwise": 350,
-          "solo": 560,
+          "event": "Marfa Night Sky Weekend (McDonald Observatory star party)",
+          "ifYes": 103,
+          "otherwise": 319,
+          "solo": 529,
           "fitsBudget": true,
           "repairs": []
         },
         {
-          "id": "trip_mwdg36e26czp",
-          "city": "San Antonio",
-          "title": "san antonio with gabe, pearl lights + abuela food",
-          "host": "Gabriel Flores",
+          "id": "trip_mwdhwdxge4xi",
+          "city": "New Orleans",
+          "title": "bywater weekend with beau + frenchmen with camille",
+          "host": "Beau Landry",
           "hostDegree": 1,
-          "ifYes": 120,
-          "otherwise": 265,
-          "solo": 420,
-          "fitsBudget": true,
-          "repairs": []
-        },
-        {
-          "id": "trip_mwdg36e2jmtk",
-          "city": "Houston",
-          "title": "houston with raj, montrose crash + night markets",
-          "host": "Raj Iyer",
-          "hostDegree": 1,
-          "ifYes": 130,
-          "otherwise": 280,
-          "solo": 440,
+          "ifYes": 163,
+          "otherwise": 313,
+          "solo": 533,
           "fitsBudget": true,
           "repairs": []
         }
       ],
       "audit": {
-        "runId": "run_mwdg36e2",
+        "runId": "run_mwdhwdxg",
         "viewerId": "maya",
         "input": {
           "start": "2026-12-18",
@@ -455,8 +509,8 @@
           "budget": 200
         },
         "mode": "live",
-        "costUsd": 0.0484,
-        "latencyMs": 25098,
+        "costUsd": 0.0469,
+        "latencyMs": 22655,
         "raw": {
           "ids": 13,
           "grounded": 13,
@@ -465,7 +519,51 @@
         },
         "trips": [
           {
-            "tripId": "trip_mwdg36e2v72c",
+            "tripId": "trip_mwdhwdxgfbdd",
+            "city": "san-antonio",
+            "elements": [
+              {
+                "kind": "host",
+                "id": "gabe",
+                "exists": true,
+                "visible": true
+              },
+              {
+                "kind": "person",
+                "id": "lena",
+                "exists": true,
+                "visible": true
+              },
+              {
+                "kind": "reel",
+                "id": "tr_pearl",
+                "exists": true,
+                "visible": true
+              },
+              {
+                "kind": "post",
+                "id": "p_00qw",
+                "exists": true,
+                "visible": true
+              },
+              {
+                "kind": "post",
+                "id": "p_00qz",
+                "exists": true,
+                "visible": true
+              }
+            ],
+            "renderedViolations": 0,
+            "fitsBudget": true,
+            "ifYes": 99,
+            "otherwise": 235,
+            "solo": 389,
+            "hostOptedIn": true,
+            "hostDegree": 1,
+            "fofHasMutual": null
+          },
+          {
+            "tripId": "trip_mwdhwdxgnaf0",
             "city": "marfa",
             "elements": [
               {
@@ -496,12 +594,6 @@
               },
               {
                 "kind": "person",
-                "id": "kenji",
-                "exists": true,
-                "visible": true
-              },
-              {
-                "kind": "person",
                 "id": "lucas",
                 "exists": true,
                 "visible": true
@@ -527,91 +619,53 @@
             ],
             "renderedViolations": 0,
             "fitsBudget": true,
-            "ifYes": 110,
-            "otherwise": 350,
-            "solo": 560,
+            "ifYes": 103,
+            "otherwise": 319,
+            "solo": 529,
             "hostOptedIn": true,
             "hostDegree": 1,
             "fofHasMutual": null
           },
           {
-            "tripId": "trip_mwdg36e26czp",
-            "city": "san-antonio",
+            "tripId": "trip_mwdhwdxge4xi",
+            "city": "new-orleans",
             "elements": [
               {
                 "kind": "host",
-                "id": "gabe",
+                "id": "beau",
                 "exists": true,
                 "visible": true
               },
               {
                 "kind": "person",
-                "id": "lena",
+                "id": "elijah",
+                "exists": true,
+                "visible": true
+              },
+              {
+                "kind": "person",
+                "id": "camille",
                 "exists": true,
                 "visible": true
               },
               {
                 "kind": "reel",
-                "id": "tr_pearl",
+                "id": "tr_brass",
                 "exists": true,
                 "visible": true
               },
               {
                 "kind": "post",
-                "id": "p_00qz",
+                "id": "p_00o6",
                 "exists": true,
                 "visible": true
               }
             ],
             "renderedViolations": 0,
             "fitsBudget": true,
-            "ifYes": 120,
-            "otherwise": 265,
-            "solo": 420,
-            "hostOptedIn": true,
-            "hostDegree": 1,
-            "fofHasMutual": null
-          },
-          {
-            "tripId": "trip_mwdg36e2jmtk",
-            "city": "houston",
-            "elements": [
-              {
-                "kind": "host",
-                "id": "raj",
-                "exists": true,
-                "visible": true
-              },
-              {
-                "kind": "person",
-                "id": "tj",
-                "exists": true,
-                "visible": true
-              },
-              {
-                "kind": "person",
-                "id": "layla",
-                "exists": true,
-                "visible": true
-              },
-              {
-                "kind": "post",
-                "id": "p_00ql",
-                "exists": true,
-                "visible": true
-              },
-              {
-                "kind": "post",
-                "id": "p_00qr",
-                "exists": true,
-                "visible": true
-              }
-            ],
-            "renderedViolations": 0,
-            "fitsBudget": true,
-            "ifYes": 130,
-            "otherwise": 280,
-            "solo": 440,
+            "ifYes": 163,
+            "otherwise": 313,
+            "solo": 533,
             "hostOptedIn": true,
             "hostDegree": 1,
             "fofHasMutual": null
@@ -626,51 +680,29 @@
       "budget": 40,
       "expect": "tiny budget: Dallas ride she's already on, or decline",
       "weekend": "Dec 11–13",
-      "runId": "run_mwdg4csh",
+      "runId": "run_mwdhxg0s",
       "mode": "live",
-      "latencyMs": 31115,
-      "costUsd": 0.0384,
-      "steps": 20,
+      "latencyMs": 23101,
+      "costUsd": 0.0278,
+      "steps": 17,
       "trips": [
         {
-          "id": "trip_mwdg4cshf22e",
-          "city": "Chicago",
-          "title": "chicago with mei in pilsen",
-          "host": "Mei Tanaka",
-          "hostDegree": 1,
-          "ifYes": 315,
-          "otherwise": 485,
-          "solo": 725,
-          "fitsBudget": false,
-          "repairs": []
-        },
-        {
-          "id": "trip_mwdg4csgn9j8",
+          "id": "trip_mwdhxg0sifqo",
           "city": "Houston",
-          "title": "houston with raj for banh mi + night markets",
+          "title": "houston with raj for cheap eats + towels",
           "host": "Raj Iyer",
           "hostDegree": 2,
-          "ifYes": 130,
-          "otherwise": 280,
-          "solo": 440,
+          "ifYes": 111,
+          "otherwise": 251,
+          "solo": 411,
           "fitsBudget": false,
-          "repairs": []
-        },
-        {
-          "id": "trip_mwdg4csgw60x",
-          "city": "Dallas",
-          "title": "dallas with diego, oak cliff couch",
-          "host": "Diego Morales",
-          "hostDegree": 2,
-          "ifYes": 140,
-          "otherwise": 290,
-          "solo": 455,
-          "fitsBudget": false,
-          "repairs": []
+          "repairs": [
+            "removed an 'under budget' claim: the priced trip is over budget"
+          ]
         }
       ],
       "audit": {
-        "runId": "run_mwdg4csh",
+        "runId": "run_mwdhxg0s",
         "viewerId": "zoe",
         "input": {
           "start": "2026-12-11",
@@ -678,73 +710,17 @@
           "budget": 40
         },
         "mode": "live",
-        "costUsd": 0.0384,
-        "latencyMs": 31115,
+        "costUsd": 0.0278,
+        "latencyMs": 23101,
         "raw": {
-          "ids": 7,
-          "grounded": 7,
+          "ids": 2,
+          "grounded": 2,
           "privacyViolationsCaught": 0,
           "invented": 0
         },
         "trips": [
           {
-            "tripId": "trip_mwdg4cshf22e",
-            "city": "chicago",
-            "elements": [
-              {
-                "kind": "host",
-                "id": "mei",
-                "exists": true,
-                "visible": true
-              },
-              {
-                "kind": "person",
-                "id": "arjun",
-                "exists": true,
-                "visible": true
-              },
-              {
-                "kind": "person",
-                "id": "colin",
-                "exists": true,
-                "visible": true
-              },
-              {
-                "kind": "post",
-                "id": "p_00nq",
-                "exists": true,
-                "visible": true
-              },
-              {
-                "kind": "post",
-                "id": "p_00ni",
-                "exists": true,
-                "visible": true
-              },
-              {
-                "kind": "post",
-                "id": "p_00nd",
-                "exists": true,
-                "visible": true
-              },
-              {
-                "kind": "post",
-                "id": "p_00nl",
-                "exists": true,
-                "visible": true
-              }
-            ],
-            "renderedViolations": 0,
-            "fitsBudget": false,
-            "ifYes": 315,
-            "otherwise": 485,
-            "solo": 725,
-            "hostOptedIn": true,
-            "hostDegree": 1,
-            "fofHasMutual": null
-          },
-          {
-            "tripId": "trip_mwdg4csgn9j8",
+            "tripId": "trip_mwdhxg0sifqo",
             "city": "houston",
             "elements": [
               {
@@ -762,35 +738,9 @@
             ],
             "renderedViolations": 0,
             "fitsBudget": false,
-            "ifYes": 130,
-            "otherwise": 280,
-            "solo": 440,
-            "hostOptedIn": true,
-            "hostDegree": 2,
-            "fofHasMutual": true
-          },
-          {
-            "tripId": "trip_mwdg4csgw60x",
-            "city": "dallas",
-            "elements": [
-              {
-                "kind": "host",
-                "id": "diego",
-                "exists": true,
-                "visible": true
-              },
-              {
-                "kind": "post",
-                "id": "p_00qh",
-                "exists": true,
-                "visible": true
-              }
-            ],
-            "renderedViolations": 0,
-            "fitsBudget": false,
-            "ifYes": 140,
-            "otherwise": 290,
-            "solo": 455,
+            "ifYes": 111,
+            "otherwise": 251,
+            "solo": 411,
             "hostOptedIn": true,
             "hostDegree": 2,
             "fofHasMutual": true
@@ -805,54 +755,56 @@
       "budget": 300,
       "expect": "Denver: Jules hosts, comp, flight",
       "weekend": "Dec 11–13",
-      "runId": "run_mwdg5go4",
+      "runId": "run_mwdhytn6",
       "mode": "live",
-      "latencyMs": 22498,
-      "costUsd": 0.044899999999999995,
-      "steps": 20,
+      "latencyMs": 25460,
+      "costUsd": 0.0458,
+      "steps": 21,
       "trips": [
         {
-          "id": "trip_mwdg5go31dmm",
+          "id": "trip_mwdhytn5uv25",
           "city": "Denver",
-          "title": "denver with jules for mural crawl + bouldering finals",
+          "title": "denver with jules for the mural crawl + comp",
           "host": "Jules Park",
           "hostDegree": 1,
           "event": "RiNo Mural Crawl + Movement bouldering comp finals",
-          "ifYes": 295,
-          "otherwise": 455,
-          "solo": 635,
+          "ifYes": 272,
+          "otherwise": 424,
+          "solo": 603,
           "fitsBudget": true,
           "repairs": []
         },
         {
-          "id": "trip_mwdg5go37cvu",
+          "id": "trip_mwdhytn5rev9",
           "city": "Dallas",
-          "title": "dallas with cole for the deep ellum vintage market",
+          "title": "dallas with cole + harper for the vintage market",
           "host": "Cole Patterson",
           "hostDegree": 2,
-          "ride": "Ravi Shah",
+          "ride": "Owen Castillo",
           "event": "Deep Ellum Vintage Market (winter edition)",
-          "ifYes": 110,
-          "otherwise": 290,
-          "solo": 455,
+          "ifYes": 60,
+          "otherwise": 178,
+          "solo": 261,
           "fitsBudget": true,
-          "repairs": []
+          "repairs": [
+            "dates follow Owen's car: 2026-12-12 → 2026-12-13"
+          ]
         },
         {
-          "id": "trip_mwdg5go41fld",
+          "id": "trip_mwdhytn6xwrx",
           "city": "Houston",
-          "title": "houston with raj, cheap + easy",
+          "title": "houston with raj for board games + food",
           "host": "Raj Iyer",
           "hostDegree": 2,
-          "ifYes": 125,
-          "otherwise": 275,
-          "solo": 440,
+          "ifYes": 103,
+          "otherwise": 243,
+          "solo": 411,
           "fitsBudget": true,
           "repairs": []
         }
       ],
       "audit": {
-        "runId": "run_mwdg5go4",
+        "runId": "run_mwdhytn6",
         "viewerId": "ethan",
         "input": {
           "start": "2026-12-11",
@@ -860,17 +812,17 @@
           "budget": 300
         },
         "mode": "live",
-        "costUsd": 0.044899999999999995,
-        "latencyMs": 22498,
+        "costUsd": 0.0458,
+        "latencyMs": 25460,
         "raw": {
-          "ids": 13,
-          "grounded": 13,
+          "ids": 15,
+          "grounded": 15,
           "privacyViolationsCaught": 0,
           "invented": 0
         },
         "trips": [
           {
-            "tripId": "trip_mwdg5go31dmm",
+            "tripId": "trip_mwdhytn5uv25",
             "city": "denver",
             "elements": [
               {
@@ -903,19 +855,25 @@
                 "id": "p_00mv",
                 "exists": true,
                 "visible": true
+              },
+              {
+                "kind": "reel",
+                "id": "tr_ridge",
+                "exists": true,
+                "visible": true
               }
             ],
             "renderedViolations": 0,
             "fitsBudget": true,
-            "ifYes": 295,
-            "otherwise": 455,
-            "solo": 635,
+            "ifYes": 272,
+            "otherwise": 424,
+            "solo": 603,
             "hostOptedIn": true,
             "hostDegree": 1,
             "fofHasMutual": null
           },
           {
-            "tripId": "trip_mwdg5go37cvu",
+            "tripId": "trip_mwdhytn5rev9",
             "city": "dallas",
             "elements": [
               {
@@ -926,14 +884,14 @@
               },
               {
                 "kind": "ride",
-                "id": "ride_ravi_dal",
+                "id": "ride_owen_dal",
                 "exists": true,
                 "visible": true,
                 "inDates": true
               },
               {
                 "kind": "driver",
-                "id": "ravi",
+                "id": "owen",
                 "exists": true,
                 "visible": true
               },
@@ -958,12 +916,6 @@
               },
               {
                 "kind": "person",
-                "id": "owen",
-                "exists": true,
-                "visible": true
-              },
-              {
-                "kind": "person",
                 "id": "zoe",
                 "exists": true,
                 "visible": true
@@ -973,19 +925,25 @@
                 "id": "p_00q9",
                 "exists": true,
                 "visible": true
+              },
+              {
+                "kind": "post",
+                "id": "p_00qh",
+                "exists": true,
+                "visible": true
               }
             ],
             "renderedViolations": 0,
             "fitsBudget": true,
-            "ifYes": 110,
-            "otherwise": 290,
-            "solo": 455,
+            "ifYes": 60,
+            "otherwise": 178,
+            "solo": 261,
             "hostOptedIn": true,
             "hostDegree": 2,
             "fofHasMutual": true
           },
           {
-            "tripId": "trip_mwdg5go41fld",
+            "tripId": "trip_mwdhytn6xwrx",
             "city": "houston",
             "elements": [
               {
@@ -1021,9 +979,9 @@
             ],
             "renderedViolations": 0,
             "fitsBudget": true,
-            "ifYes": 125,
-            "otherwise": 275,
-            "solo": 440,
+            "ifYes": 103,
+            "otherwise": 243,
+            "solo": 411,
             "hostOptedIn": true,
             "hostDegree": 2,
             "fofHasMutual": true
@@ -1038,53 +996,55 @@
       "budget": 150,
       "expect": "New Orleans: Finn's van via Sam, Elijah hosts",
       "weekend": "Nov 20–22",
-      "runId": "run_mwdg6if4",
+      "runId": "run_mwdi02fz",
       "mode": "live",
-      "latencyMs": 23185,
-      "costUsd": 0.0305,
-      "steps": 20,
+      "latencyMs": 23635,
+      "costUsd": 0.0383,
+      "steps": 21,
       "trips": [
         {
-          "id": "trip_mwdg6if37kfj",
+          "id": "trip_mwdi02fzmg9j",
+          "city": "Houston",
+          "title": "houston with tj + raj's food run",
+          "host": "TJ Okafor",
+          "hostDegree": 1,
+          "ifYes": 103,
+          "otherwise": 243,
+          "solo": 411,
+          "fitsBudget": true,
+          "repairs": [
+            "dropped a reason with a model-written price: \"raj posted that $4.50 banh mi run on bellaire, free driving \""
+          ]
+        },
+        {
+          "id": "trip_mwdi02fz8kkz",
           "city": "New Orleans",
-          "title": "new orleans with elijah for finn's van + hi-ho late set",
+          "title": "new orleans with finn's van + elijah's couch",
           "host": "Elijah Brown",
           "hostDegree": 1,
           "ride": "Finn Gallagher",
           "event": "SAMANTHA_VR + Colin Byrne — late set at the Hi-Ho Lounge",
-          "ifYes": 105,
-          "otherwise": 345,
-          "solo": 565,
+          "ifYes": 108,
+          "otherwise": 313,
+          "solo": 533,
           "fitsBudget": true,
           "repairs": []
         },
         {
-          "id": "trip_mwdg6if3valp",
-          "city": "Houston",
-          "title": "houston with tj for grill + raj's banh mi run",
-          "host": "TJ Okafor",
-          "hostDegree": 1,
-          "ifYes": 125,
-          "otherwise": 275,
-          "solo": 440,
-          "fitsBudget": true,
-          "repairs": []
-        },
-        {
-          "id": "trip_mwdg6if4y9rd",
+          "id": "trip_mwdi02fz1hih",
           "city": "Dallas",
-          "title": "dallas with diego for oak cliff couch + tacos",
+          "title": "dallas with diego via jordan",
           "host": "Diego Morales",
           "hostDegree": 2,
-          "ifYes": 135,
-          "otherwise": 285,
-          "solo": 455,
+          "ifYes": 112,
+          "otherwise": 256,
+          "solo": 427,
           "fitsBudget": true,
           "repairs": []
         }
       ],
       "audit": {
-        "runId": "run_mwdg6if4",
+        "runId": "run_mwdi02fz",
         "viewerId": "devon",
         "input": {
           "start": "2026-11-20",
@@ -1092,8 +1052,8 @@
           "budget": 150
         },
         "mode": "live",
-        "costUsd": 0.0305,
-        "latencyMs": 23185,
+        "costUsd": 0.0383,
+        "latencyMs": 23635,
         "raw": {
           "ids": 11,
           "grounded": 11,
@@ -1102,7 +1062,39 @@
         },
         "trips": [
           {
-            "tripId": "trip_mwdg6if37kfj",
+            "tripId": "trip_mwdi02fzmg9j",
+            "city": "houston",
+            "elements": [
+              {
+                "kind": "host",
+                "id": "tj",
+                "exists": true,
+                "visible": true
+              },
+              {
+                "kind": "person",
+                "id": "raj",
+                "exists": true,
+                "visible": true
+              },
+              {
+                "kind": "post",
+                "id": "p_00ql",
+                "exists": true,
+                "visible": true
+              }
+            ],
+            "renderedViolations": 0,
+            "fitsBudget": true,
+            "ifYes": 103,
+            "otherwise": 243,
+            "solo": 411,
+            "hostOptedIn": true,
+            "hostDegree": 1,
+            "fofHasMutual": null
+          },
+          {
+            "tripId": "trip_mwdi02fz8kkz",
             "city": "new-orleans",
             "elements": [
               {
@@ -1151,12 +1143,6 @@
               },
               {
                 "kind": "person",
-                "id": "finn",
-                "exists": true,
-                "visible": true
-              },
-              {
-                "kind": "person",
                 "id": "lucas",
                 "exists": true,
                 "visible": true
@@ -1188,47 +1174,15 @@
             ],
             "renderedViolations": 0,
             "fitsBudget": true,
-            "ifYes": 105,
-            "otherwise": 345,
-            "solo": 565,
+            "ifYes": 108,
+            "otherwise": 313,
+            "solo": 533,
             "hostOptedIn": true,
             "hostDegree": 1,
             "fofHasMutual": null
           },
           {
-            "tripId": "trip_mwdg6if3valp",
-            "city": "houston",
-            "elements": [
-              {
-                "kind": "host",
-                "id": "tj",
-                "exists": true,
-                "visible": true
-              },
-              {
-                "kind": "person",
-                "id": "raj",
-                "exists": true,
-                "visible": true
-              },
-              {
-                "kind": "post",
-                "id": "p_00ql",
-                "exists": true,
-                "visible": true
-              }
-            ],
-            "renderedViolations": 0,
-            "fitsBudget": true,
-            "ifYes": 125,
-            "otherwise": 275,
-            "solo": 440,
-            "hostOptedIn": true,
-            "hostDegree": 1,
-            "fofHasMutual": null
-          },
-          {
-            "tripId": "trip_mwdg6if4y9rd",
+            "tripId": "trip_mwdi02fz1hih",
             "city": "dallas",
             "elements": [
               {
@@ -1252,9 +1206,9 @@
             ],
             "renderedViolations": 0,
             "fitsBudget": true,
-            "ifYes": 135,
-            "otherwise": 285,
-            "solo": 455,
+            "ifYes": 112,
+            "otherwise": 256,
+            "solo": 427,
             "hostOptedIn": true,
             "hostDegree": 2,
             "fofHasMutual": true
@@ -1269,53 +1223,43 @@
       "budget": 250,
       "expect": "Chicago: Arjun hosts + his birthday",
       "weekend": "Dec 4–6",
-      "runId": "run_mwdg75db",
+      "runId": "run_mwdi0jq1",
       "mode": "live",
-      "latencyMs": 29245,
-      "costUsd": 0.0451,
-      "steps": 20,
+      "latencyMs": 21892,
+      "costUsd": 0.0444,
+      "steps": 21,
       "trips": [
         {
-          "id": "trip_mwdg75dblksw",
+          "id": "trip_mwdi0jq1bezu",
           "city": "Houston",
-          "title": "houston with raj for banh mi + night markets",
+          "title": "houston with raj for night markets + banh mi run",
           "host": "Raj Iyer",
           "hostDegree": 1,
-          "ifYes": 130,
-          "otherwise": 280,
-          "solo": 440,
+          "ifYes": 111,
+          "otherwise": 251,
+          "solo": 411,
           "fitsBudget": true,
           "repairs": []
         },
         {
-          "id": "trip_mwdg75dbbcek",
+          "id": "trip_mwdi0jq1p6vp",
           "city": "San Antonio",
-          "title": "san antonio with gabe for pearl market → spurs",
+          "title": "san antonio with gabe for pearl market + spurs",
           "host": "Gabriel Flores",
           "hostDegree": 2,
           "ride": "Tyler Brooks",
           "event": "Pearl farmers market → Spurs game (day trip)",
-          "ifYes": 90,
-          "otherwise": 265,
-          "solo": 420,
+          "ifYes": 52,
+          "otherwise": 156,
+          "solo": 233,
           "fitsBudget": true,
-          "repairs": []
-        },
-        {
-          "id": "trip_mwdg75db27va",
-          "city": "New Orleans",
-          "title": "new orleans with beau for porch + bywater bikes",
-          "host": "Beau Landry",
-          "hostDegree": 2,
-          "ifYes": 185,
-          "otherwise": 345,
-          "solo": 565,
-          "fitsBudget": true,
-          "repairs": []
+          "repairs": [
+            "dates follow Tyler's car: 2026-12-05 → 2026-12-06"
+          ]
         }
       ],
       "audit": {
-        "runId": "run_mwdg75db",
+        "runId": "run_mwdi0jq1",
         "viewerId": "priya",
         "input": {
           "start": "2026-12-04",
@@ -1323,8 +1267,8 @@
           "budget": 250
         },
         "mode": "live",
-        "costUsd": 0.0451,
-        "latencyMs": 29245,
+        "costUsd": 0.0444,
+        "latencyMs": 21892,
         "raw": {
           "ids": 8,
           "grounded": 8,
@@ -1333,12 +1277,18 @@
         },
         "trips": [
           {
-            "tripId": "trip_mwdg75dblksw",
+            "tripId": "trip_mwdi0jq1bezu",
             "city": "houston",
             "elements": [
               {
                 "kind": "host",
                 "id": "raj",
+                "exists": true,
+                "visible": true
+              },
+              {
+                "kind": "person",
+                "id": "tj",
                 "exists": true,
                 "visible": true
               },
@@ -1357,15 +1307,15 @@
             ],
             "renderedViolations": 0,
             "fitsBudget": true,
-            "ifYes": 130,
-            "otherwise": 280,
-            "solo": 440,
+            "ifYes": 111,
+            "otherwise": 251,
+            "solo": 411,
             "hostOptedIn": true,
             "hostDegree": 1,
             "fofHasMutual": null
           },
           {
-            "tripId": "trip_mwdg75dbbcek",
+            "tripId": "trip_mwdi0jq1p6vp",
             "city": "san-antonio",
             "elements": [
               {
@@ -1395,12 +1345,6 @@
                 "inDates": true
               },
               {
-                "kind": "person",
-                "id": "tyler",
-                "exists": true,
-                "visible": true
-              },
-              {
                 "kind": "reel",
                 "id": "tr_pearl",
                 "exists": true,
@@ -1409,53 +1353,9 @@
             ],
             "renderedViolations": 0,
             "fitsBudget": true,
-            "ifYes": 90,
-            "otherwise": 265,
-            "solo": 420,
-            "hostOptedIn": true,
-            "hostDegree": 2,
-            "fofHasMutual": true
-          },
-          {
-            "tripId": "trip_mwdg75db27va",
-            "city": "new-orleans",
-            "elements": [
-              {
-                "kind": "host",
-                "id": "beau",
-                "exists": true,
-                "visible": true
-              },
-              {
-                "kind": "reel",
-                "id": "tr_brass",
-                "exists": true,
-                "visible": true
-              },
-              {
-                "kind": "post",
-                "id": "p_00o3",
-                "exists": true,
-                "visible": true
-              },
-              {
-                "kind": "post",
-                "id": "p_00o6",
-                "exists": true,
-                "visible": true
-              },
-              {
-                "kind": "post",
-                "id": "p_00nx",
-                "exists": true,
-                "visible": true
-              }
-            ],
-            "renderedViolations": 0,
-            "fitsBudget": true,
-            "ifYes": 185,
-            "otherwise": 345,
-            "solo": 565,
+            "ifYes": 52,
+            "otherwise": 156,
+            "solo": 233,
             "hostOptedIn": true,
             "hostDegree": 2,
             "fofHasMutual": true
@@ -1470,70 +1370,92 @@
       "budget": 60,
       "expect": "Thanksgiving weekend, few options",
       "weekend": "Nov 27–29",
-      "error": "proposal.trips.map is not a function"
-    },
-    {
-      "user": "ella",
-      "w": 3,
-      "budget": 80,
-      "expect": "tiny network, nobody open to hosting → graceful decline",
-      "weekend": "Dec 4–6",
-      "runId": "run_mwdg8gjx",
+      "runId": "run_mwdi16uo",
       "mode": "live",
-      "latencyMs": 30334,
-      "costUsd": 0.0341,
-      "steps": 18,
+      "latencyMs": 29480,
+      "costUsd": 0.0498,
+      "steps": 19,
       "trips": [
         {
-          "id": "trip_mwdg8gjxce07",
+          "id": "trip_mwdi16uonlof",
           "city": "Houston",
-          "title": "houston couch with tj + $4.50 banh mi",
-          "host": "TJ Okafor",
+          "title": "houston with raj for the montrose night market",
+          "host": "Raj Iyer",
           "hostDegree": 2,
-          "ifYes": 130,
-          "otherwise": 280,
-          "solo": 440,
-          "fitsBudget": false,
-          "repairs": []
-        },
-        {
-          "id": "trip_mwdg8gjx0tgq",
-          "city": "San Antonio",
-          "title": "san antonio day-trip ride with tyler for pearl + spurs",
-          "ride": "Tyler Brooks",
-          "event": "Pearl farmers market → Spurs game (day trip)",
-          "ifYes": 175,
-          "otherwise": 265,
-          "solo": 420,
-          "fitsBudget": false,
-          "repairs": []
+          "ride": "Yara Saleh",
+          "event": "Montrose Night Market",
+          "ifYes": 57,
+          "otherwise": 170,
+          "solo": 250,
+          "fitsBudget": true,
+          "repairs": [
+            "dates follow Yara's car: 2026-11-28 → 2026-11-29"
+          ]
         }
       ],
       "audit": {
-        "runId": "run_mwdg8gjx",
-        "viewerId": "ella",
+        "runId": "run_mwdi16uo",
+        "viewerId": "hannah",
         "input": {
-          "start": "2026-12-04",
-          "end": "2026-12-06",
-          "budget": 80
+          "start": "2026-11-27",
+          "end": "2026-11-29",
+          "budget": 60
         },
         "mode": "live",
-        "costUsd": 0.0341,
-        "latencyMs": 30334,
+        "costUsd": 0.0498,
+        "latencyMs": 29480,
         "raw": {
-          "ids": 5,
-          "grounded": 5,
+          "ids": 6,
+          "grounded": 6,
           "privacyViolationsCaught": 0,
           "invented": 0
         },
         "trips": [
           {
-            "tripId": "trip_mwdg8gjxce07",
+            "tripId": "trip_mwdi16uonlof",
             "city": "houston",
             "elements": [
               {
                 "kind": "host",
+                "id": "raj",
+                "exists": true,
+                "visible": true
+              },
+              {
+                "kind": "ride",
+                "id": "ride_yara_hou",
+                "exists": true,
+                "visible": true,
+                "inDates": true
+              },
+              {
+                "kind": "driver",
+                "id": "yara",
+                "exists": true,
+                "visible": true
+              },
+              {
+                "kind": "event",
+                "id": "e_hou_night_market",
+                "exists": true,
+                "visible": true,
+                "inDates": true
+              },
+              {
+                "kind": "person",
+                "id": "priya",
+                "exists": true,
+                "visible": true
+              },
+              {
+                "kind": "person",
                 "id": "tj",
+                "exists": true,
+                "visible": true
+              },
+              {
+                "kind": "person",
+                "id": "maddie",
                 "exists": true,
                 "visible": true
               },
@@ -1545,16 +1467,66 @@
               }
             ],
             "renderedViolations": 0,
-            "fitsBudget": false,
-            "ifYes": 130,
-            "otherwise": 280,
-            "solo": 440,
+            "fitsBudget": true,
+            "ifYes": 57,
+            "otherwise": 170,
+            "solo": 250,
             "hostOptedIn": true,
             "hostDegree": 2,
             "fofHasMutual": true
-          },
+          }
+        ],
+        "declined": false
+      }
+    },
+    {
+      "user": "ella",
+      "w": 3,
+      "budget": 80,
+      "expect": "tiny network, nobody open to hosting → graceful decline",
+      "weekend": "Dec 4–6",
+      "runId": "run_mwdi1ywk",
+      "mode": "live",
+      "latencyMs": 35860,
+      "costUsd": 0.0354,
+      "steps": 17,
+      "trips": [
+        {
+          "id": "trip_mwdi1ywk639y",
+          "city": "San Antonio",
+          "title": "san antonio day trip with tyler for pearl + spurs",
+          "ride": "Tyler Brooks",
+          "event": "Pearl farmers market → Spurs game (day trip)",
+          "ifYes": 130,
+          "otherwise": 156,
+          "solo": 233,
+          "fitsBudget": false,
+          "repairs": [
+            "dates follow Tyler's car: 2026-12-05 → 2026-12-06",
+            "removed an 'under budget' claim: the priced trip is over budget"
+          ]
+        }
+      ],
+      "audit": {
+        "runId": "run_mwdi1ywk",
+        "viewerId": "ella",
+        "input": {
+          "start": "2026-12-04",
+          "end": "2026-12-06",
+          "budget": 80
+        },
+        "mode": "live",
+        "costUsd": 0.0354,
+        "latencyMs": 35860,
+        "raw": {
+          "ids": 4,
+          "grounded": 4,
+          "privacyViolationsCaught": 0,
+          "invented": 0
+        },
+        "trips": [
           {
-            "tripId": "trip_mwdg8gjx0tgq",
+            "tripId": "trip_mwdi1ywk639y",
             "city": "san-antonio",
             "elements": [
               {
@@ -1578,23 +1550,23 @@
                 "inDates": true
               },
               {
-                "kind": "person",
-                "id": "tyler",
+                "kind": "reel",
+                "id": "tr_pearl",
                 "exists": true,
                 "visible": true
               },
               {
-                "kind": "reel",
-                "id": "tr_pearl",
+                "kind": "post",
+                "id": "p_00qw",
                 "exists": true,
                 "visible": true
               }
             ],
             "renderedViolations": 0,
             "fitsBudget": false,
-            "ifYes": 175,
-            "otherwise": 265,
-            "solo": 420,
+            "ifYes": 130,
+            "otherwise": 156,
+            "solo": 233,
             "hostOptedIn": null,
             "hostDegree": null,
             "fofHasMutual": null
@@ -1609,39 +1581,53 @@
       "budget": 400,
       "expect": "NYC: Ava hosts (restricted profile), Wes's open house",
       "weekend": "Jan 1–3",
-      "runId": "run_mwdg8ykz",
+      "runId": "run_mwdi2hti",
       "mode": "live",
-      "latencyMs": 22869,
-      "costUsd": 0.038400000000000004,
-      "steps": 20,
+      "latencyMs": 24013,
+      "costUsd": 0.0386,
+      "steps": 21,
       "trips": [
         {
-          "id": "trip_mwdg8ykyd6rd",
-          "city": "Dallas",
-          "title": "dallas with cole + sienna, brunch and deep ellum",
-          "host": "Cole Patterson",
+          "id": "trip_mwdi2hti15vh",
+          "city": "San Antonio",
+          "title": "san antonio with gabe for tacos",
+          "host": "Gabriel Flores",
           "hostDegree": 2,
-          "ifYes": 135,
-          "otherwise": 285,
-          "solo": 455,
+          "ifYes": 83,
+          "otherwise": 219,
+          "solo": 389,
           "fitsBudget": true,
           "repairs": []
         },
         {
-          "id": "trip_mwdg8ykydwvm",
-          "city": "New Orleans",
-          "title": "new orleans with beau, second line + frenchmen",
-          "host": "Beau Landry",
+          "id": "trip_mwdi2hthfr7y",
+          "city": "Houston",
+          "title": "houston with raj for night market eats",
+          "host": "Raj Iyer",
           "hostDegree": 2,
-          "ifYes": 210,
-          "otherwise": 365,
-          "solo": 565,
+          "ifYes": 103,
+          "otherwise": 243,
+          "solo": 411,
+          "fitsBudget": true,
+          "repairs": [
+            "dropped a reason with a model-written price: \"raj posted the $4.50 banh mi as stop one on his free driving\""
+          ]
+        },
+        {
+          "id": "trip_mwdi2hthuofo",
+          "city": "Dallas",
+          "title": "dallas with cole + sienna for brunch",
+          "host": "Cole Patterson",
+          "hostDegree": 2,
+          "ifYes": 112,
+          "otherwise": 256,
+          "solo": 427,
           "fitsBudget": true,
           "repairs": []
         }
       ],
       "audit": {
-        "runId": "run_mwdg8ykz",
+        "runId": "run_mwdi2hti",
         "viewerId": "grace",
         "input": {
           "start": "2027-01-01",
@@ -1649,17 +1635,99 @@
           "budget": 400
         },
         "mode": "live",
-        "costUsd": 0.038400000000000004,
-        "latencyMs": 22869,
+        "costUsd": 0.0386,
+        "latencyMs": 24013,
         "raw": {
-          "ids": 9,
-          "grounded": 9,
+          "ids": 10,
+          "grounded": 10,
           "privacyViolationsCaught": 0,
           "invented": 0
         },
         "trips": [
           {
-            "tripId": "trip_mwdg8ykyd6rd",
+            "tripId": "trip_mwdi2hti15vh",
+            "city": "san-antonio",
+            "elements": [
+              {
+                "kind": "host",
+                "id": "gabe",
+                "exists": true,
+                "visible": true
+              },
+              {
+                "kind": "person",
+                "id": "lena",
+                "exists": true,
+                "visible": true
+              },
+              {
+                "kind": "reel",
+                "id": "tr_pearl",
+                "exists": true,
+                "visible": true
+              },
+              {
+                "kind": "post",
+                "id": "p_00qw",
+                "exists": true,
+                "visible": true
+              },
+              {
+                "kind": "post",
+                "id": "p_00qz",
+                "exists": true,
+                "visible": true
+              }
+            ],
+            "renderedViolations": 0,
+            "fitsBudget": true,
+            "ifYes": 83,
+            "otherwise": 219,
+            "solo": 389,
+            "hostOptedIn": true,
+            "hostDegree": 2,
+            "fofHasMutual": true
+          },
+          {
+            "tripId": "trip_mwdi2hthfr7y",
+            "city": "houston",
+            "elements": [
+              {
+                "kind": "host",
+                "id": "raj",
+                "exists": true,
+                "visible": true
+              },
+              {
+                "kind": "person",
+                "id": "tj",
+                "exists": true,
+                "visible": true
+              },
+              {
+                "kind": "person",
+                "id": "maddie",
+                "exists": true,
+                "visible": true
+              },
+              {
+                "kind": "post",
+                "id": "p_00ql",
+                "exists": true,
+                "visible": true
+              }
+            ],
+            "renderedViolations": 0,
+            "fitsBudget": true,
+            "ifYes": 103,
+            "otherwise": 243,
+            "solo": 411,
+            "hostOptedIn": true,
+            "hostDegree": 2,
+            "fofHasMutual": true
+          },
+          {
+            "tripId": "trip_mwdi2hthuofo",
             "city": "dallas",
             "elements": [
               {
@@ -1685,57 +1753,13 @@
                 "id": "p_00q9",
                 "exists": true,
                 "visible": true
-              },
-              {
-                "kind": "post",
-                "id": "p_00qh",
-                "exists": true,
-                "visible": true
               }
             ],
             "renderedViolations": 0,
             "fitsBudget": true,
-            "ifYes": 135,
-            "otherwise": 285,
-            "solo": 455,
-            "hostOptedIn": true,
-            "hostDegree": 2,
-            "fofHasMutual": true
-          },
-          {
-            "tripId": "trip_mwdg8ykydwvm",
-            "city": "new-orleans",
-            "elements": [
-              {
-                "kind": "host",
-                "id": "beau",
-                "exists": true,
-                "visible": true
-              },
-              {
-                "kind": "person",
-                "id": "camille",
-                "exists": true,
-                "visible": true
-              },
-              {
-                "kind": "reel",
-                "id": "tr_brass",
-                "exists": true,
-                "visible": true
-              },
-              {
-                "kind": "post",
-                "id": "p_00o6",
-                "exists": true,
-                "visible": true
-              }
-            ],
-            "renderedViolations": 0,
-            "fitsBudget": true,
-            "ifYes": 210,
-            "otherwise": 365,
-            "solo": 565,
+            "ifYes": 112,
+            "otherwise": 256,
+            "solo": 427,
             "hostOptedIn": true,
             "hostDegree": 2,
             "fofHasMutual": true
@@ -1750,39 +1774,40 @@
       "budget": 150,
       "expect": "Atlanta: BeltLine run, Andre via Kwame",
       "weekend": "Dec 25–27",
-      "runId": "run_mwdg9isl",
+      "runId": "run_mwdi35ki",
       "mode": "live",
-      "latencyMs": 25704,
-      "costUsd": 0.0367,
+      "latencyMs": 30287,
+      "costUsd": 0.032100000000000004,
       "steps": 20,
       "trips": [
         {
-          "id": "trip_mwdg9isl9ssq",
+          "id": "trip_mwdi35kii81j",
           "city": "Houston",
-          "title": "houston couch + grill with tj",
+          "title": "houston with tj for grill + cheap eats",
           "host": "TJ Okafor",
           "hostDegree": 2,
-          "ifYes": 125,
-          "otherwise": 275,
-          "solo": 440,
+          "ifYes": 103,
+          "otherwise": 243,
+          "solo": 411,
           "fitsBudget": true,
           "repairs": []
         },
         {
-          "id": "trip_mwdg9isla2k6",
-          "city": "New Orleans",
-          "title": "new orleans streetcar days with elijah",
-          "host": "Elijah Brown",
+          "id": "trip_mwdi35kiihml",
+          "city": "Atlanta",
+          "title": "atlanta with andre + kwame for beltline night run",
+          "host": "Andre Jackson",
           "hostDegree": 2,
-          "ifYes": 210,
-          "otherwise": 365,
-          "solo": 565,
+          "event": "BeltLine Night Run 5k + Ponce City Market after",
+          "ifYes": 285,
+          "otherwise": 433,
+          "solo": 573,
           "fitsBudget": false,
           "repairs": []
         }
       ],
       "audit": {
-        "runId": "run_mwdg9isl",
+        "runId": "run_mwdi35ki",
         "viewerId": "marcus",
         "input": {
           "start": "2026-12-25",
@@ -1790,17 +1815,17 @@
           "budget": 150
         },
         "mode": "live",
-        "costUsd": 0.0367,
-        "latencyMs": 25704,
+        "costUsd": 0.032100000000000004,
+        "latencyMs": 30287,
         "raw": {
-          "ids": 5,
-          "grounded": 5,
+          "ids": 7,
+          "grounded": 7,
           "privacyViolationsCaught": 0,
           "invented": 0
         },
         "trips": [
           {
-            "tripId": "trip_mwdg9isl9ssq",
+            "tripId": "trip_mwdi35kii81j",
             "city": "houston",
             "elements": [
               {
@@ -1818,41 +1843,54 @@
             ],
             "renderedViolations": 0,
             "fitsBudget": true,
-            "ifYes": 125,
-            "otherwise": 275,
-            "solo": 440,
+            "ifYes": 103,
+            "otherwise": 243,
+            "solo": 411,
             "hostOptedIn": true,
             "hostDegree": 2,
             "fofHasMutual": true
           },
           {
-            "tripId": "trip_mwdg9isla2k6",
-            "city": "new-orleans",
+            "tripId": "trip_mwdi35kiihml",
+            "city": "atlanta",
             "elements": [
               {
                 "kind": "host",
-                "id": "elijah",
+                "id": "andre",
                 "exists": true,
                 "visible": true
               },
               {
-                "kind": "post",
-                "id": "p_00o3",
+                "kind": "event",
+                "id": "e_atl_beltline_run",
+                "exists": true,
+                "visible": true,
+                "inDates": true
+              },
+              {
+                "kind": "person",
+                "id": "kwame",
                 "exists": true,
                 "visible": true
               },
               {
                 "kind": "reel",
-                "id": "tr_brass",
+                "id": "tr_krog",
+                "exists": true,
+                "visible": true
+              },
+              {
+                "kind": "post",
+                "id": "p_00mc",
                 "exists": true,
                 "visible": true
               }
             ],
             "renderedViolations": 0,
             "fitsBudget": false,
-            "ifYes": 210,
-            "otherwise": 365,
-            "solo": 565,
+            "ifYes": 285,
+            "otherwise": 433,
+            "solo": 573,
             "hostOptedIn": true,
             "hostDegree": 2,
             "fofHasMutual": true
@@ -1867,53 +1905,41 @@
       "budget": 250,
       "expect": "Denver (Mateo) or Houston (Layla), no hosts → honest",
       "weekend": "Dec 18–20",
-      "runId": "run_mwdga1bg",
+      "runId": "run_mwdi3o68",
       "mode": "live",
-      "latencyMs": 23513,
-      "costUsd": 0.0408,
+      "latencyMs": 23611,
+      "costUsd": 0.0387,
       "steps": 20,
       "trips": [
         {
-          "id": "trip_mwdga1bgrh71",
+          "id": "trip_mwdi3o686th2",
+          "city": "San Antonio",
+          "title": "san antonio with gabe, pearl lights + abuela tacos",
+          "host": "Gabriel Flores",
+          "hostDegree": 2,
+          "ifYes": 99,
+          "otherwise": 235,
+          "solo": 389,
+          "fitsBudget": true,
+          "repairs": []
+        },
+        {
+          "id": "trip_mwdi3o68mq9k",
           "city": "Marfa",
           "title": "marfa with kenji + june for night sky weekend",
           "host": "June Whitaker",
           "hostDegree": 2,
           "ride": "Kenji Watanabe",
-          "event": "Marfa Night Sky Weekend (Chinati grounds + McDonald Observatory star party)",
-          "ifYes": 110,
-          "otherwise": 350,
-          "solo": 560,
-          "fitsBudget": true,
-          "repairs": []
-        },
-        {
-          "id": "trip_mwdga1bgvxwj",
-          "city": "San Antonio",
-          "title": "san antonio cheap + gabe's southtown couch",
-          "host": "Gabriel Flores",
-          "hostDegree": 2,
-          "ifYes": 120,
-          "otherwise": 265,
-          "solo": 420,
-          "fitsBudget": true,
-          "repairs": []
-        },
-        {
-          "id": "trip_mwdga1bga6vq",
-          "city": "New Orleans",
-          "title": "bywater porch weekend with beau",
-          "host": "Beau Landry",
-          "hostDegree": 2,
-          "ifYes": 185,
-          "otherwise": 345,
-          "solo": 565,
+          "event": "Marfa Night Sky Weekend (McDonald Observatory star party)",
+          "ifYes": 103,
+          "otherwise": 319,
+          "solo": 529,
           "fitsBudget": true,
           "repairs": []
         }
       ],
       "audit": {
-        "runId": "run_mwdga1bg",
+        "runId": "run_mwdi3o68",
         "viewerId": "omar",
         "input": {
           "start": "2026-12-18",
@@ -1921,17 +1947,49 @@
           "budget": 250
         },
         "mode": "live",
-        "costUsd": 0.0408,
-        "latencyMs": 23513,
+        "costUsd": 0.0387,
+        "latencyMs": 23611,
         "raw": {
-          "ids": 10,
-          "grounded": 10,
+          "ids": 9,
+          "grounded": 9,
           "privacyViolationsCaught": 0,
           "invented": 0
         },
         "trips": [
           {
-            "tripId": "trip_mwdga1bgrh71",
+            "tripId": "trip_mwdi3o686th2",
+            "city": "san-antonio",
+            "elements": [
+              {
+                "kind": "host",
+                "id": "gabe",
+                "exists": true,
+                "visible": true
+              },
+              {
+                "kind": "reel",
+                "id": "tr_pearl",
+                "exists": true,
+                "visible": true
+              },
+              {
+                "kind": "post",
+                "id": "p_00qz",
+                "exists": true,
+                "visible": true
+              }
+            ],
+            "renderedViolations": 0,
+            "fitsBudget": true,
+            "ifYes": 99,
+            "otherwise": 235,
+            "solo": 389,
+            "hostOptedIn": true,
+            "hostDegree": 2,
+            "fofHasMutual": true
+          },
+          {
+            "tripId": "trip_mwdi3o68mq9k",
             "city": "marfa",
             "elements": [
               {
@@ -1973,12 +2031,6 @@
                 "visible": true
               },
               {
-                "kind": "person",
-                "id": "kenji",
-                "exists": true,
-                "visible": true
-              },
-              {
                 "kind": "post",
                 "id": "p_00pn",
                 "exists": true,
@@ -1993,85 +2045,9 @@
             ],
             "renderedViolations": 0,
             "fitsBudget": true,
-            "ifYes": 110,
-            "otherwise": 350,
-            "solo": 560,
-            "hostOptedIn": true,
-            "hostDegree": 2,
-            "fofHasMutual": true
-          },
-          {
-            "tripId": "trip_mwdga1bgvxwj",
-            "city": "san-antonio",
-            "elements": [
-              {
-                "kind": "host",
-                "id": "gabe",
-                "exists": true,
-                "visible": true
-              },
-              {
-                "kind": "reel",
-                "id": "tr_pearl",
-                "exists": true,
-                "visible": true
-              },
-              {
-                "kind": "post",
-                "id": "p_00qz",
-                "exists": true,
-                "visible": true
-              }
-            ],
-            "renderedViolations": 0,
-            "fitsBudget": true,
-            "ifYes": 120,
-            "otherwise": 265,
-            "solo": 420,
-            "hostOptedIn": true,
-            "hostDegree": 2,
-            "fofHasMutual": true
-          },
-          {
-            "tripId": "trip_mwdga1bga6vq",
-            "city": "new-orleans",
-            "elements": [
-              {
-                "kind": "host",
-                "id": "beau",
-                "exists": true,
-                "visible": true
-              },
-              {
-                "kind": "reel",
-                "id": "tr_brass",
-                "exists": true,
-                "visible": true
-              },
-              {
-                "kind": "post",
-                "id": "p_00o3",
-                "exists": true,
-                "visible": true
-              },
-              {
-                "kind": "post",
-                "id": "p_00o6",
-                "exists": true,
-                "visible": true
-              },
-              {
-                "kind": "post",
-                "id": "p_00nx",
-                "exists": true,
-                "visible": true
-              }
-            ],
-            "renderedViolations": 0,
-            "fitsBudget": true,
-            "ifYes": 185,
-            "otherwise": 345,
-            "solo": 565,
+            "ifYes": 103,
+            "otherwise": 319,
+            "solo": 529,
             "hostOptedIn": true,
             "hostDegree": 2,
             "fofHasMutual": true
@@ -2086,9 +2062,9 @@
       "user": "maya",
       "city": "Dallas",
       "mode": "live",
-      "latencyMs": 12926,
-      "costUsd": 0.0078,
-      "looked": 1,
+      "latencyMs": 27380,
+      "costUsd": 0.026199999999999998,
+      "looked": 2,
       "items": [
         {
           "title": "deep ellum pillars on a quiet sunday",
@@ -2099,17 +2075,51 @@
           "authorOk": true
         },
         {
-          "title": "big tex + fletcher's corny dog",
+          "title": "klyde warren food truck lawn",
+          "credit": "Grace Liu",
+          "mediaId": "dal-klyde",
+          "labelled": true,
+          "mentionsPhoto": true,
+          "authorOk": true
+        },
+        {
+          "title": "big tex at the fairgrounds",
           "credit": "Harper Nguyen",
           "mediaId": "dal-state-fair",
           "labelled": false,
           "mentionsPhoto": null,
           "authorOk": true
+        }
+      ]
+    },
+    {
+      "user": "maya",
+      "city": "San Antonio",
+      "mode": "live",
+      "latencyMs": 27190,
+      "costUsd": 0.0229,
+      "looked": 1,
+      "items": [
+        {
+          "title": "pearl at dusk",
+          "credit": "Gabriel Flores",
+          "mediaId": "sa-pearl",
+          "labelled": true,
+          "mentionsPhoto": true,
+          "authorOk": true
         },
         {
-          "title": "klyde warren food truck lawn",
-          "credit": "Grace Liu",
-          "mediaId": "dal-klyde",
+          "title": "river walk, 20 mins max",
+          "credit": "Lena Schultz",
+          "mediaId": "sa-riverwalk",
+          "labelled": false,
+          "mentionsPhoto": null,
+          "authorOk": true
+        },
+        {
+          "title": "mission san josé",
+          "credit": "Gabriel Flores",
+          "mediaId": "sa-missions",
           "labelled": true,
           "mentionsPhoto": true,
           "authorOk": true
@@ -2120,8 +2130,8 @@
       "user": "maya",
       "city": "San Antonio",
       "mode": "live",
-      "latencyMs": 24121,
-      "costUsd": 0.024099999999999996,
+      "latencyMs": 25524,
+      "costUsd": 0.0244,
       "looked": 2,
       "items": [
         {
@@ -2133,7 +2143,7 @@
           "authorOk": true
         },
         {
-          "title": "mission san josé with abuela energy",
+          "title": "mission san josé arches",
           "credit": "Gabriel Flores",
           "mediaId": "sa-missions",
           "labelled": true,
@@ -2151,83 +2161,41 @@
       ]
     },
     {
-      "user": "maya",
-      "city": "Marfa",
-      "mode": "live",
-      "latencyMs": 23086,
-      "costUsd": 0.0248,
-      "looked": 2,
-      "items": [
-        {
-          "title": "prada marfa that isn't a store",
-          "credit": "Kenji Watanabe",
-          "mediaId": "marfa-prada",
-          "labelled": true,
-          "mentionsPhoto": true,
-          "authorOk": true
-        },
-        {
-          "title": "pull over for stars after prada",
-          "credit": "Kenji Watanabe",
-          "mediaId": "marfa-prada",
-          "labelled": true,
-          "mentionsPhoto": true,
-          "authorOk": true
-        },
-        {
-          "title": "chinati long buildings tour",
-          "credit": "Lucas Moreau",
-          "mediaId": "marfa-chinati",
-          "labelled": true,
-          "mentionsPhoto": true,
-          "authorOk": true
-        },
-        {
-          "title": "chinati outside at golden hour",
-          "credit": "Lucas Moreau",
-          "mediaId": "marfa-chinati",
-          "labelled": true,
-          "mentionsPhoto": true,
-          "authorOk": true
-        }
-      ]
-    },
-    {
       "user": "zoe",
-      "city": "Chicago",
+      "city": "Houston",
       "mode": "live",
-      "latencyMs": 28441,
-      "costUsd": 0.029200000000000004,
+      "latencyMs": 38108,
+      "costUsd": 0.0294,
       "looked": 2,
       "items": [
         {
-          "title": "riverwalk sketch afternoon",
-          "credit": "Mei Tanaka",
-          "mediaId": "chi-riverwalk",
+          "title": "the $4.50 banh mi on bellaire",
+          "credit": "Raj Iyer",
+          "mediaId": "hou-viet",
           "labelled": true,
           "mentionsPhoto": true,
           "authorOk": true
         },
         {
-          "title": "the bean (yes, really)",
-          "credit": "Priya Natarajan",
-          "mediaId": "chi-bean",
+          "title": "raj's night market drive",
+          "credit": "Raj Iyer",
+          "mediaId": "hou-viet",
           "labelled": true,
-          "mentionsPhoto": true,
+          "mentionsPhoto": false,
           "authorOk": true
         },
         {
-          "title": "the point lakefront walk",
-          "credit": "Nadia Hassan",
-          "mediaId": "chi-lakefront",
+          "title": "museum district free sundays",
+          "credit": "Layla Haddad",
+          "mediaId": "hou-space",
           "labelled": false,
           "mentionsPhoto": null,
           "authorOk": true
         },
         {
-          "title": "L ride window views",
-          "credit": "Colin Byrne",
-          "mediaId": "chi-l-train",
+          "title": "saturn v lying down",
+          "credit": "Layla Haddad",
+          "mediaId": "hou-space",
           "labelled": false,
           "mentionsPhoto": null,
           "authorOk": true
@@ -2238,32 +2206,16 @@
       "user": "ethan",
       "city": "Denver",
       "mode": "live",
-      "latencyMs": 25002,
-      "costUsd": 0.020300000000000002,
-      "looked": 1,
+      "latencyMs": 33683,
+      "costUsd": 0.0257,
+      "looked": 2,
       "items": [
         {
-          "title": "union station plaza at 8am",
+          "title": "union station early",
           "credit": "Noah Lindqvist",
           "mediaId": "den-union",
           "labelled": true,
           "mentionsPhoto": true,
-          "authorOk": true
-        },
-        {
-          "title": "great hall benches work sesh",
-          "credit": "Noah Lindqvist",
-          "mediaId": "den-union",
-          "labelled": true,
-          "mentionsPhoto": false,
-          "authorOk": true
-        },
-        {
-          "title": "ridge road before the storm",
-          "credit": "Mateo Ruiz",
-          "mediaId": "den-snow-trail",
-          "labelled": false,
-          "mentionsPhoto": null,
           "authorOk": true
         },
         {
@@ -2272,6 +2224,14 @@
           "mediaId": "den-brewery",
           "labelled": true,
           "mentionsPhoto": true,
+          "authorOk": true
+        },
+        {
+          "title": "ridge road in summer vs december",
+          "credit": "Mateo Ruiz",
+          "mediaId": "den-snow-trail",
+          "labelled": false,
+          "mentionsPhoto": null,
           "authorOk": true
         }
       ]
