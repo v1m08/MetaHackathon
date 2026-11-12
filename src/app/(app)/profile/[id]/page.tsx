@@ -9,8 +9,7 @@ import { Shell } from "@/components/Shell";
 import { Avatar, Button, Photo, Pill, PostSkeleton, cx } from "@/components/ui";
 import { api, refresh, useApi } from "@/lib/api";
 import { useSession } from "@/lib/session";
-import { OpenDoorBadge, OpenDoorEditor } from "@/components/travel/OpenDoor";
-import { TravelStyleCard } from "@/components/travel/TravelStyle";
+import { OpenDoorBadge } from "@/components/travel/OpenDoor";
 import type { HydratedPost } from "@/server/db";
 import type { Reel, User } from "@/types";
 
@@ -88,10 +87,10 @@ export default function ProfilePage() {
             {u.hometown && <div className="flex items-center gap-3"><MapPin size={20} className="text-ink-2" /><span>From <b className="font-semibold">{u.hometown}</b></span></div>}
             {u.relationship && <div className="flex items-center gap-3"><Heart size={20} className="text-ink-2" /><span>{u.relationship}</span></div>}
             {mine ? (
-              <>
-                <OpenDoorEditor />
-                <TravelStyleCard />
-              </>
+              <Link href="/travel/setup" className="flex items-center gap-3 rounded-xl bg-[#f0f2f5] px-3 py-2.5">
+                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-fb text-white"><Compass size={18} /></span>
+                <span className="min-w-0 flex-1 text-[14px] leading-snug"><b className="font-semibold">Trips settings.</b> <span className="text-ink-2">{u.openDoor?.on ? `Your agent answers for you (${u.openDoor.offers.length} offer${u.openDoor.offers.length === 1 ? "" : "s"}, open to ${u.openDoor.tier === "fof" ? "friends of friends" : u.openDoor.tier === "network" ? "your network" : "friends"}).` : "Your agent is off; turn it on to let friends' agents ask you."} Travel style lives here too.</span></span>
+              </Link>
             ) : (
               <>
                 <OpenDoorBadge d={u.openDoor} name={u.name} />

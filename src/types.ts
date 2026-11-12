@@ -37,6 +37,8 @@ export interface User {
   /** Open Door: this person's hosting policy in their own words, plus who it is open to and what they offer.
    *  `openToHosting`/`hostingNote` are kept in sync from it (couch offered + on) so older code keeps working. */
   openDoor?: OpenDoor;
+  /** When this person finished the Trips intake (travel style + agent toggle). Unset = show the intake. */
+  tripsSetupAt?: string;
 }
 
 export type OpenDoorTier = "friends" | "fof" | "network";

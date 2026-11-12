@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useRef, useState } from "react";
-import { Activity, Car, ChevronDown, ChevronUp, Compass, Sparkles } from "lucide-react";
+import { Activity, Bot, Car, ChevronDown, ChevronRight, ChevronUp, Compass, Sparkles } from "lucide-react";
 import { Shell } from "@/components/Shell";
 import { ModeBadge, ReasoningStream } from "@/components/travel/Reasoning";
 import { TripCard } from "@/components/travel/TripCard";
@@ -18,6 +18,9 @@ type Options = {
   weekends: { n: number; start: string; end: string; label: string; busy: boolean }[];
   nudges: { rideId: string; driver: { id: string; name: string; avatar: string; connection?: string }; toCityName: string; departAt: string; seatsOpen: number; event?: { id: string; title: string }; weekend?: { start: string; end: string; label: string } }[];
   budgets: number[];
+  setupDone: boolean;
+  agent: { door: boolean; tier: string; offers: string[]; styleLines: number };
+  requests: { total: number; waiting: number };
 };
 type Result = { runId: string; trips: Trip[]; declineReason?: string; mode: string; costUsd: number; latencyMs: number; model: string };
 
@@ -76,6 +79,20 @@ function DiscoverInner() {
   return (
     <Shell back title="Trips" right={<Link href="/dev/ai" className="rounded-full p-2 text-ink-2" title="AI Inspector"><Activity size={20} /></Link>}>
       <div className="space-y-3 p-3">
+        {opt && !opt.setupDone && !params.get("run") && (
+          <section className="rounded-2xl border border-fb/30 bg-fb/5 p-4">
+            <div className="flex items-center gap-2 text-fb"><Bot size={18} /><span className="text-[12px] font-semibold uppercase tracking-wide">first time here</span></div>
+            <h2 className="mt-1 text-[18px] font-bold leading-tight">Set up Trips in two steps.</h2>
+            <p className="mt-1 text-[13.5px] text-ink-2">Your travel style (from your own posts, editable) and whether your agent may answer friends&apos; asks for you. Takes a minute; everything stays yours to approve.</p>
+            <Link href="/travel/setup" className="mt-3 flex items-center justify-center gap-1 rounded-xl bg-fb py-2.5 text-[15px] font-semibold text-white">Set up Trips <ChevronRight size={16} /></Link>
+          </section>
+        )}
+        {opt && (opt.setupDone || opt.requests.total > 0) && (
+          <div className="flex items-center gap-2 text-[12.5px]">
+            <Link href="/travel/setup" className={cx("flex items-center gap-1.5 rounded-full px-3 py-1.5 font-semibold", opt.agent.door ? "bg-emerald-50 text-emerald-700" : "bg-[#e4e6eb] text-ink-2")}><Bot size={13} /> {opt.agent.door ? `agent on · ${opt.agent.tier === "fof" ? "friends of friends" : opt.agent.tier === "network" ? "network" : "friends"}` : "agent off"}{opt.agent.styleLines ? ` · style ${opt.agent.styleLines}` : ""}</Link>
+            <Link href="/travel/opendoor" className={cx("ml-auto flex items-center gap-1.5 rounded-full px-3 py-1.5 font-semibold", opt.requests.waiting ? "bg-amber-100 text-amber-900" : "bg-[#e4e6eb] text-ink-2")}>{opt.requests.waiting ? `${opt.requests.waiting} waiting for you` : `requests (${opt.requests.total})`} <ChevronRight size={13} /></Link>
+          </div>
+        )}
         <section className="rounded-2xl bg-white p-4 shadow-sm">
           <div className="flex items-center gap-2 text-fb"><Compass size={18} /><span className="text-[12px] font-semibold uppercase tracking-wide">where can my people take me?</span></div>
           <h1 className="mt-1 text-[22px] font-bold leading-tight">Pick a weekend and a budget. Not a place.</h1>

@@ -41,7 +41,7 @@ export function OpenDoorEditor() {
     <div className={cx("rounded-xl p-3", d.on ? "bg-emerald-50" : "bg-[#f0f2f5]")}>
       <label className="flex items-center gap-3">
         <DoorOpen size={20} className={d.on ? "text-emerald-700" : "text-ink-2"} />
-        <span className="flex-1"><b className="font-semibold">Open Door</b><div className="text-[13px] text-ink-2">Your agent answers asks for you, within what you write here. Identities stay hidden until you both say yes.</div></span>
+        <span className="flex-1"><b className="font-semibold">Let my agent answer for me</b><div className="text-[13px] text-ink-2">When a friend&apos;s agent asks about a stay, a seat or a tour, yours answers inside what you write here. Names stay hidden until you both say yes, and you get the final call.</div></span>
         <input type="checkbox" checked={d.on} onChange={(e) => save({ on: e.target.checked })} className="h-5 w-5 accent-fb" />
       </label>
       {d.on && (
@@ -86,7 +86,7 @@ export function OpenDoorBadge({ d, name }: { d?: OpenDoor; name: string }) {
   return (
     <div className="flex items-start gap-3">
       <DoorOpen size={20} className="mt-0.5 text-emerald-600" />
-      <span className="text-[14px] leading-snug"><b className="font-semibold text-emerald-700">Open Door</b> <span className="text-ink-2">· {d.offers.map(offerLabel).join(", ")} · open to {tierLabel(d.tier)}. Ask through your agent; {name.split(" ")[0]}&apos;s agent answers from a policy you can&apos;t read.</span></span>
+      <span className="text-[14px] leading-snug"><b className="font-semibold text-emerald-700">Trips: agent on</b> <span className="text-ink-2">· {d.offers.map(offerLabel).join(", ")} · open to {tierLabel(d.tier)}. Plan a trip and your agent can ask {name.split(" ")[0]}&apos;s, anonymously.</span></span>
     </div>
   );
 }

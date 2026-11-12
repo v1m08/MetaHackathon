@@ -7,7 +7,7 @@ Two windows, two people. **A = Maya (traveler)**, **B = a host** (Gabriel in San
 1. `.env.local` has `MODEL_API_KEY`; raise `MODEL_BUDGET_USD` for demo day (the guard refuses live calls past it and falls back to replay/mock, labelled).
 2. `npm install && npm run build && npm start` (production build, no compile pauses). Open http://localhost:3000.
 3. Warm once: `npm run warm` (images), then run the exact demo input once so Discover is cached (`/travel?as=maya&start=<Fri>&end=<Sun>&budget=120&run=1`). For the live demo use a different budget so judges see Muse run live.
-4. Build Maya's travel style once: open `/profile/maya?as=maya` → **Build my travel style** (≈6 s, ≈$0.01). Edit or delete a line on camera if you want; the host's agent only gets what's left.
+4. Do the Trips intake for Maya once: `/travel/setup?as=maya` → **Build my travel style** (≈6 s, ≈$0.01), check the agent toggle, **Done**. Edit or delete a style line on camera if you want; the host's agent only gets what's left.
 5. `npm run reset` restores the seed (clears trips, drafts, requests, availability cache; keeps caches warm). It does **not** clear travel styles' source content, but it does clear the generated styles, so redo step 4 after a reset.
 6. Windows: **A** `http://localhost:3000/?as=maya`, **B** `http://localhost:3000/travel/opendoor?as=gabe` (or `?as=cole`).
 
@@ -15,14 +15,14 @@ Two windows, two people. **A = Maya (traveler)**, **B = a host** (Gabriel in San
 
 | Step | Window | Do | Say |
 |---|---|---|---|
-| 1 | B | Open Gabriel's profile → **Open Door** card. Read the policy aloud. Change nothing yet. | "This is the whole interface for hosting: your words, who it's open to, what you offer. Gabriel's agent can only act inside this." |
+| 1 | B | `/travel/setup?as=gabe` → the agent toggle and Gabriel's policy. Read it aloud. Change nothing yet. | "Trips has one intake: your travel style and this toggle. Flip it on and an agent answers friends' asks for you, inside your own words. Gabriel's agent can only act inside this." |
 | 2 | A | Feed → nudge ("Yara is driving to Houston…") or Menu → Trips → pick a weekend + budget → **Find my trips**. | "Weekend and budget, not a destination. Watch it map her network, then *read what people said* about those dates: RSVPs, posts, her own chats. No seeded calendar." |
 | 3 | A | Cards. Tap **Build my guide** on San Antonio (or Dallas). Scroll to **Make it happen**. | "Availability is calibrated: *Likely free* with the quote, *Busy* with the reason, *Unknown → we'll ask*. That **Ask** button drafts a one-liner she approves first." |
 | 4 | A | **Ask their agents, anonymously.** Watch the transcript. | "Her agent asks Gabriel's agent. It never sends her name (code strips it). Gabriel's agent answers only yes / no / conditions, from the policy. The shield line is the disclosure check: anything beyond the policy is removed before it comes back." |
 | 5 | A | The anonymous fit card. Tap **Yes, ask them**. | "She sees a host 'you know directly', the dates, the conditions, and why it fits from both sides. Not who." |
 | 6 | B | `/travel/opendoor` → the anonymous card: "A friend of yours wants to stay Dec 11–13… See who?" Tap **See who**. | "Gabriel sees the connection and the dates, not the name. He chooses to look." |
 | 7 | B | Reveal: Maya, UT Design cohort, mutuals. Tap **Yes, open the chat**. | "Both revealed, host decides last with full information. Then a real chat opens seeded with how they know each other, and the agents are out of it." |
-| 8 | A | Messenger → the new chat with the Open Door context line. | "From here it's two people." |
+| 8 | A | Messenger → the new chat with the context line. Back on the trip page: **Your trip plan** → **Confirm this plan**. | "From here it's two people. And nothing was a plan until Maya confirmed it." |
 | 9 | B (optional, 60 s) | Edit the policy ("friends only" tier, or "no guests in December") → A: run **Ask their agents** again on another trip. | "Same traveler, different policy, different answer. The policy is the product." |
 | 10 | Inspector (optional) | `/dev/ai` → traces `opendoor.traveler`, `opendoor.host.gabe`, `travel.availability`, `travel.style`. | "Every call, prompt, tokens, cost. Nothing is scripted." |
 

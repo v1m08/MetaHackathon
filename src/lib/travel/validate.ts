@@ -46,6 +46,8 @@ export interface Trip {
   /** What validation changed, for the Inspector and the eval. */
   repairs: string[];
   createdAt: string;
+  /** The traveler's final yes on the assembled plan (host confirmed, ride asked, dates). Nothing is final before this. */
+  confirmedAt?: string;
 }
 
 const tripId = () => `trip_${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { Activity, Bot, CalendarCheck, Check, ChevronDown, ChevronUp, DoorOpen, Eye, MessageCircle, Pencil, Sparkles, Trash2, X } from "lucide-react";
+import { Activity, Bot, CalendarCheck, Check, ChevronDown, ChevronUp, ClipboardCheck, DoorOpen, Eye, MessageCircle, Pencil, Sparkles, Trash2, X } from "lucide-react";
 import { Shell } from "@/components/Shell";
 import { ModeBadge, ReasoningStream } from "@/components/travel/Reasoning";
 import { PersonRow, PriceLine } from "@/components/travel/TripCard";
@@ -68,7 +68,9 @@ function DraftCard({ d, onChange }: { d: Draft; onChange: () => void }) {
 
 export default function TripPage() {
   const { id } = useParams<{ id: string }>();
-  const { data: trip, error } = useApi<Trip>(`/api/travel/trips/${id}`);
+  const { data: tripData, error } = useApi<Trip>(`/api/travel/trips/${id}`);
+  const [tripOverride, setTripOverride] = useState<Trip | null>(null);
+  const trip = tripOverride ?? tripData;
   const [steps, setSteps] = useState<StreamStep[]>([]);
   const [guide, setGuide] = useState<Guide | null>(null);
   const [running, setRunning] = useState(false);
@@ -121,6 +123,7 @@ export default function TripPage() {
       .catch((e) => setGErr((e as Error).message))
       .finally(() => setRunning(false));
     api<{ dates: DatesResult; drafts: Draft[] }>(`/api/travel/coordinate?tripId=${trip.id}`).then(setCoord).catch(() => {});
+    api<{ requests: RequestView[] }>("/api/opendoor/requests").then((r) => { const mine = r.requests.filter((x) => x.tripId === trip.id && x.role === "traveler"); if (mine.length) { setNegoRequests(mine); setNegoStarted(true); setNegoResult({ mode: mine[0].mode, summary: "", costUsd: 0 }); } }).catch(() => {});
   }, [trip]);
 
   const reloadCoord = () => api<{ dates: DatesResult; drafts: Draft[] }>(`/api/travel/coordinate?tripId=${trip!.id}`).then(setCoord);
@@ -133,6 +136,7 @@ export default function TripPage() {
     }
   }
 
+  const matched = negoRequests.find((r) => r.conversationId);
   if (error) return <Shell back title="Trip"><div className="p-6 text-center text-ink-2">This trip isn&apos;t yours or has expired. <Link href="/travel" className="font-semibold text-fb">Find trips</Link></div></Shell>;
   if (!trip) return <Shell back title="Trip"><div className="p-3"><div className="skeleton h-80 rounded-2xl" /></div></Shell>;
   const cover = trip.evidence[0]?.image;
@@ -263,6 +267,24 @@ export default function TripPage() {
                 </>
               )}
             </div>
+          )}
+        </section>
+
+        <section className={cx("rounded-2xl p-4 shadow-sm", trip.confirmedAt ? "bg-emerald-50" : "bg-white")}>
+          <div className="flex items-center gap-2"><ClipboardCheck size={16} className="text-emerald-700" /><h2 className="text-[16px] font-bold">Your trip plan</h2>{trip.confirmedAt && <span className="ml-auto rounded-full bg-emerald-200 px-2 py-0.5 text-[10.5px] font-semibold uppercase text-emerald-800">confirmed by you</span>}</div>
+          <ul className="mt-2 space-y-1 text-[13.5px]">
+            <li className="flex gap-2"><span className="w-16 shrink-0 text-ink-2">dates</span><span>{fmt(trip.start)} – {fmt(trip.end)}</span></li>
+            <li className="flex gap-2"><span className="w-16 shrink-0 text-ink-2">stay</span><span>{matched ? <><b className="font-semibold">{first(matched.other?.name ?? trip.host?.name ?? "")} said yes</b> · chat open</> : trip.host ? <>{first(trip.host.name)} · {negoRequests.some((r) => r.travelerAccepted) || coord?.drafts.some((d) => d.key === "host" && d.status === "sent") ? "asked, waiting for their yes" : "not asked yet"}</> : "hostel"}</span></li>
+            {trip.ride && <li className="flex gap-2"><span className="w-16 shrink-0 text-ink-2">ride</span><span>{first(trip.ride.driver.name)}&apos;s car · {coord?.drafts.some((d) => d.key === "ride" && d.status === "sent") ? "asked, waiting for a reply" : "seat not asked yet"}</span></li>}
+            <li className="flex gap-2"><span className="w-16 shrink-0 text-ink-2">cost</span><span>~${trip.prices.ifYes.total} if the yeses hold · ~${trip.prices.otherwise.total} otherwise</span></li>
+          </ul>
+          {!trip.confirmedAt ? (
+            <>
+              <p className="mt-2 text-[12.5px] text-ink-2">Nothing here is final until you confirm it. Your agent can ask; only you can lock a plan.</p>
+              <Button className="mt-2 w-full" disabled={!matched && !coord?.drafts.some((d) => d.status === "sent")} onClick={async () => { const t = await api<Trip>(`/api/travel/trips/${trip.id}`, { method: "POST", json: { action: "confirm" } }); setTripOverride(t); }}><ClipboardCheck size={16} /> {matched ? "Confirm this plan" : "Confirm once someone has said yes"}</Button>
+            </>
+          ) : (
+            <p className="mt-2 text-[12.5px] text-emerald-900">Confirmed {new Date(trip.confirmedAt).toLocaleString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}. {matched ? `${first(matched.other?.name ?? "")} was told.` : ""} <button className="font-semibold underline" onClick={async () => { const t = await api<Trip>(`/api/travel/trips/${trip.id}`, { method: "POST", json: { action: "unconfirm" } }); setTripOverride(t); }}>Undo</button></p>
           )}
         </section>
       </div>
