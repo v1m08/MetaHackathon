@@ -13,7 +13,7 @@ export const signalPosts: Post[] = [
   // Theo (LA): on set w2 and w4
   P("theo", 2, `call sheet says ${weekendLabel(2)} AND ${weekendLabel(4)} are shoot weekends. 5am calls. if i owe you a hang it's ${weekendLabel(3)} or january`, { likes: 9 }),
   // Nadia (Chicago): parents in town w2, exams dec 7–18 (policy)
-  P("nadia", 4, `parents land in chicago the ${weekendLabel(2)} weekend for thanksgiving part two and i have been asked to "have the apartment look like an adult lives in it". then exams until dec 18. see you all in 2027`, { likes: 11 }),
+  P("nadia", 4, `parents land in chicago the ${weekendLabel(2)} weekend for thanksgiving part two and i have been asked to "have the apartment look like an adult lives in it". then exams dec 7 to 18, nothing else. see you all in 2027`, { likes: 11 }),
   // Elijah (New Orleans): on shift w2
   P("elijah", 5, `picked up the whole ${weekendLabel(2)} holiday weekend in the unit (triple time, i'm not a saint). ${weekendLabel(3)} i am OFF and i will be on a porch`, { likes: 7 }),
   // June (Marfa): away w2

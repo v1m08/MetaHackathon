@@ -13,6 +13,7 @@ import { reels } from "./reels";
 import { travelConversations, travelEvents, travelGroupPosts, travelGroups, travelRides } from "./travelEvents";
 import { travelPosts, travelReels } from "./travelPosts";
 import { users } from "./users";
+import { cultureEvents, cultureGroups, memoryPosts, pastEvents, triggerPosts } from "./reconnect";
 
 // Notifications are derived from the seed so they always point at real content.
 function buildNotifications(): Notification[] {
@@ -68,10 +69,10 @@ const withSignals = <T extends { id: string; participantIds: string[]; messages:
 export function buildSeed(): Database {
   return {
     users: structuredClone(users),
-    posts: structuredClone([...feedPosts, ...groupPosts, ...travelPosts, ...travelGroupPosts, ...signalPosts]).sort((a, b) => b.createdAt.localeCompare(a.createdAt)),
+    posts: structuredClone([...feedPosts, ...groupPosts, ...travelPosts, ...travelGroupPosts, ...signalPosts, ...memoryPosts, ...triggerPosts]).sort((a, b) => b.createdAt.localeCompare(a.createdAt)),
     stories: structuredClone(stories),
-    groups: structuredClone([...groups, ...travelGroups]),
-    events: structuredClone([...events, ...travelEvents]),
+    groups: structuredClone([...groups, ...travelGroups, ...cultureGroups]),
+    events: structuredClone([...events, ...travelEvents, ...pastEvents, ...cultureEvents]),
     listings: structuredClone(listings),
     reels: structuredClone([...reels, ...travelReels]),
     conversations: withSignals(structuredClone([...conversations, ...travelConversations])),

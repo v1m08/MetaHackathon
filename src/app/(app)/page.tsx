@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Plus } from "lucide-react";
 import { ComposerCard } from "@/components/Composer";
 import { TravelNudge } from "@/components/travel/Nudge";
+import { useDailyNudge, WhyNowStrip } from "@/components/reconnect/WhyNowStrip";
 import { PostCard } from "@/components/Post";
 import { Shell, useMe } from "@/components/Shell";
 import { Avatar, Photo, PostSkeleton, Sheet } from "@/components/ui";
@@ -53,6 +54,10 @@ function Stories() {
 
 export default function FeedPage() {
   const { data: posts, mutate } = useApi<HydratedPost[]>("/api/feed", { poll: 8000 });
+  const { data: daily } = useDailyNudge();
+  const d = daily?.nudge ?? null;
+  // the drifted friend's post floats to the top of the feed when there is a nudge for it
+  const ordered = posts && d?.post ? [...posts.filter((p) => p.id === d.post!.id), ...posts.filter((p) => p.id !== d.post!.id)] : posts;
   return (
     <Shell>
       <ComposerCard />
@@ -63,10 +68,11 @@ export default function FeedPage() {
           <PostSkeleton />
         </>
       )}
-      {posts?.map((p, i) => (
-        <div key={p.id}>
-          {i === 2 && <TravelNudge />}
-          <PostCard post={p} onChange={(np) => mutate(posts.map((x) => (x.id === np.id ? np : x)), { revalidate: false })} />
+      {ordered?.map((p, i) => (
+        <div key={p.id} className={d?.post?.id === p.id ? "mb-2 bg-white" : undefined}>
+          {i === 3 && <TravelNudge />}
+          <PostCard post={p} onChange={(np) => mutate(posts!.map((x) => (x.id === np.id ? np : x)), { revalidate: false })} />
+          {d && d.post?.id === p.id && <WhyNowStrip d={d} />}
         </div>
       ))}
       {posts && <div className="py-8 text-center text-[13px] text-ink-2">You&apos;re all caught up</div>}

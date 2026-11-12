@@ -9,6 +9,7 @@ import { messageTime } from "@/lib/format";
 import { useSession } from "@/lib/session";
 import { useMe } from "@/components/Shell";
 import type { Conversation, Listing } from "@/types";
+import { PlanChip } from "@/components/reconnect/ui";
 
 type Card = { id: string; name: string; avatar: string; city?: string; openToHosting?: boolean };
 type Conv = Conversation & { name: string; participants: Card[]; others: Card[] };
@@ -17,10 +18,12 @@ function DraftBubble({ m, onDone }: { m: Conversation["messages"][number]; onDon
   const [editing, setEditing] = useState(false);
   const [text, setText] = useState(m.text);
   const [busy, setBusy] = useState(false);
+  const isPlan = m.attachment?.type === "plan";
   const act = async (action: "approve" | "edit" | "discard") => {
     setBusy(true);
     try {
-      await api(`/api/travel/drafts/${m.id}`, { method: "POST", json: { action, text } });
+      if (isPlan && action === "approve") await api(`/api/reconnect/plans/${m.attachment!.ref}`, { method: "POST", json: { action: "send", text } });
+      else await api(`/api/travel/drafts/${m.id}`, { method: "POST", json: { action, text } });
       setEditing(false);
       onDone();
     } finally {
@@ -29,7 +32,7 @@ function DraftBubble({ m, onDone }: { m: Conversation["messages"][number]; onDon
   };
   return (
     <div className="my-2 ml-auto w-[88%] rounded-2xl border border-amber-300 bg-amber-50 p-3">
-      <div className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide text-amber-800"><Compass size={12} /> Drafted by your trip agent · awaiting your approval</div>
+      <div className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide text-amber-800"><Compass size={12} /> {isPlan ? "Drafted in your words · you send it" : "Drafted by your trip agent · awaiting your approval"}</div>
       {m.draftReason && <div className="mt-0.5 text-[12px] text-amber-900/80">{m.draftReason}</div>}
       {editing ? (
         <textarea value={text} onChange={(e) => setText(e.target.value)} rows={4} className="mt-2 w-full rounded-xl border border-amber-300 bg-white p-2 text-[15px] outline-none" />
@@ -45,7 +48,7 @@ function DraftBubble({ m, onDone }: { m: Conversation["messages"][number]; onDon
         <button disabled={busy} onClick={() => setEditing((v) => !v)} className="flex items-center gap-1 rounded-full bg-white px-3 py-1.5 text-[13px] font-semibold text-ink"><Pencil size={14} /> {editing ? "Cancel" : "Edit"}</button>
         <button disabled={busy} onClick={() => act("discard")} className="flex items-center gap-1 rounded-full bg-white px-3 py-1.5 text-[13px] font-semibold text-red-600"><Trash2 size={14} /></button>
       </div>
-      <div className="mt-1.5 text-[11px] text-amber-900/70">Nothing is sent until you approve. Sending stays inside this app.</div>
+      <div className="mt-1.5 text-[11px] text-amber-900/70">{isPlan ? "Nothing is sent until you tap it. Sending also creates an invite-only Event for the plan." : "Nothing is sent until you approve. Sending stays inside this app."}</div>
     </div>
   );
 }
@@ -137,6 +140,7 @@ export default function ThreadPage() {
                 {!mine && <span className="w-7 shrink-0">{lastOfRun && sender && <Avatar src={sender.avatar} name={sender.name} size={28} />}</span>}
                 <div className={cx("flex max-w-[75%] flex-col", mine ? "items-end" : "items-start")}>
                   {m.attachment?.type === "listing" && <ListingChip id={m.attachment.ref} />}
+                  {m.attachment?.type === "plan" && <PlanChip id={m.attachment.ref} mine={mine} />}
                   {m.attachment?.type === "image" && <Photo src={m.attachment.ref} className="mb-1 max-h-60 rounded-2xl object-cover" />}
                   {m.text && (
                     <div

@@ -21,7 +21,9 @@
     "credits": "node scripts/credits.mjs",
     "sim": "node scripts/sim.mjs",
     "animations": "node scripts/build-animations.mjs",
-    "eval:opendoor": "node scripts/eval-opendoor.mjs"
+    "eval:opendoor": "node scripts/eval-opendoor.mjs",
+    "eval:reconnect": "node scripts/eval-reconnect.mjs",
+    "qa:reconnect": "node scripts/qa-reconnect.mjs"
   },
   "dependencies": {
     "lucide-react": "^0.468.0",

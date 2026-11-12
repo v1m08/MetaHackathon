@@ -7,6 +7,7 @@ import { Avatar, Button } from "@/components/ui";
 const SHORTCUTS = [
   { href: "/groups", icon: UsersRound, label: "Groups", color: "text-fb" },
   { href: "/events", icon: CalendarDays, label: "Events", color: "text-red-500" },
+  { href: "/reconnect", icon: Heart, label: "Reconnect", color: "text-rose-500" },
   { href: "/travel", icon: Compass, label: "Trips", color: "text-fb" },
   { href: "/marketplace", icon: Store, label: "Marketplace", color: "text-fb" },
   { href: "/dating", icon: Heart, label: "Dating", color: "text-pink-500" },
