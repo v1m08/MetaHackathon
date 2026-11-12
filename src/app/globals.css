@@ -38,3 +38,11 @@ body { background: var(--color-bg); color: var(--color-ink); font-family: var(--
 .slideup { animation: slideup .25s cubic-bezier(.2,.8,.2,1); }
 @keyframes fadein { from { opacity: 0 } to { opacity: 1 } }
 .fadein { animation: fadein .2s ease-out; }
+
+/* travel: reasoning stream motion */
+@keyframes stepin { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+.stepin { animation: stepin 320ms cubic-bezier(.2,.8,.2,1) both; }
+@keyframes pulse2 { 0%,100% { opacity: 1; transform: scale(1);} 50% { opacity: .4; transform: scale(.8);} }
+.pulse { animation: pulse2 1.1s ease-in-out infinite; }
+@keyframes dots { 0% { content: ""; } 33% { content: "."; } 66% { content: ".."; } 100% { content: "..."; } }
+.dots::after { content: ""; animation: dots 1.2s steps(1) infinite; }

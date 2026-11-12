@@ -66,12 +66,18 @@ const RETRYABLE = (status?: number) => status === undefined || status === 429 ||
 
 async function rawPost<T>(path: string, body: unknown): Promise<T> {
   const e = env();
-  const res = await fetch(`${e.base}${path}`, {
-    method: "POST",
-    headers: { "content-type": "application/json", authorization: `Bearer ${e.key}` },
-    body: JSON.stringify(body),
-    signal: AbortSignal.timeout(90_000),
-  });
+  let res: Response;
+  try {
+    res = await fetch(`${e.base}${path}`, {
+      method: "POST",
+      headers: { "content-type": "application/json", authorization: `Bearer ${e.key}` },
+      body: JSON.stringify(body),
+      signal: AbortSignal.timeout(90_000),
+    });
+  } catch (err) {
+    const cause = (err as { cause?: { code?: string; message?: string } }).cause;
+    throw new AIError(`network: ${cause?.code ?? cause?.message ?? (err as Error).message}`);
+  }
   const text = await res.text();
   let data: unknown;
   try {
@@ -102,7 +108,7 @@ async function chat(body: ChatBody, meta: { task: string; kind: CallKind; cache:
   const images = countImages(body.messages);
   const est = estimateChatUsd(body.model, promptChars(body), body.max_tokens ?? 1024, images);
   let lastErr: unknown;
-  for (let attempt = 1; attempt <= 2; attempt++) {
+  for (let attempt = 1; attempt <= 3; attempt++) {
     // Throws BudgetExceededError when the ledger is full; callers turn that into a mock fallback.
     const id = ledger().reserve({ task: meta.task, model: body.model, kind: meta.kind, reservedUsd: est, images, attempt });
     try {
@@ -115,8 +121,8 @@ async function chat(body: ChatBody, meta: { task: string; kind: CallKind; cache:
       lastErr = err;
       ledger().fail(id, (err as Error).message);
       const status = (err as AIError).status;
-      if (attempt === 1 && RETRYABLE(status)) {
-        await new Promise((res) => setTimeout(res, 800));
+      if (attempt < 3 && RETRYABLE(status)) {
+        await new Promise((res) => setTimeout(res, 700 * attempt));
         continue;
       }
       throw err;
@@ -323,6 +329,8 @@ export interface ToolsOptions extends CallOptions {
   onStep?: (step: TraceStep) => void;
   /** Force the first call to use a tool. */
   toolChoice?: "auto" | "required";
+  /** End the loop as soon as this tool has run (its args are the structured answer). Saves a model round-trip. */
+  stopOnTool?: string;
 }
 
 async function tools(input: string | AIMessage[], opts: ToolsOptions): Promise<ToolsResult> {
@@ -385,7 +393,8 @@ async function tools(input: string | AIMessage[], opts: ToolsOptions): Promise<T
           model,
           messages,
           tools: last ? undefined : toolSpecs,
-          tool_choice: last ? undefined : i === 0 && opts.toolChoice === "required" ? "required" : "auto",
+          // The Meta Model API only accepts tool_choice "auto" (observed 2026-11-12); "required" is prompted instead.
+          tool_choice: last ? undefined : "auto",
           temperature: opts.temperature ?? 0.3,
           max_tokens: opts.maxTokens ?? 1200,
           reasoning_effort: opts.reasoningEffort ?? "low",
@@ -404,6 +413,10 @@ async function tools(input: string | AIMessage[], opts: ToolsOptions): Promise<T
         return { text, steps, trace: finish(t, start, { response: text, steps, usage, mode, costUsd }) };
       }
       await runCalls(msg.tool_calls);
+      if (opts.stopOnTool && msg.tool_calls.some((c) => c.function.name === opts.stopOnTool)) {
+        const text = textOf(msg);
+        return { text, steps, trace: finish(t, start, { response: text, steps, usage, mode, costUsd }) };
+      }
     }
     throw new AIError("Tool loop exceeded maxSteps");
   } catch (err) {

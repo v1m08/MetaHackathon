@@ -129,4 +129,40 @@ for (const [a, b] of edges) {
   users.find((u) => u.id === b)!.friendIds.push(a);
 }
 
+// ---------- travel fields for the Austin core ----------
+// Hosting is opt-in. Maya has no car (rides matter for her); several friends drive.
+const core: Record<string, Partial<User>> = {
+  maya: { openToHosting: true, hostingNote: "couch in Mueller, 2 nights, I get up at 6 to run (quietly)", hasCar: false },
+  jordan: { hasCar: false, hostingNote: "" },
+  priya: { hasCar: false },
+  devon: { openToHosting: true, hostingNote: "futon, I work nights so you'll have the place", hasCar: true },
+  sofia: { hasCar: true },
+  ethan: { openToHosting: true, hostingNote: "guest room in Mueller, board games mandatory", hasCar: true },
+  aisha: { hasCar: false, privacy: "friends" },
+  lucas: { hasCar: false },
+  hannah: { hasCar: true },
+  marcus: { hasCar: true },
+  zoe: { hasCar: false, privacy: "friends" },
+  tyler: { hasCar: true, openToHosting: true, hostingNote: "couch in Round Rock, lake day included if it's warm" },
+  nina: { hasCar: true },
+  sam: { hasCar: false },
+  omar: { hasCar: false },
+  grace: { hasCar: true },
+};
+for (const u of users) Object.assign(u, { city: "austin", privacy: "public", ...core[u.id] });
+
+// ---------- the wider network (other cities) ----------
+import { travelEdges, travelUsers } from "./travelUsers";
+import { resolveBusy } from "./travel";
+for (const tu of travelUsers) users.push(resolveBusy(tu));
+for (const [a, b, label] of travelEdges) {
+  const ua = users.find((u) => u.id === a);
+  const ub = users.find((u) => u.id === b);
+  if (!ua || !ub) throw new Error(`travel edge references unknown user: ${a} - ${b}`);
+  if (!ua.friendIds.includes(b)) ua.friendIds.push(b);
+  if (!ub.friendIds.includes(a)) ub.friendIds.push(a);
+  (ua.friendLabels ??= {})[b] = label;
+  (ub.friendLabels ??= {})[a] = label;
+}
+
 export const userById = (id: string) => users.find((u) => u.id === id);

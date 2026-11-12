@@ -9,3 +9,4 @@ node_modules
 .ai-ledger.json.lock
 .ai-ledger.json.tmp*
 .ai-cache
+.ai-runs

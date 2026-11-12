@@ -1,4 +1,5 @@
 import type { Database, Notification } from "@/types";
+import { cities } from "./cities";
 import { conversations } from "./conversations";
 import { dating } from "./dating";
 import { events } from "./events";
@@ -9,6 +10,8 @@ import { groups } from "./groups";
 import { hoursAgo } from "./helpers";
 import { listings } from "./listings";
 import { reels } from "./reels";
+import { travelConversations, travelEvents, travelGroupPosts, travelGroups, travelRides } from "./travelEvents";
+import { travelPosts, travelReels } from "./travelPosts";
 import { users } from "./users";
 
 // Notifications are derived from the seed so they always point at real content.
@@ -16,7 +19,7 @@ function buildNotifications(): Notification[] {
   const out: Notification[] = [];
   let n = 0;
   const push = (p: Omit<Notification, "id">) => out.push({ id: `n_${++n}`, ...p });
-  const allPosts = [...feedPosts, ...groupPosts];
+  const allPosts = [...feedPosts, ...groupPosts, ...travelPosts, ...travelGroupPosts];
 
   for (const u of users) {
     const mine = allPosts.filter((p) => p.authorId === u.id).sort((a, b) => b.createdAt.localeCompare(a.createdAt)).slice(0, 4);
@@ -62,13 +65,13 @@ function buildNotifications(): Notification[] {
 export function buildSeed(): Database {
   return {
     users: structuredClone(users),
-    posts: structuredClone([...feedPosts, ...groupPosts]).sort((a, b) => b.createdAt.localeCompare(a.createdAt)),
+    posts: structuredClone([...feedPosts, ...groupPosts, ...travelPosts, ...travelGroupPosts]).sort((a, b) => b.createdAt.localeCompare(a.createdAt)),
     stories: structuredClone(stories),
-    groups: structuredClone(groups),
-    events: structuredClone(events),
+    groups: structuredClone([...groups, ...travelGroups]),
+    events: structuredClone([...events, ...travelEvents]),
     listings: structuredClone(listings),
-    reels: structuredClone(reels),
-    conversations: structuredClone(conversations),
+    reels: structuredClone([...reels, ...travelReels]),
+    conversations: structuredClone([...conversations, ...travelConversations]),
     dating: structuredClone(dating),
     games: structuredClone(games),
     notifications: buildNotifications(),
@@ -78,5 +81,7 @@ export function buildSeed(): Database {
       { fromId: "grace", toId: "jordan", createdAt: hoursAgo(12) },
       { fromId: "marcus", toId: "priya", createdAt: hoursAgo(8) },
     ].filter((fr) => !users.find((u) => u.id === fr.fromId)!.friendIds.includes(fr.toId)),
+    cities: structuredClone(cities),
+    rides: structuredClone(travelRides),
   };
 }

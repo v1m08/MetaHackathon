@@ -1,0 +1,170 @@
+// Nothing the model says reaches the screen unchecked. Every person, event, ride, post and reel id in a proposal
+// is validated against the store AND against what this viewer can see; anything that fails is dropped or repaired.
+// Costs are recomputed here from seeded prices, so the two numbers on a card are never model arithmetic.
+import { cityById, milesBetween } from "@/data/cities";
+import { cardFor, db, getUser } from "@/server/db";
+import type { FBEvent, ID, Ride } from "@/types";
+import { twoPrices, type CostBreakdown, type LodgingMode, type TransportMode } from "./pricing";
+import { cityMediaFor, datesBetween, type ProposedTrip } from "./tools";
+import { canSeeEvent, canSeePost, canSeeReel, canSeeUser, connection } from "./visibility";
+
+export interface TripPerson {
+  id: ID;
+  name: string;
+  avatar: string;
+  connection: string;
+  degree: 1 | 2;
+  via?: { id: ID; name: string };
+  openToHosting: boolean;
+  hostingNote?: string;
+  hasCar: boolean;
+  freeThatWeekend: boolean;
+}
+export interface Trip {
+  id: string;
+  viewerId: ID;
+  city: string;
+  cityName: string;
+  state: string;
+  start: string;
+  end: string;
+  nights: number;
+  budget: number;
+  title: string;
+  pitch: string;
+  reasons: string[];
+  host?: TripPerson;
+  ride?: { id: string; driver: TripPerson; fromCity: string; toCity: string; departAt: string; returnAt: string; seatsOpen: number; note?: string };
+  event?: { id: string; title: string; startsAt: string; location: string; price?: string; goingYouKnow: { id: ID; name: string; avatar: string; connection: string }[] };
+  people: TripPerson[];
+  evidence: { kind: "post" | "reel"; id: string; authorId: ID; author: string; image: string; caption: string }[];
+  prices: { ifYes: CostBreakdown; otherwise: CostBreakdown; solo: CostBreakdown; miles: number; driveHours: number; transportIfYes: TransportMode; lodgingIfYes: LodgingMode; conditions: string[] };
+  fitsBudget: boolean;
+  /** What validation changed, for the Inspector and the eval. */
+  repairs: string[];
+  createdAt: string;
+}
+
+const tripId = () => `trip_${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
+
+export function tripPerson(viewerId: ID, id: ID, dates: string[]): TripPerson | null {
+  const u = getUser(id);
+  if (!u || !canSeeUser(viewerId, u)) return null;
+  const c = connection(viewerId, id);
+  if (!c) return null;
+  const via = c.via ? getUser(c.via) : undefined;
+  return { id: u.id, name: u.name, avatar: u.avatar, connection: c.label, degree: c.degree, via: via ? { id: via.id, name: via.name } : undefined, openToHosting: !!u.openToHosting, hostingNote: u.openToHosting ? u.hostingNote : undefined, hasCar: !!u.hasCar, freeThatWeekend: !dates.some((d) => u.busyDates?.includes(d)) };
+}
+
+function overlaps(r: Ride, start: string, end: string) {
+  const dep = r.departAt.slice(0, 10);
+  const ret = r.returnAt.slice(0, 10);
+  // allow leaving a day early / returning a day late
+  const s = new Date(start + "T00:00:00");
+  s.setDate(s.getDate() - 1);
+  const e = new Date(end + "T00:00:00");
+  e.setDate(e.getDate() + 1);
+  return dep >= s.toISOString().slice(0, 10) && ret <= e.toISOString().slice(0, 10);
+}
+
+export function validateTrip(viewerId: ID, p: ProposedTrip, ctx: { start: string; end: string; budget: number }): Trip | null {
+  const me = getUser(viewerId);
+  const city = cityById(p.city);
+  const repairs: string[] = [];
+  if (!me || !city || city.id === me.city) return null;
+  const dates = datesBetween(ctx.start, ctx.end);
+  const nights = Math.max(1, Math.min(7, Math.round(p.nights || dates.length - 1)));
+
+  // host: must exist, be visible, live there, have opted in, and be free
+  let host: TripPerson | undefined;
+  if (p.hostId) {
+    const u = getUser(p.hostId);
+    const tp = tripPerson(viewerId, p.hostId, dates);
+    if (!u || !tp) repairs.push(`dropped host ${p.hostId}: not in your network`);
+    else if (u.city !== city.id) repairs.push(`dropped host ${u.name}: lives in ${u.city}, not ${city.id}`);
+    else if (!u.openToHosting) repairs.push(`dropped host ${u.name}: has not turned on "open to hosting"`);
+    else if (!tp.freeThatWeekend) repairs.push(`dropped host ${u.name}: busy that weekend`);
+    else host = tp;
+  }
+  // ride
+  let ride: Trip["ride"];
+  if (p.rideId) {
+    const r = db().rides.find((x) => x.id === p.rideId);
+    const driver = r ? tripPerson(viewerId, r.driverId, dates) : null;
+    if (!r || !driver) repairs.push(`dropped ride ${p.rideId}: unknown or driver not in your network`);
+    else if (r.toCity !== city.id) repairs.push(`dropped ride ${r.id}: goes to ${r.toCity}`);
+    else if (r.fromCity !== me.city) repairs.push(`dropped ride ${r.id}: leaves from ${r.fromCity}, not your city`);
+    else if (r.seatsOpen <= 0) repairs.push(`dropped ride ${r.id}: no seats open`);
+    else if (!overlaps(r, ctx.start, ctx.end)) repairs.push(`dropped ride ${r.id}: wrong dates`);
+    else ride = { id: r.id, driver, fromCity: r.fromCity, toCity: r.toCity, departAt: r.departAt, returnAt: r.returnAt, seatsOpen: r.seatsOpen, note: r.note };
+  }
+  // event
+  let event: Trip["event"];
+  if (p.eventId) {
+    const e: FBEvent | undefined = db().events.find((x) => x.id === p.eventId);
+    if (!e || !canSeeEvent(viewerId, e)) repairs.push(`dropped event ${p.eventId}: unknown or not visible`);
+    else if (e.city !== city.id) repairs.push(`dropped event ${e.title}: in ${e.city}`);
+    else if (!dates.includes(e.startsAt.slice(0, 10))) repairs.push(`dropped event ${e.title}: not that weekend`);
+    else event = { id: e.id, title: e.title, startsAt: e.startsAt, location: e.location, price: e.price, goingYouKnow: e.going.filter((id) => id !== viewerId && canSeeUser(viewerId, getUser(id)!)).map((id) => ({ ...cardFor(id), connection: connection(viewerId, id)?.label ?? "" })) };
+  }
+  // other people there
+  const people: TripPerson[] = [];
+  for (const id of new Set([...(p.peopleIds ?? []), ...(event?.goingYouKnow.map((g) => g.id) ?? [])])) {
+    if (id === host?.id) continue;
+    const u = getUser(id);
+    const tp = tripPerson(viewerId, id, dates);
+    if (!u || !tp) {
+      repairs.push(`dropped person ${id}: not in your network`);
+      continue;
+    }
+    if (u.city !== city.id && !event?.goingYouKnow.some((g) => g.id === id)) {
+      repairs.push(`dropped person ${u.name}: not in ${city.id}`);
+      continue;
+    }
+    people.push(tp);
+  }
+  people.sort((a, b) => a.degree - b.degree);
+  // evidence
+  const evidence: Trip["evidence"] = [];
+  for (const ev of p.evidence ?? []) {
+    if (ev.kind === "post") {
+      const post = db().posts.find((x) => x.id === ev.id);
+      if (post && post.city === city.id && canSeePost(viewerId, post) && post.images?.length) evidence.push({ kind: "post", id: post.id, authorId: post.authorId, author: getUser(post.authorId)!.name, image: post.images[0], caption: post.text });
+      else repairs.push(`dropped evidence post ${ev.id}`);
+    } else {
+      const reel = db().reels.find((x) => x.id === ev.id);
+      if (reel && reel.city === city.id && canSeeReel(viewerId, reel)) evidence.push({ kind: "reel", id: reel.id, authorId: reel.authorId, author: getUser(reel.authorId)!.name, image: reel.image, caption: reel.caption });
+      else repairs.push(`dropped evidence reel ${ev.id}`);
+    }
+  }
+  if (!evidence.length) {
+    // repair: attach the viewer's visible media from that city
+    for (const m of cityMediaFor(viewerId, city.id, 4)) evidence.push({ kind: m.kind, id: m.id, authorId: m.authorId, author: m.author, image: m.image, caption: m.caption });
+  }
+  if (!host && !ride && !event && !people.length) return null;
+
+  // reasons: drop any that name a person we removed
+  const keptNames = new Set([host, ride?.driver, ...people, ...(event?.goingYouKnow ?? [])].filter(Boolean).map((x) => x!.name.split(" ")[0].toLowerCase()));
+  const droppedNames = repairs.map((r) => r.match(/dropped (?:host|person) ([A-Z][a-z]+)/)?.[1]?.toLowerCase()).filter(Boolean) as string[];
+  const reasons = (p.reasons ?? []).filter((r) => !droppedNames.some((n) => !keptNames.has(n) && r.toLowerCase().includes(n))).slice(0, 5);
+
+  // prices, in code
+  const miles = milesBetween(cityById(me.city!)!, city);
+  const transportIfYes: TransportMode = ride ? "ride" : me.hasCar ? "own-car" : miles > 600 ? "flight" : "bus";
+  const lodgingIfYes: LodgingMode = host ? "host" : "hostel";
+  const occupants = ride ? 2 + ride.seatsOpen - 1 + 0 : 1;
+  const prices = twoPrices({ fromCity: me.city!, toCity: city.id, nights, transport: transportIfYes, lodging: lodgingIfYes, carOccupants: ride ? Math.max(2, 1 + (db().rides.find((r) => r.id === ride!.id)?.riderIds.length ?? 0) + 1) : occupants, withLocal: !!host || people.length > 0 });
+  const conditions = [host ? `${host.name.split(" ")[0]} says yes to hosting` : "", ride ? `${ride.driver.name.split(" ")[0]} has a seat` : ""].filter(Boolean);
+
+  return {
+    id: tripId(), viewerId, city: city.id, cityName: city.name, state: city.state, start: ctx.start, end: ctx.end, nights, budget: ctx.budget,
+    title: p.title, pitch: p.pitch, reasons, host, ride, event, people, evidence,
+    prices: { ...prices, transportIfYes, lodgingIfYes, conditions },
+    fitsBudget: prices.ifYes.total <= ctx.budget, repairs, createdAt: new Date().toISOString(),
+  };
+}
+
+export function rankTrips(trips: Trip[]) {
+  const score = (t: Trip) => (t.host?.degree === 1 ? 0 : t.host ? 1 : 2) * 1000 + (t.fitsBudget ? 0 : 500) + t.prices.ifYes.total;
+  return [...trips].sort((a, b) => score(a) - score(b));
+}

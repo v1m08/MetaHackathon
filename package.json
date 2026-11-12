@@ -11,7 +11,9 @@
     "warm": "curl -s http://localhost:3000/api/admin/warm-images",
     "reset": "curl -s -X POST http://localhost:3000/api/admin/reset",
     "test": "node --test \"tests/**/*.test.mjs\"",
-    "ledger": "node scripts/ledger.mjs"
+    "ledger": "node scripts/ledger.mjs",
+    "index-media": "curl -s -X POST \"http://localhost:3000/api/admin/index-media\"",
+    "media-pick": "node scripts/media-pick.mjs"
   },
   "dependencies": {
     "lucide-react": "^0.468.0",
