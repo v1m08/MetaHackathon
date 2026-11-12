@@ -1,28 +1,27 @@
 import type { Post, Story } from "@/types";
 import { P } from "./builders";
 import { hoursAgo, photo } from "./helpers";
-import { mediaUrl } from "./travel";
 
 // Personal (non-group) posts that show up on friends' feeds and profiles.
 export const feedPosts: Post[] = [
   P("jordan", 1.5, "48 hours until the pop-up. 14 lbs of birria braising as we speak. If you've ever eaten my food at a party and said 'you should sell this', Saturday is your chance to put your money where your mouth is. Hotel Vegas back patio, 11am 🌮", {
-    hours: true, likes: 61, love: 24, wow: 3, shares: 11, images: [mediaUrl("atx-birria")], audience: "public",
+    hours: true, likes: 61, love: 24, wow: 3, shares: 11, images: [photo("birria-pot", 800, 800)], audience: "public",
     comments: [["maya", "I have said this at minimum 11 times. I'll be first in line"], ["devon", "bringing cash and an appetite"], ["sofia", "we're playing the night before so the whole band is coming hungover, be gentle"], ["sam", "patio's clean, chairs are out, let's go"]],
   }),
   P("maya", 4, "first bowl that didn't collapse 🏺 only took 7 weeks. it's lopsided and I love her", {
-    hours: true, likes: 48, love: 19, location: "Clay Studio ATX",
+    hours: true, likes: 48, love: 19, images: [photo("pottery-bowl-first", 800, 800)], location: "Clay Studio ATX",
     comments: [["lucas", "she's perfect"], ["priya", "ok but can I have a mug next"], ["grace", "the lopsided ones are the ones with personality"], ["hannah", "framing this"]],
   }),
   P("sofia", 9, "PORCH LIGHTS at Hotel Vegas FRIDAY 10pm with Sun June and a secret guest (it's not secret it's Sam DJing after). $10 at the door. we have new songs. one of them is about an ex who's going to be there. come watch me be brave", {
-    hours: true, likes: 73, love: 31, haha: 6, shares: 15, audience: "public",
+    hours: true, likes: 73, love: 31, haha: 6, shares: 15, images: [photo("porch-lights-flyer", 800, 1000)], audience: "public",
     comments: [["sam", "the after set is going to be nasty. in a good way"], ["zoe", "which ex 👀"], ["sofia", "zoe."], ["lucas", "bringing the camera, you'll have photos by sunday"], ["maya", "wouldn't miss it"], ["jordan", "cooking all night but I'll make the last song"]],
   }),
   P("devon", 14, "post-shift sunrise from the parking garage. 13 hours, 2 codes, 1 kid who drew me a picture of a 'nurse dinosaur'. going to sleep for 9 hours and then volleyball", {
-    hours: true, likes: 54, love: 22, care: 9,
+    hours: true, likes: 54, love: 22, care: 9, images: [photo("parking-garage-sunrise", 800, 600)],
     comments: [["nina", "the nurse dinosaur drawing is going on your fridge or I'm reporting you"], ["marcus", "rest up. sunday's gonna be good"], ["aisha", "you're a hero and you need an iron supplement"], ["tyler", "see you at 10. I'm bringing Grace"]],
   }),
   P("priya", 22, "I SIGNED A LEASE. 19 days, 14 tours, 1 scam, 0 tears (lie). Riverside, 2b/2b, moving Dec 1. Thank you to the apartment group and to Aisha for the spreadsheet intervention", {
-    hours: true, likes: 67, love: 28, care: 4,
+    hours: true, likes: 67, love: 28, care: 4, images: [photo("lease-signing-selfie", 800, 800)],
     comments: [["aisha", "the spreadsheet did it"], ["zoe", "housewarming when"], ["ethan", "congrats priya!! welcome to the adult world of paying for internet"], ["hannah", "so proud 🥹"], ["omar", "riverside club 🤝"]],
   }),
   P("ethan", 30, "finally sent the V5 I've been projecting since August. 11 sessions. no video because my hands were shaking too much to film after", {
@@ -62,7 +61,7 @@ export const feedPosts: Post[] = [
     comments: [["sofia", "SAM!!!! road trip"], ["jordan", "I'll cook for the green room"], ["zoe", "earl must go"], ["lucas", "I'll come shoot it"]],
   }),
   P("grace", 5.5, "first farmers market of fall. spent $38 on 'ingredients' and will cook none of it. the tomatoes are decorative", {
-    likes: 33, haha: 12, images: [mediaUrl("atx-market")], location: "Mueller Farmers Market",
+    likes: 33, haha: 12, images: [photo("farmers-market-haul", 800, 800)], location: "Mueller Farmers Market",
     comments: [["hannah", "coffee + treats challenge says this counts"], ["grace", "it's PRODUCE"], ["jordan", "bring them to me I'll make something"]],
   }),
   P("omar", 6, "100 mile ride done. 6h12m. ate 9 gels, 2 bananas, 1 gas station burrito that saved my life at mile 70. the 360 bridge climb at mile 85 is a war crime", {

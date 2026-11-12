@@ -1,13 +1,12 @@
 "use client";
 import Link from "next/link";
-import { Bookmark, CalendarDays, ChevronRight, Clapperboard, Compass, Gamepad2, Heart, HelpCircle, Settings, Store, Users, UsersRound, Wand2 } from "lucide-react";
+import { Bookmark, CalendarDays, ChevronRight, Clapperboard, Gamepad2, Heart, HelpCircle, Settings, Store, Users, UsersRound, Wand2 } from "lucide-react";
 import { Shell, useMe } from "@/components/Shell";
 import { Avatar, Button } from "@/components/ui";
 
 const SHORTCUTS = [
   { href: "/groups", icon: UsersRound, label: "Groups", color: "text-fb" },
   { href: "/events", icon: CalendarDays, label: "Events", color: "text-red-500" },
-  { href: "/travel", icon: Compass, label: "Trips", color: "text-fb" },
   { href: "/marketplace", icon: Store, label: "Marketplace", color: "text-fb" },
   { href: "/dating", icon: Heart, label: "Dating", color: "text-pink-500" },
   { href: "/gaming", icon: Gamepad2, label: "Gaming", color: "text-fb" },

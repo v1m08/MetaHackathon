@@ -9,18 +9,7 @@
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
     "warm": "curl -s http://localhost:3000/api/admin/warm-images",
-    "reset": "curl -s -X POST http://localhost:3000/api/admin/reset",
-    "test": "node --import tsx --test \"tests/**/*.test.mjs\" \"tests/**/*.test.ts\"",
-    "ledger": "node scripts/ledger.mjs",
-    "index-media": "curl -s -X POST \"http://localhost:3000/api/admin/index-media\"",
-    "media-pick": "node scripts/media-pick.mjs",
-    "record": "node scripts/record.mjs",
-    "replay:on": "curl -s -X POST localhost:3000/api/admin/mode -H 'content-type: application/json' -d '{\"replay\":true}'",
-    "replay:off": "curl -s -X POST localhost:3000/api/admin/mode -H 'content-type: application/json' -d '{\"replay\":false}'",
-    "eval": "node scripts/eval.mjs",
-    "credits": "node scripts/credits.mjs",
-    "sim": "node scripts/sim.mjs",
-    "animations": "node scripts/build-animations.mjs"
+    "reset": "curl -s -X POST http://localhost:3000/api/admin/reset"
   },
   "dependencies": {
     "lucide-react": "^0.468.0",
@@ -35,7 +24,6 @@
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "tailwindcss": "^4.0.0",
-    "tsx": "^4.23.15",
     "typescript": "^5.7.0"
   }
 }

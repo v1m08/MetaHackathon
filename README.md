@@ -1,155 +1,180 @@
-# Where can my people take me?
+# facebook (young adults hackathon base)
 
-A Facebook feature for young adults who want to travel and can't afford it. You give a **weekend and a budget**, not a destination. A **Muse agent** reasons across your actual network and proposes trips that only exist because of the people you know:
-
-> *dallas with cole + harper for the deep ellum vintage market — ~$110 if Cole says yes to hosting and Ravi has a seat, ~$290 otherwise.*
-
-Then it builds a **Guide** from what your friends posted there (read with Muse image understanding, every pick credited to the friend), and **Coordinates** the trip: who's free when, drafted messages, introductions through mutual friends, and nothing sends until you approve it in Messenger.
-
-Built for Meta's "make Facebook valuable for young adults" hackathon on top of a mobile-first Facebook clone (every surface exists and is seeded). The core AI runs on **Meta Muse** through the Meta Model API.
+A high-fidelity, mobile-first Facebook clone to build an AI feature on top of. Every major surface exists, is seeded with lived-in data about a friend group of young adults in Austin, and reads/writes one shared in-memory store. One AI layer wraps Meta's Muse models (OpenAI-compatible Model API) with text, structured output, images and tool calling, plus a mock mode that works with no key or network. An Inspector shows judges every prompt, output and latency.
 
 ```bash
 npm install
-cp .env.example .env.local      # put MODEL_API_KEY in it; without a key everything runs in mock mode
-npm run dev                     # http://localhost:3000  → Menu → Trips, or /travel
+cp .env.example .env     # optional; leave MODEL_API_KEY empty for mock mode
+npm run dev              # http://localhost:3000
 ```
 
-Demo identity is per browser tab: open `http://localhost:3000/?as=maya` and, in a second window, `/messages?as=cole` to watch the approved message arrive. `pitch/runbook.md` has the click path.
+## What's here
 
-## The loop
-
-| Stage | What the user sees | What runs |
+| Surface | Route | Notes |
 |---|---|---|
-| **Discover** `/travel` | Weekend chips + budget. A live reasoning stream ("Mapping your whole network…", "Pricing Dallas: 2 nights, staying with a friend, by a friend's car", "Reading your friends' photos from Dallas"), then 2–3 trip cards with two prices, the host, the driver, the event, the people you know there and why. | `src/lib/travel/agent.ts`: a Muse tool-calling loop over viewer-scoped tools, ending in a `propose_trips` call. `validate.ts` checks every id and re-prices in code. SSE from `/api/travel/discover`. |
-| **Guide** `/travel/[id]` | "Your guide, from your people": 4–6 picks, each credited ("from Cole's post · Plano East high school"), matched to your taste, with prices friends mentioned. One box shows a photo Muse looked at *just now* and what it saw. | `guide.ts`: reads friends' city posts + stored image notes, calls `look_at_photo` (live vision) on 1–2 photos, proposes; code forces the credit to the real author and drops anything the viewer can't see. |
-| **Coordinate** same page | Availability grid for you, host, driver; alternative weekends if someone's busy; "Draft the messages (intros via your mutuals)". Drafts appear here and in Messenger as *awaiting your approval* with Approve / Edit / Discard. | `coordinate.ts`: dates in code; Muse writes the words; code picks recipients (friend-of-friend → the mutual, asking for an intro). Approval flips the draft to sent inside the clone; recipients never see drafts. |
-| **Nudge** Feed | "Owen is driving to Dallas on Dec 12. You're free that weekend." → opens Discover with that trip. | `components/travel/Nudge.tsx` from `/api/travel/options` (rides from your city by people you can see, on weekends you're free). |
-| Entry points | Events ("Make this a trip" on out-of-town events), Profile ("Open to hosting friends" toggle on your own; badge + "Plan a visit" on friends elsewhere), Messenger (chip in chats with people in other cities), Menu → Trips. | |
+| Feed | `/` | Stories, composer, posts with reactions (hold Like for the picker), comments & replies |
+| Reels | `/reels` | Full-screen snap scroll, double-tap to like, save |
+| Profile | `/profile/:id` | Cover, about, friends grid, posts/photos/reels tabs, friend requests |
+| Friends | `/friends` | Requests, suggestions with mutuals, friends grid |
+| Groups | `/groups`, `/groups/:id` | 6 groups with 15–20 post histories each; join, post, **AI "Catch me up"** |
+| Events | `/events`, `/events/:id` | RSVP, guests, discussion posts |
+| Marketplace | `/marketplace`, `/marketplace/:id`, `/marketplace/new` | Categories, search, save, message seller (creates a real chat), **AI "Draft listing"** |
+| Messenger | `/messages`, `/messages/:id` | Live between two windows (1.5s polling), group chats, listing attachments, read receipts |
+| Dating | `/dating` | Card stack with prompts, like/pass, matches, "It's a match" screen |
+| Gaming | `/gaming`, `/gaming/:id` | Two playable mini games (Tap Dash, Word Rush) with live friends leaderboards |
+| Notifications | `/notifications` | Derived from real seed content, unread badges |
+| Search | `/search` | People, groups, events, listings, posts |
+| Saved, Menu, Switch account | `/saved`, `/menu`, `/switch` | |
+| **AI Inspector** | `/dev/ai` | Every model call: prompt, output, tool steps, latency, tokens, mode. Playground for each capability. |
+
+Branding is a text wordmark and generic Lucide icons only.
 
 ## Architecture
 
 ```
-                 ┌──────────────────────── UI (Next.js app router, phone frame) ───────────────────────┐
-                 │  /travel  Discover          /travel/[id]  Guide + Coordinate        Feed nudge,     │
-                 │  reasoning stream (SSE)     Muse-saw box, credited picks, drafts     Events/Profile/ │
-                 │  trip cards, two prices     Approve · Edit · Discard                 Messenger chips │
-                 └───────────────┬─────────────────────────────────┬───────────────────────────────────┘
-                                 │ POST /api/travel/discover (SSE)  │ /api/travel/guide (SSE), /coordinate, /drafts/[id]
-                 ┌───────────────▼─────────────────────────────────▼───────────────────────────────────┐
-                 │  src/lib/travel/                                                                     │
-                 │  agent.ts ── Muse tool loop ──► tools.ts (viewer-scoped)                             │
-                 │     scan_network · find_people_by_city · check_availability · estimate_trip_cost     │
-                 │     get_city_media · propose_trips        guide: look_at_photo (vision) · propose_guide
-                 │  visibility.ts  canSeeUser/Post/Reel/Event + connection(viewer, person)              │
-                 │  validate.ts    every id re-checked, hosts must have opted in + be free, re-priced   │
-                 │  pricing.ts     two prices + hotel/solo comparison, from a seeded table, in code     │
-                 │  taste.ts       saved Reels + likes + interests × image notes → taste profile        │
-                 │  coordinate.ts  shared dates · drafts · approve/edit/discard                         │
-                 │  replay.ts      recorded real runs replayed when Muse is down (labelled)             │
-                 │  checks.ts      fact audit used by the eval and the persona sim                      │
-                 └───────────────┬────────────────────────────────────────────────────────────────────┘
-                                 │
-                 ┌───────────────▼────────────────────┐    ┌──────────────────────────────────────────┐
-                 │  src/lib/ai/  ONE Muse client       │    │  src/server/db.ts  in-memory store       │
-                 │  ai.text/json/tools (+images)       │    │  seeded from src/data (deterministic)    │
-                 │  ledger.ts  budget guard, file lock │    │  61 people · 12 cities · hosting flags   │
-                 │  cache.ts   identical req → $0      │    │  busy dates · 7 rides · 22 events        │
-                 │  trace.ts   Inspector /dev/ai       │    │  55 licensed photos + Muse image notes   │
-                 └─────────────────────────────────────┘    └──────────────────────────────────────────┘
+src/
+  types.ts                 Domain types (User, Post, Group, FBEvent, Listing, Reel, Conversation, …)
+  data/                    Seed: users.ts (16 people, friend graph), groupPosts.ts, feedPosts.ts,
+                           events.ts, listings.ts, reels.ts, conversations.ts, dating.ts, games.ts
+                           index.ts builds the Database (+ derives notifications)
+  server/
+    db.ts                  In-memory store + all mutations (react, comment, post, RSVP, send message, swipe…)
+    http.ts                route() wrapper: acting user, params, JSON body, error → JSON
+  app/api/**               Thin Next.js route handlers over server/db.ts (37 routes)
+  lib/
+    session.ts             Per-tab identity (who am I) — see "Demoing as different users"
+    api.ts                 fetch wrapper (adds x-user-id) + useApi() SWR hook with polling
+    ai/                    THE AI LAYER (below)
+  components/
+    Shell.tsx              Phone frame, top bar, tab bar, demo strip
+    Post.tsx               PostCard, reactions, comments sheet
+    Composer.tsx           Composer card + full composer screen (with AI "Help me write")
+    ui.tsx                 Avatar, Button, Sheet, Pill, skeletons…
+  app/(app)/**             One folder per surface, all client components rendered inside the phone frame
+  app/dev/ai/              The Inspector (outside the frame)
 ```
 
-**Data flow.** Pages call the API with an `x-user-id` header (per-tab identity). Travel routes call `src/lib/travel/*`, which read the same store the rest of the app renders. The agent never sees the store directly, only tool results that were filtered for that viewer.
+**Data flow.** Pages call `useApi("/api/…")`. Route handlers call functions in `server/db.ts`. The store is a plain object on `globalThis`, seeded from `src/data` at boot. It survives hot reloads and resets on server restart (or `POST /api/admin/reset`). Timestamps in the seed are relative to boot, so the data always looks like it happened this week.
 
-## How Muse is used
+**Why in-memory.** Zero setup, instant resets between demo runs, and the AI tools can read the exact same objects the UI renders. If you need persistence later, `db()` is the single place to swap in SQLite or a JSON file.
 
-| Use | Model | How |
+**Phone frame.** On screens ≥768px the app renders inside a 390×844 phone on a dark stage (good on a projector). On real phones it is full-bleed. `?frame=0` turns the frame off (remembered in localStorage).
+
+## Demoing as different users
+
+Identity lives per browser tab (sessionStorage), not in a cookie, so two windows can be two people:
+
+- Menu → **Switch account**, or the status strip under the phone.
+- Open a second window at `http://localhost:3000/?as=jordan` (any user id from `src/data/users.ts`: `maya`, `jordan`, `priya`, `devon`, `sofia`, `ethan`, `aisha`, `lucas`, `hannah`, `marcus`, `zoe`, `tyler`, `nina`, `sam`, `omar`, `grace`). The ↗ button on the Switch screen does this for you.
+- Open the same conversation in both windows (e.g. Maya ↔ Jordan planning the taco pop-up); messages appear on the other side within ~1.5s. Feed, groups, notifications and leaderboards also poll.
+
+All API calls carry `x-user-id`; the server trusts it (this is a demo, there is no auth).
+
+## The AI layer (`src/lib/ai`)
+
+Server-only. Import `ai` and never call the Model API directly, so every call is traced and mock-able.
+
+```ts
+import { ai } from "@/lib/ai";
+
+// Plain text
+const { text } = await ai.text("Write a one-line caption for a pottery photo", { task: "caption", userId });
+
+// Structured output (JSON Schema in, typed object out; retries once on invalid JSON)
+const { data } = await ai.json<{ title: string; tags: string[] }>(prompt, {
+  task: "listing.tags", userId,
+  schema: { type: "object", properties: { title: { type: "string" }, tags: { type: "array", items: { type: "string" } } }, required: ["title", "tags"] },
+});
+
+// Image
+const { url } = await ai.image("flyer for a backyard taco pop-up, warm evening light", { task: "flyer", size: "1024x1024" });
+
+// Tool calling (server-side tools over the store; loop runs until the model answers)
+import { allTools } from "@/lib/ai/tools";
+const { text: answer, steps } = await ai.tools("What's happening with my friends this weekend?", { task: "weekend", userId, tools: allTools });
+```
+
+- `task` is the label shown in the Inspector. Name them `feature.step`.
+- Tools live in `src/lib/ai/tools.ts` (`get_feed`, `get_group_posts`, `get_user_profile`, `search`, `get_upcoming_events`, `get_recent_messages`). A tool is `{ name, description, parameters (JSON Schema), run(args, { userId }) }`. Add yours there.
+- Transport is raw `fetch` against `/chat/completions` and `/images/generations`, so there is no SDK version to fight. Structured output tries `response_format: json_schema`, falls back to `json_object`, then to prompt-only parsing.
+- `SYSTEM_BASE` in `src/lib/ai/index.ts` sets the house voice. Override per call with `system`.
+
+### Real vs mock
+
+| | Live | Mock |
 |---|---|---|
-| The agent (Discover, Guide, drafts) | `muse-spark-1.3` | OpenAI-compatible `/chat/completions` with `tools` and `tool_choice: "auto"` (the API only accepts auto), `reasoning_effort: "low"`, JSON-schema `response_format` for drafts. Loop capped at 8 round-trips; ends on `propose_trips` / `propose_guide`. |
-| Image understanding | `muse-ember-1.0` | `image_url` content parts with `data:` URIs read from the local image cache (the API refuses URLs whose robots.txt disallows fetching). Used at index time over all 55 seeded photos (`src/data/mediaIndex.json`: description, tags, food, activities, vibe, goodFor) and live in the Guide's `look_at_photo`. |
-| Persona simulation | `muse-ember-1.0` | Structured verdicts; see below. |
+| When | `MODEL_API_KEY` set (or `AI_MODE=live`) | No key, or `AI_MODE=mock`, or `mode: "mock"` on one call |
+| Text | Muse | Canned per-task lines for the built-in features; generic echo otherwise |
+| JSON | Muse + schema | A schema-valid object synthesized from the JSON Schema (uses `description`/`enum`) |
+| Image | Muse image model | Deterministic placeholder photo |
+| Tools | Real loop | Calls the first tool with schema-derived args, then stubs the answer. Tool `run()` is real. |
+| Latency | Real | 250–700ms so loading states are visible |
 
-Model ids were confirmed against `GET /v1/models` and real requests on 2026-11-12 (PLAN.md). Everything goes through `src/lib/ai/index.ts`: traced for the Inspector, cached on disk when identical, and metered.
-
-### The budget guard
-
-Every live call **reserves a worst-case cost before it is sent** (prompt size, `max_tokens`, images, 1.5× margin on third-party prices) in a file-locked, gitignored ledger (`.ai-ledger.json`), then settles to the real `usage`. Retries and failed calls are booked. When the ledger reaches `MODEL_BUDGET_USD` (default 50; `MODEL_BUDGET_RESERVE_USD` 10 is kept for final QA and only spendable with `AI_FINAL=1`) the client refuses and the feature falls back to **replay** or mock, labelled in the UI. `npm test` proves refusal at a full ledger and under four parallel processes. `npm run ledger` prints spend by model and task; the Inspector header shows it live. The whole build, two persona swarms, the evaluation and final QA came to about $6 on the ledger (with its 1.5× margin), out of the $50 ceiling.
-
-### Safety lives in the tools
-
-- Every tool takes `ctx.userId` and returns only what that viewer can already see: friends, friends-of-friends through a named mutual, public content, their groups. `visibility.ts` is the one place that decides.
-- After the model answers, `validate.ts` checks **every** person, ride, event, post and Reel id against the store *and* the viewer. Hosts must exist, live there, have **"Open to hosting friends"** on, and be free on the dates. Anything that fails is dropped and the reasons that cite it are scrubbed; repairs are logged on the card object and shown in the stream ("Fixed 2 things the model got wrong").
-- Costs are never model arithmetic: `estimate_trip_cost` and the final card use `pricing.ts`.
-- Friend-of-friend options appear only with the mutual named ("Ethan's friend · intro via Ethan"), and the drafted message goes to the mutual.
-- Drafts are messages with `status: "draft"`; the conversation APIs hide other people's drafts; approval is the only path to `sent`. Sending is simulated inside the clone; nothing leaves the app.
-
-## Fallback modes (labelled, never mistaken for live)
-
-| Badge | When | What |
-|---|---|---|
-| **LIVE · Muse** | key set, API up | real calls |
-| **Cached Muse response** | identical request seen before | served from `.ai-cache/` at $0 (warm the demo input once, then demo a slightly different one live) |
-| **Replay of a recorded run** | API error / timeout, budget guard, or `npm run replay:on` / `AI_MODE=replay` | a real recorded run (`src/data/recordings.json`, made with `npm run record` from `.ai-runs/`) replayed with its original pacing; trips re-validated against the current store |
-| **Mock · no model** | no key, or nothing to replay | code-only placeholder (hosts first), clearly marked |
-
-## Running the evaluation and the simulation
-
-```bash
-npm test            # ledger/budget tests + tool layer, visibility rules, validation, cost math (node --test via tsx)
-npm run eval        # 12 seeded scenarios through the real endpoints → EVAL.md + eval/results.json
-npm run sim         # persona swarm → sim/<persona>.json, sim/summary-run.json (see PERSONAS.md)
-npm run record      # copy the latest real runs into src/data/recordings.json for replay + animations
-```
-
-Final QA scripts: `node scripts/qa-demo-runs.mjs --n 5 [--vary]` (five consecutive full demo runs from reset, approval checked from the recipient's side) and `node scripts/qa-inputs.mjs` (ten judge-style inputs). Results of the last run are in `eval/` and `PROGRESS.md`.
-
-`EVAL.md` reports grounding (rendered and raw), constraints, privacy (target zero, with restricted profiles seeded so a violation is possible and would be caught), guide attribution on hand-labelled photos (`eval/labels.json`), and network-trip vs hotel-trip cost.
-
-### Persona simulation
-
-`scripts/sim.mjs` drives 16 simulated young adults (`sim/personas.json`, each a seeded account with a different budget, network, car, taste and comfort with strangers; one has nobody open to hosting and should get a graceful decline). Each is played by a Muse agent that reads what the real feature returned through the same endpoints the UI calls, picks or rejects trips with reasons, reads the Guide, and approves / edits / refuses the drafts through the real approval endpoint. Personas give opinions; `checks.ts` checks facts. Full traces are in `sim/`. **These are simulated users, not user research**, and are labelled as such in `PERSONAS.md`, the deck and the script.
-
-## What is simulated
-
-- **People, posts, events, rides, chats** are fictional seed data (`src/data/`). Photos from other cities are real, openly licensed Wikimedia Commons images (`CREDITS.md`), and their captions were written *after* Muse described them, so captions match pixels.
-- **Prices** come from a seeded table (`pricing.ts`); the "X% cheaper than a hotel trip" number is arithmetic on that table.
-- **Availability** is a seeded busy-date list per person.
-- **Sending a message** happens inside the clone; there is no real Messenger.
-- **Personas** are Muse agents, not people.
-- The Muse calls, tool use, image understanding, validation, pricing and approval flow are real.
-
-## Repo map
+Env (`.env.example`):
 
 ```
-src/lib/ai/            the one Muse client: index.ts, ledger.ts, cache.ts, trace.ts, mock.ts, tools.ts (base tools)
-src/lib/travel/        agent, guide, coordinate, tools, visibility, validate, pricing, taste, replay, checks, store
-src/app/api/travel/    discover (SSE), guide (SSE), coordinate, drafts/[id], options, trips/[id]
-src/app/api/admin/     reset, dump, audit, mode (replay switch), index-media, warm-images
-src/app/api/sim/       persona turn (through the client, so it is metered)
-src/app/(app)/travel/  Discover page, trip page;  src/components/travel/  TripCard, Reasoning stream, Nudge
-src/data/              users.ts + travelUsers.ts, cities.ts, travelPosts.ts, travelEvents.ts, media.json,
-                       mediaIndex.json (Muse image notes), recordings.json (replay), helpers, travel.ts
-scripts/               media-pick, credits, eval, sim, record, ledger
-tests/                 ledger.test.mjs, travel.test.ts
-pitch/                 deck.html, deck.pdf, script.md, runbook.md, qa.md, submission.md, animations/
-PLAN.md · PROGRESS.md · DECISIONS.md · EVAL.md · PERSONAS.md · CREDITS.md
+MODEL_API_KEY=            # from the hackathon
+MODEL_API_BASE_URL=https://api.meta.ai/v1
+MODEL_TEXT=muse-spark     # placeholder: open /dev/ai → "List models" to see the IDs your key can use, then set these
+MODEL_IMAGE=muse-image
+AI_MODE=auto              # auto | live | mock
 ```
+
+The model IDs above are placeholders. The Inspector's **List models** button calls `GET /v1/models` with your key so you can copy the real ones into `.env`.
+
+### Built-in example features (copy these)
+
+All in `src/lib/ai/features/index.ts`, each wired to a UI control and an API route:
+
+1. **Composer → ✨ AI** (`compose.ideas` / `compose.rewrite`): structured output, grounded in the user's bio and what friends posted. `POST /api/ai/compose`.
+2. **Group → Catch me up** (`digest.research` then `digest.write`): a tool-calling step that fetches posts and the viewer's profile, then a structured digest personalized to the viewer. `POST /api/ai/digest`.
+3. **Marketplace → Draft listing** (`listing.draft`): structured output with an enum category. `POST /api/ai/listing`.
+4. **Inspector playground** (`playground.*`): one button per capability.
+
+## Where a new feature plugs in
+
+1. **Data it needs**: add fields to `src/types.ts`, seed them in `src/data/*.ts`, expose a query/mutation in `src/server/db.ts`.
+2. **AI**: write a function in `src/lib/ai/features/` that gathers context from `server/db.ts` and calls `ai.text/json/image/tools` with a `task` label. If the model should look things up itself, add a `ToolDef` to `src/lib/ai/tools.ts`.
+3. **API**: add `src/app/api/<feature>/route.ts` using `route()` from `server/http.ts` (it gives you `userId`, `params`, `body()`).
+4. **UI**: pick the surface. Common entry points:
+   - A button in `PostCard` (`components/Post.tsx`) or the post header menu
+   - A card between posts in `app/(app)/page.tsx` (feed injection)
+   - A button next to "Catch me up" in `app/(app)/groups/[id]/page.tsx`
+   - The Reels overlay in `app/(app)/reels/page.tsx`
+   - Composer panels in `components/Composer.tsx`
+   - The Messenger input bar in `app/(app)/messages/[id]/page.tsx`
+   - Event detail actions in `app/(app)/events/[id]/page.tsx`
+   - Dating card in `app/(app)/dating/page.tsx`
+   - Marketplace detail in `app/(app)/marketplace/[id]/page.tsx`
+   Use `useApi()` to read, `api()` to mutate, `refresh("/api/prefix")` to revalidate.
+5. **Show the judges**: your calls appear in `/dev/ai` automatically with prompt, output, steps and latency. Link to it from your UI like the digest sheet does.
+
+## The seed (what the AI can mine)
+
+Sixteen people, 20–26, Austin, TX, with a dense friend graph: Maya (designer, runs the run club), Jordan (line cook about to launch a taco pop-up), Priya (CS senior who just signed a lease after a 19-day hunt), Devon (ER night nurse, volleyball), Sofia (band Porch Lights, show Friday), Ethan (SWE, bouldering), Aisha (MPH student organizing a health fair), Lucas (French barista, film photos), Hannah (first-year teacher), Marcus (trainer, reels creator), Zoe (sophomore, thrift flips, Valorant), Tyler (real estate, pickleball), Nina (nursing student, 61 plants), Sam (bartender/DJ), Omar (PhD, cyclist), Grace (new grad in marketing).
+
+Storylines cross surfaces on purpose: Jordan's pop-up is a feed post, a group post in Cheap Eats, an event, a DM thread with Maya, a group-chat topic, a reel and a listing (he's selling his bike for the truck fund). Priya's apartment hunt runs through 18 posts in the apartments group, her DMs with Aisha, and a listing for her textbooks. Use these threads to show an AI feature connecting dots across the app.
+
+- 6 groups, ~85 group posts with comments and replies
+- ~30 personal feed posts, 10 stories
+- 10 events (one past), 16 listings, 14 reels
+- 12 conversations (3 group chats), 11 dating profiles, 6 games
+- Notifications and friend requests derived from the above
+
+## Reliability notes for the live demo
+
+- Images are placeholder photos (picsum / pravatar) served through `/api/img`, a caching proxy. Run `npm run warm` once with the server up and all 160+ seed images are cached in `.image-cache/`, so the demo works with no internet. Avatars fall back to initials and photos to gradients if anything is missing.
+- `npm run reset` (or `POST /api/admin/reset`) restores the seed without a restart.
+- Polling intervals: feed 8s, messages 1.5s, notifications 5s, games 4s. Tweak in each page's `useApi(..., { poll })`.
+- `npm run typecheck` and `npm run build` both pass; use `npm run build && npm start` for the demo machine so there are no dev-server compile pauses.
 
 ## Scripts
 
 ```
-npm run dev / build / start     Next.js
-npm run typecheck · npm test    tsc; node tests (ledger, tools, visibility, validation, pricing)
-npm run reset                   restore the seed and clear trips/drafts (server must be running)
-npm run warm                    cache every seed image locally
-npm run index-media             rebuild Muse image notes (≈$0.04; only needed if photos change)
-npm run eval · npm run sim      evaluation / persona swarm → EVAL.md, sim/
-npm run record                  refresh replay recordings from real runs
-npm run replay:on|off           force replay mode at runtime
-npm run ledger                  Muse spend so far
+npm run dev        # Turbopack dev server
+npm run build      # production build
+npm start          # serve the build
+npm run typecheck  # tsc --noEmit
+npm run warm       # cache every seed image locally (server must be running)
+npm run reset      # restore the seed data (server must be running)
 ```
-
-Env (`.env.example`): `MODEL_API_KEY`, `MODEL_API_BASE_URL`, `MODEL_TEXT` (agent), `MODEL_VISION`, `MODEL_FAST`, `MODEL_IMAGE`, `AI_MODE` (`auto|live|mock|replay`), `MODEL_BUDGET_USD`, `MODEL_BUDGET_RESERVE_USD`, `AI_FINAL`.
-
-## The clone underneath
-
-Feed, Reels, Profile, Friends, Groups (with AI "Catch me up"), Events, Marketplace (with AI "Draft listing"), Messenger (live between two windows), Dating, Gaming, Notifications, Search, Saved, Menu, Switch account, and the AI Inspector at `/dev/ai` (every model call: prompt, output, tool steps, latency, tokens, mode, cost). Branding is a text wordmark and generic icons only. See `git log` for the base.

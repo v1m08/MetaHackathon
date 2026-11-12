@@ -22,46 +22,6 @@ export interface User {
   friendIds: ID[];
   interests: string[];
   birthday?: string; // MM-DD
-  /** City id (see data/cities.ts). Derived from location when missing. */
-  city?: string;
-  /** Travel: hosting is opt-in. Only people who turned this on are ever proposed as hosts. */
-  openToHosting?: boolean;
-  hostingNote?: string;
-  hasCar?: boolean;
-  /** Dates (YYYY-MM-DD) this person is busy; used by availability checks. */
-  busyDates?: string[];
-  /** Default visibility of this person's posts, photos and Reels. "friends" = restricted profile. */
-  privacy?: "public" | "friends";
-  /** How this person knows each friend, by friend id ("UT Design classmates"). */
-  friendLabels?: Record<ID, string>;
-}
-
-export interface City {
-  id: ID;
-  name: string;
-  state: string;
-  lat: number;
-  lng: number;
-  /** Seeded nightly prices in USD, used by code (never by the model) for the two-price cost math. */
-  hotelNight: number;
-  hostelNight: number;
-  tags: string[];
-}
-
-/** Someone driving to an event or city with open seats. */
-export interface Ride {
-  id: ID;
-  driverId: ID;
-  eventId?: ID;
-  fromCity: ID;
-  toCity: ID;
-  departAt: string; // ISO
-  returnAt: string; // ISO
-  seatsOpen: number;
-  riderIds: ID[];
-  note?: string;
-  /** What the driver asks per rider, round trip, in their own words/number. Code uses this over the gas formula. */
-  costShareUsd?: number;
 }
 
 export interface Comment {
@@ -89,8 +49,6 @@ export interface Post {
   shares: number;
   /** Who this post is visible to when not in a group. */
   audience?: "public" | "friends";
-  /** City id the post/photos are from, when away from home. */
-  city?: string;
 }
 
 export interface Story {
@@ -131,7 +89,6 @@ export interface FBEvent {
   invited?: ID[];
   category: string;
   price?: string;
-  city?: string;
 }
 
 export interface Listing {
@@ -163,8 +120,6 @@ export interface Reel {
   savedBy: ID[];
   tags: string[];
   createdAt: string;
-  city?: string;
-  audience?: "public" | "friends";
 }
 
 export interface Message {
@@ -173,11 +128,8 @@ export interface Message {
   text: string;
   createdAt: string;
   reactions?: Record<ID, string>;
-  attachment?: { type: "image" | "listing" | "event" | "trip"; ref: string };
+  attachment?: { type: "image" | "listing" | "event"; ref: string };
   readBy?: ID[];
-  /** Drafts written by the travel agent sit here until the sender approves them. Only the sender sees drafts. */
-  status?: "draft" | "sent";
-  draftReason?: string;
 }
 
 export interface Conversation {
@@ -222,8 +174,7 @@ export type NotificationType =
   | "birthday"
   | "marketplace"
   | "memory"
-  | "mention"
-  | "travel";
+  | "mention";
 
 export interface Notification {
   id: ID;
@@ -249,6 +200,4 @@ export interface Database {
   games: Game[];
   notifications: Notification[];
   friendRequests: { fromId: ID; toId: ID; createdAt: string }[];
-  cities: City[];
-  rides: Ride[];
 }
