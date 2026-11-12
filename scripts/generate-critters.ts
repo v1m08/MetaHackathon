@@ -1,4 +1,4 @@
-// npm run critters:generate [-- --force] [-- --style flat|plush|cute|costume|fuzzy] [-- maya dev …]
+// npm run critters:generate [-- --force] [-- --style flat|plush|cute|costume|fuzzy|soft] [-- maya dev …]
 // Draws each friend's critter with Muse Image (muse-image-1.0), from their memory file: the body/color/accessory
 // Muse Wonder picked plus a prop from a shared place or inside joke. Saves to public/seed/critters/<id>.<ext>.
 // Existing images are kept unless --force. Blocked friends are never drawn.
@@ -11,7 +11,7 @@ import { ai } from "@/lib/ai";
 import { colorById } from "@/lib/hangout/parts";
 import { builtMemory, hang } from "@/server/hangout/store";
 
-const STYLES = ["flat", "plush", "cute", "costume", "fuzzy"] as const;
+const STYLES = ["flat", "plush", "cute", "costume", "fuzzy", "soft"] as const;
 type Style = (typeof STYLES)[number];
 const styleArg = process.argv.find((a, i) => a.startsWith("--style=") || process.argv[i - 1] === "--style")?.replace("--style=", "");
 const STYLE: Style = STYLES.includes(styleArg as Style) ? (styleArg as Style) : "flat";
@@ -20,6 +20,7 @@ const STYLE_TEXT: Record<Style, string> = {
   flat: "Gentle happy expression, soft rosy cheeks, tiny stubby arms. Simple flat vector illustration with soft pastel shading and a thin darker outline, centered on a plain cream background, no text, no logos.",
   plush: "An original character made as a soft handmade plush toy from fuzzy felt fabric, with simple dot eyes, a tiny stitched smile, rosy embroidered cheeks and tiny stubby arms. Photographed like a 3D plush toy in soft studio lighting, centered on a plain cream background, no text, no logos.",
   cute: "An original kawaii character with chibi proportions: a big round head on a tiny body, large sparkly eyes with white highlights, rosy blush, a small happy open smile and tiny nub arms. Soft glossy 3D cartoon render in pastel colors with gentle rim light, like a collectible sticker, centered on a plain cream background, no text, no logos.",
+  soft: "Minimal kawaii design: a big round head on a small rounded body, a smooth cream-colored face, two small shiny black dot eyes set wide apart, a tiny curved smile, soft oval pink blush, short nub arms and little feet. Photorealistic 3D render of a soft collectible plush with short, smooth felted fuzz in muted pastel tones, standing full-body facing the viewer, pure white background, soft diffused studio lighting, gentle shadow, centered, no text, no logos.",
   fuzzy: "Chubby rounded proportions with a cream-colored muzzle, tiny black dot eyes, soft pink blush cheeks, a tiny smile, short stubby arms and little feet, standing full-body facing the viewer. Photorealistic 3D render of a soft fuzzy felt-and-fur collectible plush in pastel colors, clean pure white background, soft diffused studio lighting, subtle shadow, centered, no text, no logos.",
   costume: "Small black dot eyes, rosy cheeks, a tiny gentle smile, short arms and little feet, standing full-body facing the viewer. Photorealistic 3D render of a soft collectible figure with realistic fuzzy fur and real fabric clothing, clean bright white studio background, soft even lighting, subtle floor shadow, no text, no logos.",
 };
@@ -87,6 +88,17 @@ const ANIMAL: Record<string, { species: string; detail: string }> = {
   campus: { species: "penguin", detail: "wearing a tiny backpack" },
 };
 
+/** Soft style: cleaner and rounder, natural muted pastels, one tiny detail per friendship. */
+const SOFT: Record<string, { species: string; color: string; detail: string }> = {
+  ramen: { species: "kitten with little pointed ears", color: "soft coral-pink", detail: "holding a tiny bowl of ramen" },
+  goose: { species: "baby goose with a small orange beak", color: "soft dove-grey", detail: "with a tiny white feather tucked behind one wing" },
+  school: { species: "bunny with tall ears", color: "soft butter-yellow", detail: "with a tiny star clip on one ear" },
+  run: { species: "fox with a fluffy cream-tipped tail", color: "soft peach-orange", detail: "wearing a tiny red sweatband" },
+  movies: { species: "bear cub with round ears", color: "warm honey-tan", detail: "wearing tiny round glasses" },
+  swim: { species: "round baby seal with whiskers", color: "pale sky-blue", detail: "with a tiny pink flower on its head" },
+  campus: { species: "penguin with a cream belly and a small yellow beak", color: "soft lilac", detail: "wearing a tiny backpack" },
+};
+
 function themeKey(m: NonNullable<ReturnType<typeof builtMemory>>) {
   if (m.insideJokes.some((j) => /goose/i.test(j.phrase))) return "goose";
   const kinds = m.sharedPlaces.map((p) => PLACES.find((x) => x.name === p.name)?.kind);
@@ -108,6 +120,10 @@ function promptFor(friendId: string) {
   const m = builtMemory(friendId);
   if (!m) return null;
   const c = colorById(m.critter.color);
+  if (STYLE === "soft") {
+    const a = SOFT[themeKey(m)];
+    return `An original kawaii plush animal character: a ${a.species} in ${a.color}, ${a.detail}. ${STYLE_TEXT.soft}`;
+  }
   if (STYLE === "fuzzy") {
     const a = ANIMAL[themeKey(m)];
     return `An original kawaii plush animal character: a ${a.species} with soft fuzzy pastel ${c.label.toLowerCase()} (${c.fill}) fur, ${a.detail}. ${STYLE_TEXT.fuzzy}`;
