@@ -20,7 +20,7 @@ export const SCENARIOS: Scenario[] = [
     label: "Dev shares an angry goose Reel",
     friendId: "dev",
     trigger: { kind: "reel", item: { id: "reel_dev_goose", friendId: "dev", date: d, caption: "this goose woke up and chose violence", topicTags: ["goose", "animals", "funny", "park"], imagePath: "/seed/photos/reel_dev_goose.svg" } },
-    expect: { outcome: "nudge", type: "joke", mustCite: chatsMentioning("dev", /goose/i) },
+    expect: { outcome: "nudge", type: "joke", mustCite: [...chatsMentioning("dev", /goose/i), "ph_dev_01"] },
   },
   {
     id: "jess_moved",

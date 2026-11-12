@@ -69,6 +69,8 @@ export interface ChatSnippet {
   date: string; // ISO datetime
   sender: ID; // "me" or the friend id
   text: string;
+  /** Runtime only: a shared photo attached from a nudge. */
+  photoId?: ID;
 }
 
 /** Likes and reactions. Kept in the seed to prove they never count as contact. */
@@ -163,6 +165,8 @@ export interface Plan {
   estCostPerPerson: number;
   reason: string;
   confirmedBy: ID[];
+  metUpOn?: string;
+  keepsake?: string;
 }
 
 export type CritterState = "awake" | "sleepy" | "napping" | "celebrating" | "resting" | "egg" | "hatching";
