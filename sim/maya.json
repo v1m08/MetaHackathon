@@ -13,7 +13,7 @@
   "label": "Dec 11–13",
   "busy": false
  },
- "startedAt": "2026-11-12T11:16:57.112Z",
+ "startedAt": "2026-11-12T11:21:41.675Z",
  "stages": {
   "discover": {
    "steps": [
@@ -26,7 +26,7 @@
     {
      "kind": "model",
      "text": "Deciding what to look at next",
-     "detail": "1 ms",
+     "detail": "0 ms",
      "i": 1,
      "at": 1
     },
@@ -86,21 +86,21 @@
       "ride_ravi_dal"
      ],
      "i": 3,
-     "at": 4
+     "at": 3
     },
     {
      "kind": "model",
      "text": "Deciding what to look at next",
      "detail": "0 ms",
      "i": 4,
-     "at": 4
+     "at": 3
     },
     {
      "kind": "tool",
      "tool": "estimate_trip_cost",
      "text": "Pricing Dallas: 2 nights, staying with a friend, by a friend's car",
      "i": 5,
-     "at": 4
+     "at": 3
     },
     {
      "kind": "result",
@@ -123,14 +123,14 @@
      "text": "about $110 if they say yes, about $245 otherwise",
      "detail": "173 mi · 2.5h drive · hotel + solo would be $405",
      "i": 8,
-     "at": 5
+     "at": 4
     },
     {
      "kind": "tool",
      "tool": "estimate_trip_cost",
      "text": "Pricing San Antonio: 2 nights, staying with a friend, by bus",
      "i": 9,
-     "at": 5
+     "at": 4
     },
     {
      "kind": "result",
@@ -138,21 +138,21 @@
      "text": "about $95 if they say yes, about $230 otherwise",
      "detail": "87 mi · 1.3h drive · hotel + solo would be $385",
      "i": 10,
-     "at": 5
+     "at": 4
     },
     {
      "kind": "model",
      "text": "Deciding what to look at next",
      "detail": "0 ms",
      "i": 11,
-     "at": 5
+     "at": 4
     },
     {
      "kind": "tool",
      "tool": "get_city_media",
      "text": "Reading your friends' photos and Reels from Dallas",
      "i": 12,
-     "at": 5
+     "at": 4
     },
     {
      "kind": "result",
@@ -160,14 +160,14 @@
      "text": "Read 3 photos from Dallas",
      "detail": "1 of Harper's, 1 of Cole's, 1 of Grace's",
      "i": 13,
-     "at": 5
+     "at": 4
     },
     {
      "kind": "tool",
      "tool": "get_city_media",
      "text": "Reading your friends' photos and Reels from San Antonio",
      "i": 14,
-     "at": 5
+     "at": 4
     },
     {
      "kind": "result",
@@ -175,40 +175,451 @@
      "text": "Read 3 photos from San Antonio",
      "detail": "2 of Gabriel's, 1 of Lena's",
      "i": 15,
-     "at": 5
+     "at": 4
     },
     {
      "kind": "model",
      "text": "Deciding what to look at next",
-     "detail": "1 ms",
+     "detail": "0 ms",
      "i": 16,
-     "at": 6
+     "at": 5
     },
     {
      "kind": "tool",
      "tool": "propose_trips",
-     "text": "Putting together 1237 trips",
+     "text": "Putting the trips together",
      "i": 17,
-     "at": 6
+     "at": 5
+    },
+    {
+     "kind": "info",
+     "text": "The proposal came back as broken text; asking Muse to restate it as valid JSON",
+     "i": 18,
+     "at": 5
     },
     {
      "kind": "info",
      "text": "Checking every person, ride, event and photo against what you can actually see",
-     "i": 18,
-     "at": 6
+     "i": 19,
+     "at": 5
     },
     {
      "kind": "done",
-     "text": "No trip this time",
+     "text": "2 trips that only exist because of your people",
      "detail": "0.0s · cached",
-     "i": 19,
+     "i": 20,
      "at": 6
     }
    ],
    "result": {
-    "runId": "run_mwdgdolm",
-    "trips": [],
-    "declineReason": "the agent's proposal was malformed",
+    "runId": "run_mwdgjs4w",
+    "trips": [
+     {
+      "id": "trip_mwdgjs4wvygz",
+      "viewerId": "maya",
+      "city": "dallas",
+      "cityName": "Dallas",
+      "state": "TX",
+      "start": "2026-12-11",
+      "end": "2026-12-13",
+      "nights": 2,
+      "budget": 120,
+      "title": "dallas with cole for the deep ellum vintage market",
+      "pitch": "ravi's driving up friday anyway and cole's spare room is open. you'll hit the vintage market saturday with harper and the whole plano crew.",
+      "reasons": [
+       "ride with ravi fri 5pm from mueller, $15 gas split, 2 seats open",
+       "crash with cole in lower greenville, he's free and hosting",
+       "deep ellum vintage market sat night with harper + cole going",
+       "cole's post: quiet deep ellum + painted pillars, good photo walk"
+      ],
+      "host": {
+       "id": "cole",
+       "name": "Cole Patterson",
+       "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D65",
+       "connection": "Plano East high school",
+       "degree": 1,
+       "openToHosting": true,
+       "hostingNote": "spare bedroom in Lower Greenville. any weekend I'm not at the lake.",
+       "hasCar": true,
+       "freeThatWeekend": true
+      },
+      "ride": {
+       "id": "ride_ravi_dal",
+       "driver": {
+        "id": "ravi",
+        "name": "Ravi Shah",
+        "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D39",
+        "connection": "Ethan's friend (board game night)",
+        "degree": 2,
+        "via": {
+         "id": "ethan",
+         "name": "Ethan Park"
+        },
+        "openToHosting": false,
+        "hasCar": true,
+        "freeThatWeekend": true
+       },
+       "fromCity": "austin",
+       "toCity": "dallas",
+       "departAt": "2026-12-12T01:00:00.000Z",
+       "returnAt": "2026-12-14T04:00:00.000Z",
+       "seatsOpen": 2,
+       "note": "going up for family anyway so the car's going regardless. civic, 2 seats, fri 5pm from mueller (yes in traffic, sorry), back sunday night. I drive the speed limit and I'm not sorry about that either. $15 each or buy me a kolache in west."
+      },
+      "event": {
+       "id": "e_dal_vintage",
+       "title": "Deep Ellum Vintage Market (winter edition)",
+       "startsAt": "2026-12-12T18:00:00.000Z",
+       "location": "Deep Ellum Art Co. + the lot behind it",
+       "price": "Free entry",
+       "goingYouKnow": [
+        {
+         "id": "harper",
+         "name": "Harper Nguyen",
+         "username": "harper.nguyen",
+         "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D34",
+         "pronouns": "she/her",
+         "city": "dallas",
+         "openToHosting": false,
+         "connection": "Plano East high school"
+        },
+        {
+         "id": "owen",
+         "name": "Owen Castillo",
+         "username": "owen.castillo",
+         "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D19",
+         "pronouns": "he/him",
+         "city": "austin",
+         "openToHosting": false,
+         "connection": "Harper's friend (vintage markets)"
+        },
+        {
+         "id": "zoe",
+         "name": "Zoe Nakamura",
+         "username": "zoe.nak",
+         "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D16",
+         "pronouns": "she/they",
+         "city": "austin",
+         "openToHosting": false,
+         "connection": "Jordan's friend"
+        },
+        {
+         "id": "cole",
+         "name": "Cole Patterson",
+         "username": "cole.patterson",
+         "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D65",
+         "pronouns": "he/him",
+         "city": "dallas",
+         "openToHosting": true,
+         "connection": "Plano East high school"
+        },
+        {
+         "id": "sienna",
+         "name": "Sienna Walsh",
+         "username": "sienna.w",
+         "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D35",
+         "pronouns": "she/her",
+         "city": "dallas",
+         "openToHosting": false,
+         "connection": "Grace's friend (UT Advertising classmates)"
+        },
+        {
+         "id": "ravi",
+         "name": "Ravi Shah",
+         "username": "ravi.shah",
+         "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D39",
+         "pronouns": "he/him",
+         "city": "austin",
+         "openToHosting": false,
+         "connection": "Ethan's friend (board game night)"
+        }
+       ]
+      },
+      "people": [
+       {
+        "id": "harper",
+        "name": "Harper Nguyen",
+        "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D34",
+        "connection": "Plano East high school",
+        "degree": 1,
+        "openToHosting": false,
+        "hasCar": true,
+        "freeThatWeekend": true
+       },
+       {
+        "id": "owen",
+        "name": "Owen Castillo",
+        "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D19",
+        "connection": "Harper's friend (vintage markets)",
+        "degree": 2,
+        "via": {
+         "id": "harper",
+         "name": "Harper Nguyen"
+        },
+        "openToHosting": false,
+        "hasCar": true,
+        "freeThatWeekend": true
+       },
+       {
+        "id": "zoe",
+        "name": "Zoe Nakamura",
+        "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D16",
+        "connection": "Jordan's friend",
+        "degree": 2,
+        "via": {
+         "id": "jordan",
+         "name": "Jordan Reyes"
+        },
+        "openToHosting": false,
+        "hasCar": false,
+        "freeThatWeekend": true
+       },
+       {
+        "id": "sienna",
+        "name": "Sienna Walsh",
+        "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D35",
+        "connection": "Grace's friend (UT Advertising classmates)",
+        "degree": 2,
+        "via": {
+         "id": "grace",
+         "name": "Grace Liu"
+        },
+        "openToHosting": false,
+        "hasCar": true,
+        "freeThatWeekend": true
+       }
+      ],
+      "evidence": [
+       {
+        "kind": "post",
+        "id": "p_00q9",
+        "authorId": "cole",
+        "author": "Cole Patterson",
+        "image": "/api/img?u=https%3A%2F%2Fthumb.wikimedia.org%2Fwikipedia%2Fcommons%2Fthumb%2F9%2F99%2FDeep_Ellum_-_29.jpg%2F1280px-Deep_Ellum_-_29.jpg",
+        "caption": "deep ellum on a sunday afternoon when it's quiet. the overpass pillars painted like trees, then actual trees and grass in the little park past them, brick buildings behind. nobody's out yet. truck's in the lot, spare bedroom in lower greenville's empty, come up"
+       }
+      ],
+      "prices": {
+       "ifYes": {
+        "total": 75,
+        "lines": [
+         {
+          "label": "gas split, what the driver asked (215 mi each way)",
+          "usd": 15
+         },
+         {
+          "label": "staying with a friend (2 nights)",
+          "usd": 0
+         },
+         {
+          "label": "food, 3 days (local's cheap spots)",
+          "usd": 54
+         },
+         {
+          "label": "getting around, 3 days",
+          "usd": 6
+         }
+        ],
+        "transport": "ride",
+        "lodging": "host"
+       },
+       "otherwise": {
+        "total": 255,
+        "lines": [
+         {
+          "label": "bus, round trip (215 mi)",
+          "usd": 54
+         },
+         {
+          "label": "hostel, 2 nights × $42",
+          "usd": 84
+         },
+         {
+          "label": "food, 3 days",
+          "usd": 105
+         },
+         {
+          "label": "getting around, 3 days",
+          "usd": 12
+         }
+        ],
+        "transport": "bus",
+        "lodging": "hostel"
+       },
+       "solo": {
+        "total": 420,
+        "lines": [
+         {
+          "label": "bus, round trip (215 mi)",
+          "usd": 54
+         },
+         {
+          "label": "hotel, 2 nights × $125",
+          "usd": 250
+         },
+         {
+          "label": "food, 3 days",
+          "usd": 105
+         },
+         {
+          "label": "getting around, 3 days",
+          "usd": 12
+         }
+        ],
+        "transport": "bus",
+        "lodging": "hotel"
+       },
+       "miles": 215,
+       "driveHours": 3.2,
+       "transportIfYes": "ride",
+       "lodgingIfYes": "host",
+       "conditions": [
+        "Cole says yes to hosting",
+        "Ravi has a seat"
+       ]
+      },
+      "fitsBudget": true,
+      "repairs": [],
+      "createdAt": "2026-11-12T11:21:41.936Z"
+     },
+     {
+      "id": "trip_mwdgjs4wx9cg",
+      "viewerId": "maya",
+      "city": "san-antonio",
+      "cityName": "San Antonio",
+      "state": "TX",
+      "start": "2026-12-11",
+      "end": "2026-12-13",
+      "nights": 2,
+      "budget": 120,
+      "title": "san antonio with gabe, pearl lights + abuela cooking",
+      "pitch": "gabe's got the southtown spare room and his abuela will absolutely feed you. pearl at dusk is right there and it's cheap.",
+      "reasons": [
+       "crash with gabe, spare room, he's free and hosting",
+       "gabe's reel: pearl fountains lit up at dusk, free to walk",
+       "mission san josé arches free, his abuela cooks if you go",
+       "lena's local too for river walk / pearl food call"
+      ],
+      "host": {
+       "id": "gabe",
+       "name": "Gabriel Flores",
+       "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D40",
+       "connection": "UT Design cohort",
+       "degree": 1,
+       "openToHosting": true,
+       "hostingNote": "spare room at my place in Southtown. abuela lives downstairs and will cook.",
+       "hasCar": true,
+       "freeThatWeekend": true
+      },
+      "people": [
+       {
+        "id": "lena",
+        "name": "Lena Schultz",
+        "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D41",
+        "connection": "Gabriel's friend (San Antonio)",
+        "degree": 2,
+        "via": {
+         "id": "gabe",
+         "name": "Gabriel Flores"
+        },
+        "openToHosting": false,
+        "hasCar": true,
+        "freeThatWeekend": true
+       }
+      ],
+      "evidence": [
+       {
+        "kind": "reel",
+        "id": "tr_pearl",
+        "authorId": "gabe",
+        "author": "Gabriel Flores",
+        "image": "/api/img?u=https%3A%2F%2Fupload.wikimedia.org%2Fwikipedia%2Fcommons%2Fe%2Fea%2FGustavs_Geysers_Pearl_Brewery_San_Antonio_2021.jpg",
+        "caption": "pearl at dusk. the ground fountains lit up, trees wrapped in string lights, a kid and a dog losing their minds in the spray, the old brewery chimney behind it all. saturday ritual. free to walk, $12 tacos if you cave #sanantonio #thepearl"
+       }
+      ],
+      "prices": {
+       "ifYes": {
+        "total": 95,
+        "lines": [
+         {
+          "label": "bus, round trip (87 mi)",
+          "usd": 36
+         },
+         {
+          "label": "staying with a friend (2 nights)",
+          "usd": 0
+         },
+         {
+          "label": "food, 3 days (local's cheap spots)",
+          "usd": 54
+         },
+         {
+          "label": "getting around, 3 days",
+          "usd": 6
+         }
+        ],
+        "transport": "bus",
+        "lodging": "host"
+       },
+       "otherwise": {
+        "total": 230,
+        "lines": [
+         {
+          "label": "bus, round trip (87 mi)",
+          "usd": 36
+         },
+         {
+          "label": "hostel, 2 nights × $38",
+          "usd": 76
+         },
+         {
+          "label": "food, 3 days",
+          "usd": 105
+         },
+         {
+          "label": "getting around, 3 days",
+          "usd": 12
+         }
+        ],
+        "transport": "bus",
+        "lodging": "hostel"
+       },
+       "solo": {
+        "total": 385,
+        "lines": [
+         {
+          "label": "bus, round trip (87 mi)",
+          "usd": 36
+         },
+         {
+          "label": "hotel, 2 nights × $115",
+          "usd": 230
+         },
+         {
+          "label": "food, 3 days",
+          "usd": 105
+         },
+         {
+          "label": "getting around, 3 days",
+          "usd": 12
+         }
+        ],
+        "transport": "bus",
+        "lodging": "hotel"
+       },
+       "miles": 87,
+       "driveHours": 1.3,
+       "transportIfYes": "bus",
+       "lodgingIfYes": "host",
+       "conditions": [
+        "Gabriel says yes to hosting"
+       ]
+      },
+      "fitsBudget": true,
+      "repairs": [],
+      "createdAt": "2026-11-12T11:21:41.936Z"
+     }
+    ],
     "mode": "cached",
     "costUsd": 0,
     "latencyMs": 6,
@@ -216,7 +627,7 @@
    }
   },
   "audit": {
-   "runId": "run_mwdgdolm",
+   "runId": "run_mwdgjs4w",
    "viewerId": "maya",
    "input": {
     "start": "2026-12-11",
@@ -227,32 +638,569 @@
    "costUsd": 0,
    "latencyMs": 6,
    "raw": {
-    "ids": 0,
-    "grounded": 0,
+    "ids": 8,
+    "grounded": 8,
     "privacyViolationsCaught": 0,
     "invented": 0
    },
-   "trips": [],
-   "declined": true
+   "trips": [
+    {
+     "tripId": "trip_mwdgjs4wvygz",
+     "city": "dallas",
+     "elements": [
+      {
+       "kind": "host",
+       "id": "cole",
+       "exists": true,
+       "visible": true
+      },
+      {
+       "kind": "ride",
+       "id": "ride_ravi_dal",
+       "exists": true,
+       "visible": true,
+       "inDates": true
+      },
+      {
+       "kind": "driver",
+       "id": "ravi",
+       "exists": true,
+       "visible": true
+      },
+      {
+       "kind": "event",
+       "id": "e_dal_vintage",
+       "exists": true,
+       "visible": true,
+       "inDates": true
+      },
+      {
+       "kind": "person",
+       "id": "harper",
+       "exists": true,
+       "visible": true
+      },
+      {
+       "kind": "person",
+       "id": "owen",
+       "exists": true,
+       "visible": true
+      },
+      {
+       "kind": "person",
+       "id": "zoe",
+       "exists": true,
+       "visible": true
+      },
+      {
+       "kind": "person",
+       "id": "sienna",
+       "exists": true,
+       "visible": true
+      },
+      {
+       "kind": "post",
+       "id": "p_00q9",
+       "exists": true,
+       "visible": true
+      }
+     ],
+     "renderedViolations": 0,
+     "fitsBudget": true,
+     "ifYes": 75,
+     "otherwise": 255,
+     "solo": 420,
+     "hostOptedIn": true,
+     "hostDegree": 1,
+     "fofHasMutual": null
+    },
+    {
+     "tripId": "trip_mwdgjs4wx9cg",
+     "city": "san-antonio",
+     "elements": [
+      {
+       "kind": "host",
+       "id": "gabe",
+       "exists": true,
+       "visible": true
+      },
+      {
+       "kind": "person",
+       "id": "lena",
+       "exists": true,
+       "visible": true
+      },
+      {
+       "kind": "reel",
+       "id": "tr_pearl",
+       "exists": true,
+       "visible": true
+      }
+     ],
+     "renderedViolations": 0,
+     "fitsBudget": true,
+     "ifYes": 95,
+     "otherwise": 230,
+     "solo": 385,
+     "hostOptedIn": true,
+     "hostDegree": 1,
+     "fofHasMutual": null
+    }
+   ],
+   "declined": false
+  },
+  "guide": {
+   "steps": [
+    {
+     "kind": "info",
+     "text": "Building your Dallas guide from what Cole and Harper posted",
+     "i": 0,
+     "at": 2
+    },
+    {
+     "kind": "model",
+     "text": "Deciding what to read next",
+     "detail": "2325 ms",
+     "i": 1,
+     "at": 2327
+    },
+    {
+     "kind": "tool",
+     "tool": "get_my_travel_profile",
+     "text": "Reading your taste from saved Reels and likes",
+     "i": 2,
+     "at": 2327
+    },
+    {
+     "kind": "result",
+     "tool": "get_my_travel_profile",
+     "text": "You're into foodies, art people, photographers and budget travellers",
+     "i": 3,
+     "at": 2330
+    },
+    {
+     "kind": "tool",
+     "tool": "get_city_media",
+     "text": "Reading your friends' posts and Reels from Dallas",
+     "i": 4,
+     "at": 2330
+    },
+    {
+     "kind": "result",
+     "tool": "get_city_media",
+     "text": "3 photos and captions from Harper, Cole, Grace",
+     "i": 5,
+     "at": 2330
+    },
+    {
+     "kind": "model",
+     "text": "Deciding what to read next",
+     "detail": "6105 ms",
+     "i": 6,
+     "at": 8435
+    },
+    {
+     "kind": "tool",
+     "tool": "look_at_photo",
+     "text": "Looking closely at a photo: What does the scene show, what's the photo-worthy detail, an",
+     "ids": [
+      "p_00qh"
+     ],
+     "i": 7,
+     "at": 8435
+    },
+    {
+     "kind": "result",
+     "tool": "look_at_photo",
+     "text": "Muse saw: big tex with his arms out over the cacti, cotton bowl and a texas flag behind him under a blue sky. the photo-worthy detail is his texas-fla",
+     "detail": "Harper Nguyen's photo · live image understanding",
+     "i": 8,
+     "at": 11471
+    },
+    {
+     "kind": "model",
+     "text": "Deciding what to read next",
+     "detail": "14912 ms",
+     "i": 9,
+     "at": 26384
+    },
+    {
+     "kind": "tool",
+     "tool": "propose_guide",
+     "text": "Writing 3 recommendations, each credited to a friend",
+     "i": 10,
+     "at": 26384
+    },
+    {
+     "kind": "info",
+     "text": "Checking every credit against the real author and what you can see",
+     "i": 11,
+     "at": 26384
+    },
+    {
+     "kind": "done",
+     "text": "3 picks, credited to 3 friends",
+     "detail": "26.4s · live · $0.022",
+     "i": 12,
+     "at": 26385
+    }
+   ],
+   "result": {
+    "tripId": "trip_mwdgjs4wvygz",
+    "intro": "your plano people actually posted dallas, so this is all them. cheap, walkable, camera-friendly.",
+    "items": [
+     {
+      "title": "deep ellum pillars on a quiet sunday",
+      "what": "overpass pillars painted like trees next to real trees and grass, brick buildings behind. go when cole says it's empty and just wander with your film mindset.",
+      "whyYou": "you saved that portra 400 roll at golden hour — this is your dallas version, slow and quiet.",
+      "tasteTags": [
+       "photographers",
+       "art people"
+      ],
+      "when": "sunday afternoon",
+      "credit": {
+       "id": "cole",
+       "name": "Cole Patterson",
+       "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D65",
+       "connection": "Plano East high school"
+      },
+      "evidence": {
+       "kind": "post",
+       "id": "p_00q9",
+       "authorId": "cole",
+       "image": "/api/img?u=https%3A%2F%2Fthumb.wikimedia.org%2Fwikipedia%2Fcommons%2Fthumb%2F9%2F99%2FDeep_Ellum_-_29.jpg%2F1280px-Deep_Ellum_-_29.jpg",
+       "caption": "deep ellum on a sunday afternoon when it's quiet. the overpass pillars painted like trees, then actual trees and grass in the little park past them, brick buildings behind. nobody's out yet. truck's in the lot, spare bedroom in lower greenville's empty, come up"
+      }
+     },
+     {
+      "title": "klyde warren food truck lawn",
+      "what": "big lawn with food trucks lined up and glass towers behind. grab sienna for that brunch-then-park walk she does, sit in the green chairs and people-watch.",
+      "whyYou": "foodies + budget travellers to the core, second lunch is basically your love language.",
+      "tasteTags": [
+       "foodies",
+       "budget travellers"
+      ],
+      "priceHint": "$9 for a second lunch from the trucks",
+      "when": "saturday midday",
+      "credit": {
+       "id": "grace",
+       "name": "Grace Liu",
+       "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D38",
+       "connection": "friends"
+      },
+      "evidence": {
+       "kind": "post",
+       "id": "p_00qd",
+       "authorId": "grace",
+       "image": "/api/img?u=https%3A%2F%2Fthumb.wikimedia.org%2Fwikipedia%2Fcommons%2Fthumb%2F7%2F78%2FKlyde_Warren_Park.jpg%2F1280px-Klyde_Warren_Park.jpg",
+       "caption": "sienna made brunch at hers and then we walked to the park downtown with the food trucks lined up on the lawn and the glass towers behind. january so the trees were bare but it was 65 out bc texas. $9 for a second lunch from the trucks because brunch is a personality but so is a snack"
+      }
+     },
+     {
+      "title": "big tex at fair park",
+      "what": "giant big tex with arms out over the cacti, cotton bowl and texas flag behind. harper says skip $25 weekend parking and ride the dart instead.",
+      "whyYou": "you're into that touristy-but-make-it-photo thing, and harper's texas-flag boots detail is so you.",
+      "tasteTags": [
+       "photographers",
+       "budget travellers"
+      ],
+      "priceHint": "$10 corny dog, $6 DART all day",
+      "when": "friday daytime",
+      "credit": {
+       "id": "harper",
+       "name": "Harper Nguyen",
+       "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D34",
+       "connection": "Plano East high school"
+      },
+      "evidence": {
+       "kind": "post",
+       "id": "p_00qh",
+       "authorId": "harper",
+       "image": "/api/img?u=https%3A%2F%2Fthumb.wikimedia.org%2Fwikipedia%2Fcommons%2Fthumb%2F5%2F5c%2FState_Fair_of_Texas_September_2019_15_%2528Big_Tex%2529.jpg%2F1280px-State_Fair_of_Texas_September_2019_15_%2528Big_Tex%2529.jpg",
+       "caption": "big tex standing over the cacti with his arms out like he's about to hug 100k people. cotton bowl behind him, texas flag, the whole fair. fletcher's corny dog is $10 now which is a crime but I paid it. go on a weekday, parking's $25 on weekends, ride the dart instead, $6 all day",
+       "sawLive": "big tex with his arms out over the cacti, cotton bowl and a texas flag behind him under a blue sky. the photo-worthy detail is his texas-flag boots and 2019 state fair belt buckle, and there's no price or transit info visible in the photo itself."
+      }
+     }
+    ],
+    "looked": [
+     {
+      "mediaId": "dal-state-fair",
+      "image": "/api/img?u=https%3A%2F%2Fthumb.wikimedia.org%2Fwikipedia%2Fcommons%2Fthumb%2F5%2F5c%2FState_Fair_of_Texas_September_2019_15_%2528Big_Tex%2529.jpg%2F1280px-State_Fair_of_Texas_September_2019_15_%2528Big_Tex%2529.jpg",
+      "author": "Harper Nguyen",
+      "saw": "big tex with his arms out over the cacti, cotton bowl and a texas flag behind him under a blue sky. the photo-worthy detail is his texas-flag boots and 2019 state fair belt buckle, and there's no price or transit info visible in the photo itself.",
+      "costUsd": 0.0011,
+      "mode": "live"
+     }
+    ],
+    "steps": [
+     {
+      "kind": "info",
+      "text": "Building your Dallas guide from what Cole and Harper posted",
+      "i": 0,
+      "at": 2
+     },
+     {
+      "kind": "model",
+      "text": "Deciding what to read next",
+      "detail": "2325 ms",
+      "i": 1,
+      "at": 2327
+     },
+     {
+      "kind": "tool",
+      "tool": "get_my_travel_profile",
+      "text": "Reading your taste from saved Reels and likes",
+      "i": 2,
+      "at": 2327
+     },
+     {
+      "kind": "result",
+      "tool": "get_my_travel_profile",
+      "text": "You're into foodies, art people, photographers and budget travellers",
+      "i": 3,
+      "at": 2330
+     },
+     {
+      "kind": "tool",
+      "tool": "get_city_media",
+      "text": "Reading your friends' posts and Reels from Dallas",
+      "i": 4,
+      "at": 2330
+     },
+     {
+      "kind": "result",
+      "tool": "get_city_media",
+      "text": "3 photos and captions from Harper, Cole, Grace",
+      "i": 5,
+      "at": 2330
+     },
+     {
+      "kind": "model",
+      "text": "Deciding what to read next",
+      "detail": "6105 ms",
+      "i": 6,
+      "at": 8435
+     },
+     {
+      "kind": "tool",
+      "tool": "look_at_photo",
+      "text": "Looking closely at a photo: What does the scene show, what's the photo-worthy detail, an",
+      "ids": [
+       "p_00qh"
+      ],
+      "i": 7,
+      "at": 8435
+     },
+     {
+      "kind": "result",
+      "tool": "look_at_photo",
+      "text": "Muse saw: big tex with his arms out over the cacti, cotton bowl and a texas flag behind him under a blue sky. the photo-worthy detail is his texas-fla",
+      "detail": "Harper Nguyen's photo · live image understanding",
+      "i": 8,
+      "at": 11471
+     },
+     {
+      "kind": "model",
+      "text": "Deciding what to read next",
+      "detail": "14912 ms",
+      "i": 9,
+      "at": 26384
+     },
+     {
+      "kind": "tool",
+      "tool": "propose_guide",
+      "text": "Writing 3 recommendations, each credited to a friend",
+      "i": 10,
+      "at": 26384
+     },
+     {
+      "kind": "info",
+      "text": "Checking every credit against the real author and what you can see",
+      "i": 11,
+      "at": 26384
+     },
+     {
+      "kind": "done",
+      "text": "3 picks, credited to 3 friends",
+      "detail": "26.4s · live · $0.022",
+      "i": 12,
+      "at": 26385
+     }
+    ],
+    "mode": "live",
+    "costUsd": 0.0222,
+    "latencyMs": 26385,
+    "model": "muse-spark-1.3",
+    "createdAt": "2026-11-12T11:22:11.858Z"
+   }
+  },
+  "coordinate": {
+   "dates": {
+    "dates": [
+     "2026-12-11",
+     "2026-12-12",
+     "2026-12-13"
+    ],
+    "people": [
+     {
+      "id": "maya",
+      "name": "Maya Chen",
+      "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D47",
+      "role": "you",
+      "busyOn": [],
+      "free": true
+     },
+     {
+      "id": "cole",
+      "name": "Cole Patterson",
+      "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D65",
+      "role": "host",
+      "busyOn": [],
+      "free": true
+     },
+     {
+      "id": "ravi",
+      "name": "Ravi Shah",
+      "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D39",
+      "role": "driver",
+      "busyOn": [],
+      "free": true
+     }
+    ],
+    "allFree": true,
+    "alternatives": [
+     {
+      "start": "2026-11-20",
+      "end": "2026-11-22",
+      "label": "Nov 20–22"
+     },
+     {
+      "start": "2026-11-27",
+      "end": "2026-11-29",
+      "label": "Nov 27–29"
+     }
+    ]
+   },
+   "drafts": [
+    {
+     "id": "m_mwdgkqh9rt",
+     "conversationId": "c_mwdgkqh9rs",
+     "key": "host",
+     "to": {
+      "id": "cole",
+      "name": "Cole Patterson",
+      "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D65",
+      "connection": "Plano East high school"
+     },
+     "text": "hey cole! would you be open to me crashing dec 11-13 for the deep ellum vintage market winter edition? saw your note about the spare bedroom in lower greenville and that would be perfect if you're not at the lake. totally fine if not, and happy to cook while i'm there!",
+     "status": "draft",
+     "reason": "Trip: dallas with cole for the deep ellum vintage market · ask Cole about staying Dec 11–13"
+    },
+    {
+     "id": "m_mwdgkqh9rv",
+     "conversationId": "c_mwdgkqh9ru",
+     "key": "ride",
+     "to": {
+      "id": "ethan",
+      "name": "Ethan Park",
+      "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D68",
+      "connection": "friends"
+     },
+     "about": {
+      "id": "ravi",
+      "name": "Ravi Shah"
+     },
+     "text": "hey ethan! could you connect me with ravi from board game night? i'm hoping to ask about grabbing one of the 2 seats in his austin to dallas ride leaving fri dec 11 at 5pm from mueller and back sunday dec 13. happy to cover gas and handle kolache duty in west!",
+     "status": "draft",
+     "reason": "Trip: dallas with cole for the deep ellum vintage market · ask Ethan to introduce you to Ravi so you can ask for a seat in the car"
+    },
+    {
+     "id": "m_mwdgkqh9rx",
+     "conversationId": "c_mwdgkqh9rw",
+     "key": "friend",
+     "to": {
+      "id": "harper",
+      "name": "Harper Nguyen",
+      "avatar": "/api/img?u=https%3A%2F%2Fi.pravatar.cc%2F300%3Fimg%3D34",
+      "connection": "Plano East high school"
+     },
+     "text": "hey harper! are you gonna be around dallas dec 11-13? i'm coming up for the deep ellum vintage market winter edition and would love to catch up if you're free. no worries at all if you're busy that weekend!",
+     "status": "draft",
+     "reason": "Trip: dallas with cole for the deep ellum vintage market · ask Harper if they're around that weekend"
+    }
+   ],
+   "mode": "live",
+   "costUsd": 0.009
   }
  },
- "cost": 0.0004,
+ "cost": 0.033,
  "verdict": {
   "looksBroken": [
-   "the proposal was malformed and declined, so no actual trip data was provided"
+   "san antonio price math is off: $36 + $54 + $6 = $96, not $95",
+   "dallas $255 otherwise doesn't break down how bus + hostel gets to that number"
   ],
   "objections": [
-   "no actual trips were proposed to evaluate",
-   "can't verify the ~$120 budget or Dec 11-13 dates",
-   "no info on distance, strangers, or who'd be going"
+   "cole hasn't actually said yes to hosting yet and ravi's seat isn't confirmed either",
+   "ride is with ravi, ethan's friend, and it's 215 mi each way",
+   "crashing with cole from plano east high school feels a bit stranger-y",
+   "most of the dallas people - harper, owen, zoe, sienna - i don't really know"
   ],
-  "pickTripIndex": -1,
-  "reason": "nah there's literally nothing to pick from here, just a declined malformed proposal, so i wouldn't take any of it",
-  "surprising": 2,
-  "trustworthy": 1,
-  "wouldTake": false
+  "pickTripIndex": 0,
+  "reason": "dallas is the only one that actually fits the $120 budget with the ride and free couch, and the vintage market sounds fun even if i'm nervous about crashing with cole.",
+  "surprising": 4,
+  "trustworthy": 3,
+  "wouldTake": true
  },
  "verdictMode": "live",
- "latencyMs": 2489,
- "finishedAt": "2026-11-12T11:16:59.334Z"
+ "draftDecisions": {
+  "decisions": [
+   {
+    "action": "discard",
+    "draftId": "m_mwdgkqh9rt",
+    "why": "i don't actually have anything in the guide about a dec 11-13 trip, that market, cole's spare bedroom or the lake, so i wouldn't ask to crash like that"
+   },
+   {
+    "action": "discard",
+    "draftId": "m_mwdgkqh9rv",
+    "why": "ravi, the ride, mueller and kolache duty aren't in anything i was given, so i'm not gonna ask ethan to hook me up with a seat i can't verify"
+   },
+   {
+    "action": "discard",
+    "draftId": "m_mwdgkqh9rx",
+    "why": "the dec 11-13 dates and deep ellum vintage market aren't in the guide either, so i don't want to lock harper into a catch-up around a trip i haven't confirmed"
+   }
+  ],
+  "guideFeedback": "yeah the guide was for me, cheap walkable photo spots in dallas from plano people like cole, grace and harper makes sense."
+ },
+ "applied": [
+  {
+   "action": "discard",
+   "draftId": "m_mwdgkqh9rt",
+   "why": "i don't actually have anything in the guide about a dec 11-13 trip, that market, cole's spare bedroom or the lake, so i wouldn't ask to crash like that",
+   "result": {
+    "ok": true,
+    "removed": true
+   }
+  },
+  {
+   "action": "discard",
+   "draftId": "m_mwdgkqh9rv",
+   "why": "ravi, the ride, mueller and kolache duty aren't in anything i was given, so i'm not gonna ask ethan to hook me up with a seat i can't verify",
+   "result": {
+    "ok": true,
+    "removed": true
+   }
+  },
+  {
+   "action": "discard",
+   "draftId": "m_mwdgkqh9rx",
+   "why": "the dec 11-13 dates and deep ellum vintage market aren't in the guide either, so i don't want to lock harper into a catch-up around a trip i haven't confirmed",
+   "result": {
+    "ok": true,
+    "removed": true
+   }
+  }
+ ],
+ "latencyMs": 49412,
+ "finishedAt": "2026-11-12T11:22:30.830Z"
 }
