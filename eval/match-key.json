@@ -1,0 +1,84 @@
+{
+  "key": [
+    {
+      "traveler": "maya",
+      "museIs": "A",
+      "muse": "beau",
+      "museWhy": "beau lines up with early trail runs and budget hangs through active exploring plus cheap social stays and taco pop-ups for your taco chase. beau also totally gets the golden-hour film walk thing with slow film shooting from a bike-friendly porch base.",
+      "baseline": "ivy",
+      "baselineScore": 0.11
+    },
+    {
+      "traveler": "jordan",
+      "museIs": "A",
+      "muse": "raj",
+      "museWhy": "raj keeps the guest room open always for friends, friends of friends, you name it. raj also fits a food-first night market + late wander weekend if thats your vibe.",
+      "baseline": "gabe",
+      "baselineScore": 0.1
+    },
+    {
+      "traveler": "priya",
+      "museIs": "B",
+      "muse": "raj",
+      "museWhy": "raj is the safest bet when we know nothing about the traveler cause it's open to friends, friends of friends, you name it. two people is fine and there's always towels so a weekend just works.",
+      "baseline": "arjun",
+      "baselineScore": 0.25
+    },
+    {
+      "traveler": "devon",
+      "museIs": "B",
+      "muse": "raj",
+      "museWhy": "raj keeps the guest room in montrose open always for friends and friends of friends and has towels for days. raj also covers the widest travel vibe with cheap eats, night markets and late wanders plus driving friends around.",
+      "baseline": "andre",
+      "baselineScore": 0.11
+    },
+    {
+      "traveler": "sofia",
+      "museIs": "B",
+      "muse": "raj",
+      "museWhy": "raj is the safest bet when we don't know your style cause his door is always open to friends, friends of friends, you name it. raj fits two people easy and only blocks rodeo weekends in march so a random weekend should work.",
+      "baseline": "cole",
+      "baselineScore": 0
+    },
+    {
+      "traveler": "ethan",
+      "museIs": "B",
+      "muse": "raj",
+      "museWhy": "raj is the safest bet when we know nothing about the traveler since his door is basically always open. raj also covers food, night markets, and hosting friends around town so most styles would vibe.",
+      "baseline": "raj",
+      "baselineScore": 0.25
+    },
+    {
+      "traveler": "aisha",
+      "museIs": "A",
+      "muse": "beau",
+      "museWhy": "beau totally gets your vibe with cheap porch hangs for chill evenings outside and slowing down at golden hour to shoot film. they also stay active biking around and plan days around local food pop-ups which hits your mountain rider + food-first thing.",
+      "baseline": "marisol",
+      "baselineScore": 0.11
+    },
+    {
+      "traveler": "lucas",
+      "museIs": "B",
+      "muse": "andre",
+      "museWhy": "andre matches you on slow golden-hour film shooting, free flat paths to roam, and late empty street-art walks. his beltline spot is weekends-only and made for wandering outside for free, which is totally your vibe.",
+      "baseline": "beau",
+      "baselineScore": 0.11
+    },
+    {
+      "traveler": "hannah",
+      "museIs": "A",
+      "muse": "arjun",
+      "museWhy": "arjun is such a good match cause his blue line spot feeds your train window views obsession and his budget taco hunter thing is literally stretching cheap tacos for lunch and dinner. his couch is good for two nights too so it lines up perfect for a weekend of taco popup hunting.",
+      "baseline": "cole",
+      "baselineScore": 0
+    },
+    {
+      "traveler": "zoe",
+      "museIs": "A",
+      "muse": "andre",
+      "museWhy": "andre is literally you with the slow golden-hour film shooting and late empty street-art tunnel walks. plus andre's weekend-only spot is perfect for keeping it cheap and just posting up on free paths for hours.",
+      "baseline": "cole",
+      "baselineScore": 0
+    }
+  ]
+}

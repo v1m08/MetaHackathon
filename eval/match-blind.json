@@ -1,0 +1,334 @@
+{
+  "instructions": "For each traveler, read the style lines and both hosts' policies+styles. Put A or B in yourPick. Do not open match-key.json until done.",
+  "pairs": [
+    {
+      "traveler": "maya",
+      "travelerStyle": [
+        "Early riser: You get out early to run and beat the heat and crowds.",
+        "Budget explorer: You look for free or cheap spots and go early to save.",
+        "Food-first traveler: You build days around cheap local tacos and food pop-ups.",
+        "Outdoorsy and active: You like active trips with trails, rides, and mountain views.",
+        "Live music nights: You follow free live music and street scenes wherever you are."
+      ],
+      "A": {
+        "hostId": "beau",
+        "policy": "shotgun house in the bywater, spare room, porch. run club people and anyone they vouch for. bring a bike or borrow mine. two people ok. not second line sundays, i'm marching.",
+        "style": [
+          "Parade walker: you chase live brass bands and will walk miles to stay with the parade.",
+          "Cheap social stays: you keep trips cheap and social, grabbing cooler beers and crashing on porches.",
+          "Active explorer: you like to stay active on trips, running or biking between hangouts.",
+          "Food-first stops: you plan around local food like crawfish and taco pop-ups.",
+          "Golden-hour shooter: you slow down at golden hour to shoot film photos."
+        ]
+      },
+      "B": {
+        "hostId": "ivy",
+        "policy": "you're family or you're maya's friend, either way the couch is yours. bring running shoes, we leave at 7. one person, i have one couch.",
+        "style": [
+          "Early Riser: You get up early to catch swimming spots empty and cheap before the crowds roll in.",
+          "Trail Obsessed: You build trips around trail runs and time outside on foot.",
+          "Budget Foodie: You hunt down cheap local tacos and stretch them across the day.",
+          "Scenic Photographer: You love wide empty landscape shots that show the whole place from above."
+        ]
+      },
+      "same": false,
+      "yourPick": ""
+    },
+    {
+      "traveler": "jordan",
+      "travelerStyle": [
+        "Food-first: you chase late-night tacos and take notes for your future truck.",
+        "Late-night explorer: you like wandering free street art spots late when nobody is around.",
+        "Bike miles fan: you love long bike rides and big climbing days on trips.",
+        "Free viewpoints: you enjoy free scenic hangs like watching skaters with ocean views."
+      ],
+      "A": {
+        "hostId": "raj",
+        "policy": "guest room in montrose, always. friends, friends of friends, you name it. i have a ridiculous number of towels. two people fine. rodeo weekends in march i'm booked.",
+        "style": [
+          "Food-first traveler: you plan trips around cheap local eats and will road-trip for them.",
+          "Night market fan: you go all in on night markets and save weekends for them.",
+          "Late night wanderer: you like wandering around late when spots are empty and quiet.",
+          "Social tour guide: you love hosting friends and personally driving them around town."
+        ]
+      },
+      "B": {
+        "hostId": "gabe",
+        "policy": "spare room in southtown, abuela lives downstairs and will cook whether you want it or not. UT design people and friends. two people. not the weekend before christmas.",
+        "style": [
+          "Food-first wandering: you plan days around cheap local eats like tacos.",
+          "Free walkable spots: you love free walkable places you can just wander.",
+          "Family home base: you stay with family and let abuela feed everyone.",
+          "Late low-key walks: you like late low-key walks to see street art."
+        ]
+      },
+      "same": false,
+      "yourPick": ""
+    },
+    {
+      "traveler": "priya",
+      "travelerStyle": [
+        "Early riser: you'd rather get up early for a cheap swim than sleep in and fight crowds.",
+        "One-time icons: you'll do the super touristy strip once for the neon then bounce to local spots.",
+        "Free street music: you love wandering into free loud street parties that don't really end anywhere.",
+        "Snap-happy sights: you joke about tourist traps but still stop to snap a ton of landmark pics.",
+        "Climb-seeking outdoors: you look for active outdoor stuff like climbing wherever you end up."
+      ],
+      "A": {
+        "hostId": "arjun",
+        "policy": "couch in wicker park, blue line right there. friends and hackathon people. i'm allergic to cats so if you've got cat hair on everything, no. two nights.",
+        "style": [
+          "Transit window views: you love catching city views from a train window when you travel.",
+          "Bike-first explorer: you would rather explore by bike than wait around for transit.",
+          "Budget taco hunter: you stretch cheap taco stops to cover lunch and dinner on the road.",
+          "Light packer: you keep it to one bag when you road-trip with friends.",
+          "Long ride cyclist: you go for big long bike rides to see places outdoors."
+        ]
+      },
+      "B": {
+        "hostId": "raj",
+        "policy": "guest room in montrose, always. friends, friends of friends, you name it. i have a ridiculous number of towels. two people fine. rodeo weekends in march i'm booked.",
+        "style": [
+          "Food-first traveler: you plan trips around cheap local eats and will road-trip for them.",
+          "Night market fan: you go all in on night markets and save weekends for them.",
+          "Late night wanderer: you like wandering around late when spots are empty and quiet.",
+          "Social tour guide: you love hosting friends and personally driving them around town."
+        ]
+      },
+      "same": false,
+      "yourPick": ""
+    },
+    {
+      "traveler": "devon",
+      "travelerStyle": [
+        "Night owl hours: you're on night-shift time so you do late nights over early mornings.",
+        "Food-first traveler: you travel for messy local eats and stay till your hands hurt.",
+        "Free loud fun: you're into free loud street stuff that just keeps going.",
+        "Golden hour shooter: you like wandering at golden hour to shoot film photos.",
+        "Steep climb chaser: you're down for brutal climbs with big views even if it rains."
+      ],
+      "A": {
+        "hostId": "andre",
+        "policy": "pull-out couch in O4W, two minutes to the beltline, friends only please. weekends only, i travel for work midweek. runners get a guided beltline loop.",
+        "style": [
+          "Festival road-tripper: you'll drive anywhere for a festival weekend.",
+          "Carpool road buddy: you road-trip with friends and offer up spare seats.",
+          "Easy morning mover: you mix easy runs, walks, and sits on flat free paths.",
+          "Late night wanderer: you like late empty walks through street-art tunnels.",
+          "Slow film shooter: you slow down to shoot film around golden hour."
+        ]
+      },
+      "B": {
+        "hostId": "raj",
+        "policy": "guest room in montrose, always. friends, friends of friends, you name it. i have a ridiculous number of towels. two people fine. rodeo weekends in march i'm booked.",
+        "style": [
+          "Food-first traveler: you plan trips around cheap local eats and will road-trip for them.",
+          "Night market fan: you go all in on night markets and save weekends for them.",
+          "Late night wanderer: you like wandering around late when spots are empty and quiet.",
+          "Social tour guide: you love hosting friends and personally driving them around town."
+        ]
+      },
+      "same": false,
+      "yourPick": ""
+    },
+    {
+      "traveler": "sofia",
+      "travelerStyle": [
+        "Quiet live music: You skip the loud tourist bars to sit quiet for songwriter rounds.",
+        "Film shooter: You slow down at golden hour to shoot film while you wander.",
+        "Budget foodie: You stretch cheap tacos into two meals while you're out exploring.",
+        "Free outdoor hangs: You love posting up outside for free street scenes for hours."
+      ],
+      "A": {
+        "hostId": "cole",
+        "policy": "spare bedroom in lower greenville with a queen bed, plano east people and their friends. two people, three if someone takes the couch. i cook. any weekend i'm not at the lake or at my sister's wedding stuff in december.",
+        "style": [
+          "Road trip driver: you're usually the one driving your crew somewhere new.",
+          "Live music nights: you build trips around late-night live shows.",
+          "Quiet afternoons: you like wandering neighborhoods when nobody's out yet.",
+          "Easy dusk strolls: you're into free evening walks with a cheap food stop.",
+          "Casual food stops: you're down for casual grilled bites while you're out."
+        ]
+      },
+      "B": {
+        "hostId": "raj",
+        "policy": "guest room in montrose, always. friends, friends of friends, you name it. i have a ridiculous number of towels. two people fine. rodeo weekends in march i'm booked.",
+        "style": [
+          "Food-first traveler: you plan trips around cheap local eats and will road-trip for them.",
+          "Night market fan: you go all in on night markets and save weekends for them.",
+          "Late night wanderer: you like wandering around late when spots are empty and quiet.",
+          "Social tour guide: you love hosting friends and personally driving them around town."
+        ]
+      },
+      "same": false,
+      "yourPick": ""
+    },
+    {
+      "traveler": "ethan",
+      "travelerStyle": [
+        "Film shooter: you bring film on hikes to catch peaks and pines in black and white.",
+        "Early starter: you get out early to beat the crowds and the heat.",
+        "Ride seeker: you're down for big long bike rides to earn the views.",
+        "Budget explorer: you love cheap transit rides for the best city views.",
+        "Local foodie: you chase local staples served the traditional correct way."
+      ],
+      "A": {
+        "hostId": "raj",
+        "policy": "guest room in montrose, always. friends, friends of friends, you name it. i have a ridiculous number of towels. two people fine. rodeo weekends in march i'm booked.",
+        "style": [
+          "Food-first traveler: you plan trips around cheap local eats and will road-trip for them.",
+          "Night market fan: you go all in on night markets and save weekends for them.",
+          "Late night wanderer: you like wandering around late when spots are empty and quiet.",
+          "Social tour guide: you love hosting friends and personally driving them around town."
+        ]
+      },
+      "B": {
+        "hostId": "raj",
+        "policy": "guest room in montrose, always. friends, friends of friends, you name it. i have a ridiculous number of towels. two people fine. rodeo weekends in march i'm booked.",
+        "style": [
+          "Food-first traveler: you plan trips around cheap local eats and will road-trip for them.",
+          "Night market fan: you go all in on night markets and save weekends for them.",
+          "Late night wanderer: you like wandering around late when spots are empty and quiet.",
+          "Social tour guide: you love hosting friends and personally driving them around town."
+        ]
+      },
+      "same": true,
+      "yourPick": ""
+    },
+    {
+      "traveler": "aisha",
+      "travelerStyle": [
+        "Low-key evenings: you balance busy days with chill time outside in the evening.",
+        "Budget friendly: you're happy keeping it simple when a free view does the job.",
+        "Slow shooter: you like slowing down to shoot film around golden hour.",
+        "Mountain rider: you chase ridge rides with big mountain views.",
+        "Food-first: you build trips around local food like farmers markets."
+      ],
+      "A": {
+        "hostId": "beau",
+        "policy": "shotgun house in the bywater, spare room, porch. run club people and anyone they vouch for. bring a bike or borrow mine. two people ok. not second line sundays, i'm marching.",
+        "style": [
+          "Parade walker: you chase live brass bands and will walk miles to stay with the parade.",
+          "Cheap social stays: you keep trips cheap and social, grabbing cooler beers and crashing on porches.",
+          "Active explorer: you like to stay active on trips, running or biking between hangouts.",
+          "Food-first stops: you plan around local food like crawfish and taco pop-ups.",
+          "Golden-hour shooter: you slow down at golden hour to shoot film photos."
+        ]
+      },
+      "B": {
+        "hostId": "marisol",
+        "policy": "real guest room, three nights fine, open to friends and friends of friends. our dog biscuit will sleep on you. not the first weekend of december, we're at a wedding in birmingham.",
+        "style": [
+          "Building geek: you geek out over cool buildings and bridges wherever you go.",
+          "Trail time: you like getting outside for a hike when you travel.",
+          "Market grazer: you always hunt down farmers markets and local food spots.",
+          "Dog planner: you plan ahead for your dog when you leave town.",
+          "Low-key nights: you'd do the big party strip once then find somewhere chill."
+        ]
+      },
+      "same": false,
+      "yourPick": ""
+    },
+    {
+      "traveler": "lucas",
+      "travelerStyle": [
+        "Golden hour walker: you like slow golden-hour walks to see a place.",
+        "Film-first shooter: you shoot film because you like taking it slow.",
+        "Free-roam explorer: you'd rather wander outside for free than pay for the tour.",
+        "Bike over transit: you'd rather bike a city than wait on transit.",
+        "Late-night wanderer: you like late-night walks when nobody else is around."
+      ],
+      "A": {
+        "hostId": "beau",
+        "policy": "shotgun house in the bywater, spare room, porch. run club people and anyone they vouch for. bring a bike or borrow mine. two people ok. not second line sundays, i'm marching.",
+        "style": [
+          "Parade walker: you chase live brass bands and will walk miles to stay with the parade.",
+          "Cheap social stays: you keep trips cheap and social, grabbing cooler beers and crashing on porches.",
+          "Active explorer: you like to stay active on trips, running or biking between hangouts.",
+          "Food-first stops: you plan around local food like crawfish and taco pop-ups.",
+          "Golden-hour shooter: you slow down at golden hour to shoot film photos."
+        ]
+      },
+      "B": {
+        "hostId": "andre",
+        "policy": "pull-out couch in O4W, two minutes to the beltline, friends only please. weekends only, i travel for work midweek. runners get a guided beltline loop.",
+        "style": [
+          "Festival road-tripper: you'll drive anywhere for a festival weekend.",
+          "Carpool road buddy: you road-trip with friends and offer up spare seats.",
+          "Easy morning mover: you mix easy runs, walks, and sits on flat free paths.",
+          "Late night wanderer: you like late empty walks through street-art tunnels.",
+          "Slow film shooter: you slow down to shoot film around golden hour."
+        ]
+      },
+      "same": false,
+      "yourPick": ""
+    },
+    {
+      "traveler": "hannah",
+      "travelerStyle": [
+        "Budget foodie: you chase $4 tacos and make them stretch for lunch and dinner",
+        "Early morning swimmer: you'd rather go before 8am for a free swim",
+        "Train window views: you love seeing the city from a train window",
+        "Taco popup hunter: you save taco popups for your saturday plans"
+      ],
+      "A": {
+        "hostId": "arjun",
+        "policy": "couch in wicker park, blue line right there. friends and hackathon people. i'm allergic to cats so if you've got cat hair on everything, no. two nights.",
+        "style": [
+          "Transit window views: you love catching city views from a train window when you travel.",
+          "Bike-first explorer: you would rather explore by bike than wait around for transit.",
+          "Budget taco hunter: you stretch cheap taco stops to cover lunch and dinner on the road.",
+          "Light packer: you keep it to one bag when you road-trip with friends.",
+          "Long ride cyclist: you go for big long bike rides to see places outdoors."
+        ]
+      },
+      "B": {
+        "hostId": "cole",
+        "policy": "spare bedroom in lower greenville with a queen bed, plano east people and their friends. two people, three if someone takes the couch. i cook. any weekend i'm not at the lake or at my sister's wedding stuff in december.",
+        "style": [
+          "Road trip driver: you're usually the one driving your crew somewhere new.",
+          "Live music nights: you build trips around late-night live shows.",
+          "Quiet afternoons: you like wandering neighborhoods when nobody's out yet.",
+          "Easy dusk strolls: you're into free evening walks with a cheap food stop.",
+          "Casual food stops: you're down for casual grilled bites while you're out."
+        ]
+      },
+      "same": false,
+      "yourPick": ""
+    },
+    {
+      "traveler": "zoe",
+      "travelerStyle": [
+        "Budget tracker: you keep trips cheap and track your total as you go.",
+        "Film shooter: you wander at golden hour shooting film around the city.",
+        "Cheap eats: you stretch cheap tacos into lunch and dinner when you travel.",
+        "Late night wanderer: you prefer quiet late-night art spots over packed party strips.",
+        "Free lookout: you’ll post up for hours just watching free outdoor scenes."
+      ],
+      "A": {
+        "hostId": "andre",
+        "policy": "pull-out couch in O4W, two minutes to the beltline, friends only please. weekends only, i travel for work midweek. runners get a guided beltline loop.",
+        "style": [
+          "Festival road-tripper: you'll drive anywhere for a festival weekend.",
+          "Carpool road buddy: you road-trip with friends and offer up spare seats.",
+          "Easy morning mover: you mix easy runs, walks, and sits on flat free paths.",
+          "Late night wanderer: you like late empty walks through street-art tunnels.",
+          "Slow film shooter: you slow down to shoot film around golden hour."
+        ]
+      },
+      "B": {
+        "hostId": "cole",
+        "policy": "spare bedroom in lower greenville with a queen bed, plano east people and their friends. two people, three if someone takes the couch. i cook. any weekend i'm not at the lake or at my sister's wedding stuff in december.",
+        "style": [
+          "Road trip driver: you're usually the one driving your crew somewhere new.",
+          "Live music nights: you build trips around late-night live shows.",
+          "Quiet afternoons: you like wandering neighborhoods when nobody's out yet.",
+          "Easy dusk strolls: you're into free evening walks with a cheap food stop.",
+          "Casual food stops: you're down for casual grilled bites while you're out."
+        ]
+      },
+      "same": false,
+      "yourPick": ""
+    }
+  ]
+}
