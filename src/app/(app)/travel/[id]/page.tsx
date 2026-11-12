@@ -263,7 +263,7 @@ export default function TripPage() {
                 <>
                   <div className="text-[13px] text-ink">{negoResult.summary}</div>
                   {negoRequests.map((r) => <RequestCard key={r.id} r={r} onChange={(nr) => setNegoRequests((list) => list.map((x) => (x.id === nr.id ? nr : x)))} />)}
-                  <Link href="/travel/opendoor" className="inline-flex items-center gap-1 text-[13px] font-semibold text-fb">All your Open Door requests →</Link>
+                  <Link href="/travel/opendoor" className="inline-flex items-center gap-1 text-[13px] font-semibold text-fb">All your agent&apos;s requests →</Link>
                 </>
               )}
             </div>
