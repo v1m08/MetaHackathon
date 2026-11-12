@@ -4,8 +4,10 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
+    "dev:phone": "next dev --turbopack -H 0.0.0.0",
     "build": "next build",
     "start": "next start",
+    "start:phone": "next start -H 0.0.0.0",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
     "warm": "curl -s http://localhost:3000/api/admin/warm-images",

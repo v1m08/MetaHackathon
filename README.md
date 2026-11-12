@@ -8,6 +8,21 @@ cp .env.example .env     # optional; leave MODEL_API_KEY empty for mock mode
 npm run dev              # http://localhost:3000
 ```
 
+## Run it on your iPhone
+
+The app is mobile-first and renders full-bleed on a real phone (the desktop phone frame only appears at tablet widths and up).
+
+```bash
+npm run dev:phone        # same as dev, but listens on the LAN (0.0.0.0:3000)
+```
+
+1. Put the phone on the same Wi-Fi as the Mac (or tether the Mac to the phone's hotspot if the venue Wi-Fi isolates clients).
+2. Find the Mac's address: `ipconfig getifaddr en0`.
+3. Open `http://<that-ip>:3000` in Safari on the phone.
+4. Share → **Add to Home Screen**, then launch from the icon. It opens standalone with no browser chrome, so it looks like the real app.
+
+For a smoother demo use the production build: `npm run build && npm run start:phone`.
+
 ## What's here
 
 | Surface | Route | Notes |
