@@ -25,7 +25,7 @@ function DiscoverInner() {
   const params = useSearchParams();
   const { data: opt } = useApi<Options>("/api/travel/options");
   const [weekend, setWeekend] = useState<string>("");
-  const [budget, setBudget] = useState<string>("150");
+  const [budget, setBudget] = useState<string>("100");
   const [hint, setHint] = useState("");
   const [steps, setSteps] = useState<StreamStep[]>([]);
   const [running, setRunning] = useState(false);

@@ -18,7 +18,9 @@
     "replay:on": "curl -s -X POST localhost:3000/api/admin/mode -H 'content-type: application/json' -d '{\"replay\":true}'",
     "replay:off": "curl -s -X POST localhost:3000/api/admin/mode -H 'content-type: application/json' -d '{\"replay\":false}'",
     "eval": "node scripts/eval.mjs",
-    "credits": "node scripts/credits.mjs"
+    "credits": "node scripts/credits.mjs",
+    "sim": "node scripts/sim.mjs",
+    "animations": "node scripts/build-animations.mjs"
   },
   "dependencies": {
     "lucide-react": "^0.468.0",

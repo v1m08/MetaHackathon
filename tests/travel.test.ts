@@ -116,6 +116,11 @@ test("cost math is deterministic, in code, and the two prices make sense", () =>
   assert.throws(() => costBreakdown({ fromCity: "austin", toCity: "atlantis", nights: 1, transport: "bus", lodging: "hostel" }));
 });
 
+test("ella's network has nobody open to hosting out of town (the graceful-decline case)", async () => {
+  const net = (await findPeopleByCity.run({}, { userId: "ella" })) as { cities: { people: { openToHosting: boolean }[] }[] };
+  assert.equal(net.cities.flatMap((c) => c.people).filter((p) => p.openToHosting).length, 0);
+});
+
 test("ranking: direct-friend hosts first, then any host, then budget fit", () => {
   const ctx = { ...weekend, budget: 120 };
   const fof = validateTrip("maya", { city: "nashville", title: "fof", pitch: "", hostId: "ruben", nights: 2, reasons: [] }, ctx)!; // ruben: degree 2, hosting on, not busy

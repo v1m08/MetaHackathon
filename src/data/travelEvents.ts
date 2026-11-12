@@ -97,37 +97,37 @@ export const travelEvents: FBEvent[] = [
 // ---------- rides ----------
 export const travelRides: Ride[] = [
   {
-    id: "ride_finn_nola", driverId: "finn", eventId: "e_nola_samantha", fromCity: "austin", toCity: "new-orleans",
+    id: "ride_finn_nola", costShareUsd: 45, driverId: "finn", eventId: "e_nola_samantha", fromCity: "austin", toCity: "new-orleans",
     departAt: wk(1, 0, 13), returnAt: wk(1, 2, 14), seatsOpen: 2, riderIds: ["sam", "lucas"],
     note: "the band van (Sprinter, seats 8 but the back is gear). leaving from Hotel Vegas at 1pm sharp friday. split gas 4 ways ~$45 each. I drive the speed limit, sam picks the music until Lafayette.",
   },
   {
-    id: "ride_yara_hou", driverId: "yara", eventId: "e_hou_night_market", fromCity: "austin", toCity: "houston",
+    id: "ride_yara_hou", costShareUsd: 15, driverId: "yara", eventId: "e_hou_night_market", fromCity: "austin", toCity: "houston",
     departAt: wk(2, 1, 10), returnAt: wk(2, 2, 18), seatsOpen: 3, riderIds: [],
     note: "corolla, 3 seats, leaving from the Mueller HEB lot sat 10am, back sunday evening. I'm staying at my parents' so you'll need a couch (raj has one). gas is like $15 each, buc-ee's stop is mandatory.",
   },
   {
-    id: "ride_andre_nash", driverId: "andre", eventId: "e_nash_songwriter", fromCity: "atlanta", toCity: "nashville",
+    id: "ride_andre_nash", costShareUsd: 20, driverId: "andre", eventId: "e_nash_songwriter", fromCity: "atlanta", toCity: "nashville",
     departAt: wk(3, 0, 14), returnAt: wk(3, 2, 15), seatsOpen: 2, riderIds: ["kwame"],
     note: "4runner, leaving from my place in Old Fourth Ward at 2 friday so we make Leah's set. 4 hours with one stop. kwame's already in so the playlist is going to be a fight. gas split ~$20 each.",
   },
   {
-    id: "ride_tyler_sa", driverId: "tyler", eventId: "e_sa_pearl_spurs", fromCity: "austin", toCity: "san-antonio",
+    id: "ride_tyler_sa", costShareUsd: 10, driverId: "tyler", eventId: "e_sa_pearl_spurs", fromCity: "austin", toCity: "san-antonio",
     departAt: wk(3, 1, 7, 30), returnAt: wk(3, 1, 23, 30), seatsOpen: 2, riderIds: ["owen"],
     note: "day trip! 4runner, leaving round rock 7:30 (I can grab you on the way down 35). back after the game, home by 11:30ish. gabe's abuela is feeding us so don't eat breakfast. $10 each for gas.",
   },
   {
-    id: "ride_owen_dal", driverId: "owen", eventId: "e_dal_vintage", fromCity: "austin", toCity: "dallas",
+    id: "ride_owen_dal", costShareUsd: 18, driverId: "owen", eventId: "e_dal_vintage", fromCity: "austin", toCity: "dallas",
     departAt: wk(4, 1, 7), returnAt: wk(4, 2, 19), seatsOpen: 3, riderIds: ["zoe"],
     note: "tacoma, trunk is half harper's inventory so pack light. sat 7am from south lamar, back sunday evening. zoe's in. cole has a spare room, otherwise it's floor at harper's. gas ~$18 each.",
   },
   {
-    id: "ride_ravi_dal", driverId: "ravi", eventId: "e_dal_vintage", fromCity: "austin", toCity: "dallas",
+    id: "ride_ravi_dal", costShareUsd: 15, driverId: "ravi", eventId: "e_dal_vintage", fromCity: "austin", toCity: "dallas",
     departAt: wk(4, 0, 17), returnAt: wk(4, 2, 20), seatsOpen: 2, riderIds: [],
     note: "going up for family anyway so the car's going regardless. civic, 2 seats, fri 5pm from mueller (yes in traffic, sorry), back sunday night. I drive the speed limit and I'm not sorry about that either. $15 each or buy me a kolache in west.",
   },
   {
-    id: "ride_kenji_marfa", driverId: "kenji", eventId: "e_marfa_sky", fromCity: "austin", toCity: "marfa",
+    id: "ride_kenji_marfa", costShareUsd: 40, driverId: "kenji", eventId: "e_marfa_sky", fromCity: "austin", toCity: "marfa",
     departAt: wk(5, 0, 13), returnAt: wk(5, 2, 16), seatsOpen: 3, riderIds: ["lucas"],
     note: "the subaru's 7th marfa trip. 6.5 hrs, leaving east austin 1pm friday, stop in fredericksburg and fort stockton. lucas is in with a camera bag that counts as a person. gas ~$40 each round trip. bring a blanket for the car, I run the AC like a psycho.",
   },

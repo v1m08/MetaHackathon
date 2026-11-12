@@ -145,7 +145,7 @@ export function toggleReel(id: ID, userId: ID, field: "likes" | "savedBy") {
 // ---------- messenger ----------
 export const conversationsFor = (userId: ID) =>
   db()
-    .conversations.filter((c) => c.participantIds.includes(userId))
+    .conversations.filter((c) => c.participantIds.includes(userId) && c.messages.some((m) => m.status !== "draft" || m.senderId === userId))
     .sort((a, b) => (b.messages.at(-1)?.createdAt ?? "").localeCompare(a.messages.at(-1)?.createdAt ?? ""));
 export const getConversation = (id: ID) => db().conversations.find((c) => c.id === id);
 /** Messages this viewer may see: everything except other people's unsent drafts. */

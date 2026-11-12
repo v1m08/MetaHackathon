@@ -93,7 +93,7 @@ export const getTravelEventsAndRides: ToolDef<{ start: string; end: string }> = 
       });
     const rides = db()
       .rides.filter((r) => r.seatsOpen > 0 && r.driverId !== userId && canSeeUser(userId, getUser(r.driverId)!) && rideTouches(r.departAt, r.returnAt, start, end))
-      .map((r) => ({ id: r.id, driver: personFor(userId, getUser(r.driverId)!), fromCity: r.fromCity, toCity: r.toCity, toCityName: cityName(r.toCity), departAt: r.departAt, returnAt: r.returnAt, seatsOpen: r.seatsOpen, riders: r.riderIds.filter((id) => canSeeUser(userId, getUser(id)!)).map((id) => getUser(id)!.name), eventId: r.eventId, note: r.note, leavesFromMyCity: r.fromCity === me?.city }));
+      .map((r) => ({ id: r.id, driver: personFor(userId, getUser(r.driverId)!), fromCity: r.fromCity, toCity: r.toCity, toCityName: cityName(r.toCity), departAt: r.departAt, returnAt: r.returnAt, seatsOpen: r.seatsOpen, gasSplitUsd: r.costShareUsd, riders: r.riderIds.filter((id) => canSeeUser(userId, getUser(id)!)).map((id) => getUser(id)!.name), eventId: r.eventId, note: r.note, leavesFromMyCity: r.fromCity === me?.city }));
     return { range: { start, end }, events, rides };
   },
 };
@@ -119,7 +119,7 @@ export const checkAvailability: ToolDef<{ userIds: string[]; start: string; end:
   },
 };
 
-export const estimateTripCost: ToolDef<{ toCity: string; nights: number; transport: TransportMode; lodging: LodgingMode; carOccupants?: number; withLocal?: boolean }> = {
+export const estimateTripCost: ToolDef<{ toCity: string; nights: number; transport: TransportMode; lodging: LodgingMode; carOccupants?: number; withLocal?: boolean; rideId?: string }> = {
   name: "estimate_trip_cost",
   description: "Cost of a trip from the user's home city, computed from seeded prices. Returns BOTH totals: if the host/ride say yes, and the fallback (hostel + bus/flight). Always use this; never add up prices yourself.",
   parameters: {
@@ -131,13 +131,15 @@ export const estimateTripCost: ToolDef<{ toCity: string; nights: number; transpo
       lodging: { type: "string", enum: ["host", "hostel", "hotel"] },
       carOccupants: { type: "integer", description: "people in the car including the driver, for ride/own-car" },
       withLocal: { type: "boolean", description: "a local friend will show cheap spots" },
+      rideId: { type: "string", description: "when transport is ride: the ride id, so the driver's own gas split is used" },
     },
     required: ["toCity", "nights", "transport", "lodging"],
   },
   run: (a, { userId }) => {
     const me = getUser(userId);
     if (!cityById(a.toCity)) return { error: `unknown city ${a.toCity}. Valid: ${cities.map((c) => c.id).join(", ")}` };
-    const p = twoPrices({ fromCity: me?.city ?? "austin", toCity: a.toCity, nights: Math.max(0, Math.min(7, a.nights)), transport: a.transport, lodging: a.lodging, carOccupants: a.carOccupants, withLocal: a.withLocal });
+    const rideRec = a.rideId ? db().rides.find((r) => r.id === a.rideId) : undefined;
+    const p = twoPrices({ fromCity: me?.city ?? "austin", toCity: a.toCity, nights: Math.max(0, Math.min(7, a.nights)), transport: a.transport, lodging: a.lodging, carOccupants: a.carOccupants, withLocal: a.withLocal, rideShareUsd: rideRec?.costShareUsd });
     return { toCity: a.toCity, miles: p.miles, driveHours: p.driveHours, ifYes: p.ifYes.total, ifYesLines: p.ifYes.lines, otherwise: p.otherwise.total, otherwiseLines: p.otherwise.lines, soloHotelTrip: p.solo.total };
   },
 };

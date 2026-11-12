@@ -76,6 +76,9 @@ export const SCENES = [
   ["atx-barton", "austin", "Barton Springs Pool"],
   ["atx-greenbelt", "austin", "Barton Creek Greenbelt trail"],
   ["atx-tacos", "austin", "breakfast tacos Austin"],
+  // Austin feed (home) posts so the first screen's photos match their captions
+  ["atx-birria", "austin", "birria tacos consomé"],
+  ["atx-market", "austin", "farmers market produce basket"],
 ];
 
 async function search(q) {

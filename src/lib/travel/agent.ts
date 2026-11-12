@@ -98,7 +98,7 @@ Work in exactly this order, few round trips:
 2. Pick 2–3 candidate cities. Prefer: a ride with open seats leaving from the user's city, an event their people are going to, a direct friend who is open to hosting and free. Close ties beat friends-of-friends; a friend-of-friend is allowed only with the named "via" mutual, and you must say so.
 3. estimate_trip_cost for each candidate, all in ONE turn (several calls at once). Use transport "ride" when a ride exists, "own-car" if the user has a car, else bus under ~600 miles, flight above. lodging "host" only when the host has openToHosting=true AND is free. Never add numbers yourself.
 4. get_city_media for your top 1–2 cities, in one turn, so the pitch mentions something a friend actually posted.
-5. propose_trips exactly once, 2–3 trips in different cities, each with every id taken from tool results. Say plainly if a trip is over budget. A trip must rest on at least one person: a free host who opted in, a driver with a seat, or a friend going to an event there. If none of those exist anywhere in the network for this weekend, do NOT invent a hostel-only trip: propose an empty list with an honest declineReason that says what was missing (e.g. "nobody you know who's open to hosting is free Dec 4–6, and no one's driving anywhere").
+5. propose_trips exactly once, 2–3 trips in different cities, each with every id taken from tool results. Say plainly if a trip is over budget; if NOTHING fits the budget, propose only the single closest option and say by how much it misses, or decline. A trip must rest on at least one person: a free host who opted in, a driver with a seat, or a friend going to an event there. If none of those exist anywhere in the network for this weekend, do NOT invent a hostel-only trip: propose an empty list with an honest declineReason that says what was missing (e.g. "nobody you know who's open to hosting is free Dec 4–6, and no one's driving anywhere").
 Voice for title/pitch/reasons: a sharp friend texting, lowercase-leaning, concrete, 3–4 short reasons, no marketing words.`;
 
 export async function discover(userId: ID, input: DiscoverInput, onStep?: (s: StreamStep) => void): Promise<DiscoverRun> {
@@ -172,6 +172,7 @@ export async function discover(userId: ID, input: DiscoverInput, onStep?: (s: St
   // Mock mode never calls propose_trips: build a code-only proposal from the store so the UI still works.
   if (!proposal && mode === "mock") proposal = mockProposal(userId, input);
   if (!proposal) proposal = { trips: [], declineReason: "the agent finished without proposing a trip" };
+  if (!Array.isArray(proposal.trips)) proposal = { trips: [], declineReason: proposal.declineReason ?? "the agent's proposal was malformed" };
 
   push({ kind: "info", text: `Checking every person, ride, event and photo against what you can actually see` });
   const validated = rankTrips(proposal.trips.map((p) => validateTrip(userId, p, input)).filter((t): t is Trip => !!t)).slice(0, 3);

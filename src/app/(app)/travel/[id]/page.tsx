@@ -157,7 +157,7 @@ export default function TripPage() {
                     <p className="mt-0.5 text-[13.5px] leading-snug text-ink">{it.what}</p>
                     <p className="mt-0.5 text-[13px] leading-snug text-ink-2"><span className="font-semibold text-fb">for you:</span> {it.whyYou}</p>
                     <Link href={`/profile/${it.credit.id}`} className="mt-1.5 flex items-center gap-1.5 text-[12px] text-ink-2">
-                      <Avatar src={it.credit.avatar} name={it.credit.name} size={18} /> from <b className="font-semibold text-ink">{it.credit.name}</b>&apos;s {it.evidence.kind} · {it.credit.connection}{it.when ? ` · ${it.when}` : ""}
+                      <Avatar src={it.credit.avatar} name={it.credit.name} size={18} /><span className="min-w-0 truncate">from <b className="font-semibold text-ink">{it.credit.name.split(" ")[0]}</b>&apos;s {it.evidence.kind} · {it.credit.connection}{it.when ? ` · ${it.when}` : ""}</span>
                     </Link>
                   </div>
                 </div>

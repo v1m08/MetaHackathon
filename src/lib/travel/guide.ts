@@ -157,7 +157,7 @@ export async function buildGuide(viewerId: ID, tripId: string, onStep?: (s: Stre
     if (g) return g;
   }
   const res = await ai.tools(
-    `Build my guide for ${trip.cityName} (${trip.city}), ${trip.start} to ${trip.end}. I'm staying with ${trip.host ? trip.host.name + " (" + trip.host.connection + ")" : "nobody in particular (hostel)"}${trip.people.length ? `; also there: ${trip.people.map((p) => p.name).join(", ")}` : ""}. My budget for the whole trip is about $${trip.budget}. My taste: ${taste.summary}. My user id is "${viewerId}".`,
+    `Build my guide for ${trip.cityName} (${trip.city}), ${trip.start} to ${trip.end}. I'm staying with ${trip.host ? trip.host.name + " (" + trip.host.connection + ")" : "nobody in particular (hostel)"}${trip.people.length ? `; also there: ${trip.people.map((p) => p.name).join(", ")}` : ""}. My budget for the whole trip is about $${trip.budget}; the trip itself is already estimated at ~$${trip.prices.ifYes.total} (${trip.fitsBudget ? "within" : "already over"} budget), so recommend free or very cheap things and never claim the trip is under budget. My taste: ${taste.summary}. My user id is "${viewerId}".`,
     { task: "travel.guide", userId: viewerId, tools, system: SYSTEM, maxSteps: 7, maxTokens: 2200, temperature: 0.5, stopOnTool: "propose_guide", onStep: (s) => { const d = describeGuideStep(s, trip.city); if (d) push(d); }, mock: () => "(mock)" },
   );
   if (res.trace.fallback) {

@@ -60,6 +60,8 @@ export interface Ride {
   seatsOpen: number;
   riderIds: ID[];
   note?: string;
+  /** What the driver asks per rider, round trip, in their own words/number. Code uses this over the gas formula. */
+  costShareUsd?: number;
 }
 
 export interface Comment {

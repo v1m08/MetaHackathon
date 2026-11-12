@@ -25,5 +25,5 @@ export const GET = route((_req, { userId }) => {
     })
     .filter((n) => n.weekend)
     .sort((a, b) => a.departAt.localeCompare(b.departAt));
-  return { homeCity: me.city, homeCityName: cityById(me.city ?? "")?.name, hasCar: !!me.hasCar, taste: taste.top, tasteSummary: taste.summary, weekends, nudges, budgets: [40, 80, 150, 300] };
+  return { homeCity: me.city, homeCityName: cityById(me.city ?? "")?.name, hasCar: !!me.hasCar, taste: taste.top, tasteSummary: taste.summary, weekends, nudges, budgets: [60, 100, 150, 300] };
 });

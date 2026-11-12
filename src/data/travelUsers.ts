@@ -193,7 +193,7 @@ export const travelEdges: [string, string, string][] = [
   ["grace", "ava", "agency internship"], ["grace", "sienna", "UT Advertising classmates"],
   ["nina", "tj", "siblings"],
   ["tyler", "lena", "pickleball league"], ["tyler", "owen", "pickleball partners"],
-  ["hannah", "ella", "first-year teachers together"], ["nina", "ella", "neighbors"],
+  ["hannah", "ella", "first-year teachers together"],
   // Cross-ties so the far network isn't a star
   ["kai", "leah", "East Nashville neighbors"], ["kai", "tess", "met through Maya"], ["kai", "marisol", "Nashville UT alumni"],
   ["andre", "kwame", "gym"], ["andre", "bri", "Atlanta UT/Plano crowd"], ["andre", "kai", "UT friends"],

@@ -118,7 +118,7 @@ export function validateTrip(viewerId: ID, p: ProposedTrip, ctx: { start: string
   // other people there
   const people: TripPerson[] = [];
   for (const id of new Set([...(p.peopleIds ?? []), ...(event?.goingYouKnow.map((g) => g.id) ?? [])])) {
-    if (id === host?.id) continue;
+    if (id === host?.id || id === ride?.driver.id) continue;
     const u = getUser(id);
     const tp = tripPerson(viewerId, id, dates);
     if (!u || !tp) {
@@ -136,7 +136,9 @@ export function validateTrip(viewerId: ID, p: ProposedTrip, ctx: { start: string
   people.sort((a, b) => a.degree - b.degree);
   // evidence
   const evidence: Trip["evidence"] = [];
-  for (const ev of p.evidence ?? []) {
+  for (const ev0 of p.evidence ?? []) {
+    // repair the kind from the id prefix (models mislabel posts as reels)
+    const ev = ev0.id.startsWith("r_") ? { ...ev0, kind: "reel" as const } : ev0.id.startsWith("p_") ? { ...ev0, kind: "post" as const } : ev0;
     if (ev.kind === "post") {
       const post = db().posts.find((x) => x.id === ev.id);
       if (post && post.city === city.id && canSeePost(viewerId, post) && post.images?.length) evidence.push({ kind: "post", id: post.id, authorId: post.authorId, author: getUser(post.authorId)!.name, image: post.images[0], caption: post.text });
@@ -167,7 +169,8 @@ export function validateTrip(viewerId: ID, p: ProposedTrip, ctx: { start: string
   const transportIfYes: TransportMode = ride ? "ride" : me.hasCar ? "own-car" : miles > 600 ? "flight" : "bus";
   const lodgingIfYes: LodgingMode = host ? "host" : "hostel";
   const occupants = ride ? 2 + ride.seatsOpen - 1 + 0 : 1;
-  const prices = twoPrices({ fromCity: me.city!, toCity: city.id, nights, transport: transportIfYes, lodging: lodgingIfYes, carOccupants: ride ? Math.max(2, 1 + (db().rides.find((r) => r.id === ride!.id)?.riderIds.length ?? 0) + 1) : occupants, withLocal: !!host || people.length > 0 });
+  const rideRec = ride ? db().rides.find((r) => r.id === ride!.id) : undefined;
+  const prices = twoPrices({ fromCity: me.city!, toCity: city.id, nights, transport: transportIfYes, lodging: lodgingIfYes, carOccupants: rideRec ? Math.max(2, 1 + rideRec.riderIds.length + 1) : occupants, withLocal: !!host || people.length > 0, rideShareUsd: rideRec?.costShareUsd });
   const conditions = [host ? `${host.name.split(" ")[0]} says yes to hosting` : "", ride ? `${ride.driver.name.split(" ")[0]} has a seat` : ""].filter(Boolean);
 
   return {

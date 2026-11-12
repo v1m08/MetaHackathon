@@ -12,7 +12,7 @@ export function TravelNudge({ index = 0 }: { index?: number }) {
   const n = data?.nudges?.[index];
   if (!n || !n.weekend) return null;
   const day = new Date(n.departAt).toLocaleString("en-US", { month: "short", day: "numeric" });
-  const href = `/travel?start=${n.weekend.start}&end=${n.weekend.end}&budget=120&run=1&hint=${encodeURIComponent(`I could ride with ${n.driver.name.split(" ")[0]} to ${n.toCityName}${n.event ? ` for ${n.event.title}` : ""}`)}`;
+  const href = `/travel?start=${n.weekend.start}&end=${n.weekend.end}&budget=100&run=1&hint=${encodeURIComponent(`I could ride with ${n.driver.name.split(" ")[0]} to ${n.toCityName}${n.event ? ` for ${n.event.title}` : ""}`)}`;
   return (
     <Link href={href} className="mb-2 block bg-white px-4 py-3">
       <div className="flex items-center gap-1.5 text-[12px] font-semibold uppercase tracking-wide text-fb"><Compass size={13} /> Where can my people take me?</div>

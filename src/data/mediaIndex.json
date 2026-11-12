@@ -1933,5 +1933,87 @@
     "indexedAt": "2026-11-12T10:25:19.417Z",
     "costUsd": 0.0008,
     "mode": "live"
+  },
+  "atx-birria": {
+    "activities": [
+      "eating",
+      "dipping tacos",
+      "drinking agua fresca"
+    ],
+    "description": "three birria tacos with cilantro and onion on a yellow plate with a lime wedge, next to a cup of dark purple agua fresca and a small cup of consomé on a red table.",
+    "food": [
+      "tacos de birria",
+      "consomé",
+      "agua fresca",
+      "lime wedge",
+      "salsa"
+    ],
+    "goodFor": [
+      "foodies",
+      "budget travellers"
+    ],
+    "setting": "outdoor",
+    "tags": [
+      "birria tacos",
+      "yellow plate",
+      "lime wedge",
+      "agua fresca",
+      "styrofoam cup",
+      "consomé",
+      "red table",
+      "salsa bottle"
+    ],
+    "timeOfDay": "day",
+    "vibe": [
+      "casual",
+      "tasty",
+      "sunny",
+      "relaxed"
+    ],
+    "model": "muse-ember-1.0",
+    "indexedAt": "2026-11-12T11:14:48.410Z",
+    "costUsd": 0.0007,
+    "mode": "live"
+  },
+  "atx-market": {
+    "activities": [
+      "shopping for produce",
+      "browsing a market stall",
+      "buying fresh vegetables"
+    ],
+    "description": "An outdoor farmers market table covered with fresh produce in cardboard boxes and large orange baskets. Tomatoes, green beans, broccoli, cabbage, carrots and potatoes are displayed with handwritten price signs, with trees visible in the background.",
+    "food": [
+      "tomatoes",
+      "green beans",
+      "broccoli",
+      "cabbage",
+      "carrots",
+      "potatoes"
+    ],
+    "goodFor": [
+      "foodies",
+      "families"
+    ],
+    "setting": "outdoor",
+    "tags": [
+      "tomatoes",
+      "green beans",
+      "broccoli",
+      "cabbage",
+      "carrots",
+      "orange baskets",
+      "farmers market"
+    ],
+    "timeOfDay": "day",
+    "vibe": [
+      "fresh",
+      "casual",
+      "sunny",
+      "local"
+    ],
+    "model": "muse-ember-1.0",
+    "indexedAt": "2026-11-12T11:14:49.084Z",
+    "costUsd": 0.0007,
+    "mode": "live"
   }
 }

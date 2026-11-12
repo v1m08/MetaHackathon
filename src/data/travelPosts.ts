@@ -304,7 +304,7 @@ export const travelPosts: Post[] = [
       ["omar", "how many sheets did you shoot in total. 4x5 math is scary"],
     ],
   }),
-  TP("kenji", 58, "6th time at the prada store that isn't a store. there was a guy in a tie dye shirt just standing next to it, which is the most marfa thing possible. 7.5 hrs from austin, subaru did fine, split gas 4 ways and it's $35 each. go at night after for the stars, pull over anywhere, turn off the headlights", {
+  TP("kenji", 58, "6th time at the prada store that isn't a store. there was a guy in a tie dye shirt just standing next to it, which is the most marfa thing possible. 6.5 hrs from austin, subaru did fine, split gas 4 ways and it's $35 each. go at night after for the stars, pull over anywhere, turn off the headlights", {
     city: "marfa", pic: mediaUrl("marfa-prada"), audience: "public", likes: 7, haha: 3, plus: ["maya"],
     comments: [
       ["june", "you drove past my house and didn't stop?? the casita was EMPTY"],
