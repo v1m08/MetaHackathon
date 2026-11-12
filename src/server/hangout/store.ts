@@ -50,7 +50,7 @@ export interface HangState {
   plans: Record<string, Plan>;
   keepsakes: Record<string, string[]>;
   /** Critters designed at runtime (e.g. Sam on hatch). Otherwise the built memory file's critter is used. */
-  critters: Record<string, CritterDesign>;
+  critters: Record<string, Omit<CritterDesign, "keepsakes">>;
   seeAgain: { gatheringId: string; myPicks: string[]; theyPicked: string[]; submitted: boolean; matches: string[] };
   eggs: Record<string, { since: string; hatchedAt?: string; hatchSeen?: boolean }>;
   alerts: Alert[];
