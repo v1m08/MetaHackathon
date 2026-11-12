@@ -5,6 +5,7 @@ const BASE = process.env.EVAL_BASE ?? "http://localhost:3000";
 const args = process.argv.slice(2);
 const N = args.includes("--n") ? Number(args[args.indexOf("--n") + 1]) : 5;
 const budget = args.includes("--budget") ? Number(args[args.indexOf("--budget") + 1]) : 110;
+const vary = args.includes("--vary"); // different budget each run so every run is a live Muse call, not a cache hit
 const H = (u) => ({ "content-type": "application/json", "x-user-id": u });
 const post = (p, b, u) => fetch(`${BASE}${p}`, { method: "POST", headers: H(u), body: JSON.stringify(b) }).then((r) => r.json());
 const get = (p, u) => fetch(`${BASE}${p}`, { headers: H(u) }).then((r) => r.json());
@@ -28,7 +29,7 @@ for (let i = 1; i <= N; i++) {
   const log = { run: i };
   try {
     await post("/api/admin/reset", {}, "maya");
-    const d = await sse("/api/travel/discover", { start: wk.start, end: wk.end, budget }, "maya");
+    const d = await sse("/api/travel/discover", { start: wk.start, end: wk.end, budget: vary ? budget + i * 7 : budget }, "maya");
     if (d.error || !d.result?.trips?.length) throw new Error("discover: " + (d.error ?? "no trips"));
     log.discover = { mode: d.result.mode, ms: d.result.latencyMs, trips: d.result.trips.map((t) => t.cityName), steps: d.steps };
     const trip = d.result.trips[0];

@@ -24,11 +24,16 @@ export const GET = route(async () => {
   d.conversations.forEach((c) => c.messages.forEach((m) => m.attachment?.type === "image" && add(m.attachment.ref)));
   const list = [...urls];
   let ok = 0;
-  let failed = 0;
-  // modest concurrency to be polite to the placeholder services
+  const failedUrls: string[] = [];
+  // modest concurrency to be polite to the placeholder services; one retry for stragglers
   for (let i = 0; i < list.length; i += 6) {
-    const results = await Promise.all(list.slice(i, i + 6).map(cacheImage));
-    results.forEach((r) => (r ? ok++ : failed++));
+    const batch = list.slice(i, i + 6);
+    const results = await Promise.all(batch.map(cacheImage));
+    for (let j = 0; j < batch.length; j++) {
+      if (results[j]) ok++;
+      else if (await cacheImage(batch[j])) ok++;
+      else failedUrls.push(batch[j]);
+    }
   }
-  return { total: list.length, cached: ok, failed };
+  return { total: list.length, cached: ok, failed: failedUrls.length, failedUrls: failedUrls.slice(0, 12) };
 });

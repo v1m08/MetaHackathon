@@ -59,6 +59,14 @@ Earlier: **$0.26** at 02:50 PST (probes ≈$0.03 by hand + ledger $0.23: media i
 ## Milestone 12 — README, pitch ✔ (04:15 PST; PDF re-exported at the end)
 - README rewritten; `pitch/deck.html` (8 slides, real screenshots in `pitch/shots/`, numbers from EVAL/PERSONAS), `script.md`, `runbook.md`, `qa.md`, `submission.md`.
 
-## Milestone 13 — Final QA (in progress)
+## Milestone 13 — Final QA ✔ (04:30 PST)
 - Fresh clone + `npm install` + `npm run build`: passed (03:35 PST).
-- Ten judge-style inputs (`node scripts/qa-inputs.mjs`): 10/10 believable or declined with a reason, incl. $25 budget (Dallas flagged $32 over), one-night and week-long asks.
+- Five consecutive full demo runs from reset (`node scripts/qa-demo-runs.mjs --n 5`): 5/5 (first live, then cache hits for the identical input); and 5/5 with varied budgets so every run was live Muse (`--vary`): Discover → Guide (3–4 picks) → 3 drafts → approve → recipient sees exactly that message, no draft leaks. `eval/qa-demo-runs.json`.
+- Ten judge-style inputs (`node scripts/qa-inputs.mjs`): 10/10 believable or declined with a reason, incl. $25 budget (Dallas flagged over), one-night and week-long asks. `eval/qa-inputs.json`.
+- Replay (offline) mode: `npm run replay:on` → Discover answers in 7s from a recorded real run, badge REPLAY, trips re-validated; `replay:off` restores live. Fully offline was not tested with the network physically off; every non-Muse dependency (images, prices, seed) is local and the image cache was warmed (`npm run warm`; a handful of picsum URLs time out intermittently and fall back to gradients).
+- `npm test` 14/14, `npm run typecheck` clean, `npm run build` clean.
+- Browser-driven checks of the full flow as Maya with Cole's and Raj's inboxes in a second identity: done repeatedly during the build (screenshots in `pitch/shots/`); `pitch/demo-backup.gif` is a 36-frame recording of the whole path.
+
+## Not done / cut
+- Recap (post-trip story) was the stretch goal and was not built; everything in the Definition of Done ahead of it is.
+- A third persona swarm after the last round of wording fixes was not run (noted in PERSONAS.md).

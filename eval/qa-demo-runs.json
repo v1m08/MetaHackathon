@@ -1,0 +1,161 @@
+{
+  "ranAt": "2026-11-12T12:28:29.560Z",
+  "budget": 101,
+  "weekend": {
+    "n": 4,
+    "start": "2026-12-11",
+    "end": "2026-12-13",
+    "label": "Dec 11–13",
+    "busy": false
+  },
+  "results": [
+    {
+      "run": 1,
+      "discover": {
+        "mode": "live",
+        "ms": 28112,
+        "trips": [
+          "Dallas",
+          "San Antonio"
+        ],
+        "steps": 21
+      },
+      "guide": {
+        "mode": "live",
+        "ms": 30023,
+        "items": 3,
+        "looked": 2
+      },
+      "coordinate": {
+        "mode": "live",
+        "drafts": 3,
+        "allFree": true
+      },
+      "approved": {
+        "to": "Cole Patterson",
+        "recipientSaw": true
+      },
+      "ok": true,
+      "ms": 73357
+    },
+    {
+      "run": 2,
+      "discover": {
+        "mode": "live",
+        "ms": 24182,
+        "trips": [
+          "Dallas",
+          "Houston"
+        ],
+        "steps": 21
+      },
+      "guide": {
+        "mode": "live",
+        "ms": 34063,
+        "items": 3,
+        "looked": 2
+      },
+      "coordinate": {
+        "mode": "cached",
+        "drafts": 3,
+        "allFree": true
+      },
+      "approved": {
+        "to": "Cole Patterson",
+        "recipientSaw": true
+      },
+      "ok": true,
+      "ms": 60165
+    },
+    {
+      "run": 3,
+      "discover": {
+        "mode": "live",
+        "ms": 28876,
+        "trips": [
+          "Dallas",
+          "San Antonio",
+          "Houston"
+        ],
+        "steps": 21
+      },
+      "guide": {
+        "mode": "live",
+        "ms": 30902,
+        "items": 3,
+        "looked": 2
+      },
+      "coordinate": {
+        "mode": "cached",
+        "drafts": 3,
+        "allFree": true
+      },
+      "approved": {
+        "to": "Cole Patterson",
+        "recipientSaw": true
+      },
+      "ok": true,
+      "ms": 61733
+    },
+    {
+      "run": 4,
+      "discover": {
+        "mode": "live",
+        "ms": 25683,
+        "trips": [
+          "Dallas",
+          "San Antonio",
+          "Houston"
+        ],
+        "steps": 21
+      },
+      "guide": {
+        "mode": "live",
+        "ms": 37139,
+        "items": 4,
+        "looked": 2
+      },
+      "coordinate": {
+        "mode": "live",
+        "drafts": 3,
+        "allFree": true
+      },
+      "approved": {
+        "to": "Cole Patterson",
+        "recipientSaw": true
+      },
+      "ok": true,
+      "ms": 81910
+    },
+    {
+      "run": 5,
+      "discover": {
+        "mode": "live",
+        "ms": 23168,
+        "trips": [
+          "Dallas",
+          "San Antonio",
+          "Houston"
+        ],
+        "steps": 21
+      },
+      "guide": {
+        "mode": "live",
+        "ms": 42370,
+        "items": 4,
+        "looked": 2
+      },
+      "coordinate": {
+        "mode": "cached",
+        "drafts": 3,
+        "allFree": true
+      },
+      "approved": {
+        "to": "Cole Patterson",
+        "recipientSaw": true
+      },
+      "ok": true,
+      "ms": 67542
+    }
+  ]
+}

@@ -72,7 +72,7 @@ Model ids were confirmed against `GET /v1/models` and real requests on 2026-11-1
 
 ### The budget guard
 
-Every live call **reserves a worst-case cost before it is sent** (prompt size, `max_tokens`, images, 1.5× margin on third-party prices) in a file-locked, gitignored ledger (`.ai-ledger.json`), then settles to the real `usage`. Retries and failed calls are booked. When the ledger reaches `MODEL_BUDGET_USD` (default 50; `MODEL_BUDGET_RESERVE_USD` 10 is kept for final QA and only spendable with `AI_FINAL=1`) the client refuses and the feature falls back to **replay** or mock, labelled in the UI. `npm test` proves refusal at a full ledger and under four parallel processes. `npm run ledger` prints spend by model and task; the Inspector header shows it live.
+Every live call **reserves a worst-case cost before it is sent** (prompt size, `max_tokens`, images, 1.5× margin on third-party prices) in a file-locked, gitignored ledger (`.ai-ledger.json`), then settles to the real `usage`. Retries and failed calls are booked. When the ledger reaches `MODEL_BUDGET_USD` (default 50; `MODEL_BUDGET_RESERVE_USD` 10 is kept for final QA and only spendable with `AI_FINAL=1`) the client refuses and the feature falls back to **replay** or mock, labelled in the UI. `npm test` proves refusal at a full ledger and under four parallel processes. `npm run ledger` prints spend by model and task; the Inspector header shows it live. The whole build, two persona swarms, the evaluation and final QA came to about $6 on the ledger (with its 1.5× margin), out of the $50 ceiling.
 
 ### Safety lives in the tools
 
@@ -99,6 +99,8 @@ npm run eval        # 12 seeded scenarios through the real endpoints → EVAL.md
 npm run sim         # persona swarm → sim/<persona>.json, sim/summary-run.json (see PERSONAS.md)
 npm run record      # copy the latest real runs into src/data/recordings.json for replay + animations
 ```
+
+Final QA scripts: `node scripts/qa-demo-runs.mjs --n 5 [--vary]` (five consecutive full demo runs from reset, approval checked from the recipient's side) and `node scripts/qa-inputs.mjs` (ten judge-style inputs). Results of the last run are in `eval/` and `PROGRESS.md`.
 
 `EVAL.md` reports grounding (rendered and raw), constraints, privacy (target zero, with restricted profiles seeded so a violation is possible and would be caught), guide attribution on hand-labelled photos (`eval/labels.json`), and network-trip vs hotel-trip cost.
 
