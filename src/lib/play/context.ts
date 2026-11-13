@@ -55,7 +55,9 @@ export function buildContext(conversationId: ID): ChatContext {
   const evidence: EvidenceItem[] = [];
   const add = (e: Omit<EvidenceItem, "topics">) => evidence.push({ ...e, text: e.text.slice(0, 240), topics: topicsOfText(e.text) });
 
-  for (const m of c.messages.filter((m) => m.status !== "draft" && !m.system && m.text.trim().length >= 12 && ids.includes(m.senderId)).slice(-60)) add({ id: m.id, kind: "message", by: m.senderId, text: m.text });
+  // Sidequest cards and "played …" lines are posted in a member's name but nobody wrote them: never evidence, never a quote.
+  const typed = (m: (typeof c.messages)[number]) => m.attachment?.type !== "sqgame" && m.attachment?.type !== "sqgamelog";
+  for (const m of c.messages.filter((m) => m.status !== "draft" && !m.system && typed(m) && m.text.trim().length >= 12 && ids.includes(m.senderId)).slice(-60)) add({ id: m.id, kind: "message", by: m.senderId, text: m.text });
   for (const id of ids) {
     d.posts.filter((p) => p.authorId === id && !p.eventId && all((m) => canSeePost(m, p))).slice(0, 8).forEach((p) => add({ id: p.id, kind: "post", by: id, text: p.text }));
     d.reels.filter((r) => r.authorId === id && all((m) => canSeeReel(m, r))).slice(0, 3).forEach((r) => add({ id: r.id, kind: "reel", by: id, text: r.caption }));

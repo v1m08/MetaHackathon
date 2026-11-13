@@ -1,4 +1,4 @@
-// Context, Streak & Connection-Scoring Engine for Sidequest Messenger Games (Deep Cuts + Order Up!).
+// Context, Streak & Connection-Scoring Engine for Sidequest Messenger Games (Deep Cuts, Order Up!, Ghost Run, Sketch Off).
 // Implements the full multi-signal scoring & surfacing pipeline over `sqgame` / `sqgamelog` + `.cache` rooms:
 //   1. Austin-timezone (`America/Chicago`) Snapchat-style streaks: strict majority by local midnight,
 //      1 automatic freeze every 7 days, milestones at 3/7/14/30 days, and evening hourglass after 6pm.
@@ -65,6 +65,19 @@ interface CachedXRoom {
   players?: Record<string, { name?: string; picks?: Record<string, { a?: string; r?: number; at?: string }> }>;
 }
 
+interface CachedRRoom {
+  id: string;
+  course?: { interest?: string; title?: string; tagline?: string };
+  createdAt?: string;
+  players?: Record<string, { name?: string; best?: number | null; plays?: number }>;
+}
+interface CachedSRoom {
+  id: string;
+  pack?: { interest?: string; title?: string; tagline?: string };
+  createdAt?: string;
+  drawings?: { artist?: string; at?: string; guesses?: Record<string, unknown> }[];
+}
+
 function readJsonSafe<T>(file: string): T | null {
   if (!existsSync(file)) return null;
   try {
@@ -99,8 +112,14 @@ export interface SidequestSession {
 
 const pairKey = (a: ID, b: ID) => (a < b ? `${a}|${b}` : `${b}|${a}`);
 
+/** Card refs, same scheme as ChatGames.tsx: "<id>" Deep Cuts, "k:<id>" Order Up!, "r:<id>" Ghost Run, "s:<id>" Sketch Off. */
+const REF_KIND: Record<string, GameKind> = { k: "orderup", r: "ghostrun", s: "sketchoff" };
+export const kindOfRef = (ref: string): GameKind => REF_KIND[ref.match(/^([krs]):/)?.[1] ?? ""] ?? "deepcuts";
+const roomIdOfRef = (ref: string) => ref.replace(/^[krs]:/, "");
+export const GAME_LABEL: Record<GameKind, string> = { deepcuts: "Deep Cuts", orderup: "Order Up!", ghostrun: "Ghost Run", sketchoff: "Sketch Off" };
+
 function parseCardInterest(text: string): string {
-  const m = text.match(/(?:Order Up!|Deep Cuts)\s*:\s*(.+)$/i);
+  const m = text.match(/(?:Order Up!|Deep Cuts|Ghost Run|Sketch Off)\s*:\s*(.+)$/i);
   return m ? m[1].trim() : text.replace(/^🎮\s*/, "").trim();
 }
 
@@ -115,8 +134,8 @@ export function ingestSidequestSessions(): SidequestSession[] {
       const att = m.attachment;
       if (!att || (att.type !== "sqgame" && att.type !== "sqgamelog")) continue;
       const ref = att.ref;
-      const gameKind: GameKind = ref.startsWith("k:") ? "orderup" : "deepcuts";
-      const roomId = ref.replace(/^k:/, "");
+      const gameKind = kindOfRef(ref);
+      const roomId = roomIdOfRef(ref);
 
       let sess = byRef.get(ref);
       if (!sess) {
@@ -157,7 +176,7 @@ export function ingestSidequestSessions(): SidequestSession[] {
           summary: m.text,
         });
         if (!sess.title) {
-          const tm = m.text.match(/^played\s+([^·]+)/i);
+          const tm = m.text.match(/^(?:played|ran)\s+([^·]+)/i);
           if (tm) sess.title = tm[1].trim();
         }
       }
@@ -181,6 +200,31 @@ export function ingestSidequestSessions(): SidequestSession[] {
               finishedAt: cur?.finishedAt ?? kr.createdAt ?? sess.createdAt,
               repliedAfter: cur?.repliedAfter ?? false,
               summary: cur?.summary ?? `played ${sess.title || sess.interest} · $${pl.best ?? 0}`,
+            });
+          }
+        }
+      } else if (sess.gameKind === "ghostrun" || sess.gameKind === "sketchoff") {
+        const run = sess.gameKind === "ghostrun";
+        const room = readJsonSafe<CachedRRoom & CachedSRoom>(join(CACHE_ROOT, run ? "run" : "sketch", `${sess.roomId}.json`));
+        const meta = run ? room?.course : room?.pack;
+        if (room && meta) {
+          if (meta.interest) sess.interest ||= meta.interest;
+          if (meta.title) sess.title = meta.title;
+          extraText = meta.tagline ?? "";
+          // A member played once they finished a race, or drew or guessed a drawing.
+          const played = new Map<string, number>();
+          if (run) for (const [pid, pl] of Object.entries(room.players ?? {})) if (pl.best != null) played.set(pid, Math.max(1, pl.plays ?? 1));
+          if (!run) for (const d of room.drawings ?? []) for (const pid of [d.artist, ...Object.keys(d.guesses ?? {})]) if (pid) played.set(pid, 1);
+          for (const [pid, plays] of played) {
+            const uid = pidToMember.get(pid);
+            if (!uid) continue;
+            const cur = sess.players.get(uid);
+            sess.players.set(uid, {
+              userId: uid,
+              plays: Math.max(cur?.plays ?? 0, plays),
+              finishedAt: cur?.finishedAt ?? room.createdAt ?? sess.createdAt,
+              repliedAfter: cur?.repliedAfter ?? false,
+              summary: cur?.summary,
             });
           }
         }
@@ -221,7 +265,7 @@ export function ingestSidequestSessions(): SidequestSession[] {
         }
       }
 
-      sess.title ||= sess.interest || (sess.gameKind === "orderup" ? "Order Up!" : "Deep Cuts");
+      sess.title ||= sess.interest || GAME_LABEL[sess.gameKind];
       sess.interest ||= sess.title;
       const direct = topicsOfText(`${sess.interest} ${sess.title}`);
       sess.topics = direct.length ? direct : topicsOfText(extraText);
@@ -740,7 +784,7 @@ export function userContextFor(userId: ID) {
       return {
         ref: s.ref,
         gameKind: s.gameKind,
-        gameLabel: s.gameKind === "orderup" ? "Order Up!" : "Deep Cuts",
+        gameLabel: GAME_LABEL[s.gameKind],
         title: s.title,
         interest: s.interest,
         date: s.date,
