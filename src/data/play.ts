@@ -25,6 +25,7 @@
 import type { ID } from "@/types";
 import type { Choice, Format, Round, Unlock } from "@/lib/play/store";
 import type { TopicId } from "@/lib/play/taxonomy";
+import { streakSeedGames } from "./streaks";
 
 export interface SeedPlay {
   /** Hours after the drop that this member finished. */
@@ -300,6 +301,7 @@ export const seedGames: SeedGame[] = [
       jordan: { h: 0.4, a: ["b", "a", "a"], react: "🔥" },
     },
   },
+  ...streakSeedGames, // Maya's other critter-friend DMs, for the Streaks tab
 ];
 
 /** The Group the volleyball chat already unlocked at 40. Real public group; Marcus is the one member not in it yet. */
