@@ -2,18 +2,18 @@
 // Messenger chrome: the blue wordmark header (or back + title on inner pages). The app opens on Messenger (`/` is
 // Chats); the Facebook button leads back to the feed.
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { ArrowLeft, Facebook, PenSquare } from "lucide-react";
+import { MyProfileButton, useBack } from "@/components/Shell";
 import { cx } from "@/components/ui";
 
 function Header({ title, back }: { title?: string; back?: boolean }) {
-  const router = useRouter();
+  const goBack = useBack("/");
   return (
     <header className="safe-top sticky top-0 z-40 bg-white">
       <div className="flex h-14 items-center justify-between px-3">
         {back ? (
           <span className="flex min-w-0 items-center gap-1">
-            <button onClick={() => router.back()} className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-messenger hover:bg-hover" aria-label="Back">
+            <button onClick={goBack} className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-messenger hover:bg-hover" aria-label="Back">
               <ArrowLeft size={22} />
             </button>
             <span className="truncate text-[17px] font-bold">{title}</span>
@@ -28,6 +28,7 @@ function Header({ title, back }: { title?: string; back?: boolean }) {
           <Link href="/messages" className="flex h-9 w-9 items-center justify-center rounded-full bg-[#e4e6eb]" aria-label="New message">
             <PenSquare size={18} />
           </Link>
+          <MyProfileButton />
         </div>
       </div>
     </header>

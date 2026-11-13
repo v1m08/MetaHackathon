@@ -39,7 +39,8 @@
       .marker.off { opacity: 0.5; }
 
       /* ---------- UI over the world ---------- */
-      #ui { position: fixed; inset: 0; display: flex; flex-direction: column; padding: max(10px, env(safe-area-inset-top)) 12px max(12px, env(safe-area-inset-bottom)); pointer-events: none; }
+      /* --vv-*: the area above the on-screen keyboard (set from visualViewport in main.ts). */
+      #ui { position: fixed; left: 0; right: 0; top: var(--vv-top, 0px); height: var(--vv-h, 100%); display: flex; flex-direction: column; padding: max(10px, env(safe-area-inset-top)) 12px max(12px, env(safe-area-inset-bottom)); pointer-events: none; }
       #ui > * { pointer-events: auto; }
       .scroll { overflow-y: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
       .scroll::-webkit-scrollbar { display: none; }
@@ -215,6 +216,16 @@
       .quiet-list .ans-list { margin: 0; }
       .quiet-list li { padding: 10px 0; }
 
+      /* Keyboard open (or a very short screen): keep the question, the box and the buttons all visible. */
+      .short #ui { padding-top: 6px; padding-bottom: 6px; }
+      .short .hud .panel.thin { padding: 4px 10px; }
+      .short .prompt { margin-top: 6px; padding: 10px 14px; }
+      .short .prompt h1 { font-size: 21px; margin: 2px 0 2px; }
+      .short .prompt .hint { font-size: 13px; }
+      .short .prompt .sub, .short .tries { display: none; }
+      .short .feedback { min-height: 20px; margin: 2px 0 4px; font-size: 15px; }
+      .short .answer { gap: 6px; }
+      .short .answer-actions .btn { min-height: 44px; }
       @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 1ms !important; transition-duration: 1ms !important; } }
     </style>
   </head>

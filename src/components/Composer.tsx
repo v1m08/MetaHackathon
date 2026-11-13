@@ -9,9 +9,9 @@ import { useMe } from "./Shell";
 import { Avatar, Button, Photo, cx } from "./ui";
 
 /** The "What's on your mind?" card at the top of Feed / Group / Profile. */
-export function ComposerCard({ groupId, placeholder }: { groupId?: string; placeholder?: string }) {
+export function ComposerCard({ groupId, placeholder, fromProfile }: { groupId?: string; placeholder?: string; fromProfile?: boolean }) {
   const { data: me } = useMe();
-  const href = groupId ? `/compose?group=${groupId}` : "/compose";
+  const href = groupId ? `/compose?group=${groupId}` : fromProfile ? "/compose?from=profile" : "/compose";
   return (
     <div className="mb-2 bg-white px-4 py-2.5">
       <div className="flex items-center gap-2.5">
@@ -35,7 +35,7 @@ const FEELINGS = ["happy", "blessed", "excited", "tired", "grateful", "hungry", 
 const SAMPLE_PHOTOS = ["sunset-river", "coffee-table", "concert-crowd", "trail-morning", "taco-plate", "study-desk", "city-night", "friends-laughing"];
 
 /** Full composer screen. groupId scopes the post to a group. */
-export function ComposerScreen({ groupId, groupName }: { groupId?: string; groupName?: string }) {
+export function ComposerScreen({ groupId, groupName, fromProfile }: { groupId?: string; groupName?: string; fromProfile?: boolean }) {
   const router = useRouter();
   const { data: me } = useMe();
   const [text, setText] = useState("");
@@ -53,7 +53,7 @@ export function ComposerScreen({ groupId, groupName }: { groupId?: string; group
     setBusy(true);
     await api("/api/posts", { method: "POST", json: { text, images, feeling, location, groupId, audience } });
     await Promise.all([refresh("/api/feed"), refresh("/api/groups"), refresh("/api/users")]);
-    router.replace(groupId ? `/groups/${groupId}` : "/");
+    router.replace(groupId ? `/groups/${groupId}` : fromProfile && me ? `/profile/${me.id}` : "/");
   }
 
   async function helpWrite(tone: string) {

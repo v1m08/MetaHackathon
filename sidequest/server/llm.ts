@@ -61,7 +61,7 @@ export interface ChatOpts {
   json?: boolean;
   model?: string;
   timeoutMs?: number;
-  reasoning?: "low" | "medium" | "high";
+  reasoning?: "minimal" | "low" | "medium" | "high";
   temperature?: number;
 }
 
