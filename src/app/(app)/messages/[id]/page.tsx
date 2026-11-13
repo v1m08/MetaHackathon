@@ -10,9 +10,6 @@ import { api, refresh, useApi } from "@/lib/api";
 import { messageTime } from "@/lib/format";
 import { useSession } from "@/lib/session";
 import type { Conversation, Listing, Message } from "@/types";
-import { GameChip } from "@/components/play/GameChip";
-import { ScoreBar } from "@/components/play/ScoreBar";
-import { UnlockChip } from "@/components/play/UnlockChip";
 
 type Card = { id: string; name: string; avatar: string };
 type Conv = Conversation & { name: string; participants: Card[]; others: Card[] };
@@ -43,13 +40,6 @@ export default function ThreadPage() {
   useEffect(() => {
     refresh("/api/me");
   }, [count]);
-  const started = !!c?.messages.some((m) => !m.system && m.status !== "draft");
-  const { data: daily } = useApi<{ game: { id: string } | null }>(started ? `/api/play/daily/${id}` : null, { revalidateOnFocus: false, shouldRetryOnError: false });
-  const dailyId = daily?.game?.id;
-  useEffect(() => {
-    if (dailyId) mutate();
-  }, [dailyId, mutate]);
-  const played = () => { mutate(); refresh("/api/conversations"); refresh(`/api/play/chat/${id}`); refresh("/api/notifications"); refresh(`/api/play/daily/${id}`); };
 
   async function send(body = text, attachment?: Message["attachment"]) {
     if ((!body.trim() && !attachment) || !c) return;
@@ -96,7 +86,6 @@ export default function ThreadPage() {
           <button className="p-2 text-messenger"><Video size={24} /></button>
           <button className="p-2 text-messenger"><Info size={22} /></button>
         </div>
-        {c && <ScoreBar conversationId={c.id} onChanged={played} />}
       </header>
 
       <div className="flex-1 px-3 py-3">
@@ -105,13 +94,10 @@ export default function ThreadPage() {
           const prev = c.messages[i - 1];
           const next = c.messages[i + 1];
           const gap = !prev || new Date(m.createdAt).getTime() - new Date(prev.createdAt).getTime() > 30 * 60e3;
-          const card = (x?: Message) => !!x && (!!x.system || x.attachment?.type === "game" || x.attachment?.type === "unlock" || x.attachment?.type === "sqgamelog");
+          const card = (x?: Message) => !!x && x.attachment?.type === "sqgamelog";
           const firstOfRun = !prev || card(prev) || prev.senderId !== m.senderId || gap;
           const lastOfRun = !next || card(next) || next.senderId !== m.senderId;
           const sender = byId[m.senderId];
-          if (m.attachment?.type === "game") return <GameChip key={m.id} id={m.attachment.ref} onChanged={played} />;
-          if (m.attachment?.type === "unlock") return <UnlockChip key={m.id} id={m.attachment.ref} />;
-          if (m.system) return <div key={m.id} className="my-3 rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2 text-center text-[12.5px] leading-snug text-emerald-900">{m.text}</div>;
           if (m.attachment?.type === "sqgamelog")
             return (
               <div key={m.id} className="my-2 flex justify-center">
@@ -147,7 +133,7 @@ export default function ThreadPage() {
             </div>
           );
         })}
-        {c && c.messages.length > 0 && c.messages.at(-1)!.senderId === userId && !c.messages.at(-1)!.system && (
+        {c && c.messages.length > 0 && c.messages.at(-1)!.senderId === userId && (
           <div className="mr-1 text-right text-[11px] text-ink-2">{(c.messages.at(-1)!.readBy?.length ?? 1) > 1 ? "Seen" : "Delivered"}</div>
         )}
         <div ref={bottom} />

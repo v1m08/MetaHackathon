@@ -13,7 +13,7 @@ function hash(s: string) {
 }
 const pick = <T,>(arr: T[], seed: string) => arr[hash(seed) % arr.length];
 
-const lastUser = (messages: AIMessage[]) => { const m = [...messages].reverse().find((m) => m.role === "user"); return typeof m?.content === "string" ? m.content : (m?.content ?? []).map((p) => (p.type === "text" ? p.text : "")).join(""); };
+const lastUser = (messages: AIMessage[]) => [...messages].reverse().find((m) => m.role === "user")?.content ?? "";
 
 /** Task-specific canned text; falls back to a generic but plausible reply. */
 export function mockText(task: string, messages: AIMessage[]): string {

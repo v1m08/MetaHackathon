@@ -7,12 +7,12 @@ import { useApi } from "@/lib/api";
 import { timeAgo } from "@/lib/format";
 import type { Group } from "@/types";
 
-type G = Group & { memberCount: number; isMember: boolean; lastPostAt?: string; newPosts: number; fit?: number; fitLabel?: string };
+type G = Group & { memberCount: number; isMember: boolean; lastPostAt?: string; newPosts: number };
 
 export default function GroupsPage() {
   const { data } = useApi<G[]>("/api/groups");
   const mine = data?.filter((g) => g.isMember) ?? [];
-  const discover = [...(data?.filter((g) => !g.isMember) ?? [])].sort((a, b) => (b.fit ?? 0) - (a.fit ?? 0));
+  const discover = data?.filter((g) => !g.isMember) ?? [];
   return (
     <Shell back title="Groups" right={<Link href="/search" className="rounded-full bg-[#e4e6eb] p-2"><Search size={18} /></Link>}>
       <div className="bg-white pb-3">
@@ -48,7 +48,6 @@ export default function GroupsPage() {
                   <div className="mt-1 flex items-center gap-1 text-[13px] text-ink-2">
                     {g.privacy === "private" ? <Lock size={12} /> : <Globe size={12} />} {g.privacy === "private" ? "Private" : "Public"} · {g.memberCount} members · {g.postsPerDay} posts a day
                   </div>
-                  {(g.fit ?? 0) > 0.15 && <div className="mt-1 text-[12px] font-medium text-fb">From your games{g.fitLabel ? ` · ${g.fitLabel}` : ""}</div>}
                 </div>
               </Link>
             ))}
