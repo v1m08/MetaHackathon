@@ -4,12 +4,13 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { Bookmark, Calendar, Check, Send, ShoppingBag, Star, Users, X } from "lucide-react";
+import { Bookmark, Calendar, CalendarPlus, Check, Send, ShoppingBag, Sparkles, Star, Users, X } from "lucide-react";
 import { MuseHost } from "@/components/hangout/MuseHost";
 import { Photo, cx } from "@/components/ui";
 import { api, refresh } from "@/lib/api";
 import type { ChatPickItem, ChatPicks, ChatPicksResult, EventChatPick, GroupChatPick, ListingChatPick } from "@/lib/events/chatPicks";
 import type { RsvpStatus } from "@/lib/events/forChat";
+import type { MuseIdea, MuseIdeas } from "@/lib/demo/museIdeas";
 import { eventDate, money } from "@/lib/format";
 import "./event-picks.css";
 
@@ -20,13 +21,20 @@ export function EventPicksSheet({
   gameRef,
   onClose,
   onSend,
+  onShare,
+  peek,
 }: {
   conversationId: string;
   gameRef: string;
+  /** Reopened by the viewer ("See Muse's plans"): skips the once-per-game cadence. */
+  peek?: boolean;
   onClose: () => void;
   onSend: (item: ChatPickItem) => Promise<void> | void;
+  /** Posts a message (optionally with an attachment) in the chat as the viewer. */
+  onShare?: (text: string, attachment?: { type: "event"; ref: string }) => Promise<void> | void;
 }) {
   const [data, setData] = useState<ChatPicks | null>(null);
+  const [ideas, setIdeas] = useState<MuseIdeas | null>(null);
   const [host, setHost] = useState<HTMLElement | null>(null);
   const closeRef = useRef(onClose);
   closeRef.current = onClose;
@@ -35,13 +43,24 @@ export function EventPicksSheet({
   // GET has no side effects (React dev double-run safe); POST records it as shown once displayed.
   useEffect(() => {
     let live = true;
-    api<ChatPicksResult>(`/api/conversations/${conversationId}/chat-picks?ref=${encodeURIComponent(gameRef)}`)
+    api<ChatPicksResult>(`/api/conversations/${conversationId}/chat-picks?ref=${encodeURIComponent(gameRef)}${peek ? "&peek=1" : ""}`)
       .then((r) => {
         if (!live) return;
         if (r.show) setData(r);
         else closeRef.current();
       })
       .catch(() => live && closeRef.current());
+    return () => {
+      live = false;
+    };
+  }, [conversationId, gameRef, peek]);
+
+  // Muse's group plans load alongside (one model call per chat per game, usually warmed when the game dropped).
+  useEffect(() => {
+    let live = true;
+    api<MuseIdeas>(`/api/conversations/${conversationId}/ideas?ref=${encodeURIComponent(gameRef)}`)
+      .then((r) => live && setIdeas(r))
+      .catch(() => {});
     return () => {
       live = false;
     };
@@ -94,7 +113,29 @@ export function EventPicksSheet({
           </div>
         </div>
 
-        <div className="mt-2.5 space-y-2">
+        <div className="mt-3 flex items-center gap-1.5 px-0.5 text-[11px] font-bold tracking-wide text-violet-700 uppercase">
+          <Sparkles size={12} /> Muse&apos;s ideas for {data.isGroup ? "the chat" : "you two"}
+        </div>
+        {ideas ? (
+          <>
+            {ideas.intro && <div className="mt-1 px-0.5 text-[12.5px] text-ink-2">{ideas.intro}</div>}
+            <div className="mt-1.5 space-y-2">
+              {ideas.ideas.map((idea, i) => (
+                <IdeaCard key={i} idea={idea} index={i} conversationId={conversationId} gameRef={gameRef} onShare={onShare} />
+              ))}
+            </div>
+          </>
+        ) : (
+          <div className="mt-1.5 space-y-2">
+            {[0, 1].map((i) => (
+              <div key={i} className="h-[92px] animate-pulse rounded-2xl bg-white/70" />
+            ))}
+            <div className="px-0.5 text-[12px] text-ink-2">Muse is dreaming up plans for this chat…</div>
+          </div>
+        )}
+
+        <div className="mt-3 px-0.5 text-[11px] font-bold tracking-wide text-ink-2 uppercase">Also on Facebook</div>
+        <div className="mt-1.5 space-y-2">
           {data.items.map((item) =>
             item.kind === "event" ? (
               <EventCard key={`ev_${item.id}`} p={item} onSend={onSend} onGoing={close} />
@@ -116,6 +157,103 @@ export function EventPicksSheet({
 }
 
 const btnCls = "flex items-center justify-center gap-1 rounded-lg px-2.5 py-1.5 text-[12.5px] font-semibold";
+
+function IdeaCard({
+  idea,
+  index,
+  conversationId,
+  gameRef,
+  onShare,
+}: {
+  idea: MuseIdea;
+  index: number;
+  conversationId: string;
+  gameRef: string;
+  onShare?: (text: string, attachment?: { type: "event"; ref: string }) => Promise<void> | void;
+}) {
+  const [eventId, setEventId] = useState(idea.eventId);
+  const [busy, setBusy] = useState(false);
+  const [sent, setSent] = useState(false);
+  const plan = async () => {
+    if (busy) return;
+    setBusy(true);
+    try {
+      const e = await api<{ id: string; title: string; created: boolean }>(`/api/conversations/${conversationId}/ideas/plan`, { method: "POST", json: { ref: gameRef, index } });
+      // someone else in the chat may have made it first: only the tap that created it announces it
+      if (e.created) await onShare?.(`Made it an event: ${e.title}. Who's in?`, { type: "event", ref: e.id });
+      setEventId(e.id);
+      refresh("/api/events");
+    } finally {
+      setBusy(false);
+    }
+  };
+  const share = async () => {
+    if (sent || busy) return;
+    setBusy(true);
+    try {
+      await onShare?.(`${idea.emoji} ${idea.title}: ${idea.pitch}`);
+      setSent(true);
+    } finally {
+      setBusy(false);
+    }
+  };
+  return (
+    <div className="rounded-2xl bg-white p-2.5 shadow-sm ring-1 ring-violet-100">
+      <div className="flex gap-2">
+        <div className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-violet-50 text-[20px]">{idea.emoji}</div>
+        <div className="min-w-0 flex-1">
+          <div className="text-[14.5px] leading-tight font-semibold text-ink">{idea.title}</div>
+          <div className="mt-0.5 text-[12.5px] leading-snug text-ink-2">{idea.pitch}</div>
+        </div>
+      </div>
+      {(idea.event || idea.listings.length > 0) && (
+        <div className="mt-2 space-y-1">
+          {idea.event && (
+            <Link href={`/events/${idea.event.id}`} className="flex items-center gap-2 rounded-xl bg-[#f0f2f5] p-1.5">
+              <Photo src={idea.event.cover} className="h-9 w-9 shrink-0 rounded-lg object-cover" />
+              <div className="min-w-0 flex-1">
+                <div className="text-[10px] font-bold text-red-600 uppercase">Event · {eventDate(idea.event.startsAt)}</div>
+                <div className="truncate text-[12.5px] font-semibold text-ink">{idea.event.title}</div>
+              </div>
+            </Link>
+          )}
+          {idea.listings.map((l) => (
+            <Link key={l.id} href={`/marketplace/${l.id}`} className="flex items-center gap-2 rounded-xl bg-[#f0f2f5] p-1.5">
+              <Photo src={l.image} className="h-9 w-9 shrink-0 rounded-lg object-cover" />
+              <div className="min-w-0 flex-1">
+                <div className="text-[10px] font-bold text-emerald-700 uppercase">Marketplace · from {l.seller}</div>
+                <div className="truncate text-[12.5px] font-semibold text-ink">{l.title}</div>
+              </div>
+              <div className="pr-1 text-[12.5px] font-bold text-ink">{money(l.price)}</div>
+            </Link>
+          ))}
+          {idea.listings.length > 0 && (
+            <div className="flex items-center gap-1 px-1 pt-0.5 text-[11.5px] text-ink-2">
+              <ShoppingBag size={12} className="text-emerald-700" />
+              <span>
+                <b className="text-ink">{money(idea.total)}</b> total · about <b className="text-ink">{money(idea.perPerson)}</b> each if you split it
+              </span>
+            </div>
+          )}
+        </div>
+      )}
+      <div className="mt-2 flex gap-1.5">
+        {eventId ? (
+          <Link href={`/events/${eventId}`} className={cx(btnCls, "flex-1 bg-[#e7f3ff] text-messenger")}>
+            <Check size={14} /> Event created
+          </Link>
+        ) : (
+          <button onClick={plan} disabled={busy} className={cx(btnCls, "flex-1 bg-messenger text-white")}>
+            <CalendarPlus size={14} /> {busy ? "Making it…" : "Make it an event"}
+          </button>
+        )}
+        <button onClick={share} disabled={busy || sent} className={cx(btnCls, sent ? "bg-[#e7f3ff] text-messenger" : "bg-[#e4e6eb] text-ink")}>
+          {sent ? <><Check size={14} /> Sent</> : <><Send size={13} /> Send</>}
+        </button>
+      </div>
+    </div>
+  );
+}
 
 function EventCard({ p, onSend, onGoing }: { p: EventChatPick; onSend: (i: ChatPickItem) => Promise<void> | void; onGoing: () => void }) {
   const [status, setStatus] = useState<RsvpStatus>(p.myStatus);

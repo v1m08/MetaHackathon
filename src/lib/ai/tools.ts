@@ -57,7 +57,7 @@ export const getUpcomingEvents: ToolDef<{ userId: string }> = {
   run: ({ userId }) => {
     const me = getUser(userId);
     return db()
-      .events.filter((e) => new Date(e.startsAt).getTime() > Date.now())
+      .events.filter((e) => new Date(e.startsAt).getTime() > Date.now() && (!e.inviteOnly || e.hostId === userId || e.going.includes(userId) || !!e.invited?.includes(userId)))
       .map((e) => ({ id: e.id, title: e.title, startsAt: e.startsAt, location: e.location, going: e.going.length, meGoing: e.going.includes(userId), friendsGoing: e.going.filter((id) => me?.friendIds.includes(id)).map((id) => getUser(id)?.name) }));
   },
 };

@@ -7,6 +7,7 @@
 import { mockFromSchema, mockImage, mockLatency, mockText, mockToolCalls } from "./mock";
 import { pushTrace, traceId } from "./trace";
 import type { AIMessage, AIMode, CallKind, CallOptions, ImageResult, JSONSchema, JsonResult, TextResult, ToolCall, ToolDef, ToolsResult, Trace, TraceStep, Usage } from "./types";
+import "@/server/net"; // prefer IPv4 for outbound calls
 
 export * from "./types";
 export { traces, clearTraces, traceStats } from "./trace";
@@ -135,6 +136,7 @@ async function json<T = unknown>(input: string | AIMessage[], opts: CallOptions 
       messages,
       temperature: opts.temperature ?? 0.4,
       max_tokens: opts.maxTokens ?? 900,
+      ...(opts.reasoning ? { reasoning_effort: opts.reasoning } : {}),
       response_format: { type: "json_schema", json_schema: { name: opts.schemaName ?? "result", schema: opts.schema, strict: false } },
     };
     let r: ChatCompletion;

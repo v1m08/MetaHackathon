@@ -210,8 +210,21 @@ Young adults stay connected in Messenger through two GamePigeon-style pixel game
    - Ingests `sqgame` / `sqgamelog` messages + Sidequest room caches (`sidequest/.cache/{rarity,kitchen}/*.json`) with zero legacy quiz dependencies.
    - **Austin-timezone (`America/Chicago`) Snapchat-style streaks:** counts days where a strict majority played before local midnight, with **1 automatic streak freeze per 7 days**, **3 / 7 / 14 / 30-day milestones**, and an **evening hourglass** after 6pm.
    - **Anti-hijack group agreement (`mean × coverage × (1 − SD)`):** discounts 1 loud spammer in a group chat until $\ge 50\%$ of members play on a topic.
-   - **4-part `0–100` Connection Score & Commitment Thresholds:** `40%` turnout + `20%` streak + `20%` post-game banter & Deep Cuts mind-melds + `20%` shared topic confidence, gating tiers at **`40` (Group) → `60` (Event) → `75` (Marketplace)**.
-   - Open **Menu → Context Inspector (`/dev/context`)** to inspect Before vs. After affinities, 4-part Connection Score & streak breakdown, and downstream rankings.
+   - **8-signal `0–100` Connection Score & Commitment Thresholds** (`connectionScoreFor`, weights in `SCORE_WEIGHTS`), gating tiers at **`40` (Group) → `60` (Event) → `75` (Marketplace)** once the chat has a settled topic:
+
+     | Signal | Weight | What it measures |
+     |---|---|---|
+     | Turnout | 28% | Share of the chat that finishes each game (today's open game can lift it, never drag it) |
+     | Streak | 16% | Days in a row a majority played, out of 7 |
+     | Banter | 16% | Players who chat within 30 min of finishing, replay, or match answers in Deep Cuts |
+     | Shared taste | 12% | How settled the chat is on a topic (`mean × coverage × (1 − SD)`, so one loud player can't set it) |
+     | Momentum | 10% | Turnout in the last 3 days vs the days before: 0.5 steady, higher picking up, 0 if the chat stopped |
+     | Balance | 7% | `1 − Gini` of finishes + banter across all members: is everyone in, or do two people carry it |
+     | Cohesion | 6% | Share of member pairs who have finished the same game |
+     | Tempo | 5% | Median time from a game being posted to each finish (30 min = full, 12 h = none) |
+
+     It also returns **planning intent** (how much the chat's recent messages sound like making plans). That isn't part of the score: it tells Muse whether to upgrade a plan the chat already has or to make a first step easy.
+   - Open **Menu → Context Inspector (`/dev/context`)** to inspect Before vs. After affinities, the 8-signal Connection Score & streak breakdown, and downstream rankings.
 4. **Multi-Factor Ecosystem Ranking (`Events`, `Groups`, `Marketplace`):**
    - `socialMatchFor` combines **topic fit** + **threshold-gated shared-chat overlap** + **mutual friends going (`+0.05` each, cap `+0.15`)** + **event soonness (`+0.10` over 21 days)** + **saturation filtering** (omits `Send to X` when `X` is already RSVPed going) + **RSVP / Join / Save feedback loop** back into user affinity.
 
@@ -220,6 +233,21 @@ Young adults stay connected in Messenger through two GamePigeon-style pixel game
    - **Benchmarks (all must pass):** you finished this game here · the chat has earned the **Event tier** (`connectionScoreFor().earnedTiers`: score ≥ 60 plus a settled topic) · at least one event fits ≥ `0.6` · once per game per person and one popup per person per chat per Austin day. The finish that earns the tier shows **"Events unlocked"**; after a member has seen it the unlock sticks, since the score can dip when a new game starts. The popup never shows the score itself (it lives in `/dev/context`).
    - **Fit:** the strongest of the **game's subject** (1.0 primary / 0.65 secondary), the **chat's settled topics** (`chatTopicsFor`, 0.8 at full agreement) and **interests every member lists** on their public profile (0.6; a group needs ≥ half), plus `+0.1` per extra agreeing source, friends going (`+0.05` each, cap `+0.15`) and soonness (`+0.10` over 21 days). Of the events that fit, the popup suggests the one **closest to everyone's profiles**: each member's best match across the event's topics (1 for its main topic, 0.65 for the others), averaged over the chat; ties go to the better fit. Past events, events you're going to or hosting, and events any member can't see are left out. If every other member is already going, Send is hidden and the why line names them.
    - **Try it:** `c_ethan_priya?as=ethan` → play Order Up!: Ramen → close. For the unlock moment: in `c_volleyball?as=sam` start Order Up!: Tacos, run `npm run demo:events`, then play it as Sam and close. `GET /api/conversations/<id>/event-picks?ref=<game>` explains why a popup didn't show.
+
+## Judges demo: one group chat, a Muse ping, then group plans
+
+Five judges each take a seat in one Messenger group chat, **Sunday cookout 🔥** (`c_judges`: Tyler, Jordan, Devon, Nina, Grace).
+
+1. `npm run demo:public` → judges scan the QR code, open `/demo`, and each tap a different person. They land on their Facebook feed.
+2. On `/admin`, tap **Drop** (default topic `tacos`, which opens instantly). Tyler posts today's Order Up! game in the chat, and Muse writes each judge a personal one-line nudge using their interests and jokes from the chat. It pops up on every judge's phone as a Facebook banner (`src/components/GameNudge.tsx`) and appears in Notifications. **Play now** opens the game in the chat.
+3. A judge finishes and closes the game. The post-game sheet shows **Muse's ideas for the chat**: three plans written for this group. Each plan is a **kit** of real things on Facebook: optionally one upcoming Event plus up to three Marketplace listings, with the total and the per-person split.
+   - **Try it together:** two or three homemade foods off Marketplace that are new to the chat (tamales, puff-puff, a man'oushe kit…) turned into a blind taste-off.
+   - **Event plus:** a real Event with a listing or two that makes it better for this group (the taco pop-up plus a griddle and a hot-sauce flight).
+   - **Wildcard:** an original plan, with or without listings.
+
+   Every id Muse names is checked in code: a plan that names an event or listing that isn't a candidate is dropped, a listing is used in one plan only, and chat members' own listings, sold listings and private saves never enter the kits. **Make it an event** creates an invite-only Facebook Event for the chat (only the host and the invited can see it) with the kit attached: the event page shows **What to grab on Marketplace** with pickup spots and the split. Only the first tap announces it in the thread. The scored Groups/Events/Marketplace picks sit below under "Also on Facebook". A **See Muse's plans for this chat** button above the composer reopens the sheet any time after you've finished the newest game.
+
+The chat is seeded with six days of food games that everyone played and trash-talked after, so its Connection Score starts at **86** (all tiers earned) and every judge's first finish gets the sheet; each Drop also clears the once-a-day cadence for the chat. The plans take one Muse call per chat per game, shared by everyone and warmed when the game drops; the nudges take one call per drop. Without Muse (no key, timeout, network), both fall back to templates built from the same real data, and the plans keep retrying Muse in the background. Marketplace has nine homemade-food and kitchen listings for this (`src/data/listings.ts`), with photos generated once by `scripts/gen-market-photos.ts` into `public/seed/market/`. Code: `src/lib/demo/drop.ts`, `src/lib/demo/museIdeas.ts`; tests: `tests/judge-demo.test.ts`. Reset between runs on `/admin`.
 
 ### Privacy Guardrails (Enforced in Code)
 - **Strict Audience Intersection on Input:** Private Reel/Marketplace saves (`savedBy`), unshared private Groups, restricted (`friends`-only) profiles when non-friends are present, and other threads' messages are excluded from `GameTray` topic suggestions.

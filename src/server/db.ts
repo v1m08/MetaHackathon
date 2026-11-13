@@ -234,7 +234,7 @@ export function search(q: string) {
   return {
     people: db().users.filter((u) => has(u.name, u.username, u.bio, u.work, u.school, ...u.interests)).slice(0, 8),
     groups: db().groups.filter((g) => has(g.name, g.description, ...g.tags)).slice(0, 5),
-    events: db().events.filter((e) => has(e.title, e.description, e.location)).slice(0, 5),
+    events: db().events.filter((e) => !e.inviteOnly && has(e.title, e.description, e.location)).slice(0, 5), // search has no viewer: invite-only events never show
     listings: db().listings.filter((l) => has(l.title, l.description, l.category)).slice(0, 6),
     posts: db().posts.filter((p) => has(p.text)).slice(0, 8),
   };

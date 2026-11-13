@@ -12,7 +12,7 @@ export function timeAgo(iso: string, short = true): string {
   return new Date(iso).toLocaleDateString(undefined, { month: "short", day: "numeric" });
 }
 export const compact = (n: number) => (n >= 1e6 ? `${(n / 1e6).toFixed(1)}M` : n >= 1e3 ? `${(n / 1e3).toFixed(n >= 1e4 ? 0 : 1)}K` : String(n));
-export const money = (n: number) => (n === 0 ? "Free" : `$${n.toLocaleString()}`);
+export const money = (n: number) => (n === 0 ? "Free" : `$${Number.isInteger(n) ? n.toLocaleString() : n.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`);
 export function eventDate(iso: string) {
   const d = new Date(iso);
   const day = d.toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" });

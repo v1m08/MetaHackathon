@@ -88,8 +88,12 @@ export interface FBEvent {
   going: ID[];
   interested: ID[];
   invited?: ID[];
+  /** Only the host, the invited and those who've RSVPed can see it (events made from a chat's Muse plan). */
+  inviteOnly?: boolean;
   category: string;
   price?: string;
+  /** Marketplace listings this plan needs, when the event was made from one of Muse's group plans. */
+  kit?: { listingIds: ID[]; total: number; perPerson: number; conversationId: ID };
 }
 
 export interface Listing {
@@ -176,7 +180,8 @@ export type NotificationType =
   | "birthday"
   | "marketplace"
   | "memory"
-  | "mention";
+  | "mention"
+  | "game";
 
 export interface Notification {
   id: ID;

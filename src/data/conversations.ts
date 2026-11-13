@@ -220,4 +220,17 @@ export const conversations: Conversation[] = [
     ["omar", 58.9, "that's fair. tuesday?"],
     ["ethan", 58.8, "tuesday."],
   ]),
+  // The judges' chat for the live demo (/demo): five judges each pick one seat. Its game history is seeded in
+  // src/lib/context/seed.ts; today's game drops live from /admin as Tyler (src/lib/demo/drop.ts).
+  build("c_judges", ["tyler", "jordan", "devon", "nina", "grace"], [
+    ["tyler", 30, "ok who's actually free sunday. I have the big grill and zero plans"],
+    ["jordan", 29.8, "I'll bring tortillas and the leftover birria from the pop-up if there is any"],
+    ["nina", 29.7, "I'm off sunday!! I'll bake something. tres leches?"],
+    ["grace", 29.5, "I can do a matcha bar. don't laugh"],
+    ["devon", 29.4, "laughing. also I'm in"],
+    ["grace", 29.2, "also jordan please no sharpie prices this time"],
+    ["jordan", 29, "the sharpie is part of the brand"],
+    ["devon", 6, "the taco game last night was rigged. I served 14 and got $170"],
+    ["tyler", 5.9, "skill issue"],
+  ], { name: "Sunday cookout 🔥", emoji: "🔥" }),
 ];

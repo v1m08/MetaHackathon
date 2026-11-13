@@ -34,6 +34,8 @@ export interface CallOptions {
   model?: string;
   temperature?: number;
   maxTokens?: number;
+  /** Reasoning effort for Muse (a reasoning model): thinking counts against maxTokens, so keep it low for short JSON. */
+  reasoning?: "minimal" | "low" | "medium" | "high";
   /** Force a mode for this one call. */
   mode?: AIMode;
   /** What to return in mock mode. Build it from real store data so demos look right without a key. */

@@ -36,6 +36,7 @@ export function canSeeReel(viewerId: ID, r: Reel): boolean {
 }
 
 export function canSeeEvent(viewerId: ID, e: FBEvent): boolean {
+  if (e.inviteOnly) return e.hostId === viewerId || e.going.includes(viewerId) || e.interested.includes(viewerId) || !!e.invited?.includes(viewerId);
   if (e.hostGroupId) {
     const g = db().groups.find((x) => x.id === e.hostGroupId);
     if (g && g.privacy === "private" && !g.memberIds.includes(viewerId)) return false;

@@ -1,6 +1,9 @@
 import type { Listing } from "@/types";
 import { daysAgo, photo } from "./helpers";
 
+/** Photos generated once with Muse (scripts/gen-market-photos.ts) and served from public/, so they never depend on a placeholder host. */
+const food = (name: string) => `/seed/market/${name}.jpg`;
+
 export const listings: Listing[] = [
   { id: "l_bike", sellerId: "jordan", title: "Trek FX 2 hybrid bike, 2021, medium", price: 260, images: [photo("trek-fx2", 800, 800), photo("trek-fx2-side", 800, 800)], category: "Bikes", location: "East Austin", createdAt: daysAgo(2), condition: "Good", status: "available", savedBy: ["zoe", "lucas"],
     description: "Selling because the truck fund needs it. Rode it to work for 2 years, new chain in the spring, tires have a season left. Comes with the rack and a Kryptonite lock. Small scratch on the top tube. No lowballs, I know what I have (a bike)." },
@@ -34,4 +37,23 @@ export const listings: Listing[] = [
     description: "Making room for a third roommate. Article-brand, 2 years old, no pets, no stains, one small snag on the back that you can't see against a wall. $220 and you move it (it's light, two people)." },
   { id: "l_keyboard", sellerId: "priya", title: "Keychron K2 mechanical keyboard (brown switches)", price: 55, images: [photo("keychron-k2", 800, 600)], category: "Electronics", location: "West Campus", createdAt: daysAgo(5), condition: "Like new", status: "available", savedBy: ["ethan", "zoe"],
     description: "Built a custom board so this one's extra. Browns are quiet enough for a library. Bluetooth + wired. Keycaps are the original ones." },
+  // ---------- Homemade food & kitchen gear: what Muse builds "try it together" plans from (src/lib/demo/museIdeas.ts) ----------
+  { id: "l_food_tamales", sellerId: "sofia", title: "Abuela's tamales, one dozen (pork rojo or rajas con queso)", price: 20, images: [food("tamales")], category: "Food", location: "East Austin", createdAt: daysAgo(1), condition: "New", status: "available", savedBy: ["lucas", "sam"],
+    description: "My abuela makes 20 dozen every weekend and I am her sales department. Pork in red chile or rajas with cheese, steamed Saturday morning. Pickup Saturday after 2 near Jo's. Order by Friday night. Salsa verde included, do not ask her for the recipe." },
+  { id: "l_food_mochi", sellerId: "zoe", title: "Homemade mochi sampler (12): matcha, ube, black sesame, strawberry", price: 18, images: [food("mochi")], category: "Food", location: "West Campus", createdAt: daysAgo(1), condition: "New", status: "available", savedBy: ["grace", "hannah", "priya"],
+    description: "Three of each flavor, made the morning of pickup. The black sesame is the one people fight over. Keep them in the fridge and eat within 2 days. Pickup West Campus, weekends." },
+  { id: "l_food_puffpuff", sellerId: "aisha", title: "Nigerian puff-puff party tray (30) + suya spice", price: 22, images: [food("puffpuff")], category: "Food", location: "Cherrywood", createdAt: daysAgo(2), condition: "New", status: "available", savedBy: ["nina", "omar"],
+    description: "Fried fresh, still warm at pickup if you're on time. Comes with a jar of my aunt's suya spice (peanut, ginger, chili) for whatever you're grilling. Raising money for the health fair, so every tray helps." },
+  { id: "l_food_manoushe", sellerId: "omar", title: "Za'atar man'oushe kit: dough, za'atar, labneh (makes 8 flatbreads)", price: 24, images: [food("manoushe")], category: "Food", location: "Hyde Park", createdAt: daysAgo(2), condition: "New", status: "available", savedBy: ["ethan"],
+    description: "My mom ships me za'atar from Beirut and I have more than one PhD student can eat. You get 8 dough balls, a jar of za'atar with olive oil, and labneh. Works on a grill, a griddle or a hot oven. Instructions included, in my handwriting, sorry." },
+  { id: "l_food_dosa", sellerId: "priya", title: "Dosa night kit: fermented batter (2 qt), sambar, coconut chutney", price: 18, images: [food("dosa")], category: "Food", location: "West Campus", createdAt: daysAgo(3), condition: "New", status: "available", savedBy: ["aisha", "maya"],
+    description: "Batter is my mother's ratio and ferments for 14 hours. Makes about 16 dosas if you spread them thin, 9 if you're new at this. Sambar and chutney included. You need a flat pan or a griddle. First one always fails, that's tradition." },
+  { id: "l_food_kimchi", sellerId: "hannah", title: "Mom's kimchi (32 oz) + gochujang wing marinade", price: 15, images: [food("kimchi")], category: "Food", location: "North Loop", createdAt: daysAgo(4), condition: "New", status: "available", savedBy: ["grace"],
+    description: "My mom visits once a month and fills my fridge like I'm feeding a classroom. Napa cabbage kimchi, two weeks old (the good age), plus a jar of the marinade she uses for wings. Great on a grill." },
+  { id: "l_food_hotsauce", sellerId: "sam", title: "Small-batch hot sauce flight (5 bottles, mild to regret)", price: 25, images: [food("hotsauce")], category: "Food", location: "East Austin", createdAt: daysAgo(2), condition: "New", status: "available", savedBy: ["marcus", "lucas"],
+    description: "I ferment these behind the bar. Pineapple habanero, smoked serrano, peach scorpion, a green one I haven't named, and one I call Last Call. Five 2 oz bottles. Good for a blind tasting. Milk not included." },
+  { id: "l_food_croissants", sellerId: "lucas", title: "Fresh croissants, box of 6 (Sunday morning bake)", price: 16, images: [food("croissants")], category: "Food", location: "Clarksville", createdAt: daysAgo(1), condition: "New", status: "available", savedBy: ["maya", "sofia", "grace"],
+    description: "I laminate on Saturday nights instead of having a social life. Three plain, three pain au chocolat. Pickup Sunday 9 to 11 at the cafe. A French person made these, that's the whole pitch." },
+  { id: "l_griddle", sellerId: "marcus", title: "Blackstone 22\" tabletop griddle + propane adapter", price: 85, images: [food("griddle")], category: "Home & Kitchen", location: "South Lamar", createdAt: daysAgo(3), condition: "Good", status: "available", savedBy: ["devon"],
+    description: "Meal prepped on this for a year, then my building banned propane on balconies. Seasoned, clean, comes with the hose adapter and two spatulas. Smash burgers, tacos, dosas, whatever. $85." },
 ];

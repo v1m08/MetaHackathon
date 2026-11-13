@@ -1,10 +1,11 @@
 import { socialMatchCache, socialMatchFor } from "@/lib/context";
 import { topicsOfEvent } from "@/lib/context/taxonomy";
+import { canSeeEvent } from "@/lib/context/visibility";
 import { route } from "@/server/http";
 import { cardFor, db, getEvent, hydratePost, postsInEvent } from "@/server/db";
 export const GET = route<{ id: string }>((_req, { userId, params }) => {
   const e = getEvent(params.id);
-  if (!e) throw Object.assign(new Error("Event not found"), { status: 404 });
+  if (!e || !canSeeEvent(userId, e)) throw Object.assign(new Error("Event not found"), { status: 404 });
   const me = db().users.find((u) => u.id === userId)!;
   const m = socialMatchFor(userId, topicsOfEvent(e), socialMatchCache(userId), {
     tier: "event",

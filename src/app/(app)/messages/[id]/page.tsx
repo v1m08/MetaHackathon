@@ -123,10 +123,15 @@ export default function ThreadPage() {
   const [streakOpen, setStreakOpen] = useState(false);
   const [playing, setPlaying] = useState<string | null>(null);
   useEffect(() => {
-    if (typeof window !== "undefined" && new URLSearchParams(window.location.search).get("play") === "1") {
-      setTray(true);
-      window.history.replaceState(null, "", window.location.pathname);
-    }
+    if (typeof window === "undefined") return;
+    const q = new URLSearchParams(window.location.search);
+    if (q.get("play") === "1") setTray(true);
+    // ?game=<ref>: opened from Muse's "today's game" notification, so go straight into the game
+    if (q.get("game")) setPlaying(q.get("game"));
+    if (q.get("play") || q.get("game")) window.history.replaceState(null, "", window.location.pathname);
+    const onPlay = (e: Event) => setPlaying((e as CustomEvent<string>).detail);
+    addEventListener("fb:play", onPlay);
+    return () => removeEventListener("fb:play", onPlay);
   }, []);
   // Event unlock popup: after a scored game, closing the game asks the server whether the chat earned event picks
   const [picksFor, setPicksFor] = useState<string | null>(null);
@@ -137,13 +142,21 @@ export default function ThreadPage() {
     scored.current = null;
     if (s) void s.sent.catch(() => {}).then(() => setPicksFor(s.ref));
   }, []);
-  const closePicks = useCallback(() => setPicksFor(null), []);
+  const [picksPeek, setPicksPeek] = useState(false);
+  const closePicks = useCallback(() => {
+    setPicksFor(null);
+    setPicksPeek(false);
+  }, []);
   const sendRef = useRef(send);
   sendRef.current = send;
   const finished = useCallback((f: Finished) => {
     // GamePigeon style: a quiet "Maya played … · score" line, not a new card
     if (f.text && f.ref) scored.current = { ref: f.ref, sent: sendRef.current(f.text, { type: "sqgamelog", ref: f.ref }) };
   }, []);
+
+  // The newest game in this chat, if I've finished it: lets me reopen Muse's plans after closing the sheet.
+  const lastCard = c?.messages.findLast((m) => m.attachment?.type === "sqgame");
+  const myLastGame = lastCard && c?.messages.some((m) => m.attachment?.type === "sqgamelog" && m.attachment.ref === lastCard.attachment!.ref && m.senderId === userId) ? lastCard.attachment!.ref : null;
 
   const byId = Object.fromEntries((c?.participants ?? []).map((p) => [p.id, p]));
   const other = c?.others[0];
@@ -272,6 +285,19 @@ export default function ThreadPage() {
         <div ref={bottom} className="h-3 scroll-mb-20" />
       </div>
 
+      {myLastGame && !picksFor && !playing && (
+        <div className="pointer-events-none sticky bottom-[58px] z-10 flex justify-center pb-1.5">
+          <button
+            onClick={() => {
+              setPicksPeek(true);
+              setPicksFor(myLastGame);
+            }}
+            className="pointer-events-auto flex items-center gap-1.5 rounded-full bg-gradient-to-r from-violet-600 to-messenger px-3.5 py-1.5 text-[13px] font-semibold text-white shadow-md"
+          >
+            <Sparkles size={14} /> See Muse&apos;s plans for this chat
+          </button>
+        </div>
+      )}
       <div className="safe-bottom sticky bottom-0 z-10 flex items-center gap-1 border-t border-line/60 bg-white px-2 py-2">
         <button onClick={() => setTray(true)} className="p-1.5 text-messenger" aria-label="Games"><Plus size={24} /></button>
         <button className="p-1.5 text-messenger"><ImageIcon size={22} /></button>
@@ -301,7 +327,9 @@ export default function ThreadPage() {
         <EventPicksSheet
           conversationId={c.id}
           gameRef={picksFor}
+          peek={picksPeek}
           onClose={closePicks}
+          onShare={(text, attachment) => send(text, attachment)}
           onSend={(item) =>
             send(
               item.kind === "event"

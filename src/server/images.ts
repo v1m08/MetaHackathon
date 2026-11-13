@@ -3,6 +3,8 @@ import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
+import "./net"; // prefer IPv4 for outbound calls
+
 export const ALLOW = ["picsum.photos", "fastly.picsum.photos", "i.pravatar.cc"];
 const DIR = join(process.cwd(), ".image-cache");
 

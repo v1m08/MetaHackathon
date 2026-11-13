@@ -2,14 +2,15 @@
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState } from "react";
-import { Calendar, Check, MapPin, Send, Share2, Star, Ticket, Users } from "lucide-react";
+import { Calendar, Check, MapPin, Send, Share2, ShoppingBag, Star, Ticket, Users } from "lucide-react";
 import { PostCard } from "@/components/Post";
 import { Shell } from "@/components/Shell";
 import { Avatar, Button, Photo, Sheet, cx } from "@/components/ui";
 import { api, refresh, useApi } from "@/lib/api";
 import { eventDate, eventDay } from "@/lib/format";
 import type { HydratedPost } from "@/server/db";
-import type { FBEvent, Group } from "@/types";
+import { money } from "@/lib/format";
+import type { FBEvent, Group, Listing } from "@/types";
 
 type Card = { id: string; name: string; avatar: string };
 type ShareTarget = { conversationId: string; name: string; label: string };
@@ -122,6 +123,7 @@ export default function EventPage() {
       <div className="mt-2 bg-white px-4 py-3 text-[15px]">
         <h2 className="text-[17px] font-bold">What to expect</h2>
         <p className="mt-2 leading-snug whitespace-pre-wrap">{e.description}</p>
+        {e.kit && <KitSection kit={e.kit} />}
       </div>
       <div className="mt-2 bg-white px-4 py-3">
         <h2 className="text-[17px] font-bold">Guests</h2>
@@ -166,5 +168,39 @@ export default function EventPage() {
         </div>
       </Sheet>
     </Shell>
+  );
+}
+
+/** Marketplace listings a Muse-made plan needs, with the cost split across the chat it was planned in. */
+function KitSection({ kit }: { kit: NonNullable<FBEvent["kit"]> }) {
+  return (
+    <div className="mt-3 rounded-xl border border-line/70 p-2.5">
+      <div className="flex items-center gap-1.5 text-[12px] font-bold tracking-wide text-emerald-700 uppercase">
+        <ShoppingBag size={14} /> What to grab on Marketplace
+      </div>
+      <div className="mt-1.5 space-y-1.5">
+        {kit.listingIds.map((id) => (
+          <KitItem key={id} id={id} />
+        ))}
+      </div>
+      <div className="mt-2 text-[13px] text-ink-2">
+        <b className="text-ink">{money(kit.total)}</b> total · about <b className="text-ink">{money(kit.perPerson)}</b> each if everyone chips in
+      </div>
+    </div>
+  );
+}
+
+function KitItem({ id }: { id: string }) {
+  const { data } = useApi<Listing & { seller?: { name: string } }>(`/api/marketplace/${id}`);
+  if (!data) return <div className="h-12 animate-pulse rounded-lg bg-[#f0f2f5]" />;
+  return (
+    <Link href={`/marketplace/${id}`} className="flex items-center gap-2 rounded-lg bg-[#f0f2f5] p-1.5">
+      <Photo src={data.images[0]} className="h-10 w-10 shrink-0 rounded-md object-cover" />
+      <div className="min-w-0 flex-1">
+        <div className="truncate text-[13.5px] font-semibold">{data.title}</div>
+        <div className="truncate text-[12px] text-ink-2">{data.status === "available" ? `Pickup in ${data.location}` : "No longer available"}</div>
+      </div>
+      <div className="pr-1 text-[13.5px] font-bold">{money(data.price)}</div>
+    </Link>
   );
 }

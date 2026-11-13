@@ -4,7 +4,7 @@
 //      1 automatic freeze every 7 days, milestones at 3/7/14/30 days, and evening hourglass after 6pm.
 //   2. Anti-hijack group topic agreement: `mean × coverage × (1 − SD)` with a >=60% member turnout gate so
 //      one loud spammer cannot skew a group chat's recommendations.
-//   3. 4-part `0..100` Connection Score (40% turnout + 20% streak + 20% banter/mind-meld + 20% topic confidence)
+//   3. 8-signal `0..100` Connection Score (turnout, streak, banter, shared taste, momentum, balance, cohesion, tempo: SCORE_WEIGHTS)
 //      with commitment thresholds (`40` Group -> `60` Event -> `75` Marketplace).
 //   4. Multi-factor item ranking: topic fit + shared-chat overlap + mutual friends going (`+0.05` each, cap `0.15`)
 //      + event soonness (`+0.10` over 21 days) + saturation filtering + RSVP/Join/Save feedback signals.
@@ -374,13 +374,17 @@ export function chatDayActivityFor(conversationId: ID, sessions = ingestSideques
     set.add(uid);
   };
 
+  // A caller can pass a what-if session list (e.g. "before this player's finish"): a finish only counts if the
+  // matching session still has that player. Games missing from the list entirely are counted from the messages.
+  const byRef = new Map(sessions.filter((s) => s.conversationId === conversationId).map((s) => [s.ref, s]));
   if (c) {
     for (const m of c.messages) {
       const att = m.attachment;
       if (!att || (att.type !== "sqgame" && att.type !== "sqgamelog")) continue;
       const d = dayKey(m.createdAt);
       addGame(d, att.ref);
-      if (att.type === "sqgamelog" && c.participantIds.includes(m.senderId)) {
+      const sess = byRef.get(att.ref);
+      if (att.type === "sqgamelog" && c.participantIds.includes(m.senderId) && (!sess || sess.players.has(m.senderId))) {
         addFinisher(d, m.senderId);
       }
     }
@@ -493,47 +497,143 @@ export function chatTopicsFor(conversationId: ID, sessions = ingestSidequestSess
   }).sort((a, b) => b.score - a.score);
 }
 
+export type ScorePart = "participation" | "streak" | "reciprocity" | "confidence" | "momentum" | "balance" | "cohesion" | "tempo";
+
+/** How much each signal counts toward the 0..100 Connection Score. Sums to 1. */
+export const SCORE_WEIGHTS: Record<ScorePart, number> = {
+  participation: 0.28, // turnout: how much of the chat finishes each game
+  streak: 0.16, // consistency: consecutive days a majority played
+  reciprocity: 0.16, // banter after games, rematches, Deep Cuts mind-melds
+  confidence: 0.12, // shared taste: how settled the chat is on a topic
+  momentum: 0.1, // is turnout rising or fading (last 3 days vs the days before)
+  balance: 0.07, // is everyone involved, or is it one or two people carrying the chat
+  cohesion: 0.06, // how many pairs of members have actually played the same game
+  tempo: 0.05, // how quickly people jump in after a game is posted
+};
+const SCORE_NOTES: Record<ScorePart, string> = {
+  participation: "share of the chat that finishes each game",
+  streak: "days in a row a majority played (out of 7)",
+  reciprocity: "players who chat after, replay, or match answers",
+  confidence: "how settled the chat is on a shared topic",
+  momentum: "turnout in the last 3 days vs the days before",
+  balance: "how evenly play and banter are spread across members",
+  cohesion: "pairs of members who played the same game",
+  tempo: "how fast people play once a game is posted",
+};
+const MOMENTUM_DAYS = 3;
+const TEMPO_FULL_MS = 30 * 60e3; // everyone in within half an hour = full marks
+const TEMPO_ZERO_MS = 12 * 3600e3; // half a day later = none
+const PLAN_RE = /\b(who'?s (free|in|down|coming)|i'?m (in|down|free|off)|let'?s|we should|should we|this weekend|tonight|tomorrow|(mon|tues|wednes|thurs|fri|satur|sun)day|i'?ll bring|bringing|my place|come over|what time|rematch|bake-?off|cook-?off)\b/i;
+
+/** Gini coefficient of non-negative counts: 0 = perfectly even, toward 1 = one person does everything. */
+function gini(counts: number[]): number {
+  const n = counts.length;
+  const total = counts.reduce((s, x) => s + x, 0);
+  if (n < 2 || total === 0) return 0;
+  const sorted = [...counts].sort((x, y) => x - y);
+  const weighted = sorted.reduce((s, x, i) => s + (i + 1) * x, 0);
+  return clamp((2 * weighted) / (n * total) - (n + 1) / n);
+}
+
+export interface ScoreSignal {
+  part: ScorePart;
+  value: number; // 0..1
+  weight: number;
+  points: number; // value × weight × 100
+  note: string;
+}
+
 export interface ConnectionScoreResult {
   score: number; // 0..100
-  parts: { participation: number; streak: number; reciprocity: number; confidence: number };
+  parts: Record<ScorePart, number>;
+  /** The same parts with their weights and points, strongest first, for the Inspector. */
+  signals: ScoreSignal[];
+  /** 0..1: how much the chat is already talking about meeting up (not part of the score; it steers what Muse suggests). */
+  planning: number;
   streak: StreakInfo;
   topics: ChatTopicScore[];
   earnedTiers: SurfaceTier[];
   nextTier?: { tier: SurfaceTier; at: number };
 }
 
-/** 4-part `0..100` Connection Score + `40 / 60 / 75` tier gates (`group: 40`, `event: 60`, `listing: 75`). */
+/**
+ * 8-signal `0..100` Connection Score + `40 / 60 / 75` tier gates (`group: 40`, `event: 60`, `listing: 75`).
+ * Four signals say how much the chat plays (turnout, streak, momentum, tempo), three say how well it plays together
+ * (reciprocity, balance, cohesion) and one says whether it has a shared taste to recommend from (confidence).
+ * Everything comes from this chat's own games and messages in the last `WINDOW_DAYS` days.
+ */
 export function connectionScoreFor(conversationId: ID, sessions = ingestSidequestSessions(), now = Date.now()): ConnectionScoreResult {
   const c = getConversation(conversationId);
-  const members = c?.participantIds.length ?? 1;
+  const memberIds = c?.participantIds ?? [];
+  const members = memberIds.length || 1;
   const recent = sessions.filter((s) => s.conversationId === conversationId && now - new Date(s.createdAt).getTime() <= WINDOW_DAYS * DAY);
   const todayKey = dayKey(now);
   const rate = (list: SidequestSession[]) => mean(list.map((s) => s.players.size / members));
-  const participation = clamp(Math.max(rate(recent), rate(recent.filter((s) => s.date !== todayKey))));
+  // Today's game is still open: it can lift turnout but never drag it down.
+  const settledGames = recent.filter((s) => s.date !== todayKey);
+  const participation = clamp(Math.max(rate(recent), rate(settledGames)));
 
   const played = recent.filter((s) => s.players.size > 0);
-  const reciprocity = clamp(
+  const social = (list: SidequestSession[]) =>
     mean(
-      played.map((s) => {
+      list.map((s) => {
         const socialPlayers = [...s.players.values()].filter((r) => r.repliedAfter || r.plays > 1).length;
         const mindMelds = [...s.sameAnswers.values()].reduce((sum, v) => sum + v, 0);
         return clamp((socialPlayers + mindMelds) / Math.max(1, s.players.size));
       }),
-    ),
-  );
+    );
+  // Same rule as turnout: the banter after today's game may still be coming, so it can only help.
+  const reciprocity = clamp(Math.max(social(played), social(played.filter((s) => s.date !== todayKey))));
 
   const streak = streakInfoFor(conversationId, sessions, now);
   const topics = chatTopicsFor(conversationId, sessions, now);
   const top = topics.find((t) => t.observedBy > 0);
   const confidence = top ? clamp(top.score / 0.35) * clamp(top.observedBy / members / 0.6) : 0;
 
-  const parts = {
-    participation: round2(participation),
-    streak: round2(clamp(streak.days / 7)),
-    reciprocity: round2(reciprocity),
-    confidence: round2(confidence),
-  };
-  const score = Math.round(100 * (0.4 * participation + 0.2 * clamp(streak.days / 7) + 0.2 * reciprocity + 0.2 * confidence));
+  // Momentum: turnout over the last few days against the days before. 0.5 = steady (or too new to tell),
+  // above = picking up, below = fading; a chat that stopped playing drops to 0.
+  const age = (s: SidequestSession) => (now - new Date(s.createdAt).getTime()) / DAY;
+  const fresh = settledGames.filter((s) => age(s) <= MOMENTUM_DAYS);
+  const freshAll = recent.filter((s) => age(s) <= MOMENTUM_DAYS);
+  const older = recent.filter((s) => age(s) > MOMENTUM_DAYS);
+  const freshRate = Math.max(rate(fresh), rate(freshAll));
+  const momentum = !played.length ? 0 : !older.length ? 0.5 : !freshAll.length ? 0 : clamp(0.5 + (freshRate - rate(older)));
+
+  // Balance: finishes plus post-game banter per member, including members who never showed up.
+  const activity = memberIds.map((id) => played.reduce((n, s) => n + (s.players.has(id) ? 1 + (s.players.get(id)!.repliedAfter ? 1 : 0) : 0), 0));
+  const balance = played.length ? 1 - gini(activity) : 0;
+
+  // Cohesion: of all pairs of members, how many have finished the same game at least once.
+  let pairs = 0;
+  let coPlayed = 0;
+  for (let i = 0; i < memberIds.length; i++)
+    for (let j = i + 1; j < memberIds.length; j++) {
+      pairs++;
+      if (played.some((s) => s.players.has(memberIds[i]) && s.players.has(memberIds[j]))) coPlayed++;
+    }
+  const cohesion = pairs ? coPlayed / pairs : 0;
+
+  // Tempo: median time from a game being posted to each finish.
+  const delays = played
+    .flatMap((s) => [...s.players.values()].map((r) => new Date(r.finishedAt).getTime() - new Date(s.createdAt).getTime()))
+    .filter((d) => Number.isFinite(d))
+    .map((d) => Math.max(0, d))
+    .sort((x, y) => x - y);
+  const median = delays.length ? delays[Math.floor((delays.length - 1) / 2)] : Infinity;
+  const tempo = delays.length ? clamp(1 - (median - TEMPO_FULL_MS) / (TEMPO_ZERO_MS - TEMPO_FULL_MS)) : 0;
+
+  const raw: Record<ScorePart, number> = { participation, streak: clamp(streak.days / 7), reciprocity, confidence, momentum, balance, cohesion, tempo };
+  const order = Object.keys(SCORE_WEIGHTS) as ScorePart[];
+  const parts = Object.fromEntries(order.map((k) => [k, round2(raw[k])])) as Record<ScorePart, number>;
+  const score = Math.round(100 * order.reduce((sum, k) => sum + SCORE_WEIGHTS[k] * raw[k], 0));
+  const signals = order
+    .map((k) => ({ part: k, value: parts[k], weight: SCORE_WEIGHTS[k], points: Math.round(1000 * SCORE_WEIGHTS[k] * raw[k]) / 10, note: SCORE_NOTES[k] }))
+    .sort((x, y) => y.points - x.points);
+
+  // Planning intent: share of the chat's recent plain messages that sound like making plans. Steers suggestions only.
+  const lines = (c?.messages ?? []).filter((m) => !m.attachment && m.text && now - new Date(m.createdAt).getTime() <= WINDOW_DAYS * DAY).slice(-40);
+  const planning = lines.length ? round2(clamp((lines.filter((m) => PLAN_RE.test(m.text)).length / lines.length) * 3)) : 0;
+
   const hasSettled = topics.some((t) => t.settled);
   const tiers: SurfaceTier[] = ["group", "event", "listing"];
   const earnedTiers = hasSettled ? tiers.filter((t) => score >= THRESHOLDS[t]) : [];
@@ -541,6 +641,8 @@ export function connectionScoreFor(conversationId: ID, sessions = ingestSideques
   return {
     score,
     parts,
+    signals,
+    planning,
     streak,
     topics,
     earnedTiers,
@@ -864,7 +966,7 @@ export function userContextFor(userId: ID) {
     .map((t) => ({ topic: t, label: topicLabel(t), deepcutsChip: chipForTopic(t, "deepcuts"), orderupChip: chipForTopic(t, "orderup") }));
 
   const rankedEvents = db().events
-    .filter((e) => new Date(e.startsAt).getTime() > Date.now())
+    .filter((e) => new Date(e.startsAt).getTime() > Date.now() && canSeeEvent(userId, e))
     .map((e) => ({ id: e.id, title: e.title, location: e.location, ...socialMatchFor(userId, topicsOfEvent(e), cache, { tier: "event", startsAt: e.startsAt, alreadyInIds: [...e.going, ...(e.hostId ? [e.hostId] : [])] }) }))
     .filter((x) => x.fit > 0)
     .sort((a, b) => b.fit - a.fit)

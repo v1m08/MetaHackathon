@@ -44,6 +44,8 @@ html, body { overflow: hidden; overscroll-behavior: none; }
 .skeleton { background: linear-gradient(90deg, #e4e6eb 25%, #f0f2f5 37%, #e4e6eb 63%); background-size: 800px 100%; animation: shimmer 1.4s infinite linear; }
 @keyframes slideup { from { transform: translateY(100%) } to { transform: translateY(0) } }
 .slideup { animation: slideup .25s cubic-bezier(.2,.8,.2,1); }
+@keyframes nudge-in { from { transform: translateY(-120%) } to { transform: translateY(0) } }
+.nudge-in { animation: nudge-in .35s cubic-bezier(.2,.9,.25,1.1); }
 @keyframes fadein { from { opacity: 0 } to { opacity: 1 } }
 .fadein { animation: fadein .2s ease-out; }
 

@@ -448,9 +448,34 @@ export function GamePlayer({ roomId, userId, name, onClose, onFinished }: { room
     addEventListener("message", on);
     return () => removeEventListener("message", on);
   }, [onClose, onFinished]);
+  // Past days' "played" lines point at rooms the game server no longer has. Check before framing it, so nobody lands
+  // on a dead page with no way back to the chat.
+  const [room, setRoom] = useState<"checking" | "ok" | "gone">("checking");
+  useEffect(() => {
+    let live = true;
+    fetch(`${sqUrl()}${GAMES[kindOf(roomId)].api}/${idOf(roomId)}`, { cache: "no-store" })
+      .then((r) => live && setRoom(r.status === 404 ? "gone" : "ok"))
+      .catch(() => live && setRoom("ok")); // can't tell: let the game page speak for itself
+    return () => {
+      live = false;
+    };
+  }, [roomId]);
+  if (room === "gone")
+    return (
+      <Overlay className="flex items-center justify-center bg-black/80 p-6" onClick={onClose}>
+        <div className="w-full max-w-xs rounded-2xl bg-white p-5 text-center" onClick={(e) => e.stopPropagation()}>
+          <div className="text-[32px]">🕹️</div>
+          <div className="mt-1 text-[17px] font-semibold text-ink">That game has wrapped up</div>
+          <p className="mt-1 text-[14px] text-ink-2">It was from an earlier day. Today&apos;s game is the newest card in the chat.</p>
+          <button onClick={onClose} className="mt-4 w-full rounded-lg bg-messenger py-2.5 text-[15px] font-semibold text-white">
+            Back to chat
+          </button>
+        </div>
+      </Overlay>
+    );
   return (
     <Overlay className="bg-black" fitKeyboard>
-      <iframe src={src} title="Game" allow="autoplay; clipboard-write" className="h-full w-full border-0" />
+      {room === "ok" && <iframe src={src} title="Game" allow="autoplay; clipboard-write" className="h-full w-full border-0" />}
     </Overlay>
   );
 }

@@ -109,6 +109,14 @@ function requireMember(conversationId: ID, viewerId: ID) {
   return c;
 }
 
+/** Forgets the once-per-game / once-a-day cadence for one chat (a fresh game was dropped for the demo). Unlocks stay. */
+export function clearChatPicksCadence(conversationId: ID) {
+  const c = getConversation(conversationId);
+  if (!c) return;
+  const l = ledger();
+  for (const k of [...l.days]) if (c.participantIds.some((id) => k.startsWith(`${id}|${conversationId}|`))) l.days.delete(k);
+}
+
 export function markChatPicksShown(conversationId: ID, viewerId: ID, gameRef: string, now = Date.now()) {
   requireMember(conversationId, viewerId);
   const l = ledger();
@@ -351,7 +359,11 @@ function museLine(opts: { unlockedTier?: SurfaceTier; items: ChatPickItem[]; isG
   return `${streak || "Good game! "}This ${noun} fits ${who}.`;
 }
 
-export function chatPicksFor(conversationId: ID, viewerId: ID, gameRef: string, now = Date.now()): ChatPicksResult {
+/**
+ * `peek`: the viewer asked to see the picks again (the "See Muse's plans" button), so the once-per-game and
+ * once-a-day cadence doesn't apply. Every other benchmark (finished the game, tier earned, something fits) still does.
+ */
+export function chatPicksFor(conversationId: ID, viewerId: ID, gameRef: string, now = Date.now(), opts: { peek?: boolean } = {}): ChatPicksResult {
   const c = requireMember(conversationId, viewerId);
   const viewer = getUser(viewerId)!;
 
@@ -360,8 +372,8 @@ export function chatPicksFor(conversationId: ID, viewerId: ID, gameRef: string, 
   if (!game || !game.players.has(viewerId)) return { show: false, reason: "you haven't finished this game in this chat" };
 
   const l = ledger();
-  if (l.games.has(gameKey(viewerId, gameRef))) return { show: false, reason: "already shown for this game" };
-  if (l.days.has(chatDayKey(viewerId, c.id, now))) return { show: false, reason: "already shown in this chat today" };
+  if (!opts.peek && l.games.has(gameKey(viewerId, gameRef))) return { show: false, reason: "already shown for this game" };
+  if (!opts.peek && l.days.has(chatDayKey(viewerId, c.id, now))) return { show: false, reason: "already shown in this chat today" };
 
   const after = connectionScoreFor(c.id, sessions, now);
   const stuck = l.unlockedByChat.get(c.id) ?? new Set<SurfaceTier>();

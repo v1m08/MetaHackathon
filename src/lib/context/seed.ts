@@ -356,4 +356,31 @@ export function seedSidequestIntoDb(d: Database) {
     { id: "m_sq_gr_4b", senderId: "grace", at: dAgo(4, -25), text: "played Pilates Studio · 540 pts", attachment: { type: "sqgamelog", ref: "sqgrpl04" } },
     { id: "m_sq_gr_4c", senderId: "maya", at: dAgo(4, -20), text: "played Pilates Studio · 580 pts", attachment: { type: "sqgamelog", ref: "sqgrpl04" } },
   ]);
+
+  // Judges' chat (`c_judges`, the /demo thread): six straight days of food games, everyone playing and trash-talking after,
+  // so the Connection Score sits above the Marketplace tier (75) before the judges play today's game.
+  // Past days are completion logs only; today's game is dropped live from /admin (src/lib/demo/drop.ts).
+  const JUDGE_DAYS: { title: string; scores: Record<ID, number>; banter: [ID, string][] }[] = [
+    { title: "Taco 'Bout It (Tacos)", scores: { jordan: 241, tyler: 198, nina: 205, devon: 170, grace: 188 }, banter: [["devon", "rigged"], ["jordan", "the birria order is a trap every time"], ["nina", "rematch"]] },
+    { title: "Bun Voyage (Burgers)", scores: { tyler: 236, jordan: 229, devon: 201, grace: 176, nina: 190 }, banter: [["tyler", "grill guy wins the grill game, shocking"], ["grace", "I put pickles on everything and it worked"], ["devon", "again tonight?"]] },
+    { title: "Night Owl Noodles (Ramen)", scores: { grace: 214, nina: 222, jordan: 219, devon: 187, tyler: 166 }, banter: [["nina", "nurses run on ramen, this was home turf"], ["tyler", "who puts corn in ramen"], ["grace", "everyone in Sapporo"]] },
+    { title: "Smoke Signals (BBQ)", scores: { tyler: 251, devon: 210, jordan: 238, nina: 181, grace: 169 }, banter: [["jordan", "brisket queue was brutal"], ["devon", "I'm bringing ribs sunday to settle this"], ["grace", "I'll judge"]] },
+    { title: "Rise & Shine (Brunch)", scores: { grace: 247, nina: 219, jordan: 205, tyler: 172, devon: 195 }, banter: [["grace", "brunch is my sport"], ["tyler", "this one was rigged for grace"], ["nina", "mimosa bar sunday??"]] },
+    { title: "Sweet Tooth (Baking)", scores: { nina: 258, grace: 221, devon: 190, jordan: 202, tyler: 177 }, banter: [["nina", "tres leches confirmed for sunday"], ["devon", "can we do a bake-off"], ["jordan", "devon can't bake"]] },
+  ];
+  JUDGE_DAYS.forEach((g, i) => {
+    const day = JUDGE_DAYS.length - i; // oldest first: 6 days ago … yesterday
+    const ref = `k:sqjd0${day}`;
+    const msgs: { id: string; senderId: ID; at: string; text: string; attachment: Message["attachment"] }[] = [];
+    const order = Object.entries(g.scores);
+    order.forEach(([uid, tips], k) => {
+      const lead = order.slice(0, k).every(([, t]) => t < tips) && k > 0;
+      msgs.push({ id: `m_sq_jd_${day}_${uid}`, senderId: uid, at: dAgo(day, -90 + k * 8), text: `played ${g.title} · $${tips}${lead ? " · took the lead" : ""}`, attachment: { type: "sqgamelog", ref } });
+    });
+    g.banter.forEach(([uid, text], k) => {
+      const at = order.findIndex(([id]) => id === uid);
+      msgs.push({ id: `m_sq_jd_${day}_b${k}`, senderId: uid, at: dAgo(day, -90 + at * 8 + 4), text, attachment: undefined });
+    });
+    inject("c_judges", msgs);
+  });
 }

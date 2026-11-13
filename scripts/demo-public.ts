@@ -15,7 +15,7 @@ import qrcode from "qrcode-terminal";
 
 const APP_PORT = Number(process.env.DEMO_PORT) || 3030;
 const SQ_PORT = Number(process.env.SIDEQUEST_PORT) || 5180;
-const THREAD = process.env.DEMO_THREAD || "c_volleyball";
+const THREAD = process.env.DEMO_THREAD || "c_judges";
 const PLAYERS = (process.env.DEMO_PLAYERS || "jordan,devon,tyler,nina,grace").split(",");
 const DIST = ".next-demo";
 const c = { dim: "\x1b[2m", bold: "\x1b[1m", cyan: "\x1b[36m", green: "\x1b[32m", yellow: "\x1b[33m", red: "\x1b[31m", reset: "\x1b[0m" };
@@ -146,7 +146,8 @@ async function main() {
   console.log(`${c.bold}Direct links${c.reset}`);
   for (const p of PLAYERS) console.log(`  ${p.padEnd(8)} ${c.cyan}${publicUrl}/messages/${THREAD}?as=${p}${c.reset}`);
   console.log(`\n${c.bold}Reset chats to the starter data${c.reset}  ${c.cyan}${publicUrl}/admin${c.reset}`);
-  console.log(`\n${c.dim}Post the game from any of those (tap + in the thread) before the judges open it.`);
+  console.log(`\n${c.bold}Drop today's game (Muse pings every judge)${c.reset}  ${c.cyan}${publicUrl}/admin${c.reset}`);
+  console.log(`\n${c.dim}Once all five judges have picked a name, tap Drop on /admin.`);
   console.log(`The URL changes every time this restarts. Ctrl+C to stop everything.${c.reset}\n`);
 }
 

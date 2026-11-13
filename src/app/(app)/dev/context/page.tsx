@@ -14,7 +14,7 @@ type CrewEntry = {
   isGroup: boolean;
   avatar: string;
   closenessScore: number;
-  parts: { participation: number; streak: number; reciprocity: number; confidence: number };
+  parts: { participation: number; streak: number; reciprocity: number; confidence: number; momentum: number; balance: number; cohesion: number; tempo: number };
   streakDays: number;
   streakFreezes: number;
   streakMilestone?: number;
@@ -159,6 +159,10 @@ export default function ContextInspectorPage() {
                       <span className="rounded bg-[#f0f2f5] px-1.5 py-0.5">streak {Math.round(m.parts.streak * 100)}%</span>
                       <span className="rounded bg-[#f0f2f5] px-1.5 py-0.5">banter {Math.round(m.parts.reciprocity * 100)}%</span>
                       <span className="rounded bg-[#f0f2f5] px-1.5 py-0.5">agreement {Math.round(m.parts.confidence * 100)}%</span>
+                      <span className="rounded bg-[#f0f2f5] px-1.5 py-0.5">momentum {Math.round(m.parts.momentum * 100)}%</span>
+                      <span className="rounded bg-[#f0f2f5] px-1.5 py-0.5">balance {Math.round(m.parts.balance * 100)}%</span>
+                      <span className="rounded bg-[#f0f2f5] px-1.5 py-0.5">cohesion {Math.round(m.parts.cohesion * 100)}%</span>
+                      <span className="rounded bg-[#f0f2f5] px-1.5 py-0.5">tempo {Math.round(m.parts.tempo * 100)}%</span>
                       {m.earnedTiers.map((tier) => (
                         <span key={tier} className="rounded bg-emerald-50 px-1.5 py-0.5 font-semibold text-emerald-800">{tier} ✓</span>
                       ))}
