@@ -42,7 +42,7 @@ function ListingTile({ l }: { l: L }) {
       </Link>
       {(l.fit ?? 0) > 0.15 && (
         <div className="mt-1 space-y-1">
-          <div className="truncate text-[11.5px] font-medium text-fb">{l.fitLabel ?? "From your games"}</div>
+          <div className="line-clamp-2 text-[11.5px] leading-tight font-medium text-fb">{l.fitLabel ?? "From your games"}</div>
           {l.shareTarget && (
             sent ? (
               <Link href={`/messages/${l.shareTarget.conversationId}`} className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-semibold text-emerald-700">

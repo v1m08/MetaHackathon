@@ -330,7 +330,11 @@ export function GameTray({ conversationId, onCreate, onClose }: { conversationId
     }
   }
   const readySet = new Set(ready.map((r) => r.interest.toLowerCase()));
-  const chips = [...ready.map((r) => r.interest), ...SUGGESTIONS.filter((s) => !readySet.has(s.toLowerCase()))].slice(0, 10);
+  const smartChips = smart ? [...smart.forChat, ...smart.discover].slice(0, 5) : [];
+  const smartSet = new Set(smartChips.map((s) => s.chip.toLowerCase()));
+  const chips = [...ready.map((r) => r.interest), ...SUGGESTIONS.filter((s) => !readySet.has(s.toLowerCase()))]
+    .filter((c) => !smartSet.has(c.toLowerCase()))
+    .slice(0, 8);
 
   return (
     <Overlay className="flex flex-col justify-end bg-black/40" onClick={onClose}>
@@ -384,11 +388,11 @@ export function GameTray({ conversationId, onCreate, onClose }: { conversationId
                 Send
               </button>
             </form>
-            {smart && (smart.forChat.length > 0 || smart.discover.length > 0) && (
+            {smartChips.length > 0 && (
               <div className="mt-3">
                 <div className="mb-1.5 text-[11.5px] font-semibold text-[#6ee7b7]">Picked for this chat</div>
                 <div className="flex flex-wrap gap-1.5">
-                  {[...smart.forChat, ...smart.discover].slice(0, 5).map((s) => (
+                  {smartChips.map((s) => (
                     <button
                       key={s.chip}
                       onClick={() => create(s.chip)}

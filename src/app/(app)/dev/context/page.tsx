@@ -49,7 +49,7 @@ export default function ContextInspectorPage() {
   const p = data?.profile;
 
   return (
-    <Shell back title="Context engine" tabs={false}>
+    <Shell back title="Context engine" right={<span />} tabs={false}>
       <div className="space-y-2.5 px-2.5 py-2.5 pb-8">
         <div className="rounded-xl bg-white p-3">
           <div className="text-[15px] font-bold">Sidequest Context Engine</div>
