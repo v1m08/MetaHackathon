@@ -110,14 +110,14 @@ export default function EventPage() {
           <div className="flex gap-3"><Calendar size={20} className="shrink-0 text-ink-2" /><span>{eventDate(e.startsAt)}{e.endsAt && ` – ${new Date(e.endsAt).toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" })}`}</span></div>
           <div className="flex gap-3"><MapPin size={20} className="shrink-0 text-ink-2" /><span><b className="font-semibold">{e.location}</b>{e.address && <div className="text-ink-2">{e.address}</div>}</span></div>
           {e.price && <div className="flex gap-3"><Ticket size={20} className="shrink-0 text-ink-2" /><span>{e.price}</span></div>}
-          <div className="flex gap-3">
+          {(e.host || e.hostGroup) && <div className="flex gap-3">
             <Users size={20} className="shrink-0 text-ink-2" />
             <span>
               Hosted by{" "}
               {e.host && <Link href={`/profile/${e.host.id}`} className="font-semibold">{e.host.name}</Link>}
               {e.hostGroup && <> · <Link href={`/groups/${e.hostGroup.id}`} className="font-semibold">{e.hostGroup.name}</Link></>}
             </span>
-          </div>
+          </div>}
         </div>
       </div>
       <div className="mt-2 bg-white px-4 py-3 text-[15px]">

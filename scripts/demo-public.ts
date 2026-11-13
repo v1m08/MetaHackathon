@@ -15,8 +15,7 @@ import qrcode from "qrcode-terminal";
 
 const APP_PORT = Number(process.env.DEMO_PORT) || 3030;
 const SQ_PORT = Number(process.env.SIDEQUEST_PORT) || 5180;
-const THREAD = process.env.DEMO_THREAD || "c_judges";
-const PLAYERS = (process.env.DEMO_PLAYERS || "jordan,devon,tyler,nina,grace").split(",");
+const PLAYERS = ["nivan", "armaan", "vedansh", "keira", "abishek"]; // src/lib/demo.ts DEMO_IDS, numbered 1-5
 const DIST = ".next-demo";
 const c = { dim: "\x1b[2m", bold: "\x1b[1m", cyan: "\x1b[36m", green: "\x1b[32m", yellow: "\x1b[33m", red: "\x1b[31m", reset: "\x1b[0m" };
 const env = { ...process.env, NEXT_PUBLIC_SIDEQUEST_URL: "same-origin", NEXT_DIST_DIR: DIST, SIDEQUEST_PORT: String(SQ_PORT) };
@@ -124,6 +123,7 @@ async function main() {
   if (!(await waitFor(`http://127.0.0.1:${APP_PORT}/demo`, 60_000))) die(`app didn't start on :${APP_PORT} (port in use?)`);
   if (!(await waitFor(`http://127.0.0.1:${APP_PORT}/api/x/topics`, 5000))) die("app is up but can't reach the game server through the proxy");
 
+
   // 4. Tunnel.
   console.log("• opening the public tunnel");
   let publicUrl = "";
@@ -144,10 +144,12 @@ async function main() {
   qrcode.generate(demo, { small: true }, (q: string) => console.log(q));
   console.log(`  ${c.cyan}${demo}${c.reset}\n`);
   console.log(`${c.bold}Direct links${c.reset}`);
-  for (const p of PLAYERS) console.log(`  ${p.padEnd(8)} ${c.cyan}${publicUrl}/messages/${THREAD}?as=${p}${c.reset}`);
+  PLAYERS.forEach((p, k) => console.log(`  ${k + 1}. ${p.padEnd(8)} ${c.cyan}${publicUrl}/profile/${p}?as=${p}${c.reset}`));
   console.log(`\n${c.bold}Reset chats to the starter data${c.reset}  ${c.cyan}${publicUrl}/admin${c.reset}`);
-  console.log(`\n${c.bold}Drop today's game (Muse pings every judge)${c.reset}  ${c.cyan}${publicUrl}/admin${c.reset}`);
-  console.log(`\n${c.dim}Once all five judges have picked a name, tap Drop on /admin.`);
+  console.log(`\n${c.dim}Muse posts the game when the first judge opens the group chat. Keep the game server running.`);
+  console.log(`\n${c.bold}Second demo: the Austin "Sunday cookout" chat (Marketplace plan kits)${c.reset}`);
+  console.log(`  judges pick a seat   ${c.cyan}${publicUrl}/demo/cookout${c.reset}`);
+  console.log(`  you drop the game    ${c.cyan}${publicUrl}/admin${c.reset}  ${c.dim}(Muse pings every seat)${c.reset}`);
   console.log(`The URL changes every time this restarts. Ctrl+C to stop everything.${c.reset}\n`);
 }
 

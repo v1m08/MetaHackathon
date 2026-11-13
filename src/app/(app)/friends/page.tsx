@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { MuseNote } from "@/components/MuseNote";
 import { Shell } from "@/components/Shell";
 import { Avatar, Button, Pill, SectionTitle } from "@/components/ui";
 import { api, refresh, useApi } from "@/lib/api";
@@ -34,6 +35,7 @@ export default function FriendsPage() {
   };
   return (
     <Shell title="Friends" back>
+      <MuseNote />
       <div className="bg-white pb-2">
         <div className="flex gap-2 px-4 py-3">
           <Pill active>Suggestions</Pill>

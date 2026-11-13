@@ -1,7 +1,7 @@
 // Rarity rooms: one pack, any number of friends playing async. Answers are checked here (lists never leave the
 // server), the clock is enforced here, and you only see friends' answers to a prompt after answering it.
-import { randomBytes } from "node:crypto";
-import { existsSync, mkdirSync, readFileSync, readdirSync, renameSync, writeFileSync } from "node:fs";
+import { createHash, randomBytes } from "node:crypto";
+import { existsSync, mkdirSync, readFileSync, readdirSync, renameSync, statSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { cleanText } from "../../shared/text";
 import { matchAnswer, norm, ONLY_YOU_BONUS, PROMPTS_PER_GAME, publicPack, SECONDS_PER_PROMPT, TIER_POINTS, type Pack, type Verdict } from "../../shared/rarity";
@@ -71,14 +71,25 @@ export function createXRoom(full: Pack): XRoom {
 }
 
 // ---------- pack cache (same interest → same pack, instant) ----------
-const packKey = (interest: string) => norm(interest).replace(/ /g, "-").slice(0, 60) || "x";
-export function cachedPack(interest: string): Pack | null {
-  const f = join(PACKS, `${packKey(interest)}.json`);
-  return existsSync(f) ? (JSON.parse(readFileSync(f, "utf8")) as Pack) : null;
+/** Same interest (and same angles, if a caller asked for some) → same pack. */
+const packKey = (interest: string, angles?: string[]) =>
+  (norm(interest).replace(/ /g, "-").slice(0, 60) || "x") + (angles?.length ? `--${createHash("sha1").update(angles.map(norm).sort().join("|")).digest("hex").slice(0, 8)}` : "");
+/** The cached pack for this interest: the exact angles if we have them, otherwise the newest pack for the same
+ *  interest (any angles). Reusing it beats making a group wait a minute and a half for a near-identical new one. */
+export function cachedPack(interest: string, angles?: string[]): Pack | null {
+  const read = (f: string) => JSON.parse(readFileSync(join(PACKS, f), "utf8")) as Pack;
+  const exact = `${packKey(interest, angles)}.json`;
+  if (existsSync(join(PACKS, exact))) return read(exact);
+  if (!existsSync(PACKS)) return null;
+  const base = packKey(interest);
+  const same = readdirSync(PACKS)
+    .filter((f) => f === `${base}.json` || f.startsWith(`${base}--`))
+    .sort((a, b) => statSync(join(PACKS, b)).mtimeMs - statSync(join(PACKS, a)).mtimeMs);
+  return same[0] ? read(same[0]) : null;
 }
-export function cachePack(p: Pack) {
+export function cachePack(p: Pack, angles?: string[]) {
   mkdirSync(PACKS, { recursive: true });
-  writeFileSync(join(PACKS, `${packKey(p.interest)}.json`), JSON.stringify(p));
+  writeFileSync(join(PACKS, `${packKey(p.interest, angles)}.json`), JSON.stringify(p));
 }
 export const listCachedPacks = () => (existsSync(PACKS) ? readdirSync(PACKS).map((f) => f.replace(/\.json$/, "")) : []);
 /** Topics that are ready instantly: [{ interest, title, emoji }]. */

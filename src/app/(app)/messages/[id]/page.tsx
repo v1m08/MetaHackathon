@@ -7,6 +7,7 @@ import { GAMES, GameCard, GamePlayer, GameTray, type Finished } from "@/componen
 import { EventPicksSheet } from "@/components/events/EventPicksSheet";
 import { Critter } from "@/components/hangout/Critter";
 import { useBack, useMe } from "@/components/Shell";
+import { DEMO_CHAT, MUSE_ID } from "@/lib/demo";
 import { ArrowLeft, Flame, Image as ImageIcon, Info, Phone, Plus, Send, Smile, Sparkles, ThumbsUp, Video, X } from "lucide-react";
 import { Avatar, Photo, cx } from "@/components/ui";
 import { api, refresh, useApi } from "@/lib/api";
@@ -140,8 +141,8 @@ export default function ThreadPage() {
     setPlaying(null);
     const s = scored.current;
     scored.current = null;
-    if (s) void s.sent.catch(() => {}).then(() => setPicksFor(s.ref));
-  }, []);
+    if (s && id !== DEMO_CHAT) void s.sent.catch(() => {}).then(() => setPicksFor(s.ref));
+  }, [id]);
   const [picksPeek, setPicksPeek] = useState(false);
   const closePicks = useCallback(() => {
     setPicksFor(null);
@@ -176,6 +177,19 @@ export default function ThreadPage() {
       setSimBusy(false);
     }
   }
+
+  // ---------- hackathon demo: Muse sends the group a game, then suggests a plan ----------
+  const isDemoChat = id === DEMO_CHAT;
+  useEffect(() => {
+    if (isDemoChat) void api("/api/demo/kickoff", { method: "POST", json: { conversationId: id } }).then(() => mutate()).catch(() => {});
+  }, [isDemoChat, id, mutate]);
+  // no canned fallback if the model was unreachable: keep nudging Muse until its game shows up
+  const museGame = c?.messages.some((m) => m.senderId === MUSE_ID && m.attachment?.type === "sqgame");
+  useEffect(() => {
+    if (!isDemoChat || museGame) return;
+    const t = setInterval(() => void api("/api/demo/kickoff", { method: "POST", json: { conversationId: id } }).catch(() => {}), 15_000);
+    return () => clearInterval(t);
+  }, [isDemoChat, museGame, id]);
 
   return (
     <div className="relative flex h-full flex-col bg-white">
@@ -285,7 +299,7 @@ export default function ThreadPage() {
         <div ref={bottom} className="h-3 scroll-mb-20" />
       </div>
 
-      {myLastGame && !picksFor && !playing && (
+      {myLastGame && !isDemoChat && !picksFor && !playing && (
         <div className="pointer-events-none sticky bottom-[58px] z-10 flex justify-center pb-1.5">
           <button
             onClick={() => {
