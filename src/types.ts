@@ -129,8 +129,8 @@ export interface Message {
   text: string;
   createdAt: string;
   reactions?: Record<ID, string>;
-  /** sqgame / sqgamelog: a Deep Cuts or Order Up! game card / "played" line (src/components/ChatGames.tsx). */
-  attachment?: { type: "image" | "listing" | "event" | "sqgame" | "sqgamelog"; ref: string };
+  /** sqgame / sqgamelog: a Sidequest game card / "played" line (src/components/ChatGames.tsx). */
+  attachment?: { type: "image" | "listing" | "event" | "group" | "sqgame" | "sqgamelog"; ref: string };
   readBy?: ID[];
 }
 

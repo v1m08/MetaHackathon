@@ -2,22 +2,39 @@
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState } from "react";
-import { Calendar, Check, MapPin, Share2, Star, Ticket, Users } from "lucide-react";
+import { Calendar, Check, MapPin, Send, Share2, Star, Ticket, Users } from "lucide-react";
 import { PostCard } from "@/components/Post";
 import { Shell } from "@/components/Shell";
-import { Avatar, Button, Photo, cx } from "@/components/ui";
-import { api, useApi } from "@/lib/api";
+import { Avatar, Button, Photo, Sheet, cx } from "@/components/ui";
+import { api, refresh, useApi } from "@/lib/api";
 import { eventDate, eventDay } from "@/lib/format";
 import type { HydratedPost } from "@/server/db";
 import type { FBEvent, Group } from "@/types";
 
 type Card = { id: string; name: string; avatar: string };
-type E = FBEvent & { host?: Card; hostGroup?: Group; myStatus: "going" | "interested" | "none"; goingUsers: Card[]; interestedUsers: Card[]; friendsGoing: Card[]; posts: HydratedPost[] };
+type ShareTarget = { conversationId: string; name: string; label: string };
+type ConvSummary = { id: string; name: string; avatar?: string; isGroup: boolean };
+type E = FBEvent & {
+  host?: Card;
+  hostGroup?: Group;
+  myStatus: "going" | "interested" | "none";
+  goingUsers: Card[];
+  interestedUsers: Card[];
+  friendsGoing: Card[];
+  posts: HydratedPost[];
+  fit?: number;
+  fitLabel?: string;
+  shareTarget?: ShareTarget;
+};
 
 export default function EventPage() {
   const { id } = useParams<{ id: string }>();
   const { data: e, mutate } = useApi<E>(`/api/events/${id}`);
+  const { data: convs } = useApi<ConvSummary[]>("/api/conversations");
   const [text, setText] = useState("");
+  const [sentTo, setSentTo] = useState<string | null>(null);
+  const [shareOpen, setShareOpen] = useState(false);
+  const [busy, setBusy] = useState(false);
   if (!e) return <Shell back title=""><div className="skeleton h-56" /></Shell>;
   const { mon, day } = eventDay(e.startsAt);
   const setStatus = async (status: "going" | "interested" | "none") => {
@@ -30,8 +47,23 @@ export default function EventPage() {
     setText("");
     mutate();
   };
+  const sendToChat = async (conversationId: string) => {
+    if (busy) return;
+    setBusy(true);
+    try {
+      await api(`/api/conversations/${conversationId}/messages`, {
+        method: "POST",
+        json: { text: `Wait should we go to ${e.title}?`, attachment: { type: "event", ref: e.id } },
+      });
+      refresh("/api/conversations");
+      setSentTo(conversationId);
+      setShareOpen(false);
+    } finally {
+      setBusy(false);
+    }
+  };
   return (
-    <Shell back title="" right={<button className="rounded-full p-2"><Share2 size={20} /></button>}>
+    <Shell back title="" right={<button onClick={() => setShareOpen(true)} className="rounded-full p-2" aria-label="Share event"><Share2 size={20} /></button>}>
       <div className="bg-white pb-3">
         <div className="relative">
           <Photo src={e.cover} className="h-52 w-full object-cover" />
@@ -56,6 +88,22 @@ export default function EventPage() {
               <Star size={16} /> Interested
             </Button>
           </div>
+          {(e.fit ?? 0) > 0.15 && (
+            <div className="mt-3 flex flex-wrap items-center justify-between gap-2 rounded-xl bg-[#f0f7ff] px-3 py-2">
+              <span className="text-[13px] font-medium text-fb">{e.fitLabel ?? "Matches your games"}</span>
+              {e.shareTarget && (
+                sentTo === e.shareTarget.conversationId ? (
+                  <Link href={`/messages/${e.shareTarget.conversationId}`} className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-1 text-[12px] font-semibold text-emerald-700">
+                    <Check size={12} /> Sent · Open chat
+                  </Link>
+                ) : (
+                  <button onClick={() => void sendToChat(e.shareTarget!.conversationId)} disabled={busy} className="inline-flex items-center gap-1 rounded-full bg-fb px-2.5 py-1 text-[12px] font-semibold text-white">
+                    <Send size={11} /> {e.shareTarget.label}
+                  </button>
+                )
+              )}
+            </div>
+          )}
         </div>
         <div className="mt-4 space-y-3 border-t border-line/60 px-4 pt-3 text-[15px]">
           <div className="flex gap-3"><Calendar size={20} className="shrink-0 text-ink-2" /><span>{eventDate(e.startsAt)}{e.endsAt && ` – ${new Date(e.endsAt).toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" })}`}</span></div>
@@ -95,6 +143,28 @@ export default function EventPage() {
       </div>
       {e.posts.map((p) => <PostCard key={p.id} post={p} compact />)}
       {e.posts.length === 0 && <div className="bg-white py-6 text-center text-[14px] text-ink-2">No posts yet. Start the discussion.</div>}
+
+      <Sheet open={shareOpen} onClose={() => setShareOpen(false)} title="Send event in Messenger">
+        <div className="divide-y divide-line/40 px-4 py-2">
+          {(convs ?? []).slice(0, 6).map((c) => (
+            <div key={c.id} className="flex items-center justify-between gap-3 py-2.5">
+              <div className="flex min-w-0 items-center gap-2.5">
+                <Avatar src={c.avatar} name={c.name} size={38} />
+                <span className="truncate text-[15px] font-medium">{c.name}</span>
+              </div>
+              {sentTo === c.id ? (
+                <Link href={`/messages/${c.id}`} className="rounded-full bg-emerald-50 px-3 py-1 text-[13px] font-semibold text-emerald-700">
+                  Open chat
+                </Link>
+              ) : (
+                <Button onClick={() => void sendToChat(c.id)} disabled={busy} className="rounded-full px-3.5 py-1 text-[13px]">
+                  Send
+                </Button>
+              )}
+            </div>
+          ))}
+        </div>
+      </Sheet>
     </Shell>
   );
 }

@@ -193,7 +193,8 @@ npm run typecheck  # tsc --noEmit
 npm run warm       # cache every seed image locally (server must be running)
 npm run reset      # restore the seed data (server must be running)
 npm run sidequest  # start the Sidequest game server (:5180) for Deep Cuts & Order Up!
-npm test           # Sidequest Context Engine unit & privacy tests
+npm run demo:events # set up the volleyball chat's Event unlock (see "Event unlock popup")
+npm test           # Sidequest Context Engine + Event unlock popup tests
 ```
 
 ## Sidequest Games + Context & Closeness Engine
@@ -214,6 +215,13 @@ Young adults stay connected in Messenger through two GamePigeon-style pixel game
 4. **Multi-Factor Ecosystem Ranking (`Events`, `Groups`, `Marketplace`):**
    - `socialMatchFor` combines **topic fit** + **threshold-gated shared-chat overlap** + **mutual friends going (`+0.05` each, cap `+0.15`)** + **event soonness (`+0.10` over 21 days)** + **saturation filtering** (omits `Send to X` when `X` is already RSVPed going) + **RSVP / Join / Save feedback loop** back into user affinity.
 
+5. **Event unlock popup (`src/lib/events/forChat.ts`, `src/components/events/EventPicksSheet.tsx`):**
+   - When you finish a game and close it, Muse slides up in the Hangout-card style with **one** upcoming event for the chat: **Send to chat**, **Going / Interested**, tap for details, or **Not now**.
+   - **Benchmarks (all must pass):** you finished this game here · the chat has earned the **Event tier** (`connectionScoreFor().earnedTiers`: score ≥ 60 plus a settled topic) · at least one event fits ≥ `0.6` · once per game per person and one popup per person per chat per Austin day. The finish that earns the tier shows **"Events unlocked"**; after a member has seen it the unlock sticks, since the score can dip when a new game starts. The popup never shows the score itself (it lives in `/dev/context`).
+   - **Fit:** the strongest of the **game's subject** (1.0 primary / 0.65 secondary), the **chat's settled topics** (`chatTopicsFor`, 0.8 at full agreement) and **interests every member lists** on their public profile (0.6; a group needs ≥ half), plus `+0.1` per extra agreeing source, friends going (`+0.05` each, cap `+0.15`) and soonness (`+0.10` over 21 days). Of the events that fit, the popup suggests the one **closest to everyone's profiles**: each member's best match across the event's topics (1 for its main topic, 0.65 for the others), averaged over the chat; ties go to the better fit. Past events, events you're going to or hosting, and events any member can't see are left out. If every other member is already going, Send is hidden and the why line names them.
+   - **Try it:** `c_ethan_priya?as=ethan` → play Order Up!: Ramen → close. For the unlock moment: in `c_volleyball?as=sam` start Order Up!: Tacos, run `npm run demo:events`, then play it as Sam and close. `GET /api/conversations/<id>/event-picks?ref=<game>` explains why a popup didn't show.
+
 ### Privacy Guardrails (Enforced in Code)
 - **Strict Audience Intersection on Input:** Private Reel/Marketplace saves (`savedBy`), unshared private Groups, restricted (`friends`-only) profiles when non-friends are present, and other threads' messages are excluded from `GameTray` topic suggestions.
 - **Zero Cross-Chat Signal Leakage on Output:** Friend/group match badges (`"Matches your games with X"`) only inspect Sidequest games **both users played inside a shared thread** — games a friend played in another chat never leak.
+- **Event unlock popup:** uses only this chat's games and topics, public profile interests and attendee lists. Never another member's games from other chats or their learned affinity.

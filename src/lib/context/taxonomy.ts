@@ -4,7 +4,7 @@ import type { FBEvent, Group, Listing } from "@/types";
 import type { GameKind } from "@/components/ChatGames";
 
 export const TOPICS = [
-  { id: "food", label: "food", emoji: "🌮", re: /food|tacos?\b|cook|\beat(s|en|ing)?\b|bbq|brunch|ramen|pizza|burger|sushi|sourdough|birria|dumpling|noodle|meal|grill|bak(e|ing)|dinner|potluck|farmers market|kitchen|diner/i, events: ["Food & Drink"], tags: ["Food", "Budget"], listings: [] as string[], auto: "Tacos", deepcuts: "Street food", orderup: "Tacos", ghostrun: "Food truck sprint", sketchoff: "Street food" },
+  { id: "food", label: "food", emoji: "🌮", re: /food|tacos?\b|cook(ware|ing)?|\beat(s|en|ing)?\b|bbq|brunch|ramen|pizza|burger|sushi|sourdough|birria|dumpling|noodle|meal|grill|bak(e|ery|ing)|dinner|potluck|farmers market|kitchen|diner|pastry|pastries|cookie|cake|dessert|tortilla|cast[- ]iron|skillet|salsa|chili crisp|kimchi|snack/i, events: ["Food & Drink"], tags: ["Food", "Budget"], listings: ["Food", "Food & Drink", "Home & Kitchen", "Kitchen"], auto: "Tacos", deepcuts: "Street food", orderup: "Tacos", ghostrun: "Food truck sprint", sketchoff: "Street food" },
   { id: "music", label: "live music", emoji: "🎸", re: /music|dj|vinyl|\bbands?\b|indie|taylor swift|pop|hip-?hop|song|jazz|concert|synth|house set|\b(a|the|live|house) show\b|cumbia|afrobeats|acl|gig/i, events: ["Music"], tags: ["Music"], listings: ["Musical Instruments", "Tickets"], auto: "Indie bands", deepcuts: "Indie bands", orderup: "Late-night concert diner", ghostrun: "Tour bus sprint", sketchoff: "Concert gear" },
   { id: "sports", label: "pickup sports", emoji: "🏐", re: /volleyball|pickleball|soccer|football|basketball|spurs|f1|formula ?1|racing|pickup|\bcourts?\b|tourney|round robin/i, events: ["Sports"], tags: ["Volleyball", "Sports"], listings: ["Sporting Goods"], auto: "F1", deepcuts: "NBA trivia", orderup: "Courtside snack bar", ghostrun: "F1", sketchoff: "Sports gear" },
   { id: "outdoors", label: "the outdoors", emoji: "🧗", re: /hik|trail|climb|boulder|rock climbing|ski(ing)?|backpack|\bcamp(ing|site|fire|out)?\b|mountain|greenbelt|outdoor|scuba|diving/i, events: ["Outdoors"], tags: ["Outdoors"], listings: [], auto: "Rock climbing", deepcuts: "National parks", orderup: "Campfire kitchen", ghostrun: "Rock climbing", sketchoff: "Camping wildlife" },
@@ -37,6 +37,9 @@ export const topicsOfEvent = (e: FBEvent): TopicId[] => {
   return main.length ? main : topicsOfText(e.description.slice(0, 200));
 };
 export const topicsOfGroup = (g: Group): TopicId[] => uniq([...TOPICS.filter((t) => g.tags.some((tag) => has(t.tags, tag))).map((t) => t.id), ...topicsOfText(`${g.name} ${g.tags.join(" ")}`)]);
-export const topicsOfListing = (l: Listing): TopicId[] => uniq([...TOPICS.filter((t) => has(t.listings, l.category)).map((t) => t.id), ...topicsOfText(l.title)]);
+export const topicsOfListing = (l: Listing): TopicId[] => {
+  const main = uniq([...TOPICS.filter((t) => has(t.listings, l.category)).map((t) => t.id), ...topicsOfText(l.title)]);
+  return main.length ? main : topicsOfText(l.description.slice(0, 200));
+};
 
 export const chipForTopic = (id: TopicId, game: GameKind | "auto"): string => topic(id)[game];
