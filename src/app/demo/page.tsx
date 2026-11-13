@@ -1,44 +1,33 @@
-// Judge picker for the hackathon demo: scan one QR code, tap your number, land on your profile as that person.
-import { DEMO_CAST, demoUsers } from "@/data/demo";
-import { DEMO_IDS } from "@/lib/demo";
-import { MUSE_COLORS, museAvatarFor } from "@/lib/museAvatar";
+// Judge landing page for the Austin "Sunday cookout" demo (/demo; the SF cast demo is /demo/sf): scan one QR code, pick a person, land on Facebook as them. When the presenter
+// drops today's game (/admin), Muse pops a notification on every judge's phone that opens the game in the group chat.
+// Thread and players can be overridden: /demo?thread=c_volleyball&players=jordan,devon,tyler,nina,grace
+import { users } from "@/data/users";
 
-export default function DemoPage() {
-  const people = DEMO_IDS.map((id) => demoUsers.find((u) => u.id === id)!);
+const DEFAULT_THREAD = "c_judges";
+const DEFAULT_PLAYERS = ["jordan", "devon", "tyler", "nina", "grace"];
+
+export default async function DemoPage({ searchParams }: { searchParams: Promise<Record<string, string | undefined>> }) {
+  const sp = await searchParams;
+  const thread = sp.thread || DEFAULT_THREAD;
+  const ids = sp.players ? sp.players.split(",").map((s) => s.trim()).filter(Boolean) : DEFAULT_PLAYERS;
+  const people = ids.map((id) => users.find((u) => u.id === id)).filter((u): u is (typeof users)[number] => !!u);
+
   return (
-    <main className="mx-auto min-h-dvh max-w-md bg-[#f6f4ff] px-4 pb-10 pt-8 text-[#050505]">
-      <div className="flex items-center gap-3">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={museAvatarFor("muse")} alt="" className="h-14 w-14 rounded-2xl" />
-        <div>
-          <h1 className="text-[26px] font-extrabold leading-tight tracking-[-0.01em]">Pick your number</h1>
-          <p className="text-[15px] text-[#65676b]">You&apos;ll play as that person.</p>
-        </div>
-      </div>
+    <main className="mx-auto min-h-dvh max-w-md bg-white px-4 py-8 text-[#050505]">
+      <h1 className="text-2xl font-bold">Pick who you are</h1>
+      <p className="mt-1 text-[15px] text-[#65676b]">Everyone picks a different person. You&apos;re all in one group chat, Sunday cookout 🔥.</p>
+      <p className="mt-2 text-[15px] text-[#65676b]">Keep Facebook open. When today&apos;s game drops, Muse will ping you: tap it to play, then close the game to see what Muse suggests for your group.</p>
       <ul className="mt-6 space-y-3">
-        {people.map((u, k) => {
-          const col = MUSE_COLORS[u.id];
-          return (
-            <li key={u.id}>
-              <a href={`/profile/${u.id}?as=${u.id}`} className="flex items-center gap-3 rounded-2xl bg-white p-3 shadow-[0_1px_3px_rgba(0,0,0,0.08)] active:scale-[0.98] transition-transform">
-                <span className="flex h-11 w-11 flex-none items-center justify-center rounded-full text-[22px] font-extrabold text-white" style={{ background: `linear-gradient(135deg, ${col.from}, ${col.to})` }}>
-                  {k + 1}
-                </span>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={u.avatar} alt="" className="h-14 w-14 flex-none rounded-full" />
-                <span className="min-w-0 flex-1">
-                  <span className="block text-[18px] font-bold leading-tight">{u.name}</span>
-                  <span className="block truncate text-[14px] text-[#65676b]">
-                    {[DEMO_CAST[u.id].hood.replace(/^the /, ""), u.location.replace(", CA", "")].filter((x, i, a) => a.indexOf(x) === i).join(" · ")}
-                  </span>
-                </span>
-                <span className="flex-none text-[22px] text-[#b0b3b8]">›</span>
-              </a>
-            </li>
-          );
-        })}
+        {people.map((u) => (
+          <li key={u.id}>
+            <a href={thread === DEFAULT_THREAD ? `/feed?as=${u.id}` : `/messages/${thread}?as=${u.id}`} className="flex items-center gap-3 rounded-xl border border-[#e4e6eb] p-3 active:bg-[#f0f2f5]">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={u.avatar} alt="" className="h-12 w-12 rounded-full object-cover" />
+              <span className="text-[17px] font-semibold">{u.name}</span>
+            </a>
+          </li>
+        ))}
       </ul>
-      <p className="mt-6 text-center text-[13px] text-[#65676b]">Everyone picks a different number. A guide at the top of the screen walks you through.</p>
     </main>
   );
 }

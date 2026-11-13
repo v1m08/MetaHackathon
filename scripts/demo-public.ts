@@ -140,16 +140,14 @@ async function main() {
   // 5. Links.
   const demo = `${publicUrl}/demo`;
   console.log(`\n${c.green}${c.bold}✓ Live at ${publicUrl}${c.reset}\n`);
-  console.log(`${c.bold}Judges: scan this, then each tap a different name${c.reset}`);
+  console.log(`${c.bold}Judges: scan this, then each tap a different name${c.reset}  ${c.dim}(Austin "Sunday cookout" chat)${c.reset}`);
   qrcode.generate(demo, { small: true }, (q: string) => console.log(q));
   console.log(`  ${c.cyan}${demo}${c.reset}\n`);
-  console.log(`${c.bold}Direct links${c.reset}`);
+  console.log(`${c.bold}Drop today's game (Muse pings every seat)${c.reset}  ${c.cyan}${publicUrl}/admin${c.reset}`);
+  console.log(`${c.dim}Once everyone has picked a name, tap Drop on /admin. Reset between runs is on the same page.${c.reset}`);
+  console.log(`\n${c.bold}Second demo: the SF cast, Muse posts the game itself${c.reset}  ${c.cyan}${publicUrl}/demo/sf${c.reset}`);
   PLAYERS.forEach((p, k) => console.log(`  ${k + 1}. ${p.padEnd(8)} ${c.cyan}${publicUrl}/profile/${p}?as=${p}${c.reset}`));
-  console.log(`\n${c.bold}Reset chats to the starter data${c.reset}  ${c.cyan}${publicUrl}/admin${c.reset}`);
-  console.log(`\n${c.dim}Muse posts the game when the first judge opens the group chat. Keep the game server running.`);
-  console.log(`\n${c.bold}Second demo: the Austin "Sunday cookout" chat (Marketplace plan kits)${c.reset}`);
-  console.log(`  judges pick a seat   ${c.cyan}${publicUrl}/demo/cookout${c.reset}`);
-  console.log(`  you drop the game    ${c.cyan}${publicUrl}/admin${c.reset}  ${c.dim}(Muse pings every seat)${c.reset}`);
+  console.log(`${c.dim}Muse posts the game when the first of them opens the group chat. Keep the game server running.`);
   console.log(`The URL changes every time this restarts. Ctrl+C to stop everything.${c.reset}\n`);
 }
 
