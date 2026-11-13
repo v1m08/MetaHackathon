@@ -10,3 +10,4 @@ sidequest/.cache
 .ai-ledger.json
 .ai-ledger.json.tmp*
 .ai-cache
+.next-demo

@@ -63,10 +63,10 @@ export class SceneView {
     this.anchor = this.up ? 0.62 : 0.4;
     const fullUnits = JOURNEY_POINTS * w.meter.perPoint;
     this.k = 1500 / fullUnits;
-    // tick spacing: a round number of units, about 70 art px apart
-    const raw = 70 / this.k;
+    // tick spacing: a round number of points (the ticks are labeled in points), about 70 art px apart
+    const raw = 70 / this.k / w.meter.perPoint;
     const p10 = Math.pow(10, Math.floor(Math.log10(raw)));
-    this.step = [1, 2, 5, 10].map((m) => m * p10).find((s) => s >= raw) ?? raw;
+    this.step = ([1, 2, 5, 10].map((m) => m * p10).find((s) => s >= raw) ?? raw) * w.meter.perPoint;
 
     const gauge = opts.gauge !== false;
     host.innerHTML = `<canvas class="scene-canvas" style="position:absolute;left:0;top:0;image-rendering:pixelated"></canvas>${gauge ? `<div class="gauge" aria-hidden="true"><div class="gauge-line"></div></div>` : ""}`;
@@ -306,7 +306,7 @@ export class SceneView {
       }
       el.style.display = "";
       el.style.transform = `translateY(${y}px)`;
-      el.textContent = `${fmt(units)}${this.w.meter.unit}`;
+      el.textContent = `${fmt(units / this.w.meter.perPoint)}`;
     });
     for (const m of this.markers) {
       const el = this.markerEls.get(m.name + (m.me ? "*" : ""));

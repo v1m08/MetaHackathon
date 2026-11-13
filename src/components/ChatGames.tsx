@@ -6,7 +6,7 @@ import { createPortal } from "react-dom";
 import { X } from "lucide-react";
 import { api } from "@/lib/api";
 import { SceneView } from "../../sidequest/client/src/rarity/scene";
-import { fmt, withScene, type PublicPack } from "../../sidequest/shared/rarity";
+import { withScene, type PublicPack } from "../../sidequest/shared/rarity";
 import type { Menu } from "../../sidequest/shared/kitchen";
 import type { Course } from "../../sidequest/shared/run";
 import type { Stroke } from "../../sidequest/shared/sketch";
@@ -17,7 +17,13 @@ export type GameKind = "deepcuts" | "orderup" | "ghostrun" | "sketchoff";
 export const kindOf = (ref: string): GameKind => (ref.startsWith("k:") ? "orderup" : ref.startsWith("r:") ? "ghostrun" : ref.startsWith("s:") ? "sketchoff" : "deepcuts");
 const idOf = (ref: string) => ref.replace(/^[krs]:/, "");
 
-export const sqUrl = () => process.env.NEXT_PUBLIC_SIDEQUEST_URL || (typeof window === "undefined" ? "" : `${location.protocol}//${location.hostname}:5180`);
+/** Where the game server lives. "same-origin" = proxied through this app (next.config.ts rewrites), used for the public demo tunnel. */
+export const sqUrl = () => {
+  const v = process.env.NEXT_PUBLIC_SIDEQUEST_URL;
+  if (typeof window === "undefined") return v && v !== "same-origin" ? v : "";
+  if (v === "same-origin") return location.origin;
+  return v || `${location.protocol}//${location.hostname}:5180`;
+};
 /** Messenger user → Sidequest player id (6-32 lowercase alphanumerics). */
 export const sqPid = (userId: string) => `fbu${userId.toLowerCase().replace(/[^a-z0-9]/g, "")}`.padEnd(6, "0").slice(0, 32);
 
@@ -26,8 +32,8 @@ interface RoomInfo {
   pack: PublicPack;
   me: { done: number; finished: boolean; score: number } | null;
   board: { name: string; score: number; answered: number; me: boolean }[];
+  prompts: unknown[];
 }
-const meter = (p: PublicPack, points: number) => `${fmt(points * p.meter.perPoint)}${p.meter.unit}`;
 
 function useRoom(roomId: string, userId: string) {
   const [room, setRoom] = useState<RoomInfo | null>(null);
@@ -67,6 +73,40 @@ function Cover({ pack }: { pack: PublicPack }) {
 }
 
 
+/** A game card's footer: a plain top-3 leaderboard (or a one-line nudge before anyone has played) and the button. */
+type Standing = { name: string; me: boolean; value: string };
+const MEDALS = ["🥇", "🥈", "🥉"];
+function CardFooter({ rows, empty, cta, color, ctaText = "#111", muted = "#a9b0c4" }: { rows: Standing[] | null; empty: string; cta: string; color: string; ctaText?: string; muted?: string }) {
+  const shown = rows?.slice(0, 3) ?? [];
+  const more = (rows?.length ?? 0) - shown.length;
+  return (
+    <div className="flex items-center gap-2 px-3 py-2.5 text-white">
+      <div className="min-w-0 flex-1">
+        {!rows ? (
+          <div className="text-[14px] font-semibold">Loading…</div>
+        ) : !rows.length ? (
+          <div className="text-[14px] font-semibold">{empty}</div>
+        ) : (
+          <ol className="space-y-0.5 text-[13px] leading-[18px]">
+            {shown.map((r, k) => (
+              <li key={k} className="flex items-center gap-1.5">
+                <span className="w-4 flex-none text-center text-[12px]">{MEDALS[k]}</span>
+                <span className={cx("min-w-0 flex-1 truncate", r.me ? "font-bold" : "font-medium")}>{r.me ? "You" : r.name}</span>
+                <span className="flex-none tabular-nums" style={{ color: r.me ? "#fff" : muted }}>{r.value}</span>
+              </li>
+            ))}
+            {more > 0 && <li className="pl-[22px] text-[12px]" style={{ color: muted }}>+{more} more</li>}
+          </ol>
+        )}
+      </div>
+      <span className="flex-none self-center rounded-full px-3.5 py-1.5 text-[13px] font-bold" style={{ background: color, color: ctaText }}>
+        {cta}
+      </span>
+    </div>
+  );
+}
+const cx = (...c: (string | false | undefined)[]) => c.filter(Boolean).join(" ");
+
 export function GameCard({ roomId, userId, onOpen }: { roomId: string; userId: string; onOpen: (ref: string) => void }) {
   const kind = kindOf(roomId);
   if (kind === "orderup") return <KitchenCard gameRef={roomId} userId={userId} onOpen={onOpen} />;
@@ -79,14 +119,9 @@ function DeepCutsCard({ roomId, userId, onOpen }: { roomId: string; userId: stri
   const { room, missing } = useRoom(roomId, userId);
   if (missing) return <div className="rounded-2xl bg-[#f0f0f0] px-3 py-2 text-[13px] text-ink-2">This game has ended.</div>;
   const p = room?.pack;
-  const leader = room?.board[0];
-  const status = !room
-    ? "Loading…"
-    : room.me?.finished
-      ? `You reached ${meter(room.pack, room.me.score)}${leader && !leader.me ? ` · ${leader.name} leads` : leader?.me && room.board.length > 1 ? " · you lead" : ""}`
-      : leader
-        ? `${leader.me ? "You lead" : `${leader.name} leads`} with ${meter(room.pack, leader.score)}`
-        : "Be the first to play";
+  // Plain points here: the in-game meter ("2,380 OVO", "1,140 Elo") is flavor that means nothing in the chat.
+  const n = room?.prompts?.length || 7;
+  const rows = room ? room.board.map((b) => ({ name: b.name, me: b.me, value: b.answered < n ? `${b.score} pts · ${b.answered}/${n}` : `${b.score} pts` })) : null;
   const cta = room?.me?.finished ? "View" : room?.me?.done ? "Resume" : "Play";
   return (
     <button
@@ -111,17 +146,7 @@ function DeepCutsCard({ roomId, userId, onOpen }: { roomId: string; userId: stri
           Deep Cuts
         </div>
       </div>
-      <div className="flex items-center gap-2 px-3 py-2.5 text-white">
-        <div className="min-w-0 flex-1">
-          <div className="truncate text-[14px] font-semibold leading-tight">{status}</div>
-          <div className="mt-0.5 truncate text-[12px] text-[#a9b0c4]">
-            {p ? `${p.interest} · ${room!.board.length} played` : ""}
-          </div>
-        </div>
-        <span className="rounded-full px-3.5 py-1.5 text-[13px] font-bold" style={{ background: p?.palette.primary ?? "#ffb020", color: "#111" }}>
-          {cta}
-        </span>
-      </div>
+      <CardFooter rows={rows} empty="Be the first to play" cta={cta} color={p?.palette.primary ?? "#ffb020"} />
     </button>
   );
 }
@@ -207,9 +232,8 @@ function KitchenCard({ gameRef, userId, onOpen }: { gameRef: string; userId: str
   }, [gameRef, userId]);
   if (missing) return <div className="rounded-2xl bg-[#f0f0f0] px-3 py-2 text-[13px] text-ink-2">This restaurant has closed.</div>;
   const m = room?.menu;
-  const leader = room?.board[0];
   const usd = (n: number) => `$${n.toLocaleString("en-US")}`;
-  const status = !room ? "Loading…" : room.me ? `Your best: ${usd(room.me.best)}${leader && !leader.me ? ` · ${leader.name} leads` : room.board.length > 1 ? " · you lead" : ""}` : leader ? `${leader.name} leads with ${usd(leader.score)}` : "Be the first to open";
+  const rows = room ? room.board.map((b) => ({ name: b.name, me: b.me, value: `${usd(b.score)} tips` })) : null;
   return (
     <button
       onClick={() => onOpen(gameRef)}
@@ -220,15 +244,7 @@ function KitchenCard({ gameRef, userId, onOpen }: { gameRef: string; userId: str
       <div className="relative h-[156px] overflow-hidden" style={{ background: m ? `linear-gradient(180deg, ${m.theme.wall}, ${m.theme.wall2})` : "#3a2a20" }}>
         {m && <KitchenCover menu={m} seed={room!.id} />}
       </div>
-      <div className="flex items-center gap-2 px-3 py-2.5 text-white">
-        <div className="min-w-0 flex-1">
-          <div className="truncate text-[14px] font-semibold leading-tight">{status}</div>
-          <div className="mt-0.5 truncate text-[12px] text-[#c9b8a8]">{m ? `${m.interest} · ${room!.board.length} played` : ""}</div>
-        </div>
-        <span className="rounded-full px-3.5 py-1.5 text-[13px] font-bold text-white" style={{ background: m?.theme.primary ?? "#e8492f" }}>
-          {room?.me ? "Again" : "Play"}
-        </span>
-      </div>
+      <CardFooter rows={rows} empty="Be the first to open" cta={room?.me ? "Again" : "Play"} color={m?.theme.primary ?? "#e8492f"} ctaText="#fff" muted="#c9b8a8" />
     </button>
   );
 }
@@ -259,17 +275,11 @@ function usePoll<T>(url: string) {
   }, [url]);
   return { data, missing };
 }
-function CardShell({ label, onOpen, cover, status, sub, cta, color }: { label: string; onOpen: () => void; cover: React.ReactNode; status: string; sub: string; cta: string; color: string }) {
+function CardShell({ label, onOpen, cover, rows, empty, cta, color }: { label: string; onOpen: () => void; cover: React.ReactNode; rows: Standing[] | null; empty: string; cta: string; color: string }) {
   return (
     <button onClick={onOpen} className="mb-1 block w-[248px] overflow-hidden rounded-[18px] text-left shadow-[0_1px_2px_rgba(0,0,0,0.15)] transition-transform active:scale-[0.98]" style={{ background: "#11131b" }} aria-label={label}>
       <div className="relative h-[156px] overflow-hidden">{cover}</div>
-      <div className="flex items-center gap-2 px-3 py-2.5 text-white">
-        <div className="min-w-0 flex-1">
-          <div className="truncate text-[14px] font-semibold leading-tight">{status}</div>
-          <div className="mt-0.5 truncate text-[12px] text-[#a9b0c4]">{sub}</div>
-        </div>
-        <span className="rounded-full px-3.5 py-1.5 text-[13px] font-bold" style={{ background: color, color: "#111" }}>{cta}</span>
-      </div>
+      <CardFooter rows={rows} empty={empty} cta={cta} color={color} />
     </button>
   );
 }
@@ -298,17 +308,16 @@ function RunCard({ gameRef, userId, onOpen }: { gameRef: string; userId: string;
   const { data: room, missing } = usePoll<RunInfo>(`${sqUrl()}/api/r/${idOf(gameRef)}?me=${sqPid(userId)}`);
   if (missing) return <div className="rounded-2xl bg-[#f0f0f0] px-3 py-2 text-[13px] text-ink-2">This race has ended.</div>;
   const c = room?.course;
-  const leader = room?.board[0];
   const t = (n: number) => `${n.toFixed(2)}s`;
-  const status = !room ? "Loading…" : room.me?.best ? `Your best: ${t(room.me.best)}${leader && !leader.me ? ` · ${leader.name} leads` : room.board.length > 1 ? " · you lead" : ""}` : leader ? `${leader.name} leads with ${t(leader.time)}` : "Set the time to beat";
+  const rows = room ? room.board.map((b) => ({ name: b.name, me: b.me, value: t(b.time) })) : null;
   return (
     <CardShell
       label={`Open race ${c?.title ?? ""}`}
       onOpen={() => onOpen(gameRef)}
       color={c?.palette.primary ?? "#ff5d3a"}
       cta={room?.me?.best ? "Again" : "Race"}
-      status={status}
-      sub={c ? `${c.interest} · ${room!.board.length} raced` : ""}
+      rows={rows}
+      empty="Set the time to beat"
       cover={
         <>
           <div className="absolute inset-0" style={{ background: c?.scene.start[1] ?? "#2a3142" }} />
@@ -346,15 +355,15 @@ function SketchCard({ gameRef, userId, onOpen }: { gameRef: string; userId: stri
   const p = room?.pack;
   const latest = room?.drawings.at(-1);
   const waiting = room ? room.drawings.filter((d) => !d.own && !d.guessed).length : 0;
-  const status = !room ? "Loading…" : !room.me?.drew ? (latest ? `${latest.artist} drew something. Your turn` : "Be the first to draw") : waiting ? `${waiting} drawing${waiting > 1 ? "s" : ""} to guess` : `You have ${room.me.score} pts`;
+  const rows = room ? room.board.map((b) => ({ name: b.name, me: b.me, value: `${b.score} pts` })) : null;
   return (
     <CardShell
       label={`Open drawing game ${p?.title ?? ""}`}
       onOpen={() => onOpen(gameRef)}
       color={p?.palette.accent ?? "#2f6fd1"}
       cta={!room?.me?.drew ? "Draw" : waiting ? "Guess" : "View"}
-      status={status}
-      sub={p ? `${p.interest} · ${room!.drawings.length} drawn` : ""}
+      rows={rows}
+      empty={latest ? `${latest.artist} drew something. Your turn` : "Be the first to draw"}
       cover={
         <div className="absolute inset-0 flex items-center gap-3 px-3" style={{ background: p ? `linear-gradient(180deg, ${p.palette.wall}, ${p.palette.wall2})` : "#e6d3bd" }}>
           <div className="h-[118px] w-[118px] flex-none rounded-md bg-[#fffdf8] p-1" style={{ boxShadow: "0 0 0 4px #8a5a3a, 0 6px 12px rgba(0,0,0,.3)" }}>
@@ -388,17 +397,37 @@ export interface Finished {
 }
 
 /** Full-screen layer: inside the desktop phone mockup when there is one, otherwise over the whole screen. */
-function Overlay({ children, className = "", onClick }: { children: React.ReactNode; className?: string; onClick?: () => void }) {
+function Overlay({ children, className = "", onClick, fitKeyboard = false }: { children: React.ReactNode; className?: string; onClick?: () => void; fitKeyboard?: boolean }) {
   const [host, setHost] = useState<HTMLElement | null>(null);
   useEffect(() => setHost(document.querySelector<HTMLElement>(".phone") ?? document.body), []);
+  const inFrame = !!host && host !== document.body;
+  const vv = useVisibleViewport(fitKeyboard && !!host && !inFrame);
   if (!host) return null;
-  const inFrame = host !== document.body;
   return createPortal(
-    <div className={`${inFrame ? "absolute" : "fixed"} inset-0 z-[60] ${className}`} onClick={onClick}>
+    <div className={`${inFrame ? "absolute" : "fixed"} inset-0 z-[60] ${className}`} style={vv ? { top: vv.top, height: vv.height, bottom: "auto" } : undefined} onClick={onClick}>
       {children}
     </div>,
     host,
   );
+}
+
+/** The part of the screen the on-screen keyboard isn't covering. On iOS the keyboard doesn't resize the page, it
+ *  slides it up, so a full-screen game ends up half behind the keyboard; sizing to this keeps it above. */
+function useVisibleViewport(on: boolean) {
+  const [box, setBox] = useState<{ top: number; height: number } | null>(null);
+  useEffect(() => {
+    const vv = window.visualViewport;
+    if (!on || !vv) return;
+    const fit = () => setBox({ top: vv.offsetTop, height: vv.height });
+    fit();
+    vv.addEventListener("resize", fit);
+    vv.addEventListener("scroll", fit);
+    return () => {
+      vv.removeEventListener("resize", fit);
+      vv.removeEventListener("scroll", fit);
+    };
+  }, [on]);
+  return box;
 }
 
 export function GamePlayer({ roomId, userId, name, onClose, onFinished }: { roomId: string; userId: string; name: string; onClose: () => void; onFinished: (f: Finished) => void }) {
@@ -420,7 +449,7 @@ export function GamePlayer({ roomId, userId, name, onClose, onFinished }: { room
     return () => removeEventListener("message", on);
   }, [onClose, onFinished]);
   return (
-    <Overlay className="bg-black">
+    <Overlay className="bg-black" fitKeyboard>
       <iframe src={src} title="Game" allow="autoplay; clipboard-write" className="h-full w-full border-0" />
     </Overlay>
   );

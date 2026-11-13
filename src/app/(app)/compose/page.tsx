@@ -8,7 +8,7 @@ function Inner() {
   const q = useSearchParams();
   const groupId = q.get("group") ?? undefined;
   const { data: group } = useApi<{ name: string }>(groupId ? `/api/groups/${groupId}` : null);
-  return <ComposerScreen groupId={groupId} groupName={group?.name} />;
+  return <ComposerScreen groupId={groupId} groupName={group?.name} fromProfile={q.get("from") === "profile"} />;
 }
 
 export default function ComposePage() {

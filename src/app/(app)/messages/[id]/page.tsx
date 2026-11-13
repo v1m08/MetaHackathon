@@ -1,10 +1,10 @@
 "use client";
 import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { GAMES, GameCard, GamePlayer, GameTray, type Finished } from "@/components/ChatGames";
 import { EventPicksSheet } from "@/components/events/EventPicksSheet";
-import { useMe } from "@/components/Shell";
+import { useBack, useMe } from "@/components/Shell";
 import { ArrowLeft, Image as ImageIcon, Info, Phone, Plus, Send, Smile, ThumbsUp, Video } from "lucide-react";
 import { Avatar, Photo, cx } from "@/components/ui";
 import { api, refresh, useApi } from "@/lib/api";
@@ -43,7 +43,7 @@ function EventChip({ id }: { id: string }) {
 
 export default function ThreadPage() {
   const { id } = useParams<{ id: string }>();
-  const router = useRouter();
+  const goBack = useBack("/messages");
   const { userId } = useSession();
   const { data: c, mutate } = useApi<Conv>(`/api/conversations/${id}`, { poll: 1500 });
   const [text, setText] = useState("");
@@ -97,7 +97,7 @@ export default function ThreadPage() {
     <div className="relative flex h-full flex-col bg-white">
       <header className="safe-top sticky top-0 z-10 border-b border-line/60 bg-white">
         <div className="flex h-14 items-center gap-2 px-2">
-          <button onClick={() => router.back()} className="rounded-full p-2 text-messenger"><ArrowLeft size={22} /></button>
+          <button onClick={goBack} aria-label="Back to chats" className="rounded-full p-2 text-messenger"><ArrowLeft size={22} /></button>
           {c && (
             <Link href={c.isGroup ? "#" : `/profile/${other?.id}`} className="flex min-w-0 flex-1 items-center gap-2">
               <Avatar src={c.isGroup ? c.others[0]?.avatar : other?.avatar} name={c.name} size={36} online={!c.isGroup} />
@@ -134,9 +134,19 @@ export default function ThreadPage() {
           return (
             <div key={m.id}>
               {gap && <div className="my-3 text-center text-[11px] font-semibold text-ink-2 uppercase">{messageTime(m.createdAt)}</div>}
-              {c.isGroup && !mine && firstOfRun && <div className="mb-0.5 ml-10 text-[11px] text-ink-2">{sender?.name.split(" ")[0]}</div>}
+              {c.isGroup && !mine && firstOfRun && sender && (
+                <Link href={`/profile/${sender.id}`} className="mb-0.5 ml-10 block w-fit text-[11px] text-ink-2">{sender.name.split(" ")[0]}</Link>
+              )}
               <div className={cx("flex items-end gap-2", mine ? "justify-end" : "justify-start", lastOfRun ? "mb-2" : "mb-0.5")}>
-                {!mine && <span className="w-7 shrink-0">{lastOfRun && sender && <Avatar src={sender.avatar} name={sender.name} size={28} />}</span>}
+                {!mine && (
+                  <span className="w-7 shrink-0">
+                    {lastOfRun && sender && (
+                      <Link href={`/profile/${sender.id}`} aria-label={`${sender.name}'s profile`}>
+                        <Avatar src={sender.avatar} name={sender.name} size={28} />
+                      </Link>
+                    )}
+                  </span>
+                )}
                 <div className={cx("flex max-w-[75%] flex-col", mine ? "items-end" : "items-start")}>
                   {m.attachment?.type === "listing" && <ListingChip id={m.attachment.ref} />}
                   {m.attachment?.type === "event" && <EventChip id={m.attachment.ref} />}

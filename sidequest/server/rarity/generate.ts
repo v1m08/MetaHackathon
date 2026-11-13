@@ -178,7 +178,8 @@ Reply with only JSON: {"valid":true|false,"a","r","note","reason"}`,
       },
       { role: "user", content: `Interest: ${interest}\nPrompt: ${prompt.q}\nWhat counts: ${prompt.hint ?? "-"}\nSome listed answers: ${sample}\nPlayer's answer: ${JSON.stringify(guess)}` },
     ],
-    { maxTokens: 1500, timeoutMs: 15000, reasoning: "low", temperature: 0, model: process.env.SIDEQUEST_JUDGE_MODEL || "muse-ember-1.0", task: "rarity.judge" },
+    // "minimal" reasoning: same verdicts as "low" in testing at about half the latency (~1s). Short timeout: players are waiting.
+    { maxTokens: 600, timeoutMs: 6000, reasoning: "minimal", temperature: 0, model: process.env.SIDEQUEST_JUDGE_MODEL || "muse-ember-1.0", task: "rarity.judge" },
   );
   const j = extractJson(r.text) as Record<string, unknown>;
   const valid = j.valid === true;

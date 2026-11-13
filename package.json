@@ -14,6 +14,7 @@
     "reset": "curl -s -X POST http://localhost:3000/api/admin/reset",
     "sidequest": "tsx sidequest/cli.ts",
     "demo:events": "node scripts/demo-event-unlock.mjs",
+    "demo:public": "tsx scripts/demo-public.ts",
     "test": "node --import tsx --test \"tests/**/*.test.ts\""
   },
   "dependencies": {
@@ -29,6 +30,7 @@
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "esbuild": "^0.25.12",
+    "qrcode-terminal": "^0.12.0",
     "tailwindcss": "^4.0.0",
     "tsx": "^4.23.15",
     "typescript": "^5.7.0"

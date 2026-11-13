@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { Camera, PenSquare, Search } from "lucide-react";
-import { Shell, useMe } from "@/components/Shell";
+import { MyProfileButton, Shell, useMe } from "@/components/Shell";
 import { Avatar, cx } from "@/components/ui";
 import { useApi } from "@/lib/api";
 import { messageTime } from "@/lib/format";
@@ -14,7 +14,7 @@ export default function MessagesPage() {
   const { data: convs } = useApi<Conv[]>("/api/conversations", { poll: 2500 });
   const active = me ? convs?.flatMap((c) => c.participants).filter((p, i, a) => a.findIndex((x) => x.id === p.id) === i).slice(0, 8) : [];
   return (
-    <Shell title={undefined} back right={<><button className="rounded-full bg-[#e4e6eb] p-2"><Camera size={18} /></button><button className="rounded-full bg-[#e4e6eb] p-2"><PenSquare size={18} /></button></>}>
+    <Shell title={undefined} back right={<><button className="rounded-full bg-[#e4e6eb] p-2"><Camera size={18} /></button><button className="rounded-full bg-[#e4e6eb] p-2"><PenSquare size={18} /></button><MyProfileButton /></>}>
       <div className="bg-white">
         <h1 className="px-4 pt-2 text-[24px] font-bold">Chats</h1>
         <div className="px-4 py-3">
