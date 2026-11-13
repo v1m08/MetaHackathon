@@ -222,26 +222,30 @@ function lobby(v: RoomView) {
   const resume = v.me && v.me.done > 0;
   const el = screen(`
     <div class="hud"><span></span><span></span><div class="hud-right">${muteBtn()}${closeBtn()}</div></div>
-    <div class="scroll" style="flex:1">
-      <div class="title-wrap pop" style="margin-top:3vh">
-        <h1 class="title" style="font-size:clamp(34px,10vw,64px)">${esc(p.title)}</h1>
-        <p class="subtitle">${esc(p.tagline)}</p>
-      </div>
-      <div class="stack pop" style="margin-top:22px">
-        <div class="panel">
-          <div class="speech"><span class="who">${esc(p.host.emoji)}</span><div><div class="label hot">${esc(p.host.name)}</div><p>${esc(p.host.intro)}</p></div></div>
-          <div class="label" style="margin-top:12px">${p.prompts.length} prompts · ${SECONDS_PER_PROMPT}s each · rarer answers ${deeper(p)} · only you said it +${ONLY_YOU_BONUS}</div>
-          <div class="tiers-small" style="margin-top:10px">${tiersHtml(p)}</div>
-        </div>
-        ${v.board.length ? `<div class="panel"><div class="label">${v.board.length} playing</div><div style="margin-top:6px">${boardHtml(v, 4)}</div></div>` : ""}
-      </div>
+    <div class="poster pop">
+      <h1 class="title">${esc(p.title)}</h1>
+      <p class="subtitle">${esc(p.tagline)}</p>
     </div>
-    <div class="stack pop" style="margin-top:10px">
+    <div class="poster-actions pop">
+      ${v.board.length ? `<p class="leaders">${v.board.slice(0, 3).map((b) => `${esc(b.me ? "You" : b.name)} <b>${meterText(p, b.score)}</b>`).join('<span class="sep">·</span>')}</p>` : ""}
       ${EMBED ? "" : `<input class="field" id="name" maxlength="16" placeholder="Your name" autocomplete="nickname" value="${esc(v.me?.name && v.me.name !== "Player" ? v.me.name : myName())}" aria-label="Your name" />`}
       <button class="btn big" id="go">${resume ? `Keep going ${v.me!.done}/${p.prompts.length}` : "Start"}</button>
+      <button class="link-btn" id="how">How to play</button>
       ${EMBED ? "" : `<div class="row"><button class="btn dark wide" id="invite">Invite friends</button><button class="btn dark wide" id="new">New topic</button></div>`}
       <p class="toast" id="toast"></p>
+    </div>
+    <div class="sheet" id="sheet" hidden>
+      <div class="sheet-card panel">
+        <div class="speech"><span class="who">${esc(p.host.emoji)}</span><div><div class="label hot">${esc(p.host.name)}</div><p>${esc(p.host.intro)}</p></div></div>
+        <p class="rules-text">${p.prompts.length} prompts, ${SECONDS_PER_PROMPT} seconds each. Name anything that fits. Rarer answers ${deeper(p)}. If nobody else in the chat said it, +${ONLY_YOU_BONUS}.</p>
+        <div class="tiers-small">${tiersHtml(p)}</div>
+        <button class="btn wide" id="gotit" style="margin-top:14px">Got it</button>
+      </div>
     </div>`);
+  const sheet = el.querySelector<HTMLElement>("#sheet")!;
+  el.querySelector("#how")!.addEventListener("click", () => (sheet.hidden = false));
+  el.querySelector("#gotit")!.addEventListener("click", () => (sheet.hidden = true));
+  sheet.addEventListener("click", (e) => e.target === sheet && (sheet.hidden = true));
   wireMute(el);
   wireClose(el);
   const name = el.querySelector<HTMLInputElement>("#name") ?? Object.assign(document.createElement("input"), { value: myName() || "Player" });
@@ -463,31 +467,25 @@ function results(v: RoomView) {
   }
   const el = screen(`
     <div class="hud"><span></span><span></span><div class="hud-right">${muteBtn()}${closeBtn()}</div></div>
-    <div class="scroll" style="flex:1;padding-right:var(--gutter)">
+    <div class="scroll results" style="flex:1">
       <div class="total pop">
-        <div class="label" style="color:#fff;text-shadow:2px 2px 0 #000">${esc(p.meter.label)} reached</div>
+        <div class="label">${esc(p.meter.label)} reached</div>
         <div class="big">${meterText(p, me.score)}</div>
         <p class="standing">${standing}</p>
       </div>
-      <div class="stack pop" style="margin-top:22px">
-        <button class="btn big" id="share">${EMBED ? "Back to chat" : "Send to the group chat"}</button>
-        <p class="toast" id="toast"></p>
-        ${v.board.length > 1 ? `<div class="panel"><div class="label">Leaderboard</div><div style="margin-top:6px">${boardHtml(v)}</div></div>` : ""}
-        <div class="panel"><div class="label">Your answers</div><ul class="ans-list">${p.prompts
-          .map((pr, i) => {
-            const x = v.prompts[i];
-            const m = x.mine;
-            const pts = m && m.a ? m.points + (m.onlyYou ? ONLY_YOU_BONUS : 0) : 0;
-            const friends = x.friends.filter((f) => f.a).map((f) => `${esc(f.name)}: ${esc(f.a)}`).join(" · ");
-            return `<li>
-              <span class="dot" style="background:${m && m.a ? `var(--t${m.tier})` : "rgba(255,255,255,.2)"}"></span>
-              <span class="body"><b>${esc(m && m.a ? m.a : m?.raw ? `${m.raw} ✕` : "Passed")}</b>${m?.onlyYou ? ` <span class="only">Only you</span>` : ""}<small>${esc(pr.q)}${friends ? ` · ${friends}` : ""}</small></span>
-              <span class="pts">${pts ? `+${pts}` : "–"}</span>
-            </li>`;
-          })
-          .join("")}</ul></div>
-        ${EMBED ? "<div style=\"height:20px\"></div>" : `<button class="btn dark wide" id="new" style="margin:8px 0 20px">Make a game about something else</button>`}
-      </div>
+      ${v.board.length > 1 ? `<p class="leaders pop">${v.board.slice(0, 4).map((b, k) => `<span class="${b.me ? "me" : ""}">${k + 1}. ${esc(b.me ? "You" : b.name)} <b>${meterText(p, b.score)}</b></span>`).join('<span class="sep">·</span>')}</p>` : ""}
+      <div class="panel pop quiet-list"><ul class="ans-list">${p.prompts
+        .map((_, i) => {
+          const m = v.prompts[i].mine;
+          const pts = m && m.a ? m.points + (m.onlyYou ? ONLY_YOU_BONUS : 0) : 0;
+          return `<li><span class="body"><b>${esc(m && m.a ? m.a : "Passed")}</b></span><span class="pts">${pts ? `+${pts}` : "–"}</span></li>`;
+        })
+        .join("")}</ul></div>
+    </div>
+    <div class="poster-actions pop">
+      <button class="btn big" id="share">${EMBED ? "Back to chat" : "Send to the group chat"}</button>
+      ${EMBED ? "" : `<button class="link-btn" id="new">Make a game about something else</button>`}
+      <p class="toast" id="toast"></p>
     </div>`);
   wireMute(el);
   wireClose(el);

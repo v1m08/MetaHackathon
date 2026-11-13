@@ -190,6 +190,31 @@
       .ans-list .body small { display: block; color: var(--muted); font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
       .ans-list .pts { font-weight: 800; font-variant-numeric: tabular-nums; color: var(--accent); }
 
+      /* dim the world so text on top reads cleanly */
+      #world::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(180deg, rgba(6, 8, 16, 0.62) 0%, rgba(6, 8, 16, 0.28) 38%, rgba(6, 8, 16, 0.28) 62%, rgba(6, 8, 16, 0.7) 100%); }
+
+      /* poster lobby: title on top, actions at the bottom, world in between */
+      .poster { text-align: center; margin-top: 7vh; }
+      .poster .title { font-size: clamp(38px, 11vw, 66px); }
+      .poster-actions { margin-top: auto; width: 100%; max-width: 440px; align-self: center; display: flex; flex-direction: column; gap: 10px; }
+      .leaders { margin: 0 0 4px; text-align: center; font: 500 15px var(--font); color: #fff; text-shadow: 0 1px 8px rgba(0, 0, 0, 0.9); }
+      .leaders b { font-weight: 700; color: var(--accent); }
+      .leaders .me { color: var(--primary); }
+      .leaders .sep { margin: 0 8px; opacity: 0.5; }
+      .link-btn { align-self: center; padding: 8px 12px; font: 600 15px var(--font); color: #fff; text-decoration: underline; text-underline-offset: 3px; text-shadow: 0 1px 8px rgba(0, 0, 0, 0.9); }
+      .sheet { position: fixed; inset: 0; z-index: 10; display: flex; align-items: flex-end; justify-content: center; padding: 12px; background: rgba(0, 0, 0, 0.45); }
+      .sheet[hidden] { display: none; }
+      .sheet-card { width: 100%; max-width: 440px; animation: pop 0.25s ease-out both; }
+      .rules-text { margin: 12px 0; font-size: 15px; color: var(--muted); }
+
+      /* quieter results: centered, plain rows */
+      .results { display: flex; flex-direction: column; align-items: center; }
+      .results .total { margin-top: 5vh; }
+      .results .leaders { margin: 16px 0 0; }
+      .quiet-list { width: 100%; max-width: 400px; margin-top: 16px; padding: 4px 16px; }
+      .quiet-list .ans-list { margin: 0; }
+      .quiet-list li { padding: 10px 0; }
+
       @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 1ms !important; transition-duration: 1ms !important; } }
     </style>
   </head>
