@@ -143,13 +143,14 @@ function home(error = "") {
   const s = setWorld("home", HOME_WORLD);
   s.setProgress(0, true);
   s.setMarkers([]);
+  s.showGauge(false);
   s.avatarVisible = true;
   const el = screen(`
     <div class="title-wrap pop">
       <h1 class="title">Deep Cuts</h1>
       <p class="subtitle">Name the answer nobody else thinks of</p>
     </div>
-    <div class="bottom stack pop" style="padding-right:var(--gutter)">
+    <div class="bottom stack pop">
       <form class="stack" id="f">
         <input class="field" id="i" maxlength="60" autocomplete="off" placeholder="What are you into?" aria-label="Your interest" />
         <button class="btn big" type="submit">Make the game</button>
@@ -202,6 +203,7 @@ async function room(id: string) {
   if (v.me?.finished) return results(v);
   s.setProgress(units(v.pack, v.me?.score ?? 0), true);
   s.setMarkers(markersFor(v));
+  s.showGauge(false);
   lobby(v);
 }
 
@@ -220,22 +222,21 @@ function lobby(v: RoomView) {
   const resume = v.me && v.me.done > 0;
   const el = screen(`
     <div class="hud"><span></span><span></span><div class="hud-right">${muteBtn()}${closeBtn()}</div></div>
-    <div class="scroll" style="flex:1;padding-right:var(--gutter)">
+    <div class="scroll" style="flex:1">
       <div class="title-wrap pop" style="margin-top:3vh">
         <h1 class="title" style="font-size:clamp(34px,10vw,64px)">${esc(p.title)}</h1>
         <p class="subtitle">${esc(p.tagline)}</p>
       </div>
       <div class="stack pop" style="margin-top:22px">
-        <div class="panel speech"><span class="who">${esc(p.host.emoji)}</span><div><div class="label hot">${esc(p.host.name)}</div><p>${esc(p.host.intro)}</p></div></div>
         <div class="panel">
-          <div class="label">${p.prompts.length} prompts · ${SECONDS_PER_PROMPT}s each · rarer answers ${deeper(p)}</div>
-          <div style="margin-top:10px">${tiersHtml(p)}</div>
-          <div class="label" style="margin-top:10px">Only you said it? +${ONLY_YOU_BONUS}</div>
+          <div class="speech"><span class="who">${esc(p.host.emoji)}</span><div><div class="label hot">${esc(p.host.name)}</div><p>${esc(p.host.intro)}</p></div></div>
+          <div class="label" style="margin-top:12px">${p.prompts.length} prompts · ${SECONDS_PER_PROMPT}s each · rarer answers ${deeper(p)} · only you said it +${ONLY_YOU_BONUS}</div>
+          <div class="tiers-small" style="margin-top:10px">${tiersHtml(p)}</div>
         </div>
-        ${v.board.length ? `<div class="panel"><div class="label">${v.board.length} playing</div><div style="margin-top:6px">${boardHtml(v, 6)}</div></div>` : ""}
+        ${v.board.length ? `<div class="panel"><div class="label">${v.board.length} playing</div><div style="margin-top:6px">${boardHtml(v, 4)}</div></div>` : ""}
       </div>
     </div>
-    <div class="stack pop" style="padding-right:var(--gutter);margin-top:10px">
+    <div class="stack pop" style="margin-top:10px">
       ${EMBED ? "" : `<input class="field" id="name" maxlength="16" placeholder="Your name" autocomplete="nickname" value="${esc(v.me?.name && v.me.name !== "Player" ? v.me.name : myName())}" aria-label="Your name" />`}
       <button class="btn big" id="go">${resume ? `Keep going ${v.me!.done}/${p.prompts.length}` : "Start"}</button>
       ${EMBED ? "" : `<div class="row"><button class="btn dark wide" id="invite">Invite friends</button><button class="btn dark wide" id="new">New topic</button></div>`}
@@ -280,16 +281,17 @@ async function play(v: RoomView, i: number) {
   const score = v.me?.score ?? 0;
   scene?.setProgress(units(p, score));
   scene?.setMarkers(markersFor(v).map((m) => (m.me ? { ...m, value: units(p, score) } : m)));
+  scene?.showGauge(false);
   const C = 2 * Math.PI * 22;
   const el = screen(`
     ${hud(v, i, score, i)}
-    <div class="panel prompt pop" style="margin-right:var(--gutter)">
+    <div class="panel prompt pop">
       <div class="label hot">${["Warm up", "Easy", "Getting deeper", "Deep", "Deeper", "Deep cuts only", "Final prompt"][Math.min(6, Math.round((i / Math.max(1, p.prompts.length - 1)) * 6))]}</div>
       <h1>${esc(pr.q)}</h1>
       ${pr.hint ? `<p class="hint">${esc(pr.hint)}</p>` : ""}
       <p class="sub">▼ rarer answers ${deeper(p)} ▼</p>
     </div>
-    <div class="bottom" style="padding-right:var(--gutter)">
+    <div class="bottom">
       <p class="feedback" id="fb" aria-live="polite"></p>
       <form class="answer" id="f">
         <div class="answer-row">
@@ -391,7 +393,7 @@ async function reveal(v: RoomView, i: number, verdict: Verdict, typed: string) {
   const gained = after - before;
   const el = screen(`
     ${hud(fresh, i, before, i + 1)}
-    <div class="panel reveal pop ${hit ? "" : "miss"}" style="margin-right:var(--gutter)">
+    <div class="panel reveal pop ${hit ? "" : "miss"}">
       <div class="q">${esc(p.prompts[i].q)}</div>
       <h1>${esc(hit ? verdict.answer! : typed || "No answer")}</h1>
       ${hit ? tiersHtml(p, t) : `<p class="note">${esc(verdict.reason ?? "Time's up")}</p>`}
@@ -401,7 +403,7 @@ async function reveal(v: RoomView, i: number, verdict: Verdict, typed: string) {
       ${pv.gem && pv.gem.a !== verdict.answer ? `<div class="gem"><span>💎</span><span>Deepest cut: <b>${esc(pv.gem.a)}</b>${pv.gem.note ? `. ${esc(pv.gem.note)}` : ""}</span></div>` : ""}
       ${pv.friends.length ? `<div class="friends">${pv.friends.map((f) => `<span class="fa"><small>${esc(f.name)}</small>${esc(f.a || "pass")}</span>`).join("")}</div>` : ""}
     </div>
-    <div class="bottom" style="padding-right:var(--gutter)"><button class="btn big" id="next">${last ? "See where you landed" : "Next prompt"}</button></div>`);
+    <div class="bottom"><button class="btn big" id="next">${last ? "See where you landed" : "Next prompt"}</button></div>`);
   wireMute(el);
   el.querySelector("#quit")!.addEventListener("click", () => void room(v.id));
   const next = el.querySelector<HTMLButtonElement>("#next")!;
@@ -450,6 +452,7 @@ function results(v: RoomView) {
   const me = v.me!;
   scene?.setProgress(units(p, me.score));
   scene?.setMarkers(markersFor(v));
+  scene?.showGauge(true);
   const pos = v.board.findIndex((b) => b.me);
   const others = v.board.length - 1;
   const standing =
@@ -470,16 +473,19 @@ function results(v: RoomView) {
         <button class="btn big" id="share">${EMBED ? "Back to chat" : "Send to the group chat"}</button>
         <p class="toast" id="toast"></p>
         ${v.board.length > 1 ? `<div class="panel"><div class="label">Leaderboard</div><div style="margin-top:6px">${boardHtml(v)}</div></div>` : ""}
-        <div class="answers">${p.prompts
+        <div class="panel"><div class="label">Your answers</div><ul class="ans-list">${p.prompts
           .map((pr, i) => {
             const x = v.prompts[i];
             const m = x.mine;
-            const chip = m && m.a ? `<span class="mine" style="background:var(--t${m.tier});color:var(--on-t${m.tier})">${esc(m.a)}<small>${esc(p.tiers[m.tier - 1])} ${m.points + (m.onlyYou ? ONLY_YOU_BONUS : 0)}</small></span>${m.onlyYou ? `<span class="only">Only you</span>` : ""}` : `<span class="mine" style="background:rgba(255,255,255,.08)">${esc(m?.raw ? `${m.raw} ✕` : "Passed")}</span>`;
-            return `<div class="panel ans"><div class="q">${esc(pr.q)}</div><div class="mine-line">${chip}</div>
-              ${x.friends.length ? `<div class="friends">${x.friends.map((f) => `<span class="fa"><small>${esc(f.name)}</small>${esc(f.a || "pass")}</span>`).join("")}</div>` : ""}
-              ${x.gem ? `<p class="gemline">💎 ${esc(x.gem.a)}${x.gem.note ? `: ${esc(x.gem.note)}` : ""}</p>` : ""}</div>`;
+            const pts = m && m.a ? m.points + (m.onlyYou ? ONLY_YOU_BONUS : 0) : 0;
+            const friends = x.friends.filter((f) => f.a).map((f) => `${esc(f.name)}: ${esc(f.a)}`).join(" · ");
+            return `<li>
+              <span class="dot" style="background:${m && m.a ? `var(--t${m.tier})` : "rgba(255,255,255,.2)"}"></span>
+              <span class="body"><b>${esc(m && m.a ? m.a : m?.raw ? `${m.raw} ✕` : "Passed")}</b>${m?.onlyYou ? ` <span class="only">Only you</span>` : ""}<small>${esc(pr.q)}${friends ? ` · ${friends}` : ""}</small></span>
+              <span class="pts">${pts ? `+${pts}` : "–"}</span>
+            </li>`;
           })
-          .join("")}</div>
+          .join("")}</ul></div>
         ${EMBED ? "<div style=\"height:20px\"></div>" : `<button class="btn dark wide" id="new" style="margin:8px 0 20px">Make a game about something else</button>`}
       </div>
     </div>`);
