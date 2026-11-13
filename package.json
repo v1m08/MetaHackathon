@@ -11,7 +11,9 @@
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
     "warm": "curl -s http://localhost:3000/api/admin/warm-images",
-    "reset": "curl -s -X POST http://localhost:3000/api/admin/reset"
+    "reset": "curl -s -X POST http://localhost:3000/api/admin/reset",
+    "sidequest": "tsx sidequest/cli.ts",
+    "sidequest:test": "tsx sidequest/scripts/test.ts"
   },
   "dependencies": {
     "lucide-react": "^0.468.0",
@@ -26,6 +28,9 @@
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "tailwindcss": "^4.0.0",
-    "typescript": "^5.7.0"
+    "typescript": "^5.7.0",
+    "esbuild": "^0.25.12",
+    "tsx": "^4.20.6",
+    "zod": "^4.1.12"
   }
 }
