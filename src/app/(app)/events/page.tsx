@@ -8,9 +8,10 @@ import { useApi } from "@/lib/api";
 import { eventDate } from "@/lib/format";
 import type { FBEvent } from "@/types";
 
-type E = FBEvent & { host?: { name: string }; hostGroup?: string; myStatus: "going" | "interested" | "none"; friendsGoing: { id: string; name: string; avatar: string }[] };
+type E = FBEvent & { host?: { name: string }; hostGroup?: string; myStatus: "going" | "interested" | "none"; friendsGoing: { id: string; name: string; avatar: string }[]; fit?: number; fitLabel?: string };
+const byFit = <T extends { fit?: number }>(list: T[]) => [...list].sort((a, b) => (b.fit ?? 0) - (a.fit ?? 0));
 
-function EventRow({ e }: { e: E }) {
+function EventRow({ e, showFit }: { e: E; showFit?: boolean }) {
   return (
     <Link href={`/events/${e.id}`} className="flex gap-3 px-4 py-2.5">
       <Photo src={e.cover} className="h-24 w-24 shrink-0 rounded-lg object-cover" />
@@ -25,6 +26,7 @@ function EventRow({ e }: { e: E }) {
           <span>{e.going.length} going{e.friendsGoing.length > 0 && ` · ${e.friendsGoing.length} friends`}</span>
           {e.myStatus !== "none" && <span className="ml-auto rounded bg-[#e7f3ff] px-1.5 py-0.5 text-[11px] font-bold text-fb uppercase">{e.myStatus}</span>}
         </div>
+        {showFit && (e.fit ?? 0) > 0.15 && <div className="mt-0.5 truncate text-[12px] font-medium text-fb">From your games{e.fitLabel ? ` · ${e.fitLabel}` : ""}</div>}
       </div>
     </Link>
   );
@@ -37,8 +39,9 @@ export default function EventsPage() {
   const upcoming = data?.filter((e) => new Date(e.startsAt).getTime() > now - 3600e3 * 4) ?? [];
   const past = data?.filter((e) => !upcoming.includes(e)) ?? [];
   const list = tab === "foryou" ? upcoming : tab === "going" ? upcoming.filter((e) => e.myStatus !== "none") : past;
-  const thisWeek = list.filter((e) => new Date(e.startsAt).getTime() < now + 7 * 864e5);
-  const later = list.filter((e) => !thisWeek.includes(e));
+  const rank = (l: E[]) => (tab === "foryou" ? byFit(l) : l);
+  const thisWeek = rank(list.filter((e) => new Date(e.startsAt).getTime() < now + 7 * 864e5));
+  const later = rank(list.filter((e) => !thisWeek.includes(e)));
   return (
     <Shell back title="Events" right={<Link href="/compose" className="rounded-full bg-[#e4e6eb] p-2"><CalendarDays size={18} /></Link>}>
       <div className="bg-white pb-3">
@@ -48,9 +51,9 @@ export default function EventsPage() {
           <Pill active={tab === "past"} onClick={() => setTab("past")}>Past</Pill>
         </div>
         {tab !== "past" && thisWeek.length > 0 && <SectionTitle>This week</SectionTitle>}
-        {(tab === "past" ? list : thisWeek).map((e) => <EventRow key={e.id} e={e} />)}
+        {(tab === "past" ? list : thisWeek).map((e) => <EventRow key={e.id} e={e} showFit={tab === "foryou"} />)}
         {tab !== "past" && later.length > 0 && <SectionTitle>Later</SectionTitle>}
-        {tab !== "past" && later.map((e) => <EventRow key={e.id} e={e} />)}
+        {tab !== "past" && later.map((e) => <EventRow key={e.id} e={e} showFit={tab === "foryou"} />)}
         {list.length === 0 && <div className="py-12 text-center text-ink-2">Nothing here yet</div>}
       </div>
     </Shell>

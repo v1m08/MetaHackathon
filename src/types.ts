@@ -22,6 +22,8 @@ export interface User {
   friendIds: ID[];
   interests: string[];
   birthday?: string; // MM-DD
+  city?: string;
+  privacy?: "public" | "friends";
 }
 
 export interface Comment {
@@ -49,6 +51,7 @@ export interface Post {
   shares: number;
   /** Who this post is visible to when not in a group. */
   audience?: "public" | "friends";
+  city?: string;
 }
 
 export interface Story {
@@ -89,6 +92,7 @@ export interface FBEvent {
   invited?: ID[];
   category: string;
   price?: string;
+  city?: string;
 }
 
 export interface Listing {
@@ -120,6 +124,8 @@ export interface Reel {
   savedBy: ID[];
   tags: string[];
   createdAt: string;
+  city?: string;
+  audience?: "public" | "friends";
 }
 
 export interface Message {
@@ -128,8 +134,10 @@ export interface Message {
   text: string;
   createdAt: string;
   reactions?: Record<ID, string>;
-  attachment?: { type: "image" | "listing" | "event"; ref: string };
+  attachment?: { type: "image" | "listing" | "event" | "game" | "unlock"; ref: string };
   readBy?: ID[];
+  status?: "draft" | "sent";
+  system?: boolean;
 }
 
 export interface Conversation {
@@ -174,7 +182,8 @@ export type NotificationType =
   | "birthday"
   | "marketplace"
   | "memory"
-  | "mention";
+  | "mention"
+  | "play";
 
 export interface Notification {
   id: ID;

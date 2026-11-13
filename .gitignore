@@ -6,3 +6,7 @@ node_modules
 .DS_Store
 .image-cache
 .phone-server.log
+.ai-ledger.json
+.ai-ledger.json.lock
+.ai-ledger.json.tmp*
+.ai-cache
