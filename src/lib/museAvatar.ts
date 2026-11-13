@@ -1,5 +1,5 @@
-// Cute "Muse" profile pictures for the demo accounts: a round little character with a sparkle on top, one color
-// scheme per person. Plain SVG data URIs, so they need no network and look sharp at any size.
+// Profile pictures for the demo accounts: each teammate is a plush version of their photo on their own color, and the
+// Muse bot is a round little character with a sparkle on top (a plain SVG data URI, sharp at any size).
 
 export type MuseColors = { bg: string; from: string; to: string };
 
@@ -30,4 +30,7 @@ export function museAvatar(c: MuseColors, opts: { bot?: boolean } = {}): string 
   return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
 }
 
-export const museAvatarFor = (id: string) => museAvatar(MUSE_COLORS[id] ?? MUSE_COLORS.muse, { bot: id === "muse" });
+/** Plush profile pictures made from each teammate's photo (docs/muse-style-avatars.md), on their avatar color. */
+const PLUSH = new Set(["nivan", "armaan", "vedansh", "keira", "abishek"]);
+
+export const museAvatarFor = (id: string) => (PLUSH.has(id) ? `/demo/avatars/${id}.webp` : museAvatar(MUSE_COLORS[id] ?? MUSE_COLORS.muse, { bot: id === "muse" }));
