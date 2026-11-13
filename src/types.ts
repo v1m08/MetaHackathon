@@ -134,7 +134,8 @@ export interface Message {
   text: string;
   createdAt: string;
   reactions?: Record<ID, string>;
-  attachment?: { type: "image" | "listing" | "event" | "game" | "unlock"; ref: string };
+  /** game/unlock: daily Chat Games (src/lib/play). sqgame/sqgamelog: sidequest Deep Cuts + Order Up! card / "played" line. */
+  attachment?: { type: "image" | "listing" | "event" | "game" | "unlock" | "sqgame" | "sqgamelog"; ref: string };
   readBy?: ID[];
   status?: "draft" | "sent";
   system?: boolean;

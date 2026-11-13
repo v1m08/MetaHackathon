@@ -135,7 +135,7 @@ export function DemoStrip() {
   const { data: ai } = useApi<{ mode: string; calls: number; avgLatency: number }>("/api/ai/status", { poll: 3000 });
   if (!stage) return null;
   return (
-    <div className="pointer-events-none fixed inset-x-0 bottom-3 z-50 flex justify-center">
+    <div data-devbar className="pointer-events-none fixed inset-x-0 bottom-3 z-50 flex justify-center">
       <div className="pointer-events-auto flex items-center gap-3 rounded-full bg-black/70 px-4 py-1.5 text-[12px] text-white/90 backdrop-blur">
         <span>
           Viewing as <b className="text-white">@{userId}</b>
