@@ -13,7 +13,7 @@ export type Me = User & { unreadMessages: number; unreadNotifications: number; f
 export const useMe = () => useApi<Me>("/api/me", { poll: 4000 });
 
 const tabs = [
-  { href: "/", icon: Home, label: "Home" },
+  { href: "/feed", icon: Home, label: "Home" },
   { href: "/friends", icon: Users, label: "Friends", badge: "friendRequests" as const },
   { href: "/reels", icon: Clapperboard, label: "Reels" },
   { href: "/marketplace", icon: Store, label: "Marketplace" },
@@ -62,7 +62,7 @@ export function TopBar({ title, back, right, transparent }: { title?: string; ba
             <ArrowLeft size={22} />
           </button>
         ) : (
-          <Link href="/" className="pl-1 text-[28px] font-extrabold tracking-[-0.04em] text-fb select-none">
+          <Link href="/feed" className="pl-1 text-[28px] font-extrabold tracking-[-0.04em] text-fb select-none">
             facebook
           </Link>
         )}
@@ -99,7 +99,7 @@ export function TabBar({ dark }: { dark?: boolean }) {
     <nav className={cx("safe-bottom sticky bottom-0 z-40 border-t", dark ? "border-white/10 bg-black" : "border-line/60 bg-white")}>
       <div className="flex h-[52px] items-stretch">
         {tabs.map((t) => {
-          const active = t.href === "/" ? path === "/" : path.startsWith(t.href);
+          const active = path.startsWith(t.href);
           const Icon = t.icon;
           const n = t.badge && me ? me[t.badge] : 0;
           return (
@@ -143,8 +143,12 @@ export function DemoStrip() {
         <span className="text-white/30">|</span>
         <Link href="/switch" className="hover:underline">Switch user</Link>
         <span className="text-white/30">|</span>
+        <Link href="/events" className="hover:underline">Events</Link>
+        <span className="text-white/30">|</span>
+        <Link href="/dev/context" className="hover:underline">Context Inspector</Link>
+        <span className="text-white/30">|</span>
         <Link href="/dev/ai" className="hover:underline">
-          AI Inspector · {ai ? `${ai.mode} · ${ai.calls} calls${ai.calls ? ` · ${ai.avgLatency}ms avg` : ""}` : "…"}
+          AI · {ai ? ai.mode : "…"}
         </Link>
       </div>
     </div>
