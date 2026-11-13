@@ -189,7 +189,10 @@ export async function maybeUnlock(conversationId: ID): Promise<Unlock | null> {
     let refusedWhy: string | undefined;
     try {
       const prompt = `A group chat ("${c.name ?? "a direct message"}", ${c.participantIds.length} people) plays a short daily game together. Their play just unlocked ${TIER_LABEL[tier]}:\n\n${best.item.kind.toUpperCase()}: ${best.item.title} (${best.item.sub})\nTOPIC: ${topicOf(best.topic).label}\n\nFACTS (counted by code from their answers; the only things you may state):\n${facts.map((f) => `- ${f}`).join("\n")}\n\nWrite the one line shown on the card: why this is the pick for this chat. Copy the strongest fact word for word, then add a short clause with no numbers and no quantity words (all, every, half, most, both...).`;
-      const { data, trace } = await ai.json<{ line: string }>(prompt, { task: "play.unlock", schema: WHY_SCHEMA, maxTokens: 300, temperature: 0.5, cache: false, mock: () => ({ line: `${facts[0]}, so this one is for the whole chat.` }) });
+      // The player whose finish unlocks the card waits on this call, so it goes to the fast model with room to answer:
+      // Muse reasons before it writes, and at 300 tokens the answer never came (four calls, about 30 s; now one, about 3 s).
+      // The line is one sentence and code checks it word for word either way.
+      const { data, trace } = await ai.json<{ line: string }>(prompt, { task: "play.unlock", model: ai.models.fast(), schema: WHY_SCHEMA, maxTokens: 1500, temperature: 0.5, cache: false, mock: () => ({ line: `${facts[0]}, so this one is for the whole chat.` }) });
       const line = typeof data?.line === "string" ? data.line.replace(/\s+/g, " ").trim() : ""; // a non-string is refused as empty
       mode = trace.mode;
       costUsd = trace.costUsd ?? 0;

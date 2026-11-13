@@ -15,7 +15,8 @@
     "sidequest": "tsx sidequest/cli.ts",
     "test": "node --import tsx --test \"tests/**/*.test.ts\"",
     "qa:play": "node scripts/qa-play.mjs",
-    "eval:play": "node scripts/eval-play.mjs"
+    "eval:play": "node scripts/eval-play.mjs",
+    "demo:prep": "node scripts/demo-prep.mjs"
   },
   "dependencies": {
     "lucide-react": "^0.468.0",
