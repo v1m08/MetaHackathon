@@ -31,7 +31,8 @@ interface Completion {
 }
 export interface Message {
   role: "system" | "user" | "assistant";
-  content: string;
+  /** Text, or text + images (OpenAI-style parts) for vision models. */
+  content: string | ({ type: "text"; text: string } | { type: "image_url"; image_url: { url: string } })[];
 }
 
 type Entry = { costUsd: number; status: string; reservedUsd: number; [k: string]: unknown };
@@ -83,12 +84,23 @@ export async function chatJSON(messages: Message[], opts: ChatOpts = {}): Promis
   const t0 = performance.now();
   let res: Response;
   try {
-    res = await fetch(`${env.base}/chat/completions`, {
-      method: "POST",
-      headers: { "content-type": "application/json", authorization: `Bearer ${env.key}` },
-      body: JSON.stringify(body),
-      signal: AbortSignal.timeout(timeoutMs),
-    });
+    const deadline = Date.now() + timeoutMs;
+    for (let attempt = 0; ; attempt++) {
+      try {
+        res = await fetch(`${env.base}/chat/completions`, {
+          method: "POST",
+          headers: { "content-type": "application/json", authorization: `Bearer ${env.key}` },
+          body: JSON.stringify(body),
+          signal: AbortSignal.timeout(Math.max(1000, deadline - Date.now())),
+        });
+        break;
+      } catch (err) {
+        // Connection-level failures (DNS, reset before a response) never reached the model: retry a couple of times.
+        if ((err as Error).name === "TimeoutError" || attempt >= 2 || Date.now() > deadline - 2000) throw err;
+        console.error(`[llm] ${(err as Error).message}; retrying (${attempt + 1}/2)`);
+        await new Promise((r) => setTimeout(r, 600 * (attempt + 1)));
+      }
+    }
   } catch (err) {
     const name = (err as Error).name;
     // The request may still be billed: book a worst-case estimate.
@@ -139,4 +151,42 @@ export function extractJson(text: string): unknown {
     if (a >= 0 && b > a) return JSON.parse(t.slice(a, b + 1));
     throw new SyntaxError("no JSON object in completion");
   }
+}
+
+const IMAGE_USD = 0.15; // per image, deliberately high (same estimate as the app's ledger)
+/** One generated image (PNG bytes) from the Meta image model. Booked in the ledger like text calls. */
+export async function generateImage(prompt: string, opts: { size?: string; task?: string; timeoutMs?: number } = {}): Promise<Buffer> {
+  const model = process.env.SIDEQUEST_IMAGE_MODEL || process.env.MODEL_IMAGE || "muse-image-1.0";
+  const limit = env.budgetUsd - env.reserveUsd;
+  if (spentUsd() + IMAGE_USD >= limit) throw new LLMError(`budget guard: $${spentUsd().toFixed(2)} of $${limit} spent`);
+  const t0 = performance.now();
+  let res: Response | undefined;
+  for (let attempt = 0; !res; attempt++) {
+    try {
+      res = await fetch(`${env.base}/images/generations`, {
+        method: "POST",
+        headers: { "content-type": "application/json", authorization: `Bearer ${env.key}` },
+        body: JSON.stringify({ model, prompt, n: 1, size: opts.size ?? "1024x1024", response_format: "b64_json" }),
+        signal: AbortSignal.timeout(opts.timeoutMs ?? 120000),
+      });
+    } catch (err) {
+      // connection failures never reached the model: retry; a timeout may have, so stop
+      if ((err as Error).name === "TimeoutError" || attempt >= 2) throw new LLMError(`image: ${(err as Error).message}`);
+      await new Promise((r) => setTimeout(r, 600 * (attempt + 1)));
+    }
+  }
+  const raw = await res.text();
+  const ms = Math.round(performance.now() - t0);
+  book({ id: `sq-${Date.now().toString(36)}`, ts: new Date().toISOString(), task: opts.task ?? "sidequest.image", model, kind: "image", status: res.ok ? "ok" : "error", reservedUsd: IMAGE_USD, costUsd: res.ok ? IMAGE_USD : 0, images: 1, note: `${ms}ms` });
+  let data: { data?: { b64_json?: string; url?: string }[]; error?: { message?: string } } = {};
+  try {
+    data = JSON.parse(raw);
+  } catch {
+    /* non-JSON error body */
+  }
+  if (!res.ok) throw new LLMError(data.error?.message ?? `Image API ${res.status}: ${raw.slice(0, 200)}`, res.status);
+  const d = data.data?.[0];
+  if (d?.b64_json) return Buffer.from(d.b64_json, "base64");
+  if (d?.url) return Buffer.from(await (await fetch(d.url)).arrayBuffer());
+  throw new LLMError("image: empty response");
 }

@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { GameCard, GamePlayer, GameTray, type Finished } from "@/components/ChatGames";
+import { GAMES, GameCard, GamePlayer, GameTray, type Finished } from "@/components/ChatGames";
 import { useMe } from "@/components/Shell";
 import { ArrowLeft, Image as ImageIcon, Info, Phone, Plus, Send, Smile, ThumbsUp, Video } from "lucide-react";
 import { Avatar, Photo, cx } from "@/components/ui";
@@ -172,7 +172,7 @@ export default function ThreadPage() {
           onClose={() => setTray(false)}
           onCreate={(ref, interest, game) => {
             setTray(false);
-            void send(`🎮 ${game === "orderup" ? "Order Up!" : "Deep Cuts"}: ${interest}`, { type: "sqgame", ref });
+            void send(`🎮 ${GAMES[game].name}: ${interest}`, { type: "sqgame", ref });
           }}
         />
       )}

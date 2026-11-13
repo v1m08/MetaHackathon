@@ -1,17 +1,18 @@
-// interest → a rarity-trivia pack: a themed world plus 7 prompts with big answer sets.
+// interest → a rarity-trivia pack: a themed world, a generated backdrop and PROMPTS_PER_GAME prompts with big answer sets.
 // Step 1 builds the world and prompts; step 2 fetches each prompt's answers in parallel.
 import { cleanText, ensureContrast, normalizeInterest, parseHex } from "../../shared/text";
 import { FONTS, norm, PROMPTS_PER_GAME, withScene, type Answer, type Font, type Pack, type Prompt, type Scene, type World } from "../../shared/rarity";
 import { chatJSON, extractJson } from "../llm";
+import { bgUrl, makeBackdrop } from "./backdrop";
 
 const WORLD_SYSTEM = `You build one round of a trivia game played by friends in a group chat. Every prompt asks players to NAME something; any correct answer counts, and RARER correct answers score more. The fun is digging for the deep cut nobody else thought of.
 
 Given a player's interest, design the game so it feels made by a fan of that interest:
 
-PROMPTS (exactly ${PROMPTS_PER_GAME}):
+PROMPTS (exactly ${PROMPTS_PER_GAME + 1}; the best ${PROMPTS_PER_GAME} are used):
 - Each is a short "Name a ..." / "Name any ..." style prompt with a LARGE, well-defined, checkable answer set (at least 40 real answers), from obvious to obscure.
 - Answers must be short names (1-4 words): places, things, gear, techniques, terms, events, characters, works, people, slang. Never opinions ("best", "favorite"), sentences or numbers.
-- Cover ${PROMPTS_PER_GAME} different kinds of things. Include at least one playful one only fans would get (jargon, things people shout, in-jokes).
+- Each prompt covers a different kind of thing. Include at least one playful one only fans would get (jargon, things people shout, in-jokes).
 - Order from easiest to hardest. The first prompt should be answerable by a casual fan.
 - "hint" says exactly what counts, in under 70 characters (e.g. "Any named route, any style, anywhere").
 
@@ -31,13 +32,17 @@ WORLD:
   start and end: two hex colors each for the sky/water gradient at the start and at the far end of the journey (e.g. day sky to
   starry night for a summit). ground: hex for the main material. props: 4-6 single emoji that belong in this world (gear, animals,
   landmarks), never people.
+- backdrop: 1-2 vivid sentences describing a custom pixel-art game background for THIS interest, which an image model will paint.
+  Describe the actual places, landmarks, gear and objects a fan would recognise instantly (for chess: giant marble pieces on
+  checkered platforms; for Fortnite: the battle bus over a colorful island with loot llamas and the storm wall), laid out as a
+  journey from start to legendary finish. No text, no real people.
 - avatar: one emoji for the player's marker (a person or vehicle doing the interest).
 - verb: one short submit-button word in the interest's language (e.g. "Send", "Push", "Bake", "Dig", "Drop").
 - meter.up must match the scene: false for ocean and dig, true otherwise.
 - font: pick the one whose mood matches the interest best: "Rubik" (friendly, neutral), "Bricolage Grotesque" (quirky, artsy, indie), "Fraunces" (warm, crafty, food, books, history), "Space Grotesk" (tech, science, space, gaming), "Saira Condensed" (speed, motorsport, sports stats), "Baloo 2" (cute, pets, kids, cozy), "DM Serif Display" (elegant, fashion, music, film, classical), "Archivo Black" (loud, bold, extreme sports, hype). Don't default to one; match the mood.
 
 Reply with only JSON:
-{"title","tagline","scene":{"kind","start":[2 hex],"end":[2 hex],"ground","props":[emoji]},"avatar","verb","host":{"name","emoji","intro"},"meter":{"label","unit","perPoint","up","icon"},"tiers":[6 strings],"palette":{"bg","bg2","card","primary","accent","text"},"font","prompts":[{"q","hint"}]}`;
+{"title","tagline","backdrop","scene":{"kind","start":[2 hex],"end":[2 hex],"ground","props":[emoji]},"avatar","verb","host":{"name","emoji","intro"},"meter":{"label","unit","perPoint","up","icon"},"tiers":[6 strings],"palette":{"bg","bg2","card","primary","accent","text"},"font","prompts":[{"q","hint"}]}`;
 
 const ANSWERS_SYSTEM = `You write the answer key for a trivia prompt where any correct answer counts and rarer answers score more.
 
@@ -63,7 +68,7 @@ function sanitizeWorld(raw: Record<string, unknown>, interest: string): World & 
   const prompts = (Array.isArray(raw.prompts) ? raw.prompts : [])
     .map((p) => ({ q: cleanText(o(p).q, 70), hint: cleanText(o(p).hint, 80) || undefined }))
     .filter((p) => p.q)
-    .slice(0, PROMPTS_PER_GAME);
+    .slice(0, PROMPTS_PER_GAME + 1);
   const per = Number(meter.perPoint);
   const scened = withScene({ interest, scene: raw.scene as Scene | undefined, avatar: raw.avatar as string | undefined, verb: cleanText(raw.verb, 10) || undefined } as Parameters<typeof withScene>[0]);
   return {
@@ -127,9 +132,11 @@ export async function generatePack(rawInterest: string, onStage: (s: string) => 
   );
   cost += w.costUsd;
   const world = sanitizeWorld(extractJson(w.text) as Record<string, unknown>, interest);
-  if (world.prompts.length < 5) throw new Error(`only ${world.prompts.length} prompts generated`);
+  if (world.prompts.length < PROMPTS_PER_GAME) throw new Error(`only ${world.prompts.length} prompts generated`);
   onStage(`writing answer keys for ${world.prompts.length} prompts`);
 
+  // the backdrop paints while the answer keys are written, so it adds no wait
+  const backdrop = makeBackdrop({ interest, scene: world.scene, meter: world.meter, backdrop: cleanText((extractJson(w.text) as { backdrop?: unknown }).backdrop, 400) });
   const prompts: Prompt[] = await Promise.all(
     world.prompts.map(async (p) => {
       for (let attempt = 0; attempt < 2; attempt++) {
@@ -152,8 +159,9 @@ export async function generatePack(rawInterest: string, onStage: (s: string) => 
     }),
   );
   const good = prompts.filter((p) => p.answers.length >= 20);
-  if (good.length < 5) throw new Error("answer keys came back too thin");
-  return { pack: { ...world, prompts: good.slice(0, PROMPTS_PER_GAME) }, ms: Math.round(performance.now() - t0), costUsd: cost };
+  if (good.length < PROMPTS_PER_GAME) throw new Error("answer keys came back too thin");
+  const scene = (await backdrop) ? { ...world.scene, bg: bgUrl(interest) } : world.scene;
+  return { pack: { ...world, scene, prompts: good.slice(0, PROMPTS_PER_GAME) }, ms: Math.round(performance.now() - t0), costUsd: cost };
 }
 
 /** Judge an answer that isn't on the list. Fast model; strict. */

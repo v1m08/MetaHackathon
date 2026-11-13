@@ -1,5 +1,5 @@
 // Deep Cuts client. A pixel world runs behind every screen; the camera travels as you score.
-// Home → (build) → lobby → 7 prompts (answer → reveal) → results with friends on the gauge.
+// Home → (build) → lobby → prompts (answer → reveal) → results with friends on the gauge.
 import { fmt, ONLY_YOU_BONUS, SECONDS_PER_PROMPT, TIER_POINTS, withScene, type PublicPack, type Verdict } from "../../../shared/rarity";
 import { Audio } from "../engine/audio";
 import { mix } from "../engine/util";
@@ -169,7 +169,7 @@ function home(error = "") {
 
 async function make(interest: string) {
   audio.unlock();
-  const lines = [`Building a world for ${interest}`, "Casting your host", "Writing seven prompts", "Digging up deep cuts", "Ranking answers, obvious to legendary", "Checking the answer keys", "Almost there"];
+  const lines = [`Building a world for ${interest}`, "Casting your host", "Painting your world", "Digging up deep cuts", "Ranking answers, obvious to legendary", "Checking the answer keys", "Almost there"];
   const el = screen(`<div class="making pop"><h1>${esc(interest)}</h1><p id="s" class="blink">${esc(lines[0])}</p><p id="t"></p></div>`);
   const s = el.querySelector("#s")!, t = el.querySelector("#t")!;
   const t0 = Date.now();
