@@ -80,7 +80,7 @@ export async function startServer(port: number): Promise<Server> {
       if (roomPath && req.method === "GET" && !roomPath[2]) {
         const room = getRoom(roomPath[1]);
         if (!room) return json(404, { error: "room not found" });
-        return json(200, { id: room.id, config: room.config, seed: room.seed, scores: publicBoard(sortedScores(room), url.searchParams.get("me")) });
+        return json(200, { id: room.id, config: room.config, seed: room.seed, puzzle: room.puzzle, scores: publicBoard(sortedScores(room), url.searchParams.get("me")) });
       }
       if (roomPath && req.method === "POST" && roomPath[2]) {
         const body = await readJson(req, 2000);
@@ -110,7 +110,7 @@ export async function startServer(port: number): Promise<Server> {
         const r = await generate(interest);
         const room = createRoom(r.config);
         console.log(`  [web] ${JSON.stringify(interest)} → ${r.config.template} "${r.config.title}" (${r.source}, ${r.ms}ms) room ${room.id}`);
-        return json(200, { config: room.config, roomId: room.id, seed: room.seed });
+        return json(200, { config: room.config, roomId: room.id, seed: room.seed, puzzle: room.puzzle });
       }
       res.writeHead(404).end("not found");
     } catch (err) {

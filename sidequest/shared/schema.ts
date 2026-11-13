@@ -3,12 +3,12 @@
 // field by field, falling back to the template's defaults. It never throws.
 import { z } from "zod";
 import { TEMPLATES, TEMPLATE_IDS } from "./registry";
-import type { Copy, GameConfig, Palette, Sprites, TemplateId, TriviaQuestion } from "./types";
+import { DISPLAY_FONTS, SURFACES, type Copy, type DisplayFont, type GameConfig, type Palette, type Sprites, type Surface, type TemplateId, type TriviaQuestion, type WordHuntConfig } from "./types";
 
 export * from "./types";
 export { TEMPLATES, TEMPLATE_IDS } from "./registry";
 
-export const LIMITS = { interest: 60, title: 28, tagline: 60, howToPlay: 80, line: 28, rank: 20, question: 120, choice: 40 };
+export const LIMITS = { interest: 60, title: 28, tagline: 60, howToPlay: 80, line: 28, rank: 20, question: 120, choice: 40, hint: 70 };
 
 const hex = z.string().regex(/^#[0-9a-f]{6}$/);
 const unit = z.number().min(0).max(1);
@@ -55,6 +55,15 @@ export const GameConfigSchema = z.object({
         .min(3)
         .max(5),
     })
+    .optional(),
+  wordhunt: z
+    .object({
+      themed: z.array(z.object({ word: z.string().regex(/^[A-Z]{3,10}$/), hint: z.string().max(LIMITS.hint) })).min(4).max(16),
+      surface: z.enum(SURFACES),
+      font: z.enum(DISPLAY_FONTS),
+      labels: z.object({ word: z.string().min(1).max(LIMITS.line), themed: z.string().min(1).max(LIMITS.line), repeat: z.string().min(1).max(LIMITS.line) }).strict(),
+    })
+    .strict()
     .optional(),
 }).strict();
 
@@ -243,6 +252,31 @@ function trivia(v: unknown): TriviaQuestion[] {
   return out;
 }
 
+function wordhunt(v: unknown): WordHuntConfig | null {
+  const o = isObj(v) ? v : {};
+  const seen = new Set<string>();
+  const themed: WordHuntConfig["themed"] = [];
+  for (const t of arr(o.themed)) {
+    const word = (isObj(t) ? String(t.word ?? "") : String(t ?? "")).toUpperCase().replace(/[^A-Z]/g, "");
+    if (word.length < 3 || word.length > 10 || seen.has(word) || isProfane(word)) continue;
+    seen.add(word);
+    themed.push({ word, hint: isObj(t) ? cleanText(t.hint, LIMITS.hint) : "" });
+    if (themed.length === 16) break;
+  }
+  if (themed.length < 4) return null;
+  const l = isObj(o.labels) ? o.labels : {};
+  return {
+    themed,
+    surface: SURFACES.includes(o.surface as Surface) ? (o.surface as Surface) : "felt",
+    font: DISPLAY_FONTS.includes(o.font as DisplayFont) ? (o.font as DisplayFont) : "Rubik",
+    labels: {
+      word: cleanText(l.word, LIMITS.line) || "Nice",
+      themed: cleanText(l.themed, LIMITS.line) || "Theme word",
+      repeat: cleanText(l.repeat, LIMITS.line) || "Already found",
+    },
+  };
+}
+
 export function normalizeInterest(s: unknown): string {
   return cleanText(typeof s === "string" ? s : "", LIMITS.interest).replace(/…$/, "");
 }
@@ -256,6 +290,8 @@ export function sanitizeConfig(input: unknown, fallbackInterest = "fun"): GameCo
     questions = trivia(o.trivia);
     if (questions.length < 3) template = "catcher"; // trivia without questions is not a game
   }
+  const wh = template === "wordhunt" ? wordhunt(o.wordhunt) : null;
+  if (template === "wordhunt" && !wh) template = "catcher"; // a word hunt needs themed words
   const meta = TEMPLATES[template];
   const d = meta.defaults;
   const interest = normalizeInterest(o.interest) || normalizeInterest(fallbackInterest) || "fun";
@@ -282,6 +318,7 @@ export function sanitizeConfig(input: unknown, fallbackInterest = "fun"): GameCo
     tuning,
   };
   if (template === "trivia") cfg.trivia = { questions };
+  if (wh) cfg.wordhunt = wh;
   return cfg;
 }
 

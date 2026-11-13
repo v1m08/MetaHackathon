@@ -5,6 +5,8 @@ import { randomBytes } from "node:crypto";
 import { existsSync, mkdirSync, readFileSync, renameSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { cleanText, sanitizeConfig, type GameConfig } from "../shared/schema";
+import type { Puzzle } from "../shared/wordhunt";
+import { generatePuzzle } from "./wordhunt";
 
 export interface ScoreRow {
   playerId: string;
@@ -19,6 +21,8 @@ export interface Room {
   seed: number;
   createdAt: string;
   scores: ScoreRow[];
+  /** Word hunt: one board for everyone in the room. */
+  puzzle?: Puzzle;
 }
 
 const DIR = join(__dirname, "..", ".cache");
@@ -58,6 +62,7 @@ function newId() {
 export function createRoom(config: unknown): Room {
   const room: Room = { id: newId(), config: sanitizeConfig(config), seed: randomBytes(4).readUInt32LE(0), createdAt: new Date().toISOString(), scores: [] };
   while (rooms.has(room.id)) room.id = newId();
+  if (room.config.wordhunt) room.puzzle = generatePuzzle(room.config.wordhunt.themed, room.seed);
   rooms.set(room.id, room);
   if (rooms.size > MAX_ROOMS) rooms.delete(rooms.keys().next().value!);
   save();

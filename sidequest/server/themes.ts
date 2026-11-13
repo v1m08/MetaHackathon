@@ -138,3 +138,47 @@ function mini(
     tuning: { difficulty: 0.5 },
   };
 }
+
+/** Phase 0: hand-written F1 word hunt, used to set the house style before the LLM fills these in. */
+export const WORDHUNT_F1 = {
+  template: "wordhunt",
+  interest: "F1",
+  title: "Purple Sector",
+  tagline: "Find the paddock's words before the flag drops.",
+  howToPlay: "Swipe across touching letters to make words. F1 words score double.",
+  palette: { background: "#4a5263", surface: "#3a4150", primary: "#b26bff", accent: "#3ddc84", danger: "#ff5a4f", text: "#f7f8fa" },
+  sprites: { player: "🏎️", obstacles: ["🚧", "🛞"], pickups: ["🏁"], scenery: [] },
+  copy: {
+    start: "Lights out",
+    hit: ["Green sector", "Clean lap", "Nice line"],
+    miss: ["Track limits", "Not a word", "Off the racing line"],
+    combo: ["Purple sector!", "Fastest lap!", "Undercut!"],
+    win: "Chequered flag. That's a podium.",
+    lose: "Chequered flag. Box for a rematch.",
+    ranks: ["Backmarker", "Midfield", "Podium", "World Champion"],
+  },
+  modifiers: ["themed_double"],
+  tuning: { difficulty: 0.5 },
+  wordhunt: {
+    surface: "pitlane",
+    font: "Saira Condensed",
+    labels: { word: "Green sector", themed: "Purple sector", repeat: "Already set" },
+    themed: [
+      { word: "UNDERCUT", hint: "Pit before your rival to jump them on fresh tyres" },
+      { word: "CHICANE", hint: "A tight left-right squiggle that kills your speed" },
+      { word: "PADDOCK", hint: "Where the teams, motorhomes and VIPs live on race weekend" },
+      { word: "PODIUM", hint: "Top three. Champagne optional, spraying it isn't" },
+      { word: "SECTOR", hint: "One of the three timed slices of every lap" },
+      { word: "GRAVEL", hint: "The trap waiting past the run-off. Ask anyone who's beached" },
+      { word: "SLICK", hint: "Treadless dry-weather tyre" },
+      { word: "APEX", hint: "The inside point of a corner you clip on the perfect line" },
+      { word: "KERB", hint: "Striped edge of the track. Ride it, don't abuse it" },
+      { word: "GRID", hint: "Where the cars line up for the start" },
+      { word: "POLE", hint: "First place on the grid, earned in qualifying" },
+      { word: "DRS", hint: "Drag Reduction System: the flap that opens on the straight" },
+      { word: "PIT", hint: "Where the tyre changes happen in two seconds flat" },
+      { word: "BOX", hint: "Radio code for 'come into the pits this lap'" },
+      { word: "LAP", hint: "One full trip around the circuit" },
+    ],
+  },
+};

@@ -9,6 +9,8 @@ import { Audio } from "./engine/audio";
 import { Runner, type RunResult } from "./engine/runner";
 import { contrastText } from "./theme";
 import { TEMPLATE_IMPLS } from "./templates";
+import { loadFonts, playWordHunt, type WordHuntResult } from "./games/wordhunt";
+import { wordPoints, type Puzzle } from "../../shared/wordhunt";
 
 interface Row {
   name: string;
@@ -21,6 +23,8 @@ interface Session {
   seed?: number;
   roomId?: string;
   board?: Row[];
+  /** word hunt: the room's shared board */
+  puzzle?: Puzzle;
   /** hash-link challenges only */
   scoreToBeat?: number;
 }
@@ -74,7 +78,7 @@ async function api<T>(path: string, body?: unknown): Promise<T | null> {
     return null;
   }
 }
-const fetchRoom = (id: string) => api<{ id: string; config: unknown; seed: number; scores: Row[] }>(`/api/rooms/${id}?me=${playerId}`);
+const fetchRoom = (id: string) => api<{ id: string; config: unknown; seed: number; scores: Row[]; puzzle?: Puzzle }>(`/api/rooms/${id}?me=${playerId}`);
 const postScore = (id: string, score: number) => api<{ scores: Row[] }>(`/api/rooms/${id}/scores`, { playerId, name: getName() || "Player", score });
 
 // ---------- shell ----------
@@ -172,13 +176,13 @@ async function load(raw: string) {
   let i = 0;
   const status = el.querySelector(".status")!;
   const tick = setInterval(() => (status.textContent = lines[(i = Math.min(lines.length - 1, i + 1))]), 1400);
-  const r = await api<{ config: unknown; roomId?: string; seed?: number }>("/api/generate", { interest });
+  const r = await api<{ config: unknown; roomId?: string; seed?: number; puzzle?: Puzzle }>("/api/generate", { interest });
   clearInterval(tick);
   best = 0;
   const cfg = sanitizeConfig(r?.config ?? { interest, template: "catcher" }, interest); // never dead-end
   if (r?.roomId) {
     history.replaceState(null, "", `/g/${r.roomId}`);
-    title({ cfg, seed: r.seed, roomId: r.roomId, board: [] });
+    title({ cfg, seed: r.seed, roomId: r.roomId, board: [], puzzle: r.puzzle });
   } else {
     history.replaceState(null, "", "/#" + (await encodeShare({ config: cfg })));
     title({ cfg });
@@ -188,6 +192,10 @@ async function load(raw: string) {
 // ---------- title card ----------
 function title(s: Session) {
   applyTheme(s.cfg.palette);
+  const display = s.cfg.wordhunt?.font ?? "Rubik";
+  document.documentElement.style.setProperty("--display", `"${display}"`);
+  document.documentElement.style.setProperty("--display-style", display === "Saira Condensed" || display === "Fraunces" ? "italic" : "normal");
+  if (s.cfg.wordhunt) void loadFonts(s.cfg);
   const cfg = s.cfg;
   const mods = cfg.modifiers.map((m) => `<span class="mod">${esc(m.replace(/_/g, " "))}</span>`).join("");
   const leader = s.board?.[0];
@@ -199,7 +207,7 @@ function title(s: Session) {
       <div class="hero">${cfg.sprites.player}</div>
       <h1>${esc(cfg.title)}</h1>
       <p class="tagline">${esc(cfg.tagline)}</p>
-      <div class="mods">${mods}</div>
+      ${cfg.template === "wordhunt" ? "" : `<div class="mods">${mods}</div>`}
       <p class="how">${esc(cfg.howToPlay)}</p>
       ${s.roomId ? `<input class="name" maxlength="16" placeholder="Your name" value="${esc(getName())}" autocomplete="nickname" />` : ""}
       <button class="btn primary big start">Tap to start</button>
@@ -231,14 +239,44 @@ function title(s: Session) {
 // ---------- play ----------
 function play(s: Session) {
   audio.unlock();
+  if (s.cfg.template === "wordhunt" && s.puzzle) {
+    const puzzle = s.puzzle;
+    const el = screen(`${muteButton()}<div class="wh-host"></div>`, "themed playing");
+    wireMute(el);
+    void loadFonts(s.cfg).then(() =>
+      playWordHunt(el.querySelector<HTMLElement>(".wh-host")!, s.cfg, puzzle, audio, { bot: BOT }).then((r) => {
+        const par = wordHuntPar(puzzle);
+        return results(s, { score: r.score, won: r.score >= par * 0.6, par }, r);
+      }),
+    );
+    return;
+  }
   const el = screen(`${muteButton()}<div class="stage"></div>`, "themed playing");
   wireMute(el);
   runner = new Runner(el.querySelector(".stage")!, audio);
-  runner.run(s.cfg, TEMPLATE_IMPLS[s.cfg.template], (r) => void results(s, r), { seed: s.seed, bot: BOT });
+  runner.run(s.cfg, TEMPLATE_IMPLS[s.cfg.template]!, (r) => void results(s, r), { seed: s.seed, bot: BOT });
+}
+
+/** A "great round" score: about an eighth of every common word on the board. */
+const wordHuntPar = (p: Puzzle) => Math.min(20000, Math.max(6000, p.words.filter((w) => w.c).reduce((t, w) => t + wordPoints(w.w.length, false), 0) * 0.12));
+
+function wordHuntSummary(s: Session, wh: WordHuntResult) {
+  const p = s.puzzle!;
+  const got = new Set(wh.found.map((f) => f.w));
+  const longest = wh.found.reduce((a, f) => (f.w.length > a.length ? f.w : a), "");
+  const missed = p.words.filter((w) => w.c && !got.has(w.w) && !p.themed.some((t) => t.word === w.w)).sort((a, b) => b.w.length - a.w.length).slice(0, 3).map((w) => w.w);
+  return `
+    <div class="whr-stats">
+      <div><b>${wh.found.length}</b><span>words</span></div>
+      <div><b>${esc(longest || "–")}</b><span>longest</span></div>
+      <div><b>${wh.themedFound.length}/${p.themed.length}</b><span>${esc(s.cfg.interest)} words</span></div>
+    </div>
+    <ul class="whr-themed">${p.themed.map((t) => `<li class="${got.has(t.word) ? "got" : ""}"><b>${esc(t.word)}</b><span>${esc(t.hint)}</span></li>`).join("")}</ul>
+    ${missed.length ? `<p class="whr-missed">Longest words you missed: ${missed.map(esc).join(", ")}</p>` : ""}`;
 }
 
 // ---------- results ----------
-async function results(s: Session, r: RunResult) {
+async function results(s: Session, r: RunResult, wh?: WordHuntResult) {
   const cfg = s.cfg;
   const frac = r.score / Math.max(1, r.par);
   const rank = cfg.copy.ranks[frac < 0.25 ? 0 : frac < 0.6 ? 1 : frac < 1 ? 2 : 3];
@@ -263,6 +301,7 @@ async function results(s: Session, r: RunResult) {
       <div class="score">0</div>
       <div class="rank">${esc(rank)}</div>
       <p class="beat">${esc(standing || (newBest ? "Personal best" : `Best: ${fmt(best)}`))}</p>
+      ${wh ? wordHuntSummary(s, wh) : ""}
       ${s.roomId ? `<div class="board-wrap">${boardHtml(s.board ?? [], 6)}</div>` : ""}
       <button class="btn primary big again">Play again</button>
       <button class="btn accent share">${s.roomId ? "Send to the group chat" : "Challenge a friend"}</button>
@@ -291,14 +330,14 @@ async function results(s: Session, r: RunResult) {
 // ---------- boot ----------
 async function boot() {
   try {
-    await Promise.race([document.fonts.load('600 20px "Fredoka"'), new Promise((r) => setTimeout(r, 1200))]);
+    await Promise.race([document.fonts.load('600 20px "Rubik"'), new Promise((r) => setTimeout(r, 1200))]);
   } catch {
     /* fall back to ui-rounded */
   }
   const room = location.pathname.match(/^\/g\/([a-z0-9]{4,12})$/);
   if (room) {
     const data = await fetchRoom(room[1]);
-    if (data) return title({ cfg: sanitizeConfig(data.config), seed: data.seed, roomId: data.id, board: data.scores });
+    if (data) return title({ cfg: sanitizeConfig(data.config), seed: data.seed, roomId: data.id, board: data.scores, puzzle: data.puzzle });
   }
   const shared = location.hash.length > 3 ? await decodeShare(location.hash) : null;
   if (shared) return title({ cfg: shared.config, scoreToBeat: shared.scoreToBeat });

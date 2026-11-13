@@ -24,6 +24,19 @@ const neutralCopy: Copy = {
 };
 
 export const TEMPLATES: Record<TemplateId, TemplateMeta> = {
+  wordhunt: {
+    id: "wordhunt",
+    description: "Swipe across adjacent letters on a 5x5 board to make words in 80 seconds. Themed words for the interest are hidden on the board and score double.",
+    covers: ["anything with its own vocabulary"],
+    modifiers: { themed_double: "themed words score double" },
+    tuning: {},
+    defaults: {
+      palette: { background: "#2f5d50", surface: "#24493f", primary: "#ffcf5a", accent: "#7fe0a8", danger: "#ff6b6b", text: "#fbf7ee" },
+      sprites: { player: "🔤", obstacles: ["❌", "⛔"], pickups: ["⭐"], scenery: [] },
+      copy: { ...neutralCopy, start: "Go!" },
+      modifiers: ["themed_double"],
+    },
+  },
   dodger: {
     id: "dodger",
     description: "Top-down avoider. Drag left/right to dodge falling obstacles and grab pickups while speed ramps up. 3 lives, 40 s.",

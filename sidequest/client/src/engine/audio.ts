@@ -79,6 +79,88 @@ export class Audio {
     s.start(t);
   }
 
+  // ---------- house kit: soft, musical, layered ----------
+
+  /** A rounded mallet-like note: sine body + quiet octave, filtered. */
+  private mallet(freq: number, opts: { delay?: number; gain?: number; dur?: number } = {}) {
+    const c = this.ctx;
+    if (!c || !this.master || this.muted) return;
+    const t = c.currentTime + (opts.delay ?? 0);
+    const dur = opts.dur ?? 0.35;
+    const peak = opts.gain ?? 0.22;
+    const out = c.createGain();
+    out.gain.setValueAtTime(0.0001, t);
+    out.gain.exponentialRampToValueAtTime(peak, t + 0.006);
+    out.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    const f = c.createBiquadFilter();
+    f.type = "lowpass";
+    f.frequency.setValueAtTime(Math.min(9000, freq * 6), t);
+    f.frequency.exponentialRampToValueAtTime(Math.max(400, freq * 1.5), t + dur);
+    out.connect(f).connect(this.master);
+    for (const [mult, g, type] of [[1, 1, "sine"], [2, 0.25, "triangle"], [3.01, 0.08, "sine"]] as const) {
+      const o = c.createOscillator();
+      const og = c.createGain();
+      o.type = type;
+      o.frequency.value = freq * mult;
+      og.gain.value = g;
+      o.connect(og).connect(out);
+      o.start(t);
+      o.stop(t + dur + 0.05);
+    }
+  }
+
+  /** Major pentatonic step from C5; each tile in a swipe climbs one step. */
+  static penta(step: number) {
+    const scale = [0, 2, 4, 7, 9];
+    const oct = Math.floor(step / 5);
+    return 523.25 * Math.pow(2, (scale[((step % 5) + 5) % 5] + 12 * oct) / 12);
+  }
+
+  /** One swipe step. */
+  step(i: number) {
+    this.mallet(Audio.penta(Math.min(i, 14)), { gain: 0.18, dur: 0.25 });
+  }
+  /** Backing out of a tile. */
+  unstep(i: number) {
+    this.mallet(Audio.penta(Math.max(0, i - 1)) / 2, { gain: 0.1, dur: 0.12 });
+  }
+  /** A found word: a quick rising run, longer words climb higher. Themed words get a bright top note. */
+  word(len: number, special = false) {
+    const n = Math.min(len, 8);
+    for (let k = 0; k < n; k++) this.mallet(Audio.penta(k + 2), { delay: k * 0.035, gain: 0.16, dur: 0.3 });
+    this.mallet(Audio.penta(n + 4), { delay: n * 0.035 + 0.03, gain: 0.22, dur: 0.6 });
+    if (special) {
+      this.mallet(Audio.penta(n + 7), { delay: n * 0.035 + 0.1, gain: 0.18, dur: 0.9 });
+      this.mallet(Audio.penta(n + 9), { delay: n * 0.035 + 0.16, gain: 0.14, dur: 1.1 });
+    }
+  }
+  /** Soft muted thud for "not a word". */
+  thud() {
+    this.mallet(140, { gain: 0.25, dur: 0.18 });
+    this.noise(0.06, 0.08, 500);
+  }
+  /** Two quick same notes for "already found". */
+  repeat() {
+    this.mallet(Audio.penta(4), { gain: 0.14, dur: 0.12 });
+    this.mallet(Audio.penta(4), { delay: 0.09, gain: 0.14, dur: 0.15 });
+  }
+  /** Tile landing on the tray. */
+  clack(delay = 0) {
+    this.noise(0.03, 0.12, 2400, delay);
+    this.mallet(900 + Math.random() * 200, { delay, gain: 0.05, dur: 0.05 });
+  }
+  /** Start-light beep; `go` is the higher, longer one. */
+  beep(go = false) {
+    this.tone(go ? 1320 : 660, go ? 0.35 : 0.14, { type: "sine", gain: go ? 0.2 : 0.14 });
+  }
+  tick(urgent = false) {
+    this.mallet(urgent ? 1760 : 1320, { gain: urgent ? 0.1 : 0.06, dur: 0.06 });
+  }
+  /** End of round. */
+  finish() {
+    [0, 4, 7, 12].forEach((s, k) => this.mallet(392 * Math.pow(2, s / 12), { delay: k * 0.09, gain: 0.2, dur: 0.8 }));
+  }
+
   /** `level` lets combos climb in pitch. */
   play(s: Sfx, level = 0) {
     if (!this.ctx || this.muted) return;

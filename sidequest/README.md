@@ -7,7 +7,8 @@ friend or a group chat: everyone plays the same game on the same course and comp
 ```bash
 npm run sidequest                          # interactive: asks "What are you into?" in a loop
 npm run sidequest -- "F1 and cooking"      # one interest, then keeps serving and asking
-npm run sidequest:test                     # fuzz + headless bot + fallback + link tests (no network)
+npm run sidequest -- --demo                # v2 word hunt with the hand-made F1 theme (quality reference)
+npm run sidequest:test                     # fuzz + headless bot + board + link tests (no network)
 ```
 
 The CLI starts a server on `:5180`, or reuses one that is already running. For each interest it prints:
@@ -17,6 +18,16 @@ The CLI starts a server on `:5180`, or reuses one that is already running. For e
 
 Flags: `--fresh` (skip the config cache), `--offline` (keyword fallback, no API call), `--open` (open
 in a browser), `--port 5181`, `--no-serve`. Add `?bot=1` to any game URL to watch it play itself.
+
+## v2 direction (in progress)
+
+The v1 arcade templates (`dodger`, `shot`, `catcher`) are being replaced by a few deep, hand-crafted games
+whose content the LLM generates. Word hunt ([client/src/games/wordhunt.ts](client/src/games/wordhunt.ts))
+is the first, and it sets the house style: keycap tiles on a themed table, one rising note per tile.
+Themed words for the interest are hidden on each board and score double. Boards come from
+[server/wordhunt.ts](server/wordhunt.ts): it places the themed words, fills the rest by letter frequency,
+solves the board against the SCOWL word list, and keeps the best of up to 60 tries. The whole room shares
+one board. The plan is in `~/.claude/plans/ok-the-games-are-bubbly-stallman.md`.
 
 ## How it works
 

@@ -1,4 +1,19 @@
-export type TemplateId = "dodger" | "shot" | "catcher" | "trivia";
+export type TemplateId = "dodger" | "shot" | "catcher" | "trivia" | "wordhunt";
+
+/** Display faces a theme may use (all on Google Fonts). The house face for pieces is always Rubik. */
+export const DISPLAY_FONTS = ["Saira Condensed", "Rubik", "Bricolage Grotesque", "Fraunces", "Bungee", "Baloo 2", "Space Grotesk", "Righteous"] as const;
+export type DisplayFont = (typeof DISPLAY_FONTS)[number];
+/** Table surfaces drawn in code; the theme picks one. */
+export const SURFACES = ["pitlane", "felt", "wood", "paper", "night", "court", "kitchen"] as const;
+export type Surface = (typeof SURFACES)[number];
+
+export interface WordHuntConfig {
+  themed: { word: string; hint: string }[];
+  surface: Surface;
+  font: DisplayFont;
+  /** What a found word, a themed word and a repeat are called in this theme. */
+  labels: { word: string; themed: string; repeat: string };
+}
 
 export interface Palette {
   background: string;
@@ -45,6 +60,7 @@ export interface GameConfig {
   modifiers: string[];
   tuning: { difficulty: number; [key: string]: number };
   trivia?: { questions: TriviaQuestion[] };
+  wordhunt?: WordHuntConfig;
 }
 
 /** What a challenge link carries. */

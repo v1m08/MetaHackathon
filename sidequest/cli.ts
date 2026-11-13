@@ -3,7 +3,7 @@
 //   npm run sidequest                       interactive: keeps asking, prints a link per interest
 //   npm run sidequest -- "F1 and cooking"   one interest, then keeps serving (and asking)
 //
-// Flags: --fresh (skip cache)  --offline (keyword fallback only, no API)  --open (open in browser)
+// Flags: --demo (hand-made F1 word hunt)  --fresh (skip cache)  --offline (keyword fallback only, no API)  --open (open in browser)
 //        --port 5180  --no-serve (just print the link; assumes a server is already running)
 import { execFile } from "node:child_process";
 import { createInterface } from "node:readline";
@@ -13,6 +13,8 @@ import { generate } from "./server/generate";
 import { spentUsd } from "./server/llm";
 import { isOurServer, lanAddress, startServer } from "./server/serve";
 import { encodeShare } from "./shared/share";
+import { sanitizeConfig } from "./shared/schema";
+import { WORDHUNT_F1 } from "./server/themes";
 
 const args = process.argv.slice(2);
 const flag = (f: string) => args.includes(f);
@@ -22,9 +24,11 @@ const interests = args.filter((a, i) => !a.startsWith("--") && args[i - 1] !== "
 
 const c = { dim: "\x1b[2m", bold: "\x1b[1m", cyan: "\x1b[36m", green: "\x1b[32m", yellow: "\x1b[33m", reset: "\x1b[0m" };
 
-async function makeLink(interest: string) {
+async function makeLink(interest: string, preset?: unknown) {
   process.stdout.write(`${c.dim}  generating…${c.reset}`);
-  const r = await generate(interest, { fresh: flag("--fresh"), offline: flag("--offline") });
+  const r = preset
+    ? { config: sanitizeConfig(preset), source: "preset" as const, ms: 0, costUsd: 0, note: undefined }
+    : await generate(interest, { fresh: flag("--fresh"), offline: flag("--offline") });
   process.stdout.write("\r\x1b[K");
   // A room gives a short link with a shared leaderboard; without a server, fall back to a self-contained hash link.
   let path = "";
@@ -66,6 +70,7 @@ async function main() {
     }
   }
   console.log();
+  if (flag("--demo")) await makeLink("F1", WORDHUNT_F1); // Phase 0: hand-made F1 word hunt
   for (const i of interests) await makeLink(i);
 
   if (!process.stdin.isTTY && interests.length) return process.exit(0);

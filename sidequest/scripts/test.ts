@@ -9,7 +9,9 @@ import { decodeShare, encodeShare } from "../shared/share";
 import { Engine } from "../client/src/engine/engine";
 import { TEMPLATE_IMPLS } from "../client/src/templates";
 import { fallbackConfig } from "../server/fallback";
-import { THEMES } from "../server/themes";
+import { THEMES, WORDHUNT_F1 } from "../server/themes";
+import { dictionary, generatePuzzle } from "../server/wordhunt";
+import { findPath } from "../shared/wordhunt";
 
 let failures = 0;
 const check = (name: string, fn: () => void | Promise<void>) =>
@@ -53,7 +55,7 @@ function fuzzConfig(i: number): unknown {
 
 function playHeadless(cfg: GameConfig, seed: number) {
   const e = new Engine(cfg, { seed });
-  const game = TEMPLATE_IMPLS[cfg.template].create(cfg, e);
+  const game = TEMPLATE_IMPLS[cfg.template]!.create(cfg, e);
   const dt = 1 / 120;
   let x = e.W / 2;
   for (let step = 0; step < 120 * 120 && !game.isOver(); step++) {
@@ -85,8 +87,8 @@ async function main() {
       assert.ok(contrast(cfg.palette.text, cfg.palette.background) >= 4.5, `case ${i}: text contrast`);
       assert.ok(contrast(cfg.palette.primary, cfg.palette.background) >= 3, `case ${i}: primary contrast`);
       const e = new Engine(cfg, { seed: i });
-      const g = TEMPLATE_IMPLS[cfg.template].create(cfg, e);
-      for (let k = 0; k < 240; k++) g.update(1 / 120);
+      const g = TEMPLATE_IMPLS[cfg.template]?.create(cfg, e);
+      for (let k = 0; k < 240 && g; k++) g.update(1 / 120);
     }
   });
 
@@ -117,6 +119,36 @@ async function main() {
       });
     }
   }
+
+  console.log("\nword hunt boards");
+  await check("F1 config is schema-valid", () => {
+    const cfg = sanitizeConfig(WORDHUNT_F1);
+    assert.equal(cfg.template, "wordhunt");
+    assert.ok(GameConfigSchema.safeParse(cfg).success);
+  });
+  await check("20 boards: themed words traceable, every listed word traceable, rich boards", () => {
+    const cfg = sanitizeConfig(WORDHUNT_F1);
+    const d = dictionary();
+    let minThemed = 99, minCommon = 9999;
+    for (let seed = 1; seed <= 20; seed++) {
+      const p = generatePuzzle(cfg.wordhunt!.themed, seed * 1013);
+      assert.equal(p.board.length, 25);
+      for (const t of p.themed) assert.ok(findPath(p.board, t.word), `seed ${seed}: ${t.word} not on board`);
+      for (const w of p.words) {
+        assert.ok(findPath(p.board, w.w), `seed ${seed}: ${w.w} listed but not traceable`);
+        assert.ok(d.accept.has(w.w) || p.themed.some((t) => t.word === w.w), `${w.w} not a word`);
+      }
+      minThemed = Math.min(minThemed, p.themed.length);
+      minCommon = Math.min(minCommon, p.words.filter((w) => w.c).length);
+    }
+    assert.ok(minThemed >= 4, `a board had only ${minThemed} themed words`);
+    assert.ok(minCommon >= 60, `a board had only ${minCommon} common words`);
+    console.log(`      worst board: ${minThemed} themed words, ${minCommon} common words`);
+  });
+  await check("same seed gives the same board", () => {
+    const t = sanitizeConfig(WORDHUNT_F1).wordhunt!.themed;
+    assert.deepEqual(generatePuzzle(t, 77), generatePuzzle(t, 77));
+  });
 
   console.log("\noffline fallback");
   await check("odd interests all produce valid configs", () => {
