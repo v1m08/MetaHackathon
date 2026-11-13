@@ -17,6 +17,16 @@ export function readUserId(): string {
   return sessionStorage.getItem(KEY) || localStorage.getItem(KEY) || DEFAULT_USER;
 }
 
+/** Has someone been picked in this browser (URL, this tab, or last used)? A home-screen app starts with none: iOS gives it its own storage. */
+export function hasIdentity(): boolean {
+  if (typeof window === "undefined") return false;
+  try {
+    return !!(new URLSearchParams(window.location.search).get("as") || sessionStorage.getItem(KEY) || localStorage.getItem(KEY));
+  } catch {
+    return false;
+  }
+}
+
 export function writeUserId(id: string) {
   sessionStorage.setItem(KEY, id);
   localStorage.setItem(KEY, id);

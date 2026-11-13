@@ -28,6 +28,11 @@ export default async function DemoPage({ searchParams }: { searchParams: Promise
           </li>
         ))}
       </ul>
+      {thread === DEFAULT_THREAD && (
+        <p className="mt-6 text-center text-[14px]">
+          <a href="/demo/sf" className="font-semibold text-[#1877f2]">Switch to the SF weekend plans crew</a>
+        </p>
+      )}
     </main>
   );
 }

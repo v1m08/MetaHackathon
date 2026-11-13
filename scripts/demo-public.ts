@@ -18,7 +18,7 @@ const SQ_PORT = Number(process.env.SIDEQUEST_PORT) || 5180;
 const PLAYERS = ["nivan", "armaan", "vedansh", "keira", "abishek"]; // src/lib/demo.ts DEMO_IDS, numbered 1-5
 const DIST = ".next-demo";
 const c = { dim: "\x1b[2m", bold: "\x1b[1m", cyan: "\x1b[36m", green: "\x1b[32m", yellow: "\x1b[33m", red: "\x1b[31m", reset: "\x1b[0m" };
-const env = { ...process.env, NEXT_PUBLIC_SIDEQUEST_URL: "same-origin", NEXT_DIST_DIR: DIST, SIDEQUEST_PORT: String(SQ_PORT) };
+const env = { ...process.env, NEXT_PUBLIC_SIDEQUEST_URL: "same-origin", NEXT_PUBLIC_DEMO_PICKER: "/demo", NEXT_DIST_DIR: DIST, SIDEQUEST_PORT: String(SQ_PORT) };
 
 const children: ChildProcess[] = [];
 const shutdown = (code = 0) => {

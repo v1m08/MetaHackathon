@@ -28,6 +28,9 @@ export default function DemoPage() {
         ))}
       </ul>
       <p className="mt-6 text-center text-[13px] text-[#65676b]">Everyone picks a different person. A guide at the top of the screen walks you through.</p>
+      <p className="mt-3 text-center text-[13px]">
+        <a href="/demo" className="font-semibold text-[#1877f2]">Switch to the Sunday cookout crew</a>
+      </p>
     </main>
   );
 }
