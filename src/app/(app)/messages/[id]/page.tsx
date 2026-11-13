@@ -61,8 +61,10 @@ export default function ThreadPage() {
   const sendRef = useRef(send);
   sendRef.current = send;
   const finished = useCallback((f: Finished) => {
-    const place = f.players > 1 ? (f.rank === 1 ? " and took the lead" : ` (#${f.rank} of ${f.players})`) : "";
-    void sendRef.current(`${f.icon} I reached ${f.reached} in ${f.title}${place}`, { type: "game", ref: f.room });
+    if (f.text && f.ref) return void sendRef.current(f.text, { type: "game", ref: f.ref });
+    const players = f.players ?? 1;
+    const place = players > 1 ? (f.rank === 1 ? " and took the lead" : ` (#${f.rank} of ${players})`) : "";
+    void sendRef.current(`${f.icon} I reached ${f.reached} in ${f.title}${place}`, { type: "game", ref: f.room ?? "" });
   }, []);
 
   const byId = Object.fromEntries((c?.participants ?? []).map((p) => [p.id, p]));
@@ -147,9 +149,9 @@ export default function ThreadPage() {
       {tray && (
         <GameTray
           onClose={() => setTray(false)}
-          onCreate={(roomId, interest) => {
+          onCreate={(ref, interest, game) => {
             setTray(false);
-            void send(`🎮 Deep Cuts: ${interest}`, { type: "game", ref: roomId });
+            void send(`🎮 ${game === "orderup" ? "Order Up!" : "Deep Cuts"}: ${interest}`, { type: "game", ref });
           }}
         />
       )}

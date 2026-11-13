@@ -6,6 +6,12 @@ import { createPortal } from "react-dom";
 import { X } from "lucide-react";
 import { SceneView } from "../../sidequest/client/src/rarity/scene";
 import { fmt, withScene, type PublicPack } from "../../sidequest/shared/rarity";
+import type { Menu } from "../../sidequest/shared/kitchen";
+
+/** A chat game reference: "<roomId>" is Deep Cuts, "k:<roomId>" is Order Up!. */
+export type GameKind = "deepcuts" | "orderup";
+export const kindOf = (ref: string): GameKind => (ref.startsWith("k:") ? "orderup" : "deepcuts");
+const idOf = (ref: string) => ref.replace(/^k:/, "");
 
 export const sqUrl = () => process.env.NEXT_PUBLIC_SIDEQUEST_URL || (typeof window === "undefined" ? "" : `${location.protocol}//${location.hostname}:5180`);
 /** Messenger user → Sidequest player id (6-32 lowercase alphanumerics). */
@@ -57,7 +63,11 @@ function Cover({ pack }: { pack: PublicPack }) {
 }
 
 
-export function GameCard({ roomId, userId, onOpen }: { roomId: string; userId: string; onOpen: (id: string) => void }) {
+export function GameCard({ roomId, userId, onOpen }: { roomId: string; userId: string; onOpen: (ref: string) => void }) {
+  return kindOf(roomId) === "orderup" ? <KitchenCard gameRef={roomId} userId={userId} onOpen={onOpen} /> : <DeepCutsCard roomId={roomId} userId={userId} onOpen={onOpen} />;
+}
+
+function DeepCutsCard({ roomId, userId, onOpen }: { roomId: string; userId: string; onOpen: (ref: string) => void }) {
   const { room, missing } = useRoom(roomId, userId);
   if (missing) return <div className="rounded-2xl bg-[#f0f0f0] px-3 py-2 text-[13px] text-ink-2">This game has ended.</div>;
   const p = room?.pack;
@@ -108,14 +118,89 @@ export function GameCard({ roomId, userId, onOpen }: { roomId: string; userId: s
   );
 }
 
+// ---------- Order Up! card ----------
+interface KitchenInfo {
+  id: string;
+  menu: Menu;
+  board: { name: string; score: number; me: boolean }[];
+  me: { best: number; plays: number } | null;
+}
+function KitchenCard({ gameRef, userId, onOpen }: { gameRef: string; userId: string; onOpen: (ref: string) => void }) {
+  const [room, setRoom] = useState<KitchenInfo | null>(null);
+  const [missing, setMissing] = useState(false);
+  useEffect(() => {
+    let alive = true;
+    const load = async () => {
+      try {
+        const r = await fetch(`${sqUrl()}/api/k/${idOf(gameRef)}?me=${sqPid(userId)}`, { cache: "no-store" });
+        if (r.status === 404) return alive && setMissing(true);
+        const d = (await r.json()) as KitchenInfo;
+        if (alive) setRoom(d);
+      } catch {
+        /* server down */
+      }
+    };
+    void load();
+    const t = setInterval(load, 5000);
+    return () => {
+      alive = false;
+      clearInterval(t);
+    };
+  }, [gameRef, userId]);
+  if (missing) return <div className="rounded-2xl bg-[#f0f0f0] px-3 py-2 text-[13px] text-ink-2">This restaurant has closed.</div>;
+  const m = room?.menu;
+  const leader = room?.board[0];
+  const usd = (n: number) => `$${n.toLocaleString("en-US")}`;
+  const status = !room ? "Loading…" : room.me ? `Your best: ${usd(room.me.best)}${leader && !leader.me ? ` · ${leader.name} leads` : room.board.length > 1 ? " · you lead" : ""}` : leader ? `${leader.name} leads with ${usd(leader.score)}` : "Be the first to open";
+  return (
+    <button
+      onClick={() => onOpen(gameRef)}
+      className="mb-1 block w-[248px] overflow-hidden rounded-[18px] text-left shadow-[0_1px_2px_rgba(0,0,0,0.15)] transition-transform active:scale-[0.98]"
+      style={{ background: "#1c140f" }}
+      aria-label={`Open restaurant ${m?.name ?? ""}`}
+    >
+      <div className="relative h-[156px] overflow-hidden" style={{ background: m ? `linear-gradient(180deg, ${m.theme.wall}, ${m.theme.wall2})` : "#3a2a20" }}>
+        {m && (
+          <>
+            <div className="absolute inset-x-0 top-0 h-8" style={{ background: `repeating-linear-gradient(90deg, ${m.theme.primary} 0 18px, #fff8ef 18px 36px)` }} />
+            <div className="absolute inset-x-0 top-8 h-2" style={{ background: `radial-gradient(circle at 9px 0, ${m.theme.primary} 8px, transparent 9px) 0 0 / 36px 8px, radial-gradient(circle at 27px 0, #fff8ef 8px, transparent 9px) 0 0 / 36px 8px` }} />
+            <div className="absolute inset-0 flex flex-col items-center justify-center px-3 pt-8 text-center">
+              <div className="text-[30px] leading-none">{m.chef.emoji}</div>
+              <div className="mt-1 text-[21px] font-extrabold leading-[1.05] text-white" style={{ textShadow: `0 2px 0 ${m.theme.primary}, 0 3px 10px rgba(0,0,0,.5)` }}>{m.name}</div>
+              <div className="mt-1.5 text-[20px] tracking-[3px]">{m.ingredients.slice(0, 5).map((i) => i.emoji).join("")}</div>
+            </div>
+            <div className="absolute inset-x-0 bottom-0 h-3" style={{ background: m.theme.counter }} />
+          </>
+        )}
+        <div className="absolute left-2 top-10 rounded-full px-2 py-0.5 text-[11px] font-semibold text-white" style={{ background: "rgba(20,12,8,.6)" }}>
+          Order Up!
+        </div>
+      </div>
+      <div className="flex items-center gap-2 px-3 py-2.5 text-white">
+        <div className="min-w-0 flex-1">
+          <div className="truncate text-[14px] font-semibold leading-tight">{status}</div>
+          <div className="mt-0.5 truncate text-[12px] text-[#c9b8a8]">{m ? `${m.interest} · ${room!.board.length} played` : ""}</div>
+        </div>
+        <span className="rounded-full px-3.5 py-1.5 text-[13px] font-bold text-white" style={{ background: m?.theme.primary ?? "#e8492f" }}>
+          {room?.me ? "Again" : "Play"}
+        </span>
+      </div>
+    </button>
+  );
+}
+
 export interface Finished {
-  room: string;
-  score: number;
-  reached: string;
-  icon: string;
-  title: string;
-  rank: number;
-  players: number;
+  /** Deep Cuts fields */
+  room?: string;
+  score?: number;
+  reached?: string;
+  icon?: string;
+  title?: string;
+  rank?: number;
+  players?: number;
+  /** Order Up! sends the chat line and card ref directly */
+  text?: string;
+  ref?: string;
 }
 
 /** Full-screen layer: inside the desktop phone mockup when there is one, otherwise over the whole screen. */
@@ -133,11 +218,12 @@ function Overlay({ children, className = "", onClick }: { children: React.ReactN
 }
 
 export function GamePlayer({ roomId, userId, name, onClose, onFinished }: { roomId: string; userId: string; name: string; onClose: () => void; onFinished: (f: Finished) => void }) {
-  const src = `${sqUrl()}/x/${roomId}?embed=1&pid=${sqPid(userId)}&name=${encodeURIComponent(name)}`;
+  const path = kindOf(roomId) === "orderup" ? `/k/${idOf(roomId)}` : `/x/${roomId}`;
+  const src = `${sqUrl()}${path}?embed=1&pid=${sqPid(userId)}&name=${encodeURIComponent(name)}`;
   useEffect(() => {
     const on = (e: MessageEvent) => {
       const d = e.data as { source?: string; type?: string } & Partial<Finished>;
-      if (d?.source !== "deepcuts") return;
+      if (d?.source !== "deepcuts" && d?.source !== "orderup") return;
       if (d.type === "close") onClose();
       if (d.type === "finished") onFinished(d as Finished);
     };
@@ -146,25 +232,32 @@ export function GamePlayer({ roomId, userId, name, onClose, onFinished }: { room
   }, [onClose, onFinished]);
   return (
     <Overlay className="bg-black">
-      <iframe src={src} title="Deep Cuts" allow="autoplay; clipboard-write" className="h-full w-full border-0" />
+      <iframe src={src} title="Game" allow="autoplay; clipboard-write" className="h-full w-full border-0" />
     </Overlay>
   );
 }
 
-const SUGGESTIONS = ["Rock climbing", "F1", "Sourdough", "Scuba diving", "Dinosaurs", "Taylor Swift", "Coffee", "Space"];
+const GAMES: Record<GameKind, { name: string; blurb: string; emoji: string; api: string; prefix: string; placeholder: string; suggestions: string[]; accent: string }> = {
+  deepcuts: { name: "Deep Cuts", blurb: "Name the answer nobody else thinks of", emoji: "🔎", api: "/api/x", prefix: "", placeholder: "Pick a topic for the chat", suggestions: ["Rock climbing", "F1", "Sourdough", "Scuba diving", "Dinosaurs", "Taylor Swift", "Coffee", "Space"], accent: "#ffb020" },
+  orderup: { name: "Order Up!", blurb: "Run a restaurant. Serve fast, earn tips", emoji: "🍳", api: "/api/k", prefix: "k:", placeholder: "What kind of restaurant?", suggestions: ["Burgers", "Ramen", "Tacos", "Pizza", "Sushi", "Coffee shop", "Rock climbing", "Taylor Swift"], accent: "#e8492f" },
+};
 
-export function GameTray({ onCreate, onClose }: { onCreate: (roomId: string, interest: string) => void; onClose: () => void }) {
+export function GameTray({ onCreate, onClose }: { onCreate: (ref: string, interest: string, game: GameKind) => void; onClose: () => void }) {
+  const [game, setGame] = useState<GameKind>("deepcuts");
+  const G = GAMES[game];
+  const SUGGESTIONS = G.suggestions;
   const [topic, setTopic] = useState("");
   const [ready, setReady] = useState<{ interest: string; title: string; emoji: string }[]>([]);
   const [building, setBuilding] = useState<string | null>(null);
   const [secs, setSecs] = useState(0);
   const [error, setError] = useState("");
   useEffect(() => {
-    fetch(`${sqUrl()}/api/x/topics`)
+    setReady([]);
+    fetch(`${sqUrl()}${G.api}/topics`)
       .then((r) => r.json())
       .then(setReady)
       .catch(() => setError("Game server isn't running. Start it with: npm run sidequest"));
-  }, []);
+  }, [G.api]);
   useEffect(() => {
     if (!building) return;
     const t0 = Date.now();
@@ -178,10 +271,10 @@ export function GameTray({ onCreate, onClose }: { onCreate: (roomId: string, int
     setBuilding(i);
     setError("");
     try {
-      const r = await fetch(`${sqUrl()}/api/x/new`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ interest: i }) });
+      const r = await fetch(`${sqUrl()}${G.api}/new`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ interest: i }) });
       const d = (await r.json()) as { id?: string; error?: string };
       if (!r.ok || !d.id) throw new Error(d.error ?? "Couldn't make that game");
-      onCreate(d.id, i);
+      onCreate(`${G.prefix}${d.id}`, i, game);
     } catch (e) {
       setError((e as Error).message);
       setBuilding(null);
@@ -195,17 +288,30 @@ export function GameTray({ onCreate, onClose }: { onCreate: (roomId: string, int
       <div className="rounded-t-[22px] px-4 pb-6 pt-3 text-white" style={{ background: "#11131b" }} onClick={(e) => e.stopPropagation()}>
         <div className="mx-auto mb-3 h-1 w-10 rounded-full bg-white/25" />
         <div className="flex items-center justify-between">
-          <div>
-            <div className="text-[22px] font-extrabold leading-none">Deep Cuts</div>
-            <div className="mt-1 text-[13px] text-[#a9b0c4]">Name the answer nobody else thinks of</div>
-          </div>
+          <div className="text-[20px] font-extrabold leading-none">Play a game</div>
           <button onClick={onClose} className="rounded-full p-1.5 text-white/70" aria-label="Close"><X size={20} /></button>
         </div>
+        {!building && (
+          <div className="mt-3 grid grid-cols-2 gap-2">
+            {(Object.keys(GAMES) as GameKind[]).map((k) => (
+              <button
+                key={k}
+                onClick={() => setGame(k)}
+                className="rounded-2xl px-3 py-2.5 text-left transition-colors"
+                style={{ background: game === k ? "rgba(255,255,255,.14)" : "rgba(255,255,255,.05)", boxShadow: game === k ? `inset 0 0 0 2px ${GAMES[k].accent}` : "none" }}
+              >
+                <div className="text-[22px] leading-none">{GAMES[k].emoji}</div>
+                <div className="mt-1.5 text-[15px] font-bold">{GAMES[k].name}</div>
+                <div className="text-[12px] leading-snug text-[#a9b0c4]">{GAMES[k].blurb}</div>
+              </button>
+            ))}
+          </div>
+        )}
         {building ? (
           <div className="py-8 text-center">
             <div className="text-[20px] font-bold">Building {building}…</div>
             <div className="mt-2 text-[13px] text-[#a9b0c4]">
-              {readySet.has(building.toLowerCase()) ? "Almost ready" : `${secs}s · new topics take about a minute`}
+              {readySet.has(building.toLowerCase()) ? "Almost ready" : `${secs}s · new topics take ${game === "orderup" ? "about 20 seconds" : "about a minute"}`}
             </div>
           </div>
         ) : (
@@ -221,11 +327,11 @@ export function GameTray({ onCreate, onClose }: { onCreate: (roomId: string, int
                 value={topic}
                 onChange={(e) => setTopic(e.target.value)}
                 maxLength={60}
-                placeholder="Pick a topic for the chat"
+                placeholder={G.placeholder}
                 className="min-w-0 flex-1 rounded-full bg-white/10 px-4 py-3 text-[16px] text-white outline-none ring-2 ring-transparent placeholder:text-white/40 focus:ring-[#6ee7b7]"
                 autoFocus
               />
-              <button type="submit" className="rounded-full px-5 text-[15px] font-bold text-[#111]" style={{ background: "#ffb020" }}>
+              <button type="submit" className="rounded-full px-5 text-[15px] font-bold" style={{ background: G.accent, color: game === "orderup" ? "#fff" : "#111" }}>
                 Send
               </button>
             </form>

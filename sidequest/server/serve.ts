@@ -10,6 +10,7 @@ import { createRoom, getRoom, sortedScores, submitScore, type ScoreRow } from ".
 import { FRAME_CSP, framePage, playPage } from "./gen/pages";
 import { loadGame } from "./gen/pipeline";
 import { generatePack } from "./rarity/generate";
+import { createKRoom, generateMenu, getKRoom, kRoomView, readyKitchenTopics, submitKScore } from "./kitchen";
 import { cachedPack, cachePack, createXRoom, getXRoom, openPrompt, readyTopics, roomView, submitAnswer } from "./rarity/rooms";
 
 /** Never expose playerIds (they act as the write key); mark the caller's own row instead. */
@@ -90,6 +91,28 @@ export async function startServer(port: number): Promise<Server> {
   };
   await buildX();
 
+  const kctx = await esbuild.context({
+    entryPoints: [join(CLIENT, "src", "kitchen", "main.ts")],
+    bundle: true,
+    format: "iife",
+    target: "es2020",
+    write: false,
+    sourcemap: "inline",
+    logLevel: "silent",
+  });
+  let kjs = "";
+  const buildK = async () => {
+    try {
+      const r = await kctx.rebuild();
+      kjs = r.outputFiles?.[0]?.text ?? kjs;
+    } catch (err) {
+      const msg = (err as Error).message;
+      console.error("\n[kitchen client build failed]\n" + msg);
+      kjs = `document.body.innerHTML = ${JSON.stringify("<pre style='color:#fff;padding:16px;white-space:pre-wrap'>Client build failed:\n" + msg.replace(/</g, "&lt;") + "</pre>")}`;
+    }
+  };
+  await buildK();
+
   const server = createServer(async (req, res) => {
     const url = new URL(req.url ?? "/", "http://x");
     try {
@@ -98,7 +121,7 @@ export async function startServer(port: number): Promise<Server> {
         res.end(JSON.stringify(v));
       };
       // The messenger app (another origin) creates games and reads rooms for its chat cards.
-      if (url.pathname.startsWith("/api/x")) {
+      if (url.pathname.startsWith("/api/x") || url.pathname.startsWith("/api/k")) {
         res.setHeader("access-control-allow-origin", "*");
         res.setHeader("access-control-allow-headers", "content-type");
         res.setHeader("access-control-allow-methods", "GET, POST, OPTIONS");
@@ -107,6 +130,37 @@ export async function startServer(port: number): Promise<Server> {
           return res.end();
         }
       }
+      // ---------- Order Up! (restaurant) ----------
+      if (req.method === "GET" && /^\/k\/[a-z0-9]{4,12}$/.test(url.pathname)) {
+        await buildK();
+        res.writeHead(200, { "content-type": "text/html; charset=utf-8", "cache-control": "no-store" });
+        return res.end(readFileSync(join(CLIENT, "kitchen.html")));
+      }
+      if (req.method === "GET" && url.pathname === "/kitchen.js") {
+        res.writeHead(200, { "content-type": "text/javascript; charset=utf-8", "cache-control": "no-store" });
+        return res.end(kjs);
+      }
+      if (req.method === "GET" && url.pathname === "/api/k/topics") return json(200, readyKitchenTopics());
+      if (req.method === "POST" && url.pathname === "/api/k/new") {
+        const body = await readJson(req, 2000);
+        const interest = String(body.interest ?? "").slice(0, 60).trim();
+        if (!interest) return json(400, { error: "topic required" });
+        try {
+          const room = createKRoom(await generateMenu(interest));
+          console.log(`  [web] kitchen ${JSON.stringify(interest)} → /k/${room.id}`);
+          return json(200, { id: room.id });
+        } catch (e) {
+          return json(502, { error: `Couldn't open that restaurant (${(e as Error).message}). Try another topic.` });
+        }
+      }
+      const kApi = url.pathname.match(/^\/api\/k\/([a-z0-9]{4,12})(\/score)?$/);
+      if (kApi) {
+        const room = getKRoom(kApi[1]);
+        if (!room) return json(404, { error: "room not found" });
+        if (req.method === "GET" && !kApi[2]) return json(200, kRoomView(room, url.searchParams.get("me")));
+        if (req.method === "POST" && kApi[2]) return json(200, submitKScore(room, await readJson(req, 2000)));
+      }
+
       // ---------- rarity trivia ----------
       const xPage = url.pathname === "/x" || /^\/x\/[a-z0-9]{4,12}$/.test(url.pathname);
       if (req.method === "GET" && xPage) {
