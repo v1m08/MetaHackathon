@@ -1,10 +1,13 @@
-// Seeds realistic Sidequest (Deep Cuts + Order Up!) rooms on disk + message cards in seeded threads so
-// the pixel cards, leaderboards, /dev/context, and Events/Groups/Marketplace rankings all work out-of-the-box
+// Seeds realistic Sidequest (Deep Cuts, Order Up!, Ghost Run, Sketch Off) rooms on disk + message cards in seeded threads so
+// the pixel cards, leaderboards, Your Hangout critters, /dev/context, and Events/Groups/Marketplace rankings all work out-of-the-box
 // with zero Model API calls, and update live whenever new games are played.
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { PRESET_MENUS } from "../../../sidequest/shared/kitchen";
 import type { Pack } from "../../../sidequest/shared/rarity";
+import { COURSE_LENGTH, PRESET_COURSES } from "../../../sidequest/shared/run";
+import { PRESET_SKETCH, type Stroke } from "../../../sidequest/shared/sketch";
+import { dayStartMs } from "./day";
 import type { Database, ID, Message } from "@/types";
 
 export const sqPid = (userId: string) => `fbu${userId.toLowerCase().replace(/[^a-z0-9]/g, "")}`.padEnd(6, "0").slice(0, 32);
@@ -13,6 +16,8 @@ const CACHE_ROOT = join(process.cwd(), "sidequest", ".cache");
 const KITCHEN_DIR = join(CACHE_ROOT, "kitchen");
 const RARITY_DIR = join(CACHE_ROOT, "rarity");
 const PACKS_DIR = join(CACHE_ROOT, "packs");
+const RUN_DIR = join(CACHE_ROOT, "run");
+const SKETCH_DIR = join(CACHE_ROOT, "sketch");
 
 const INDIE_PACK: Pack = {
   interest: "indie bands",
@@ -45,17 +50,102 @@ function writeSeedRoom(path: string, data: unknown) {
 export function seedSidequestIntoDb(d: Database) {
   const now = Date.now();
   const DAY = 864e5;
+  const startToday = dayStartMs(now);
   const dAgo = (days: number, minsOffset = 0) => new Date(now - days * DAY + minsOffset * 60e3).toISOString();
   const hAgo = (h: number) => new Date(now - h * 3600e3).toISOString();
+  // Guaranteed to fall inside today's `America/Chicago` calendar day even right after local midnight.
+  const todayIso = (minsAgo: number) => new Date(Math.min(now - 1000, Math.max(startToday + 1000, now - minsAgo * 60e3))).toISOString();
 
   try {
     mkdirSync(KITCHEN_DIR, { recursive: true });
     mkdirSync(RARITY_DIR, { recursive: true });
     mkdirSync(PACKS_DIR, { recursive: true });
+    mkdirSync(RUN_DIR, { recursive: true });
+    mkdirSync(SKETCH_DIR, { recursive: true });
 
     const tacos = PRESET_MENUS.find((m) => m.interest === "tacos")!;
     const burgers = PRESET_MENUS.find((m) => m.interest === "burgers")!;
     const ramen = PRESET_MENUS.find((m) => m.interest === "ramen")!;
+    const f1Course = PRESET_COURSES.find((c) => c.interest === "f1")!;
+    const moviesSketch = PRESET_SKETCH.find((p) => p.interest === "movies")!;
+    const animalsSketch = PRESET_SKETCH.find((p) => p.interest === "animals")!;
+
+    // Pixel popcorn bucket strokes on a 96x96 grid (red/white striped bucket + yellow fluffy kernels).
+    const popcornStrokes: Stroke[] = [
+      [3, 1, [30, 34, 36, 26, 44, 30, 48, 22, 54, 28, 62, 26, 66, 34, 58, 38, 38, 38, 30, 34]],
+      [2, 0, [36, 30, 40, 32, 52, 26, 56, 30, 46, 34]],
+      [1, 1, [30, 38, 66, 38, 60, 78, 36, 78, 30, 38]],
+      [8, 1, [40, 42, 42, 74]],
+      [8, 1, [54, 42, 52, 74]],
+    ];
+    // Pixel cat face strokes on a 96x96 grid.
+    const catStrokes: Stroke[] = [
+      [2, 1, [28, 42, 34, 22, 44, 36, 52, 36, 62, 22, 68, 42, 66, 66, 48, 74, 30, 66, 28, 42]],
+      [0, 0, [40, 48, 40, 50]],
+      [0, 0, [56, 48, 56, 50]],
+      [1, 0, [46, 56, 50, 56, 48, 59, 46, 56]],
+      [0, 0, [20, 54, 34, 55]],
+      [0, 0, [62, 55, 76, 54]],
+    ];
+    // Smooth 22.85s ghost sample track ([pos, lane, pos, lane, ...]) for Ethan's F1 sprint.
+    const ethanGhost: number[] = [];
+    for (let step = 0; step <= 228; step++) {
+      const pos = Math.min(COURSE_LENGTH, Math.round((step / 228) * COURSE_LENGTH));
+      const lane = step < 60 ? 1 : step < 120 ? 0 : step < 175 ? 2 : 1;
+      ethanGhost.push(pos, lane);
+    }
+
+    writeSeedRoom(join(SKETCH_DIR, "sqsfmv01.json"), {
+      id: "sqsfmv01",
+      pack: moviesSketch,
+      seed: 90214,
+      createdAt: todayIso(45),
+      players: {
+        [sqPid("sofia")]: { name: "Sofia", word: 0, joinedAt: todayIso(45), opened: {} },
+      },
+      drawings: [
+        {
+          id: "drwpop1",
+          artist: sqPid("sofia"),
+          word: 0, // "popcorn"
+          strokes: popcornStrokes,
+          at: todayIso(42),
+          ai: { guess: "popcorn", correct: true },
+          guesses: {},
+        },
+      ],
+    });
+
+    writeSeedRoom(join(SKETCH_DIR, "sqhnzoo1.json"), {
+      id: "sqhnzoo1",
+      pack: animalsSketch,
+      seed: 61208,
+      createdAt: todayIso(60),
+      players: {
+        [sqPid("maya")]: { name: "Maya", word: 0, joinedAt: todayIso(60), opened: {} },
+      },
+      drawings: [
+        {
+          id: "drwcat1",
+          artist: sqPid("maya"),
+          word: 0, // "cat"
+          strokes: catStrokes,
+          at: todayIso(58),
+          ai: { guess: "cat", correct: true },
+          guesses: {},
+        },
+      ],
+    });
+
+    writeSeedRoom(join(RUN_DIR, "sqetf101.json"), {
+      id: "sqetf101",
+      course: f1Course,
+      seed: 73105,
+      createdAt: todayIso(35),
+      players: {
+        [sqPid("ethan")]: { name: "Ethan", best: 22.85, plays: 2, ghost: ethanGhost },
+      },
+    });
 
     writeSeedRoom(join(KITCHEN_DIR, "sqmjrm05.json"), {
       id: "sqmjrm05",
@@ -203,5 +293,67 @@ export function seedSidequestIntoDb(d: Database) {
     { id: "m_sq_ep_1", senderId: "priya", at: hAgo(16), text: "🎮 Order Up!: Ramen", attachment: { type: "sqgame", ref: "k:sqramn02" } },
     { id: "m_sq_ep_2", senderId: "priya", at: hAgo(15.9), text: "played Night Owl Noodles · $189", attachment: { type: "sqgamelog", ref: "k:sqramn02" } },
     { id: "m_sq_ep_3", senderId: "ethan", at: hAgo(15.6), text: "played Night Owl Noodles · $172 · #2 of 2", attachment: { type: "sqgamelog", ref: "k:sqramn02" } },
+  ]);
+
+  // ---------- Hangout 1:1 DM game histories across all 4 Sidequest games ----------
+  // Past days use lightweight GamePigeon completion logs (`sqgamelog`) so threads stay crisp with zero 404 cards,
+  // while today's active games (`s:sqsfmv01`, `r:sqetf101`, `s:sqhnzoo1`) have full `.cache` rooms on disk.
+  // Sofia (`c_maya_sofia`): 7-day streak on Sketch Off + Sofia drew popcorn TODAY -> "yourTurn"
+  const sofiaMsgs: { id: string; senderId: ID; at: string; text: string; attachment: Message["attachment"] }[] = [];
+  for (let day = 7; day >= 1; day--) {
+    const ref = `s:sqsfh0${day}`;
+    sofiaMsgs.push(
+      { id: `m_sq_sf_${day}b`, senderId: "sofia", at: dAgo(day, -25), text: "played Cosmic Doodles (Space) · 210 pts", attachment: { type: "sqgamelog", ref } },
+      { id: `m_sq_sf_${day}c`, senderId: "maya", at: dAgo(day, -18), text: "played Cosmic Doodles (Space) · 230 pts", attachment: { type: "sqgamelog", ref } },
+    );
+  }
+  sofiaMsgs.push(
+    { id: "m_sq_sf_td1", senderId: "sofia", at: todayIso(45), text: "🎮 Sketch Off: Movies", attachment: { type: "sqgame", ref: "s:sqsfmv01" } },
+    { id: "m_sq_sf_td2", senderId: "sofia", at: todayIso(42), text: "drew in Frame by Frame · AI guessed it!", attachment: { type: "sqgamelog", ref: "s:sqsfmv01" } },
+  );
+  inject("c_maya_sofia", sofiaMsgs);
+
+  // Ethan (`c_maya_ethan`): 2-day streak on Ghost Run (F1) + Ethan raced TODAY -> "yourTurn"
+  inject("c_maya_ethan", [
+    { id: "m_sq_et_2b", senderId: "ethan", at: dAgo(2, -16), text: "played Lights Out Sprint (F1) · 23.40s", attachment: { type: "sqgamelog", ref: "r:sqeth02" } },
+    { id: "m_sq_et_2c", senderId: "maya", at: dAgo(2, -10), text: "played Lights Out Sprint (F1) · 23.12s · took the lead", attachment: { type: "sqgamelog", ref: "r:sqeth02" } },
+    { id: "m_sq_et_1b", senderId: "maya", at: dAgo(1, -16), text: "played Lights Out Sprint (F1) · 22.95s", attachment: { type: "sqgamelog", ref: "r:sqeth01" } },
+    { id: "m_sq_et_1c", senderId: "ethan", at: dAgo(1, -11), text: "played Lights Out Sprint (F1) · 22.88s · took the lead", attachment: { type: "sqgamelog", ref: "r:sqeth01" } },
+    { id: "m_sq_et_td1", senderId: "ethan", at: todayIso(35), text: "🎮 Ghost Run: F1", attachment: { type: "sqgame", ref: "r:sqetf101" } },
+    { id: "m_sq_et_td2", senderId: "ethan", at: todayIso(33), text: "played Lights Out Sprint · 22.85s", attachment: { type: "sqgamelog", ref: "r:sqetf101" } },
+  ]);
+
+  // Aisha (`c_maya_aisha`): 7-day streak on Deep Cuts (Coffee), BOTH played today -> "done" (celebrating!)
+  const aishaMsgs: { id: string; senderId: ID; at: string; text: string; attachment: Message["attachment"] }[] = [];
+  for (let day = 6; day >= 1; day--) {
+    const ref = `sqai0${day}`;
+    aishaMsgs.push(
+      { id: `m_sq_ai_${day}b`, senderId: "aisha", at: dAgo(day, -24), text: "played Coffee Culture · 680 pts", attachment: { type: "sqgamelog", ref } },
+      { id: `m_sq_ai_${day}c`, senderId: "maya", at: dAgo(day, -18), text: "played Coffee Culture · 720 pts", attachment: { type: "sqgamelog", ref } },
+    );
+  }
+  aishaMsgs.push(
+    { id: "m_sq_ai_td2", senderId: "aisha", at: todayIso(52), text: "played Matcha Hour · 760 pts", attachment: { type: "sqgamelog", ref: "sqaitd01" } },
+    { id: "m_sq_ai_td3", senderId: "maya", at: todayIso(48), text: "played Matcha Hour · 810 pts · took the lead", attachment: { type: "sqgamelog", ref: "sqaitd01" } },
+  );
+  inject("c_maya_aisha", aishaMsgs);
+
+  // Hannah (`c_maya_hannah`): 3-day streak on Sketch Off (Animals) + Maya drew TODAY, waiting on Hannah -> "theirTurn"
+  for (let day = 3; day >= 1; day--) {
+    const ref = `s:sqhnh0${day}`;
+    inject("c_maya_hannah", [
+      { id: `m_sq_hn_${day}b`, senderId: "hannah", at: dAgo(day, -24), text: "played Zoo Doodles (Animals) · 190 pts", attachment: { type: "sqgamelog", ref } },
+      { id: `m_sq_hn_${day}c`, senderId: "maya", at: dAgo(day, -16), text: "played Zoo Doodles (Animals) · 220 pts", attachment: { type: "sqgamelog", ref } },
+    ]);
+  }
+  inject("c_maya_hannah", [
+    { id: "m_sq_hn_td1", senderId: "maya", at: todayIso(60), text: "🎮 Sketch Off: Animals", attachment: { type: "sqgame", ref: "s:sqhnzoo1" } },
+    { id: "m_sq_hn_td2", senderId: "maya", at: todayIso(58), text: "drew in Zoo Doodles · AI guessed it!", attachment: { type: "sqgamelog", ref: "s:sqhnzoo1" } },
+  ]);
+
+  // Grace (`c_maya_grace`): played together 4 days ago, missed since -> "lost" (napping in hammock!)
+  inject("c_maya_grace", [
+    { id: "m_sq_gr_4b", senderId: "grace", at: dAgo(4, -25), text: "played Pilates Studio · 540 pts", attachment: { type: "sqgamelog", ref: "sqgrpl04" } },
+    { id: "m_sq_gr_4c", senderId: "maya", at: dAgo(4, -20), text: "played Pilates Studio · 580 pts", attachment: { type: "sqgamelog", ref: "sqgrpl04" } },
   ]);
 }

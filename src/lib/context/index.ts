@@ -353,6 +353,52 @@ export interface StreakInfo {
   milestone?: number;
 }
 
+export interface ChatDayActivity {
+  finishersByDay: Map<string, Set<ID>>;
+  gamesByDay: Map<string, Set<string>>;
+}
+
+/** Per-day (`America/Chicago`) game activity for a conversation across both new rooms and replays of existing cards. */
+export function chatDayActivityFor(conversationId: ID, sessions = ingestSidequestSessions()): ChatDayActivity {
+  const c = getConversation(conversationId);
+  const finishersByDay = new Map<string, Set<ID>>();
+  const gamesByDay = new Map<string, Set<string>>();
+  const addGame = (d: string, ref: string) => {
+    let set = gamesByDay.get(d);
+    if (!set) gamesByDay.set(d, (set = new Set()));
+    set.add(ref);
+  };
+  const addFinisher = (d: string, uid: ID) => {
+    let set = finishersByDay.get(d);
+    if (!set) finishersByDay.set(d, (set = new Set()));
+    set.add(uid);
+  };
+
+  if (c) {
+    for (const m of c.messages) {
+      const att = m.attachment;
+      if (!att || (att.type !== "sqgame" && att.type !== "sqgamelog")) continue;
+      const d = dayKey(m.createdAt);
+      addGame(d, att.ref);
+      if (att.type === "sqgamelog" && c.participantIds.includes(m.senderId)) {
+        addFinisher(d, m.senderId);
+      }
+    }
+  }
+
+  for (const s of sessions) {
+    if (s.conversationId !== conversationId) continue;
+    addGame(s.date, s.ref);
+    for (const [uid, run] of s.players) {
+      const finishDay = dayKey(run.finishedAt);
+      addGame(finishDay, s.ref);
+      addFinisher(finishDay <= s.date ? s.date : finishDay, uid);
+    }
+  }
+
+  return { finishersByDay, gamesByDay };
+}
+
 /** Snapchat-style streak for a conversation over Sidequest sessions:
  *  - A calendar day (`America/Chicago`) counts when a strict majority finishes a game on that day by local midnight.
  *  - One missed day every 7 days is held by an automatic freeze (adds 0, preserves the run).
@@ -360,20 +406,12 @@ export interface StreakInfo {
 export function streakInfoFor(conversationId: ID, sessions = ingestSidequestSessions(), now = Date.now()): StreakInfo {
   const c = getConversation(conversationId);
   const members = c?.participantIds.length ?? 0;
-  const inChat = sessions.filter((s) => s.conversationId === conversationId);
-  const byDay = new Map<string, Set<ID>>();
-  for (const s of inChat) {
-    const finishers = byDay.get(s.date) ?? new Set<ID>();
-    for (const [uid, run] of s.players) {
-      if (dayKey(run.finishedAt) <= s.date) finishers.add(uid);
-    }
-    byDay.set(s.date, finishers);
-  }
+  const { finishersByDay: byDay, gamesByDay } = chatDayActivityFor(conversationId, sessions);
 
   const todayKey = dayKey(now);
   const todaySet = byDay.get(todayKey);
   const finishedToday = todaySet?.size ?? 0;
-  const hasTodayGame = inChat.some((s) => s.date === todayKey);
+  const hasTodayGame = (gamesByDay.get(todayKey)?.size ?? 0) > 0;
   const needed = majority(members);
   const today = {
     hasGame: hasTodayGame,

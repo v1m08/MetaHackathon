@@ -1,0 +1,6 @@
+/* Event unlock popup: Muse floats gently; reduced motion turns off the slide, fade and float. */
+@keyframes ep-float { 0%, 100% { transform: translateY(0) } 50% { transform: translateY(-3px) } }
+.ep-sheet .crit-host, .ep-sheet .crit { animation: ep-float 3s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .ep-sheet .slideup, .ep-sheet .fadein, .ep-sheet .crit-host, .ep-sheet .crit, .ep-sheet .crit * { animation: none !important; }
+}

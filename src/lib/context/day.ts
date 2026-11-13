@@ -14,3 +14,19 @@ export function prevDay(key: string) {
 }
 
 export const localHour = (d: Date | number = new Date()) => Number(hourFmt.format(typeof d === "number" ? new Date(d) : d));
+
+/** First epoch ms of `now`'s calendar day in `PLAY_TZ` (DST-safe). */
+export function dayStartMs(now = Date.now()): number {
+  const today = dayKey(now);
+  let t = Math.floor(now / 1e3) * 1e3;
+  for (const step of [3600e3, 60e3, 1e3]) while (dayKey(t - step) === today) t -= step;
+  return t;
+}
+
+/** ISO timestamp when `now`'s calendar day ends (local midnight in `PLAY_TZ`). */
+export function dayEndsAt(now = Date.now()): string {
+  const today = dayKey(now);
+  let t = Math.floor(now / 1e3) * 1e3;
+  for (const step of [3600e3, 60e3, 1e3]) while (dayKey(t + step) === today) t += step;
+  return new Date(t + 1e3).toISOString();
+}

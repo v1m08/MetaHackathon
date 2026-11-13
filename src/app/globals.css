@@ -49,3 +49,50 @@ html, body { overflow: hidden; overscroll-behavior: none; }
 
 /* Hide the desktop dev bar while a game is open so it never covers game buttons. */
 body.game-open [data-devbar] { display: none; }
+
+/* ---------- Hang Again: critters ---------- */
+.crit-body, .crit-eyes, .crit-shell, .crit-zzz, .crit-confetti > * { transform-box: fill-box; }
+.crit-body { transform-origin: 50% 100%; }
+@keyframes crit-bounce { 0%, 100% { transform: translateY(0) } 50% { transform: translateY(-4px) } }
+@keyframes crit-breathe { 0%, 100% { transform: scale(1, 1) } 50% { transform: scale(1.02, .97) } }
+@keyframes crit-droop { 0%, 100% { transform: rotate(-2deg) } 50% { transform: rotate(2deg) translateY(1px) } }
+@keyframes crit-hop { 0%, 100% { transform: translateY(0) scale(1, 1) } 15% { transform: translateY(0) scale(1.06, .92) } 45% { transform: translateY(-14px) scale(.96, 1.05) } 75% { transform: translateY(0) scale(1.04, .95) } }
+@keyframes crit-wobble { 0%, 60%, 100% { transform: rotate(0) } 68% { transform: rotate(-7deg) } 76% { transform: rotate(6deg) } 84% { transform: rotate(-4deg) } 92% { transform: rotate(2deg) } }
+@keyframes crit-shake { 0%, 100% { transform: rotate(0) } 20% { transform: rotate(-9deg) } 40% { transform: rotate(8deg) } 60% { transform: rotate(-6deg) } 80% { transform: rotate(4deg) } }
+@keyframes crit-pop { 0% { transform: scale(.4) translateY(20px); opacity: 0 } 60% { transform: scale(1.1) translateY(-6px); opacity: 1 } 100% { transform: scale(1) translateY(0) } }
+@keyframes crit-sway { 0%, 100% { transform: rotate(-3deg) } 50% { transform: rotate(3deg) } }
+@keyframes crit-blink { 0%, 92%, 100% { transform: scaleY(1) } 95% { transform: scaleY(.1) } }
+@keyframes crit-blink-slow { 0%, 70%, 100% { transform: scaleY(1) } 80%, 88% { transform: scaleY(.15) } }
+@keyframes crit-zzz { 0% { transform: translate(0, 0) scale(.6); opacity: 0 } 20% { opacity: 1 } 100% { transform: translate(10px, -26px) scale(1.15); opacity: 0 } }
+@keyframes crit-confetti { 0% { transform: translateY(-14px) rotate(0); opacity: 0 } 15% { opacity: 1 } 100% { transform: translateY(44px) rotate(320deg); opacity: 0 } }
+@keyframes crit-shell { 0% { transform: translateY(0) } 100% { transform: translateY(6px); opacity: .85 } }
+
+.crit-awake .crit-body { animation: crit-bounce 2.6s ease-in-out infinite; }
+.crit-sleepy .crit-body { animation: crit-droop 4.5s ease-in-out infinite; transform-origin: 50% 100%; }
+.crit-napping .crit-body { animation: crit-breathe 4s ease-in-out infinite; }
+.crit-celebrating .crit-body { animation: crit-hop .9s ease-in-out infinite; }
+.crit-egg .crit-body { animation: crit-wobble 2.4s ease-in-out infinite; transform-origin: 50% 90%; }
+.crit-hatching .crit-body { animation: crit-pop .9s cubic-bezier(.2, .9, .3, 1.3) both, crit-hop .9s .9s ease-in-out 2; }
+.crit-hatching .crit-shell { animation: crit-shake .5s ease-in-out 2, crit-shell .4s 1s ease-out forwards; transform-origin: 50% 100%; }
+.crit-resting .crit-body { animation: crit-sway 4s ease-in-out infinite; transform-origin: 50% 0%; }
+.crit-eyes { transform-origin: 50% 50%; }
+.crit-awake .crit-eyes, .crit-celebrating .crit-eyes { animation: crit-blink 4.8s infinite; }
+.crit-sleepy .crit-eyes { animation: crit-blink-slow 3.6s ease-in-out infinite; }
+.crit-zzz { animation: crit-zzz 3s ease-out infinite; }
+.crit-zzz:nth-child(2) { animation-delay: 1s; }
+.crit-zzz:nth-child(3) { animation-delay: 2s; }
+.crit-confetti > * { animation: crit-confetti 1.6s ease-in infinite; }
+.crit-confetti > *:nth-child(2n) { animation-delay: .4s; animation-duration: 1.9s; }
+.crit-confetti > *:nth-child(3n) { animation-delay: .8s; animation-duration: 1.4s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .crit *, .crit-host { animation: none !important; }
+  .crit-zzz, .crit-confetti > * { opacity: .9; }
+}
+/* Muse Image critters: moods as filters on top of the drawn art */
+.crit-art { transition: filter .4s ease; }
+.crit-napping .crit-art:not(.crit-art-own) { filter: saturate(.72) brightness(.98); }
+.crit-sleepy .crit-art:not(.crit-art-own) { filter: saturate(.88); }
+.crit-resting .crit-art:not(.crit-art-own) { filter: saturate(.85); }
+@keyframes crit-host { 0%, 100% { transform: translateY(0) } 50% { transform: translateY(-3px) } }
+.crit-host { animation: crit-host 3s ease-in-out infinite; }
