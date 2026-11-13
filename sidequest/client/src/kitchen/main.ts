@@ -150,6 +150,7 @@ function lobby(v: View) {
   const m = v.menu;
   app.innerHTML = sceneHtml(m);
   const room = app.querySelector(".room")!;
+  room.classList.add("posing"); // menu board hidden behind the title card
   room.insertAdjacentHTML(
     "beforeend",
     `<div class="overlay" id="ov">
@@ -448,6 +449,7 @@ function results(v: View, r: { coins: number; served: number; lost: number; best
   const place = v.board.length > 1 ? (pos === 0 ? " · took the lead" : ` · #${pos + 1} of ${v.board.length}`) : "";
   toChat({ type: "finished", ref: `k:${v.id}`, text: `played ${m.name} · ${money(r.coins)}${place}` });
   app.innerHTML = sceneHtml(m);
+  app.querySelector(".room")!.classList.add("posing");
   app.querySelector(".room")!.insertAdjacentHTML(
     "beforeend",
     `<div class="overlay">

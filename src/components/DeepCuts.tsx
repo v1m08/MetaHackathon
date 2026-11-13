@@ -119,6 +119,56 @@ function DeepCutsCard({ roomId, userId, onOpen }: { roomId: string; userId: stri
 }
 
 // ---------- Order Up! card ----------
+/** The restaurant's storefront in pixel art: back wall, awning, name sign, customers at the counter, the signature dish. */
+function KitchenCover({ menu: m, seed }: { menu: Menu; seed: string }) {
+  const wall = useRef<HTMLCanvasElement>(null);
+  const [art, setArt] = useState<{ people: string[]; dish: string[] } | null>(null);
+  useEffect(() => {
+    let alive = true;
+    void import("../../sidequest/client/src/kitchen/pixel").then(({ drawWall, foodSprite, personSprite }) => {
+      if (!alive) return;
+      if (wall.current) drawWall(wall.current, m.theme, m.ingredients.map((i) => i.emoji));
+      const base = [...seed].reduce((n, ch) => n * 31 + ch.charCodeAt(0), 7) % 997;
+      const moods = ["happy", "wait", "happy"] as const;
+      const signature = [...m.dishes].sort((a, b) => b.items.length - a.items.length)[0];
+      const dish = signature.items.map((id) => m.ingredients.find((i) => i.id === id)?.emoji ?? "🍽️");
+      setArt({ people: [0, 1, 2].map((k) => personSprite(base + k * 17, moods[k])), dish: dish.map((e) => foodSprite(e)) });
+    });
+    return () => {
+      alive = false;
+    };
+  }, [m, seed]);
+  const px = { imageRendering: "pixelated" as const };
+  return (
+    <>
+      <canvas ref={wall} className="absolute inset-0 h-full w-full" style={px} aria-hidden="true" />
+      {/* awning */}
+      <div className="absolute inset-x-0 top-0 h-7" style={{ background: `repeating-linear-gradient(90deg, ${m.theme.primary} 0 16px, #fff8ef 16px 32px)` }} />
+      <div className="absolute inset-x-0 top-7 h-2" style={{ background: `radial-gradient(circle at 8px 0, ${m.theme.primary} 7px, transparent 8px) 0 0 / 32px 8px, radial-gradient(circle at 24px 0, #fff8ef 7px, transparent 8px) 0 0 / 32px 8px` }} />
+      {/* wooden name sign */}
+      <div className="absolute left-1/2 top-[38px] -translate-x-1/2 whitespace-nowrap rounded-md px-3 py-1 text-[16px] font-extrabold text-white" style={{ background: "#5a3a24", border: "3px solid #8a5a3a", boxShadow: "0 3px 0 rgba(0,0,0,.25)", textShadow: "0 1px 0 rgba(0,0,0,.4)", maxWidth: "88%", overflow: "hidden", textOverflow: "ellipsis" }}>
+        {m.name}
+      </div>
+      {/* customers waiting at the counter */}
+      {art && (
+        <div className="absolute inset-x-0 bottom-[14px] flex items-end justify-between px-4">
+          <img src={art.people[0]} alt="" width={40} height={55} style={px} />
+          <div className="mb-1 flex items-end gap-0.5 rounded-full px-2 pb-1 pt-0.5" style={{ background: "radial-gradient(ellipse at 50% 60%, #fff 55%, #dcdce2 100%)" }}>
+            {art.dish.map((src, k) => (
+              <img key={k} src={src} alt="" width={22} height={22} style={px} />
+            ))}
+          </div>
+          <img src={art.people[1]} alt="" width={40} height={55} style={px} />
+        </div>
+      )}
+      {/* counter */}
+      <div className="absolute inset-x-0 bottom-0 h-[16px]" style={{ background: `repeating-linear-gradient(90deg, rgba(0,0,0,.14) 0 2px, transparent 2px 30px), linear-gradient(180deg, color-mix(in srgb, ${m.theme.counter} 65%, #fff) 0 4px, ${m.theme.counter} 4px)` }} />
+      <div className="absolute left-2 top-[11px] rounded-full px-2 py-0.5 text-[10px] font-semibold text-white" style={{ background: "rgba(20,12,8,.65)" }}>
+        Order Up!
+      </div>
+    </>
+  );
+}
 interface KitchenInfo {
   id: string;
   menu: Menu;
@@ -160,21 +210,7 @@ function KitchenCard({ gameRef, userId, onOpen }: { gameRef: string; userId: str
       aria-label={`Open restaurant ${m?.name ?? ""}`}
     >
       <div className="relative h-[156px] overflow-hidden" style={{ background: m ? `linear-gradient(180deg, ${m.theme.wall}, ${m.theme.wall2})` : "#3a2a20" }}>
-        {m && (
-          <>
-            <div className="absolute inset-x-0 top-0 h-8" style={{ background: `repeating-linear-gradient(90deg, ${m.theme.primary} 0 18px, #fff8ef 18px 36px)` }} />
-            <div className="absolute inset-x-0 top-8 h-2" style={{ background: `radial-gradient(circle at 9px 0, ${m.theme.primary} 8px, transparent 9px) 0 0 / 36px 8px, radial-gradient(circle at 27px 0, #fff8ef 8px, transparent 9px) 0 0 / 36px 8px` }} />
-            <div className="absolute inset-0 flex flex-col items-center justify-center px-3 pt-8 text-center">
-              <div className="text-[30px] leading-none">{m.chef.emoji}</div>
-              <div className="mt-1 text-[21px] font-extrabold leading-[1.05] text-white" style={{ textShadow: `0 2px 0 ${m.theme.primary}, 0 3px 10px rgba(0,0,0,.5)` }}>{m.name}</div>
-              <div className="mt-1.5 text-[20px] tracking-[3px]">{m.ingredients.slice(0, 5).map((i) => i.emoji).join("")}</div>
-            </div>
-            <div className="absolute inset-x-0 bottom-0 h-3" style={{ background: m.theme.counter }} />
-          </>
-        )}
-        <div className="absolute left-2 top-10 rounded-full px-2 py-0.5 text-[11px] font-semibold text-white" style={{ background: "rgba(20,12,8,.6)" }}>
-          Order Up!
-        </div>
+        {m && <KitchenCover menu={m} seed={room!.id} />}
       </div>
       <div className="flex items-center gap-2 px-3 py-2.5 text-white">
         <div className="min-w-0 flex-1">
@@ -220,6 +256,11 @@ function Overlay({ children, className = "", onClick }: { children: React.ReactN
 export function GamePlayer({ roomId, userId, name, onClose, onFinished }: { roomId: string; userId: string; name: string; onClose: () => void; onFinished: (f: Finished) => void }) {
   const path = kindOf(roomId) === "orderup" ? `/k/${idOf(roomId)}` : `/x/${roomId}`;
   const src = `${sqUrl()}${path}?embed=1&pid=${sqPid(userId)}&name=${encodeURIComponent(name)}`;
+  // the desktop dev bar floats over the bottom of the phone, right where games put their Play button
+  useEffect(() => {
+    document.body.classList.add("game-open");
+    return () => document.body.classList.remove("game-open");
+  }, []);
   useEffect(() => {
     const on = (e: MessageEvent) => {
       const d = e.data as { source?: string; type?: string } & Partial<Finished>;
