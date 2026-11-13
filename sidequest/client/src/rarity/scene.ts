@@ -5,7 +5,7 @@ import { fmt, TIER_POINTS, PROMPTS_PER_GAME } from "../../../shared/rarity";
 import { mix } from "../engine/util";
 
 
-const JOURNEY_POINTS = 480; // a great run; the scene's "far end" colors arrive here
+const JOURNEY_POINTS = 70 * PROMPTS_PER_GAME; // a great run; the scene's "far end" arrives here
 
 const hash = (n: number) => {
   const s = Math.sin(n * 127.1 + 311.7) * 43758.5453;
@@ -43,9 +43,21 @@ export class SceneView {
   /** Where the avatar sits on screen (0..1 of height). */
   anchor: number;
   avatarVisible = true;
+  /** Generated backdrop image; replaces the drawn world once loaded. */
+  private bgImg: HTMLImageElement | null = null;
+  private bgArt: HTMLCanvasElement | null = null;
 
-  constructor(private host: HTMLElement, private w: PublicPack, opts: { gauge?: boolean; px?: number } = {}) {
+  constructor(private host: HTMLElement, private w: PublicPack, opts: { gauge?: boolean; px?: number; assetBase?: string } = {}) {
     if (opts.px) this.px = opts.px;
+    if (w.scene.bg) {
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+      img.onload = () => {
+        this.bgImg = img;
+        this.bgArt = null;
+      };
+      img.src = (opts.assetBase ?? "") + w.scene.bg;
+    }
     this.kind = w.scene.kind;
     this.up = w.meter.up;
     this.anchor = this.up ? 0.62 : 0.4;
@@ -99,12 +111,66 @@ export class SceneView {
       }
     }
   }
+  // ---------- hooks for other games that run inside a world (Ghost Run) ----------
+  /** Drawn into the same pixel canvas after the world, every frame. */
+  overlay: ((ctx: CanvasRenderingContext2D, t: number) => void) | null = null;
+  /** Put the camera at a journey position (art px), no easing. */
+  setCam(pos: number) {
+    this.cam = this.target = Math.max(0, pos);
+  }
+  get artW() {
+    return this.W;
+  }
+  get artH() {
+    return this.H;
+  }
+  get cssPx() {
+    return this.px;
+  }
+  /** Screen y (art px) of a journey position. */
+  screenY(pos: number) {
+    return this.sy(pos);
+  }
+  /** Center x (art px) of the path at a journey position (roads and trails curve). */
+  pathX(pos: number) {
+    return this.kind === "track" ? this.roadX(pos) : this.kind === "trail" ? this.trailX(pos) : this.W / 2;
+  }
+  /** Draw an emoji as pixel art at art-px coordinates. */
+  drawEmoji(e: string, x: number, y: number, size: number, alpha = 1) {
+    this.ctx.globalAlpha = alpha;
+    this.emoji(e, x, y, size);
+    this.ctx.globalAlpha = 1;
+  }
+  shake = 0;
+
   showGauge(on: boolean) {
     this.gauge.style.display = on ? "" : "none";
   }
   destroy() {
     cancelAnimationFrame(this.raf);
     removeEventListener("resize", this.onResize);
+  }
+
+  /** The generated image, pre-shrunk to art resolution (so it reads as crisp pixel art), scrolled along the journey. */
+  private drawBackdrop() {
+    const img = this.bgImg!, { W, H } = this;
+    // a bit taller than the screen so there is a journey to scroll through (crops the far sides)
+    const scale = Math.max(W / img.width, (H * 1.35) / img.height);
+    const dw = Math.round(img.width * scale), dh = Math.round(img.height * scale);
+    if (!this.bgArt || this.bgArt.width !== dw || this.bgArt.height !== dh) {
+      const c = document.createElement("canvas");
+      c.width = dw;
+      c.height = dh;
+      const g = c.getContext("2d")!;
+      g.imageSmoothingEnabled = true;
+      g.imageSmoothingQuality = "high";
+      g.drawImage(img, 0, 0, dw, dh);
+      this.bgArt = c;
+    }
+    const travel = Math.max(0, dh - H);
+    const f = this.frac;
+    const y = this.up ? -travel * (1 - f) : -travel * f;
+    this.ctx.drawImage(this.bgArt, Math.round((W - dw) / 2), Math.round(y));
   }
 
   private resize() {
@@ -134,9 +200,15 @@ export class SceneView {
     if (Math.abs(this.target - this.cam) < 0.3) this.cam = this.target;
     const c = this.ctx;
     c.imageSmoothingEnabled = false;
-    const draw = SCENES[this.kind] ?? SCENES.tower;
-    draw.call(this, c, t);
+    if (this.bgImg) this.drawBackdrop();
+    else (SCENES[this.kind] ?? SCENES.tower).call(this, c, t);
     if (this.avatarVisible) this.drawAvatar(c, t);
+    if (this.overlay) this.overlay(c, t);
+    if (this.shake > 0.01) {
+      const s = this.shake * this.px * 3;
+      c.canvas.style.transform = `translate(${(Math.random() - 0.5) * s}px, ${(Math.random() - 0.5) * s}px)`;
+      this.shake *= 0.88;
+    } else if (c.canvas.style.transform) c.canvas.style.transform = "";
     this.updateGauge();
   }
 

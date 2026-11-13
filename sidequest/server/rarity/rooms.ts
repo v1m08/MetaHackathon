@@ -4,8 +4,9 @@ import { randomBytes } from "node:crypto";
 import { existsSync, mkdirSync, readFileSync, readdirSync, renameSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { cleanText } from "../../shared/text";
-import { matchAnswer, norm, ONLY_YOU_BONUS, publicPack, SECONDS_PER_PROMPT, TIER_POINTS, type Pack, type Verdict } from "../../shared/rarity";
+import { matchAnswer, norm, ONLY_YOU_BONUS, PROMPTS_PER_GAME, publicPack, SECONDS_PER_PROMPT, TIER_POINTS, type Pack, type Verdict } from "../../shared/rarity";
 import { judgeAnswer } from "./generate";
+import { bgUrl, hasBg, makeBackdrop } from "./backdrop";
 
 const MAX_TRIES = 3;
 const GRACE_S = 4;
@@ -56,7 +57,10 @@ export function getXRoom(id: string): XRoom | null {
 }
 
 const ALPHABET = "abcdefghjkmnpqrstuvwxyz23456789";
-export function createXRoom(pack: Pack): XRoom {
+export function createXRoom(full: Pack): XRoom {
+  const pack: Pack = { ...full, prompts: full.prompts.slice(0, PROMPTS_PER_GAME) };
+  // Older generated topics fell back to the generic tower world: paint them a backdrop in the background.
+  if (!pack.scene?.bg && pack.scene?.kind === "tower") void makeBackdrop(pack);
   let id = "";
   do id = Array.from(randomBytes(6), (b) => ALPHABET[b % ALPHABET.length]).join("");
   while (getXRoom(id));
@@ -189,6 +193,8 @@ export async function submitAnswer(r: XRoom, pid: unknown, name: unknown, i: num
   return { ok: false, locked: false, reason: verdict.reason ?? "Not on the list", tier: undefined };
 }
 
+const withBg = <P extends { interest: string; scene: Pack["scene"] }>(p: P): P => (p.scene && !p.scene.bg && hasBg(p.interest) ? { ...p, scene: { ...p.scene, bg: bgUrl(p.interest) } } : p);
+
 /** Everything the client needs. Friends' answers only for prompts you've finished. */
 export function roomView(r: XRoom, me: unknown) {
   const pid = validPid(me) ? me : "";
@@ -216,7 +222,7 @@ export function roomView(r: XRoom, me: unknown) {
   });
   return {
     id: r.id,
-    pack: publicPack(r.pack),
+    pack: withBg(publicPack(r.pack)),
     me: mine ? { name: mine.name, done, finished: done >= n, score: pid ? scoreOf(r, pid) : 0 } : null,
     board,
     prompts,

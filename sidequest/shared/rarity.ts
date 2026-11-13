@@ -1,6 +1,6 @@
 // Rarity trivia ("name a ___, rarer answers score more"), shared by server and client.
 
-export const PROMPTS_PER_GAME = 7;
+export const PROMPTS_PER_GAME = 4;
 export const SECONDS_PER_PROMPT = 25;
 export const TIER_POINTS = [10, 20, 35, 50, 75, 100] as const; // tier 1 (everyone says it) .. 6 (almost nobody)
 export const ONLY_YOU_BONUS = 25; // valid answer nobody else in the room gave
@@ -31,6 +31,8 @@ export interface Scene {
   ground: string;
   /** 3-6 emoji drawn as pixel props along the way. */
   props: string[];
+  /** Generated backdrop image (server path like /bg/chess.png). When present it replaces the drawn world. */
+  bg?: string;
 }
 
 export interface World {
@@ -91,7 +93,7 @@ export function withScene<T extends Omit<World, "scene" | "avatar" | "verb"> & P
   const props = Array.isArray(raw.props) ? raw.props.filter((e) => typeof e === "string" && e.length <= 8).slice(0, 6) : [];
   return {
     ...w,
-    scene: { kind, start: pair(raw.start, d.start), end: pair(raw.end, d.end), ground: isHex(raw.ground) ? raw.ground! : d.ground, props: props.length >= 2 ? props : d.props },
+    scene: { kind, start: pair(raw.start, d.start), end: pair(raw.end, d.end), ground: isHex(raw.ground) ? raw.ground! : d.ground, props: props.length >= 2 ? props : d.props, ...(typeof raw.bg === "string" && /^\/bg\/[a-z0-9-]+\.png$/.test(raw.bg) ? { bg: raw.bg } : {}) },
     avatar: typeof w.avatar === "string" && w.avatar.length <= 10 && w.avatar ? w.avatar : d.avatar,
     verb: typeof w.verb === "string" && w.verb.trim() ? w.verb.trim().slice(0, 10) : d.verb,
   };
