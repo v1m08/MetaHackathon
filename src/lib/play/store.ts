@@ -129,8 +129,8 @@ export function resetPlayStore(opts: { seed?: boolean } = {}) {
 
 let seq = 0;
 export const pid = (p: string) => `${p}_${Date.now().toString(36)}${(seq++).toString(36)}`;
-/** A game day is a UTC day (YYYY-MM-DD), on the server and in the UI alike, so the drop rolls over at 00:00 UTC. */
-export const dayKey = (d: Date | string = new Date()) => (typeof d === "string" ? d : d.toISOString()).slice(0, 10);
+/** A game day is the calendar day in the chats' home city (see day.ts), on the server and in the UI alike. */
+export { dayKey, prevDay } from "./day";
 
 export const getGame = (id: string) => playStore().games.get(id);
 export const gamesIn = (conversationId: ID) => [...playStore().games.values()].filter((x) => x.conversationId === conversationId).sort((a, b) => a.createdAt.localeCompare(b.createdAt));

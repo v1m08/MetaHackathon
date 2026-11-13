@@ -47,6 +47,17 @@ export interface ChatView {
   score: number;
   parts: { participation: number; streak: number; reciprocity: number; confidence: number };
   streakDays: number;
+  /** Snapchat-style streak details for the score bar. Chat totals only: the game card already shows who played. */
+  streak: {
+    days: number;
+    today: { hasGame: boolean; finished: number; members: number; needed: number; lockedIn: boolean };
+    /** Evening and today isn't locked in yet. */
+    hourglass: boolean;
+    /** 3 / 7 / 14 / 30 on the day it's reached. */
+    milestone?: number;
+    /** A freeze is holding the streak over a missed day. */
+    freezeUsed: boolean;
+  };
   games: number;
   /** Chat-level topics, best first (top 5): names and how many played games touched each. In a chat of two, only topics it has played, most played first. */
   topics: { topic: TopicId; label: string; games: number }[];

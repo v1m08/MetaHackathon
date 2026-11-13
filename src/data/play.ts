@@ -6,18 +6,18 @@
 //
 // Tuned numbers (printed by chatScore with NO game today; they come from counts, so they hold at any hour, and
 // dropping today's game does not move them: an unfinished day can lift participation but never lower it):
-//   c_volleyball   score 58 = 40 x 0.625 participation (45 of 72 seats over 9 games: 6,5,6,6,2,5,5,5,5)
-//                           + 20 x 4/7 streak (a day needs a majority, 5 of 8, finishing within 24h of the drop;
-//                             the 2-player day 5 days ago breaks it)
-//                           + 20 x 0.081 reciprocity (4 reactions) + 20 x 1.0 confidence
+//   c_volleyball   score 58 = 40 x 0.625 participation (45 of 72 seats over 9 games: 6,5,8,4,2,5,5,5,5)
+//                           + 20 x 4/7 streak (a day needs a majority, 5 of 8, finishing by Austin midnight;
+//                             6 and 5 days ago are both thin, 4 and 2 of 8, and one freeze covers only one of them)
+//                           + 20 x 0.077 reciprocity (4 reactions) + 20 x 1.0 confidence
 //                  top topic food 0.79 (confident: 7 played games touch it, 8/8 members finished one), then music
 //                  0.23; sports is liked (mean 0.46) but split (agreement 0.42). "group" is earned and already
 //                  unlocked below, so the next unlock is the Event at 60. Today's pick is a forced Wager on food.
 //                  After today's game is finished by 5 of 8 with one reaction: 61 (streak 5). By 6 with two: 62.
 //                  Four finishing is not enough (58): it takes a majority to make the day count.
-//   c_maya_jordan  score 65 (participation 0.83, streak 2: nobody finished 3 days ago; reciprocity 0.30); top topic
-//                  food 0.96. Nothing is seeded as unlocked there, so its first unlock (the Group) fires on the next
-//                  finish; the Event follows on a later day (one card a day).
+//   c_maya_jordan  score 74 (participation 0.83, streak 5: nobody finished 3 days ago and a freeze holds it;
+//                  reciprocity 0.30); top topic food 0.96. Nothing is seeded as unlocked there, so its first unlock
+//                  (the Group) fires on the next finish; the Event follows on a later day (one card a day).
 // Walkthrough: the members of c_volleyball are devon, tyler, marcus, nina, grace, ethan, sam and jordan (maya and
 // nadia are NOT in it), so open /messages/c_volleyball?as=jordan and ?as=sam. Two windows alone can't cross 60:
 // let `npm run qa:play` (or three more members) finish today's game; the Event card arrives on the fifth finish,
@@ -109,6 +109,8 @@ export const seedGames: SeedGame[] = [
       tyler: { h: 1, a: ["b", "c", "c"] },
       devon: { h: 2, a: ["c", "a", "d"] },
       sam: { h: 3.5, a: ["a", "c", "b"] },
+      marcus: { h: 4, a: ["b", "a", "c"] },
+      ethan: { h: 5, a: ["a", "b", "d"] },
       grace: { h: 6, a: ["a", "b", "c"] },
     },
   },
@@ -127,12 +129,11 @@ export const seedGames: SeedGame[] = [
       sam: { h: 0.6, a: ["marcus", "sam", "grace", "marcus"] },
       grace: { h: 1.4, a: ["marcus", "tyler", "grace", "ethan"] },
       tyler: { h: 2.2, a: ["marcus", "sam", "nina", "devon"] },
-      devon: { h: 4, a: ["marcus", "sam", "grace", "ethan"] },
-      ethan: { h: 7, a: ["marcus", "grace", "grace", "ethan"] },
     },
   },
   {
-    // The day the chat mostly missed: 2 of 8, so the streak restarts after it.
+    // The day the chat mostly missed: 2 of 8. Right after the thin day before it (4 of 8), so one freeze can't cover
+    // both and the streak restarts after it.
     id: "pg_seed_vb_5", conversationId: VB, day: 5, format: "hotseat", topic: "music", subjectId: "sam",
     title: "Hot Seat: Sam",
     premise: "How well does this chat know Sam? Sam answers too, and Sam's answer is the truth.",
@@ -261,7 +262,7 @@ export const seedGames: SeedGame[] = [
     },
   },
   {
-    // Nobody finished this one: Jordan was two days out from the pop-up.
+    // Nobody finished this one: Jordan was two days out from the pop-up. The chat's weekly freeze covers it.
     id: "pg_seed_mj_4", conversationId: MJ, day: 3, format: "split", topic: "thrift",
     title: "Flip or keep",
     premise: "Marketplace instincts. Pick a side, then guess theirs.",

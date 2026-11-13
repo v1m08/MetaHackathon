@@ -8,11 +8,12 @@
 // Performance (being right) is in results.ts and never feeds recommendations: guessing well isn't interest.
 // Code enforces: an answer counts only once its player has FINISHED the game (a tap someone can still change moves
 // no score, so nobody can read another member's pick off a moving number); a game nobody finished counts for
-// nothing; a streak day needs a strict majority finishing within 24 hours of the drop.
+// nothing; a streak day needs a strict majority finishing by local midnight, with one freeze per 7 days.
 import { tasteFor, TASTE_KEYS } from "./taste";
 import { getConversation, getUser } from "@/server/db";
 import type { ID } from "@/types";
-import { answersFor, completedBy, dayKey, eventsFor, gamesIn, playStore, type Choice, type PlayEvent, type PlayGame, type UnlockTier } from "./store";
+import { localHour } from "./day";
+import { answersFor, completedBy, dayKey, eventsFor, gamesIn, playStore, prevDay, type Choice, type PlayEvent, type PlayGame, type UnlockTier } from "./store";
 import { TOPIC_IDS, topicsOfTaste, topicsOfText, type TopicId } from "./taxonomy";
 
 export const HALF_LIFE_DAYS = 14;
@@ -167,25 +168,61 @@ export function chatTopics(conversationId: ID, now = Date.now(), excludeGameId?:
 /** A topic is settled enough to recommend on: at least two played games touched it and 60% of the chat finished one of them. */
 export const confident = (t: ChatTopic, members: number) => t.games >= 2 && t.observedBy / members >= 0.6 && t.score > 0;
 
-/** A day counts when a strict majority finished its game within 24 hours of the drop: catching up on old games later doesn't rebuild a streak. */
-const qualifies = (game: PlayGame, members: number) => {
-  const t0 = new Date(game.createdAt).getTime();
-  const onDay = new Set(eventsFor(game.id).filter((e) => e.kind === "complete" && new Date(e.at).getTime() - t0 < DAY).map((e) => e.userId));
-  return onDay.size >= Math.floor(members / 2) + 1;
-};
-/** Consecutive days on which a majority of the chat played. Today not being played yet doesn't break it. */
-export function streakDays(conversationId: ID, now = Date.now()) {
-  const c = getConversation(conversationId);
-  if (!c) return 0;
-  const byDay = new Map(gamesIn(conversationId).map((g) => [g.date, g]));
-  let n = 0;
-  for (let i = 0; i < 60; i++) {
-    const g = byDay.get(dayKey(new Date(now - i * DAY)));
-    if (g && qualifies(g, c.participantIds.length)) n++;
-    else if (i > 0) break;
-  }
-  return n;
+// ---------- streak ----------
+// Snapchat-style, for the whole chat: a day counts when a strict majority finishes that day's game by local midnight
+// (day.ts). Missing a day ends the streak, except one freeze per 7 days: a single missed day is forgiven (it holds
+// the streak but adds nothing). Today not being played yet neither adds nor breaks. Worth 20% of the chat score.
+export const FREEZE_EVERY_DAYS = 7;
+export const MILESTONES = [3, 7, 14, 30] as const;
+export const HOURGLASS_HOUR = 18;
+const STREAK_LOOKBACK_DAYS = 120;
+const majority = (members: number) => Math.floor(members / 2) + 1;
+
+/** Members who finished this game by the end of its own calendar day (catching up on an old game later doesn't count). */
+const finishedOnDay = (game: PlayGame) => new Set(eventsFor(game.id).filter((e) => e.kind === "complete" && dayKey(e.at) <= game.date).map((e) => e.userId));
+const qualifies = (game: PlayGame, members: number) => finishedOnDay(game).size >= majority(members);
+
+export interface StreakInfo {
+  days: number;
+  /** Missed days a freeze is holding the streak over, most recent first. */
+  freezes: string[];
+  /** Today's meter: chat totals only, never who. */
+  today: { hasGame: boolean; finished: number; members: number; needed: number; lockedIn: boolean };
+  /** Evening and today isn't locked in yet: the streak is at risk. */
+  hourglass: boolean;
+  /** Set on the day a milestone (3 / 7 / 14 / 30) is reached. */
+  milestone?: number;
 }
+
+export function streakInfo(conversationId: ID, now = Date.now()): StreakInfo {
+  const c = getConversation(conversationId);
+  const members = c?.participantIds.length ?? 0;
+  const byDay = new Map(gamesIn(conversationId).map((g) => [g.date, g]));
+  const todayKey = dayKey(now);
+  const todayGame = byDay.get(todayKey);
+  const finished = todayGame ? finishedOnDay(todayGame).size : 0;
+  const today = { hasGame: !!todayGame, finished, members, needed: majority(members), lockedIn: !!todayGame && members > 0 && finished >= majority(members) };
+  let days = 0;
+  const frozen: { key: string; i: number }[] = [];
+  let lastCounted = -1;
+  let key = todayKey;
+  for (let i = 0; c && i < STREAK_LOOKBACK_DAYS; i++, key = prevDay(key)) {
+    const g = byDay.get(key);
+    if (g && qualifies(g, members)) { days++; lastCounted = i; continue; }
+    if (i === 0) continue; // today isn't over
+    const lastFreeze = frozen.at(-1)?.i ?? -Infinity;
+    if (i - lastFreeze >= FREEZE_EVERY_DAYS) { frozen.push({ key, i }); continue; }
+    break;
+  }
+  // A freeze only counts if a played day lies beyond it: one at the far end of the streak holds nothing.
+  const freezes = frozen.filter((f) => f.i < lastCounted).map((f) => f.key);
+  const hourglass = today.hasGame && !today.lockedIn && members > 1 && localHour(now) >= HOURGLASS_HOUR;
+  const milestone = today.lockedIn && (MILESTONES as readonly number[]).includes(days) ? days : undefined;
+  return { days, freezes, today, hourglass, milestone };
+}
+
+/** Days in the chat's current streak (see streakInfo). */
+export const streakDays = (conversationId: ID, now = Date.now()) => streakInfo(conversationId, now).days;
 
 export interface ChatScore {
   score: number;

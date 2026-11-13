@@ -19,7 +19,8 @@ import { quotable } from "@/lib/play/select";
 import { seedGames } from "@/data/play";
 import { buildContext, quoteIn } from "@/lib/play/context";
 import { answerOf, performance, roundResults } from "@/lib/play/results";
-import { affinityFor, chatScore, chatTopics, confident, engagement, peerStances, prior, stances, streakDays, THRESHOLDS } from "@/lib/play/score";
+import { localHour, prevDay } from "@/lib/play/day";
+import { affinityFor, chatScore, chatTopics, confident, engagement, peerStances, prior, stances, streakDays, streakInfo, THRESHOLDS } from "@/lib/play/score";
 import { feasible, selectGame } from "@/lib/play/select";
 import { completedBy, dayKey, FORMATS, gamesIn, logEvent, playStore, resetPlayStore, saveGame, setAnswer, unlocksIn, type Choice, type Format, type Option, type PlayGame, type Round, type Unlock, type UnlockTier } from "@/lib/play/store";
 import { isTopic, topicsOfEvent, topicsOfGroup, topicsOfListing, type TopicId } from "@/lib/play/taxonomy";
@@ -246,44 +247,140 @@ test("a topic one member loves scores below a topic the whole chat mildly likes"
   for (let i = 1; i < topics.length; i++) assert.ok(topics[i - 1].score >= topics[i].score, "sorted best first");
 });
 
-test("streak: a majority must finish on the day; today unplayed doesn't break it, a missed day does, catching up later doesn't rebuild it", () => {
+/** The UTC instant of an Austin wall time on calendar day `key` (tries both offsets, CST and CDT). */
+function austin(key: string, h: number, m = 0): number {
+  for (const off of [5, 6]) {
+    const t = Date.parse(`${key}T${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:00Z`) + off * HOUR;
+    if (dayKey(t) === key && localHour(t) === h) return t;
+  }
+  throw new Error(`no ${h}:${m} on ${key} in Austin`);
+}
+const daysBack = (n: number) => dayKey(Date.now() - n * DAY);
+/** A game dropped at 9am Austin `daysAgo` days back (today: a minute ago), so finishes land on a known calendar day. */
+function dayGame(conversationId: ID, daysAgo: number, format: Format = "blend") {
+  const key = daysBack(daysAgo);
+  const createdAt = iso(daysAgo === 0 ? Date.now() - MIN : austin(key, 9));
+  return game(conversationId, format, "food", [round("r1", "pick", [opt("a", "food"), opt("b", "music")])], daysAgo, { date: key, createdAt });
+}
+/** `players` finish the game at an Austin wall time on its own day (or `dayShift` days later). */
+function finishAt(g: PlayGame, players: ID[], h = 10, m = 0, dayShift = 0) {
+  let key = g.date;
+  for (let i = 0; i < dayShift; i++) key = new Date(Date.parse(`${key}T12:00:00Z`) + DAY).toISOString().slice(0, 10);
+  const at = austin(key, h, m);
+  for (const u of players) play(g, u, { r1: "a" }, { afterMs: at - new Date(g.createdAt).getTime() });
+}
+/** Played (5 of 8) or thin (3 of 8) days back from yesterday, oldest last. */
+function history(days: ("ok" | "miss" | "none")[]) {
+  days.forEach((d, i) => { if (d === "none") return; finishAt(dayGame(VB, i + 1), CREW.slice(0, d === "ok" ? 5 : 3)); });
+}
+
+test("dayKey: the Austin calendar day for timestamps (CST and CDT); a day string passes through; prevDay is DST-safe", () => {
+  assert.equal(dayKey("2026-11-14"), "2026-11-14");
+  assert.equal(dayKey("2026-11-15T05:30:00.000Z"), "2026-11-14", "11:30pm Austin (CST) is still the 14th");
+  assert.equal(dayKey("2026-11-15T06:30:00.000Z"), "2026-11-15");
+  assert.equal(dayKey("2026-07-04T04:30:00.000Z"), "2026-07-03", "11:30pm Austin (CDT) is still the 3rd");
+  assert.equal(dayKey(Date.parse("2026-07-04T05:30:00.000Z")), "2026-07-04");
+  assert.equal(prevDay("2026-03-09"), "2026-03-08", "across the spring-forward change");
+  assert.equal(prevDay("2026-11-02"), "2026-11-01", "across the fall-back change");
+  assert.equal(prevDay("2026-03-01"), "2026-02-28");
+  assert.equal(prevDay("2027-01-01"), "2026-12-31");
+});
+
+test("streak: a majority must finish by Austin midnight; today unplayed neither adds nor breaks; catching up later doesn't rebuild", () => {
   clean();
-  const r = () => [round("r1", "pick", [opt("a", "food"), opt("b", "music")])];
-  const day = (daysAgo: number, players: ID[]) => { const g = game(VB, "blend", "food", r(), daysAgo); for (const u of players) play(g, u, { r1: "a" }); return g; };
   assert.equal(streakDays(VB), 0);
-  day(1, CREW.slice(0, 5)); // a majority of 8
-  day(2, CREW.slice(0, 6));
-  const thin = day(3, CREW.slice(0, 4)); // exactly half is not a majority
-  day(4, CREW);
-  assert.equal(streakDays(VB), 2, "the thin day stops the count");
-  play(thin, "jordan", { r1: "a" }, { afterMs: 25 * HOUR });
-  assert.equal(completedBy(thin.id).size, 5);
-  assert.equal(streakDays(VB), 2, "finishing an old game a day late doesn't turn it into a played day");
-  play(thin, "sam", { r1: "a" }, { afterMs: 2 * HOUR });
-  assert.equal(streakDays(VB), 4, "a fifth player on the day does");
-  const today = day(0, CREW.slice(0, 2));
-  assert.equal(streakDays(VB), 4, "today not being played yet neither adds nor breaks");
+  history(["ok", "ok", "ok"]);
+  assert.equal(streakDays(VB), 3);
+  const today = dayGame(VB, 0);
+  for (const u of CREW.slice(0, 2)) play(today, u, { r1: "a" });
+  assert.equal(streakDays(VB), 3, "today not being played yet neither adds nor breaks");
   for (const u of CREW.slice(2, 5)) play(today, u, { r1: "a" });
-  assert.equal(streakDays(VB), 5);
+  assert.equal(streakDays(VB), 4, "a majority finishing today adds it");
+
+  // Exactly half is not a majority; a fifth finish the next morning doesn't make it a played day.
+  clean();
+  const thin = dayGame(VB, 1);
+  finishAt(thin, CREW.slice(0, 4));
+  finishAt(thin, ["jordan"], 0, 30, 1);
+  assert.equal(completedBy(thin.id).size, 5);
+  assert.equal(streakDays(VB), 0, "12:30am the next day is too late");
+
+  // In a DM one person playing alone is not the chat playing.
+  clean();
+  const duo = chat("c_t_solo", ["maya", "jordan"]);
+  for (const d of [3, 2, 1]) finishAt(dayGame(duo.id, d), ["maya"]);
+  assert.equal(streakDays(duo.id), 0);
+});
+
+test("streak: a finish at 11:30pm Austin counts for that day, 12:30am the next doesn't", () => {
+  clean();
+  const late = dayGame(VB, 1);
+  finishAt(late, CREW.slice(0, 4));
+  finishAt(late, ["jordan"], 23, 30);
+  assert.equal(streakDays(VB), 1);
+  clean();
+  const tooLate = dayGame(VB, 1);
+  finishAt(tooLate, CREW.slice(0, 4));
+  finishAt(tooLate, ["jordan"], 0, 30, 1);
+  assert.equal(streakDays(VB), 0);
+});
+
+test("streak freeze: one missed day a week is forgiven and adds nothing; a second miss within 7 days or two in a row ends it", () => {
+  clean();
+  history(["ok", "miss", "ok", "ok"]);
+  assert.equal(streakDays(VB), 3, "yesterday, then the freeze holds the thin day, then two more");
+  assert.deepEqual(streakInfo(VB).freezes, [daysBack(2)]);
 
   clean();
-  day(2, CREW);
-  day(3, CREW);
-  assert.equal(streakDays(VB), 0, "yesterday had no game: the streak is over");
+  history(["ok", "miss", "ok", "ok", "miss", "ok"]);
+  assert.equal(streakDays(VB), 3, "the second miss is inside the same 7 days: it ends there");
 
-  // Six unplayed days can't be rebuilt today by opening the old cards.
+  clean();
+  history(["ok", "miss", "miss", "ok"]);
+  assert.equal(streakDays(VB), 1, "two misses in a row: one freeze can't cover both");
+  assert.deepEqual(streakInfo(VB).freezes, [], "a freeze at the far end holds nothing");
+
+  clean();
+  history(["ok", "none", "ok"]);
+  assert.equal(streakDays(VB), 2, "a day with no game at all is a miss the freeze can cover");
+
+  clean();
+  history(["ok", "miss", "ok", "ok", "ok", "ok", "ok", "ok", "miss", "ok"]);
+  assert.equal(streakDays(VB), 8, "misses 7 days apart each get a freeze");
+  assert.deepEqual(streakInfo(VB).freezes, [daysBack(2), daysBack(9)]);
+
+  // Catching up on six unplayed days today can't rebuild them; late play still counts as participation.
   clean();
   const four = chat("c_t_four", ["devon", "sam", "tyler", "grace"]);
-  const old = [6, 5, 4, 3, 2, 1].map((d) => game(four.id, "blend", "food", r(), d));
+  const old = [6, 5, 4, 3, 2, 1].map((d) => dayGame(four.id, d));
   const before = chatScore(four.id).score;
   for (const g of old) for (const u of ["devon", "sam", "tyler"]) play(g, u, { r1: "a" }, { afterMs: Date.now() - new Date(g.createdAt).getTime() });
   assert.equal(streakDays(four.id), 0);
   assert.equal(chatScore(four.id).parts.streak, 0);
-  assert.ok(chatScore(four.id).score > before, "late play still counts as participation");
-  // In a DM one person playing alone is not the chat playing.
-  const duo = chat("c_t_solo", ["maya", "jordan"]);
-  for (const d of [3, 2, 1]) play(game(duo.id, "blend", "food", r(), d), "maya", { r1: "a" });
-  assert.equal(streakDays(duo.id), 0);
+  assert.ok(chatScore(four.id).score > before);
+});
+
+test("streakInfo: today's meter (counts only), the evening hourglass, milestones at 3 / 7 / 14 / 30", () => {
+  clean();
+  history(["ok", "ok"]);
+  const key = dayKey();
+  const today = game(VB, "blend", "food", [round("r1", "pick", [opt("a", "food"), opt("b", "music")])], 0, { date: key, createdAt: iso(austin(key, 0, 1)) });
+  for (const u of CREW.slice(0, 2)) play(today, u, { r1: "a" });
+  const morning = streakInfo(VB, austin(key, 10));
+  assert.deepEqual(morning.today, { hasGame: true, finished: 2, members: 8, needed: 5, lockedIn: false });
+  assert.equal(morning.hourglass, false, "not before 6pm");
+  assert.equal(morning.milestone, undefined);
+  assert.equal(streakInfo(VB, austin(key, 20)).hourglass, true, "evening and not locked in: the streak is at risk");
+  for (const u of CREW.slice(2, 5)) play(today, u, { r1: "a" });
+  const locked = streakInfo(VB, austin(key, 20));
+  assert.equal(locked.today.lockedIn, true);
+  assert.equal(locked.hourglass, false);
+  assert.equal(locked.days, 3);
+  assert.equal(locked.milestone, 3, "three days in a row, today included");
+  clean();
+  history(["ok"]);
+  assert.equal(streakInfo(VB).today.hasGame, false);
+  assert.equal(streakInfo(VB).milestone, undefined);
 });
 
 test("chat score = 40% participation + 20% streak + 20% reciprocity + 20% confidence over 14 days", () => {
@@ -1084,7 +1181,9 @@ test("privacy: a viewer gets the chat's totals and their own topic numbers, neve
   const pts = Object.fromEntries(today.rounds[0].options.map((o, i) => [o.id, i === 0 ? 10 : 0]));
   for (const u of ["devon", "sam"]) { await act(today.id, u, { action: "answer", roundId: today.rounds[0].id, choice: pts }); await act(today.id, u, { action: "complete" }); }
   const devon = chatView(VB, "devon"), sam = chatView(VB, "sam");
-  assert.deepEqual(Object.keys(devon).sort(), ["conversationId", "games", "muted", "myTopics", "next", "parts", "score", "streakDays", "thresholds", "todayGameId", "topics", "unlocks"]);
+  assert.deepEqual(Object.keys(devon).sort(), ["conversationId", "games", "muted", "myTopics", "next", "parts", "score", "streak", "streakDays", "thresholds", "todayGameId", "topics", "unlocks"]);
+  assert.deepEqual(devon.streak, sam.streak, "the streak is a chat total, the same for everyone");
+  for (const id of CREW) assert.ok(!JSON.stringify(devon.streak).includes(`"${id}"`), "and names nobody");
   assert.deepEqual(devon.topics, sam.topics, "chat totals are the same for everyone");
   assert.equal(devon.score, sam.score);
   assert.notDeepEqual(devon.myTopics, sam.myTopics);
@@ -1444,6 +1543,70 @@ test("maybeUnlock: a lower tier with nothing to offer doesn't block the next one
   assert.deepEqual(unlocksIn(trio.id).map((x) => x.tier), ["event"], "the empty Group tier stays open for later");
 });
 
+/** `n` new people outside the chat who are friends of `member` (so tests don't depend on who the seed has going). */
+function newFriendsOf(member: ID, n: number): ID[] {
+  const ids = Array.from({ length: n }, (_, i) => `u_t_friend${i}`);
+  for (const id of ids) { db().users.push({ ...getUser("omar")!, id, friendIds: [member] }); getUser(member)!.friendIds.push(id); }
+  return ids;
+}
+
+test("rankInventory: friends of the chat going lift an event a little (0.05 each, capped at 0.15); groups and listings get nothing", () => {
+  clean();
+  const first = rankInventory(VB, "event")[0];
+  assert.ok(first, "an event to rank");
+  const e = getEvent(first.item.id)!;
+  const outside = newFriendsOf("devon", 4);
+  const partFor = () => rankInventory(VB, "event").find((x) => x.item.id === e.id)!.parts.friends;
+  const base = partFor();
+  e.going.push(outside[0]);
+  near(partFor(), Math.min(0.15, base + 0.05));
+  e.going.push(...outside.slice(1, 4));
+  assert.equal(partFor(), 0.15, "capped");
+  assert.ok(rankInventory(VB, "group").every((x) => x.parts.friends === 0));
+  assert.ok(rankInventory(VB, "listing").every((x) => x.parts.friends === 0));
+});
+
+test("unlockFacts: a streak milestone comes before the topic fallback; 'N of your friends are going' from two", () => {
+  clean();
+  // Three played days of a format with no taste facts (Receipts), so nothing else is counted about the item.
+  for (const d of [1, 2, 3]) finishAt(dayGame(VB, d, "receipts"), CREW.slice(0, 5));
+  assert.equal(streakDays(VB), 3);
+  const c = rankInventory(VB, "event")[0];
+  const e = getEvent(c.item.id)!;
+  e.going = e.going.filter((id) => CREW.includes(id));
+  let facts = unlockFacts(VB, rankInventory(VB, "event").find((x) => x.item.id === e.id)!);
+  assert.equal(facts[0], "3-day streak", "the milestone leads");
+  assert.ok(!facts.some((f) => f.includes("top topic") || /#\d/.test(f)), "and replaces the topic fallback");
+  assert.ok(!facts.some((f) => f.includes("friends")));
+  const outside = newFriendsOf("devon", 2);
+  e.going.push(outside[0]);
+  facts = unlockFacts(VB, rankInventory(VB, "event").find((x) => x.item.id === e.id)!);
+  assert.ok(!facts.some((f) => f.includes("friends")), "one friend isn't a fact yet");
+  e.going.push(outside[1]);
+  facts = unlockFacts(VB, rankInventory(VB, "event").find((x) => x.item.id === e.id)!);
+  assert.ok(facts.includes("2 of your friends are going"));
+  assert.equal(checkWhy("2 of your friends are going, so this one is for the whole chat.", facts, e.title), undefined, "the why line can copy it");
+
+  // Two days is a streak but not a milestone: it follows the topic fallback.
+  clean();
+  for (const d of [1, 2]) finishAt(dayGame(VB, d, "receipts"), CREW.slice(0, 5));
+  facts = unlockFacts(VB, rankInventory(VB, "event")[0]);
+  assert.ok(facts[0].includes("topic"), `topic first: ${facts[0]}`);
+  assert.ok(facts.includes("2-day streak"));
+});
+
+test("maybeUnlock: one card per chat per Austin day (an unlock at 11:30pm last night doesn't block today's)", async () => {
+  resetDb();
+  resetPlayStore();
+  const g = await maybeUnlock(MJ);
+  assert.equal(g?.tier, "group");
+  assert.equal(await maybeUnlock(MJ), null, "one a day");
+  g!.createdAt = iso(austin(daysBack(1), 23, 30)); // UTC is already "today" at that moment
+  const e = await maybeUnlock(MJ);
+  assert.equal(e?.tier, "event", "yesterday in Austin: today's card can come");
+  assert.equal(await maybeUnlock(MJ), null);
+});
+
 test("checkWhy: numbers only inside a fact copied word for word; no quantity words, non-strings or walls of text", async () => {
   const facts = ["7 of 20 points went to this in today's Wager", "3-day streak", "2 of you are already going"];
   assert.equal(checkWhy(`${facts[0]}, so this one is for the whole chat.`, facts), undefined, "the template line");
@@ -1501,7 +1664,7 @@ test("generateGame: a format code already knows the chat can't support is never 
 test("chatView.next is the lowest tier the chat hasn't been given, not the first threshold above the score", async () => {
   resetDb();
   resetPlayStore();
-  assert.equal(chatScore(MJ).score, 65);
+  assert.equal(chatScore(MJ).score, 74, "the DM's one missed day is held by its weekly freeze");
   assert.deepEqual(chatScore(MJ).next, { tier: "listing", at: 75 }, "the score alone would say Marketplace");
   assert.deepEqual(chatView(MJ, "maya").next, { tier: "group", at: 40, ready: true }, "but nothing has been unlocked yet: the Group comes first");
   assert.deepEqual(chatView(VB, "devon").next, { tier: "event", at: 60, ready: false });

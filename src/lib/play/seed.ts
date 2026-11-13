@@ -6,11 +6,12 @@ import { seedGames, seedUnlocks, type SeedGame } from "@/data/play";
 import { getConversation } from "@/server/db";
 import type { ID, Message } from "@/types";
 import { buildContext, type ChatContext } from "./context";
+import { dayKey } from "./day";
 import type { Choice, EvidenceItem, PlayEvent, PlayGame, PlayStore, Unlock } from "./store";
 
 const DAY = 864e5;
 const MIN = 60e3;
-/** Daily drop for seeded days: 14:00 UTC, morning in Austin. Every scripted finish lands the same UTC day. */
+/** Daily drop for seeded days: 14:00 UTC, 8–9am in Austin. The latest scripted finish (+9h) is still the same Austin day. */
 const DROP_HOUR_UTC = 14;
 const iso = (t: number) => new Date(t).toISOString();
 
@@ -26,7 +27,7 @@ function cite(key: string, ctx: ChatContext): EvidenceItem | undefined {
 }
 
 function toGame(sg: SeedGame, ctx: ChatContext, now: number): PlayGame {
-  const date = iso(now - sg.day * DAY).slice(0, 10);
+  const date = dayKey(now - sg.day * DAY); // the Austin day, so no seeded game lands on today in an Austin evening
   const evidence = new Map<string, EvidenceItem>();
   const rounds = sg.rounds.map(({ cites = [], ...r }) => {
     const found = cites.map((k) => cite(k, ctx)).filter((e): e is EvidenceItem => !!e);
@@ -94,7 +95,7 @@ export function seedPlay(s: PlayStore, now = Date.now()) {
     const c = getConversation(su.conversationId);
     const item = c && (contexts.get(c.id) ?? buildContext(c.id)).inventory.find((i) => i.id === su.refId);
     if (!c || !item) continue; // the real thing is gone or not visible to everyone: no card
-    const createdAt = `${iso(now - day * DAY).slice(0, 10)}T22:00:00.000Z`;
+    const createdAt = `${dayKey(now - day * DAY)}T22:00:00.000Z`; // 4–5pm Austin that day
     const messageId = `m_seed_${su.id}`;
     const u: Unlock = { ...su, title: item.title, sub: item.sub, image: item.image, createdAt, messageId };
     s.unlocks.set(u.id, u);

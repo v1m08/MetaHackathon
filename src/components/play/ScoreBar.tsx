@@ -1,6 +1,8 @@
 "use client";
 // The chat's interaction score under the thread header: 0-100, progress to the next unlock, streak, top chat topics.
 // Everything shown is a chat total except "your topics", which the server only ever returns for the viewer.
+// The streak is Snapchat-style: today's "N of M finished", an evening ⏳ when today isn't locked in yet, a milestone
+// at 3 / 7 / 14 / 30 days, and 🧊 when the weekly freeze is holding it. Counts only, never who.
 import { useState } from "react";
 import { BellOff, Check, ChevronRight, Flame } from "lucide-react";
 import { cx } from "@/components/ui";
@@ -11,11 +13,22 @@ import { PlaySheet } from "./shared";
 const TIER_NOUN: Record<string, string> = { group: "Group", event: "Event", listing: "Marketplace pick" };
 const PARTS: { key: keyof ChatView["parts"]; label: string; weight: number; hint: string }[] = [
   { key: "participation", label: "Participation", weight: 40, hint: "share of the chat finishing each game" },
-  { key: "streak", label: "Streak", weight: 20, hint: "days in a row most of you played" },
+  { key: "streak", label: "Streak", weight: 20, hint: "days in a row most of you finished (full at 7)" },
   { key: "reciprocity", label: "Reciprocity", weight: 20, hint: "reacting and replying after results" },
   { key: "confidence", label: "Topic confidence", weight: 20, hint: "how settled the chat's top topic is" },
 ];
 const pct = (n: number) => `${Math.round(Math.max(0, Math.min(1, n || 0)) * 100)}%`;
+
+/** One short line on today's streak state, most important first. */
+function streakStatus(st: ChatView["streak"]): { text: string; tone: string } | null {
+  const t = st.today;
+  if (st.milestone) return { text: `🎉 ${st.milestone}-day streak!`, tone: "text-orange-600 font-semibold" };
+  if (t.lockedIn) return { text: "✓ today counts", tone: "text-emerald-700 font-semibold" };
+  const more = Math.max(0, t.needed - t.finished);
+  if (st.hourglass) return { text: `⏳ ${more} more to keep the streak`, tone: "text-amber-700 font-semibold" };
+  if (t.hasGame) return { text: `${t.finished} of ${t.members} finished today`, tone: "text-ink-2" };
+  return null;
+}
 
 export function ScoreBar({ conversationId, onChanged }: { conversationId: string; onChanged?: () => void }) {
   const path = `/api/play/chat/${conversationId}`;
@@ -27,6 +40,8 @@ export function ScoreBar({ conversationId, onChanged }: { conversationId: string
   const noun = v.next ? TIER_NOUN[v.next.tier] ?? "Next" : "";
   const caption = !v.next ? "Every unlock reached" : v.next.ready ? `${noun} unlocks on the next finished game` : v.score >= v.next.at ? `${noun} is up next` : `${noun} unlocks at ${v.next.at}`;
   const tiers = Object.entries(v.thresholds ?? {}).sort((a, b) => a[1] - b[1]);
+  const st = v.streak;
+  const status = st ? streakStatus(st) : null;
   const toggle = async () => {
     setBusy(true);
     try { mutate(await api<ChatView>(path, { method: "POST", json: { action: v.muted ? "unmute" : "mute" } }), { revalidate: false }); onChanged?.(); } finally { setBusy(false); }
@@ -41,10 +56,15 @@ export function ScoreBar({ conversationId, onChanged }: { conversationId: string
             <span className="flex items-center gap-2">
               <span className="text-[17px] font-bold leading-none tabular-nums">{v.score}</span>
               <span className="h-1.5 flex-1 overflow-hidden rounded-full bg-[#e4e6eb]"><span className="block h-full rounded-full bg-messenger transition-all" style={{ width: pct(toward) }} /></span>
-              <span className={cx("flex shrink-0 items-center gap-0.5 text-[12.5px] font-semibold", v.streakDays > 0 ? "text-orange-600" : "text-ink-2")}><Flame size={14} className={v.streakDays > 0 ? "fill-orange-500" : ""} /> {v.streakDays} {v.streakDays === 1 ? "day" : "days"}</span>
+              <span className={cx("flex shrink-0 items-center gap-0.5 text-[12.5px] font-semibold", v.streakDays > 0 ? "text-orange-600" : "text-ink-2")}>
+                <Flame size={14} className={v.streakDays > 0 ? "fill-orange-500" : ""} /> {v.streakDays} {v.streakDays === 1 ? "day" : "days"}
+                {st?.freezeUsed && <span title="A freeze is holding your streak" aria-label="freeze used">🧊</span>}
+              </span>
               <ChevronRight size={14} className="shrink-0 text-ink-2" />
             </span>
             <span className="mt-1 flex items-center gap-1.5 overflow-hidden text-[11.5px] text-ink-2">
+              {status && <span className={cx("shrink-0", status.tone)}>{status.text}</span>}
+              {status && <span className="shrink-0 text-ink-2/50">·</span>}
               <span className="shrink-0">{caption}</span>
               {v.topics.slice(0, 3).map((t) => <span key={t.topic} className="shrink-0 rounded-full bg-[#f0f2f5] px-2 py-0.5 text-ink">{t.label}</span>)}
             </span>
@@ -57,6 +77,24 @@ export function ScoreBar({ conversationId, onChanged }: { conversationId: string
             <span className="text-[40px] font-bold leading-none tabular-nums">{v.score}</span>
             <span className="pb-1 text-[13px] leading-snug text-ink-2">out of 100 · last 14 days · {v.games} {v.games === 1 ? "game" : "games"}<br />{v.streakDays}-day streak · {caption.toLowerCase()}</span>
           </div>
+          {st && (
+            <div className="mt-4 rounded-xl bg-orange-50 px-3 py-2.5">
+              <div className="flex items-center justify-between text-[13.5px]">
+                <span className="flex items-center gap-1 font-semibold text-orange-700"><Flame size={15} className="fill-orange-500" /> {st.days}-day streak{st.freezeUsed ? " · 🧊 freeze holding it" : ""}</span>
+                {st.milestone && <span className="text-[12.5px] font-semibold text-orange-700">🎉 milestone</span>}
+              </div>
+              {st.today.hasGame ? (
+                <>
+                  <div className="mt-1.5 flex items-baseline justify-between text-[12.5px]"><span>{st.today.finished} of {st.today.members} finished today</span><span className="text-ink-2">{st.today.lockedIn ? "today counts ✓" : `${st.today.needed} needed`}</span></div>
+                  <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-orange-100"><div className="h-full rounded-full bg-orange-500 transition-all" style={{ width: pct(st.today.finished / Math.max(1, st.today.needed)) }} /></div>
+                  {st.hourglass && <div className="mt-1 text-[12px] font-semibold text-amber-700">⏳ {Math.max(0, st.today.needed - st.today.finished)} more by midnight to keep it going</div>}
+                </>
+              ) : (
+                <div className="mt-1 text-[12.5px] text-ink-2">Today&apos;s game hasn&apos;t dropped yet.</div>
+              )}
+              <div className="mt-1.5 text-[11.5px] text-ink-2">A day counts when most of the chat finishes by midnight. One missed day a week is forgiven.</div>
+            </div>
+          )}
           <div className="mt-4 space-y-2.5">
             {PARTS.map((p) => (
               <div key={p.key}>

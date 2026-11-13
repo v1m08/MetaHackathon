@@ -7,13 +7,14 @@ import { useApi } from "@/lib/api";
 import type { GameView } from "@/lib/play/views";
 import { GameSheet } from "./GameSheet";
 import { Faces, ModeTag } from "./shared";
+import { dayKey } from "@/lib/play/day";
 
 export function GameChip({ id, onChanged }: { id: string; onChanged?: () => void }) {
   const { data: g, error } = useApi<GameView>(`/api/play/games/${id}`, { poll: 3000 });
   const [open, setOpen] = useState(false);
   if (!g) return error ? null : <div className="my-3 flex justify-center"><div className="h-36 w-[290px] animate-pulse rounded-2xl bg-[#f0f2f5]" /></div>;
   const started = Object.keys(g.mine).length > 0;
-  const when = g.date === new Date().toISOString().slice(0, 10) ? "Today's game" : new Date(`${g.date}T12:00:00Z`).toLocaleDateString("en-US", { month: "short", day: "numeric" });
+  const when = g.date === dayKey() ? "Today's game" : new Date(`${g.date}T12:00:00Z`).toLocaleDateString("en-US", { month: "short", day: "numeric" });
   return (
     <div className="my-3 flex justify-center">
       <div className="w-[290px] overflow-hidden rounded-2xl border border-line/60 bg-white text-left text-ink">

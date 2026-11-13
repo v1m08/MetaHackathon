@@ -3,7 +3,8 @@
 //   - which item: ranked from inventory every member can see, by the chat's topic scores (never one member's);
 //     where the chat spread Wager points on the item itself, that result replaces the topic estimate
 //   - the gate: the item's topic must be settled in this chat (score.ts `confident`) or the chat put Wager points on it
-//   - the facts: counted from this chat's own finished answers and events, nothing invented
+//   - the facts: counted from this chat's own finished answers and events (plus its streak and, for events, how many
+//     of the chat's friends are going), nothing invented
 //   - whether the model's why line is allowed on screen: it must copy a fact word for word and may add no number
 //     or quantity word of its own, <=30 words, <=200 characters, no BANNED words; otherwise the first fact is shown
 //   - at most one unlock per tier per chat, one per call, and one per chat per day (no burst of cards); a tier
@@ -15,7 +16,7 @@ import { getConversation, getEvent, getGroup, getListing, getUser, notify, rsvp,
 import type { ID } from "@/types";
 import { inventoryFor, type InventoryItem } from "./context";
 import { roundResults } from "./results";
-import { affinityFor, chatScore, chatTopics, confident, decay, streakDays, THRESHOLDS, type Affinity } from "./score";
+import { affinityFor, chatScore, chatTopics, confident, decay, MILESTONES, streakDays, THRESHOLDS, type Affinity } from "./score";
 import { completedBy, dayKey, FORMAT_LABEL, gamesIn, getGame, logEvent, pid, playStore, unlocksIn, type EventKind, type PlayGame, type Unlock, type UnlockTier } from "./store";
 import { BANNED, topic as topicOf, topicLabel, type TopicId } from "./taxonomy";
 import type { MemberCard, UnlockView } from "./views";
@@ -23,6 +24,10 @@ import type { MemberCard, UnlockView } from "./views";
 export interface Candidate { item: InventoryItem; score: number; topic: TopicId; parts: Record<string, number> }
 
 const TIERS = Object.keys(THRESHOLDS) as UnlockTier[];
+const FRIENDS_EACH = 0.05;
+const FRIENDS_CAP = 0.15;
+/** "N of your friends are going" goes on the card from this many. */
+const FRIENDS_FACT_MIN = 2;
 const TIER_LABEL: Record<UnlockTier, string> = { group: "a group to join together", event: "an event for the chat", listing: "a Marketplace pick" };
 const FEEDBACK_KIND: Record<UnlockTier, EventKind> = { event: "rsvp", group: "join", listing: "save" };
 const DAY = 864e5;
@@ -79,6 +84,8 @@ export function rankInventory(conversationId: ID, tier: UnlockTier): Candidate[]
         soonness: round3(tier === "event" ? 0.1 * clamp(1 - days / 21) : 0),
         wager: round3(standing ?? 0),
         followsEvent: lastEventTopic && item.topics.includes(lastEventTopic) ? 0.3 : 0,
+        // Events: friends of the chat going is social proof, capped low so topic fit and Wager results still decide.
+        friends: round3(tier === "event" ? Math.min(FRIENDS_CAP, FRIENDS_EACH * (item.friendsIn ?? 0)) : 0),
       };
       const score = round3(Object.values(parts).reduce((s, x) => s + x, 0));
       return { item, score, topic: lastEventTopic && item.topics.includes(lastEventTopic) ? lastEventTopic : best.v > 0 ? best.t : item.topics[0], parts };
@@ -110,6 +117,10 @@ export function unlockFacts(conversationId: ID, c: Candidate): string[] {
       break outer;
     }
   }
+  // a streak milestone (3 / 7 / 14 / 30 days) is a reason in its own right, ahead of where the topic stands
+  const streak = streakDays(conversationId);
+  const milestone = (MILESTONES as readonly number[]).includes(streak);
+  if (milestone) facts.push(`${streak}-day streak`);
   // nothing counted about this item yet: say where its topic stands in this chat
   if (!facts.length) {
     const topics = chatTopics(conversationId);
@@ -117,8 +128,9 @@ export function unlockFacts(conversationId: ID, c: Candidate): string[] {
     const n = topics[rank - 1]?.games ?? 0; // played games that touched this topic, not every game the chat was sent
     facts.push(`${topicOf(c.topic).label} is this chat's ${rank <= 1 ? "top" : `#${rank}`} topic${n ? ` after ${n} game${n === 1 ? "" : "s"} on it` : ""}`);
   }
-  const streak = streakDays(conversationId);
-  if (streak >= 2) facts.push(`${streak}-day streak`);
+  if (streak >= 2 && !milestone) facts.push(`${streak}-day streak`);
+  const f = c.item.friendsIn ?? 0;
+  if (c.item.kind === "event" && f >= FRIENDS_FACT_MIN) facts.push(`${f} of your friends are going`);
   const m = c.item.membersIn.length;
   if (m >= 1 && c.item.kind !== "listing") facts.push(`${m} of you ${m === 1 ? "is" : "are"} already ${c.item.kind === "event" ? "going" : "in"}`);
   return facts;

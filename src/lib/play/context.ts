@@ -9,7 +9,11 @@ import type { ID } from "@/types";
 import type { EvidenceItem } from "./store";
 import { topicsOfEvent, topicsOfGroup, topicsOfListing, topicsOfText, type TopicId } from "./taxonomy";
 
-export interface InventoryItem { kind: "event" | "group" | "listing"; id: string; title: string; sub: string; image?: string; topics: TopicId[]; startsAt?: string; membersIn: ID[] }
+export interface InventoryItem {
+  kind: "event" | "group" | "listing"; id: string; title: string; sub: string; image?: string; topics: TopicId[]; startsAt?: string; membersIn: ID[];
+  /** Events: people going who are a friend of someone in the chat (not chat members themselves). A count, never who. */
+  friendsIn?: number;
+}
 export interface ChatContext {
   conversationId: ID;
   isGroup: boolean;
@@ -33,9 +37,10 @@ export function inventoryFor(memberIds: ID[]): InventoryItem[] {
   const now = Date.now();
   const all = (fn: (id: ID) => boolean) => memberIds.every(fn);
   const home = homeCity(memberIds);
+  const friendsGoing = (going: ID[]) => going.filter((id) => !memberIds.includes(id) && memberIds.some((m) => isFriend(m, id))).length;
   const events: InventoryItem[] = d.events
     .filter((e) => new Date(e.startsAt).getTime() > now && e.category !== "Reconnect" && (e.city ?? home) === home && all((m) => canSeeEvent(m, e)))
-    .map((e) => ({ kind: "event", id: e.id, title: e.title, sub: `${when(e.startsAt)} · ${e.location}${e.price ? ` · ${e.price}` : ""}`, image: e.cover, topics: topicsOfEvent(e), startsAt: e.startsAt, membersIn: memberIds.filter((m) => e.going.includes(m)) }));
+    .map((e) => ({ kind: "event", id: e.id, title: e.title, sub: `${when(e.startsAt)} · ${e.location}${e.price ? ` · ${e.price}` : ""}`, image: e.cover, topics: topicsOfEvent(e), startsAt: e.startsAt, membersIn: memberIds.filter((m) => e.going.includes(m)), friendsIn: friendsGoing(e.going) }));
   const groups: InventoryItem[] = d.groups
     .filter((g) => g.privacy === "public" || all((m) => g.memberIds.includes(m)))
     .map((g) => ({ kind: "group", id: g.id, title: g.name, sub: `${g.memberIds.length} members · ${g.tags.slice(0, 2).join(", ")}`, image: g.cover, topics: topicsOfGroup(g), membersIn: memberIds.filter((m) => g.memberIds.includes(m)) }));

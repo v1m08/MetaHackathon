@@ -11,7 +11,7 @@ import { db, getConversation, getUser } from "@/server/db";
 import type { ID } from "@/types";
 import { maybeUnlock, rankInventory, unlockFacts, viewUnlock } from "./recommend";
 import { answerOf, performance, roundResults } from "./results";
-import { affinityFor, chatScore, engagement, THRESHOLDS } from "./score";
+import { affinityFor, chatScore, engagement, streakInfo, THRESHOLDS } from "./score";
 import { answersFor, completedBy, dayKey, eventsFor, FORMAT_LABEL, gamesIn, getGame, logEvent, playStore, setAnswer, unlocksIn, type Choice, type PlayGame, type Round, type UnlockTier } from "./store";
 import { TOPIC_IDS, topicLabel } from "./taxonomy";
 import type { ChatView, GameView, MemberCard, UnlockView } from "./views";
@@ -154,6 +154,7 @@ export function chatView(conversationId: ID, viewerId: ID): ChatView {
     score: cs.score,
     parts: cs.parts,
     streakDays: cs.streakDays,
+    streak: (() => { const st = streakInfo(conversationId); return { days: st.days, today: st.today, hourglass: st.hourglass, milestone: st.milestone, freezeUsed: st.freezes.length > 0 }; })(),
     games: cs.games,
     topics: shown.slice(0, 5).map((t) => ({ topic: t.topic, label: topicLabel(t.topic), games: t.games })),
     myTopics: TOPIC_IDS.map((t) => ({ topic: t, label: topicLabel(t), score: round2(mine[t]) })).filter((t) => t.score > 0).sort((a, b) => b.score - a.score).slice(0, 5),
