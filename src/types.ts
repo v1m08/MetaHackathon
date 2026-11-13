@@ -190,7 +190,7 @@ export interface Message {
   text: string;
   createdAt: string;
   reactions?: Record<ID, string>;
-  attachment?: { type: "image" | "listing" | "event" | "trip" | "opendoor" | "plan"; ref: string };
+  attachment?: { type: "image" | "listing" | "event" | "trip" | "opendoor" | "plan" | "game" | "unlock"; ref: string };
   readBy?: ID[];
   /** Drafts written by the travel agent sit here until the sender approves them. Only the sender sees drafts. */
   status?: "draft" | "sent";
@@ -243,7 +243,8 @@ export type NotificationType =
   | "memory"
   | "mention"
   | "travel"
-  | "reconnect";
+  | "reconnect"
+  | "play";
 
 export interface Notification {
   id: ID;

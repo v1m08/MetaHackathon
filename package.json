@@ -24,6 +24,8 @@
     "eval:opendoor": "node scripts/eval-opendoor.mjs",
     "eval:reconnect": "node scripts/eval-reconnect.mjs",
     "qa:reconnect": "node scripts/qa-reconnect.mjs",
+    "qa:play": "node scripts/qa-play.mjs",
+    "eval:play": "node scripts/eval-play.mjs",
     "video": "python3 scripts/build-demo-video.py"
   },
   "dependencies": {

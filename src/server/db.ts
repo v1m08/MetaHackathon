@@ -189,7 +189,7 @@ export function markConversationRead(conversationId: ID, userId: ID) {
   if (!c) return;
   for (const m of c.messages) if (!m.readBy?.includes(userId)) (m.readBy ??= []).push(userId);
 }
-export const unreadCount = (userId: ID) => conversationsFor(userId).reduce((n, c) => n + c.messages.filter((m) => m.senderId !== userId && m.status !== "draft" && !m.readBy?.includes(userId)).length, 0);
+export const unreadCount = (userId: ID) => conversationsFor(userId).reduce((n, c) => n + c.messages.filter((m) => (m.system || m.senderId !== userId) && m.status !== "draft" && !m.readBy?.includes(userId)).length, 0); // a system card is nobody's own message, whoever it is stored under
 
 // ---------- dating ----------
 export const datingDeckFor = (userId: ID) =>
