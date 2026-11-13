@@ -1,7 +1,7 @@
 // interest → a rarity-trivia pack: a themed world plus 7 prompts with big answer sets.
 // Step 1 builds the world and prompts; step 2 fetches each prompt's answers in parallel.
 import { cleanText, ensureContrast, normalizeInterest, parseHex } from "../../shared/schema";
-import { FONTS, norm, PROMPTS_PER_GAME, type Answer, type Font, type Pack, type Prompt, type World } from "../../shared/rarity";
+import { FONTS, norm, PROMPTS_PER_GAME, withScene, type Answer, type Font, type Pack, type Prompt, type Scene, type World } from "../../shared/rarity";
 import { chatJSON, extractJson } from "../llm";
 
 const WORLD_SYSTEM = `You build one round of a trivia game played by friends in a group chat. Every prompt asks players to NAME something; any correct answer counts, and RARER correct answers score more. The fun is digging for the deep cut nobody else thought of.
@@ -22,10 +22,22 @@ WORLD:
 - meter: a progress metaphor that fits the interest. Points convert to it. label (e.g. "Altitude"), unit (e.g. "m"), perPoint (number, so 700 points feels big), up (true if it climbs, false if it descends), icon (one emoji).
 - tiers: 6 rarity tier names in the interest's own language, from most common to rarest. The last one should feel legendary (e.g. for climbing: "Jug", "Pocket", "Sloper", "Crimp", "Mono", "First Ascent").
 - palette: hex colors evoking the interest. bg and bg2 (gradient), card (panel color), primary (main action), accent (highlight), text (must be highly readable on bg AND card).
+- scene: the pixel-art world the player travels through as they score (their "meter" journey). kind is one of:
+  "cliff" (climb up a rock face: climbing, mountaineering), "track" (race up a circuit: motorsport, cycling, running, racing),
+  "ocean" (sink into the deep: diving, fishing, sailing, marine life), "space" (launch upward: space, sci-fi, astronomy),
+  "tower" (climb a building or stage: music, cities, careers, fashion, gaming, film), "dig" (dig down through layers: history,
+  archaeology, dinosaurs, geology, mining, true crime), "trail" (hike up hills and forest: nature, gardening, pets, camping, sports
+  on grass), "kitchen" (rise up shelves: food, baking, coffee, cooking, drinks).
+  start and end: two hex colors each for the sky/water gradient at the start and at the far end of the journey (e.g. day sky to
+  starry night for a summit). ground: hex for the main material. props: 4-6 single emoji that belong in this world (gear, animals,
+  landmarks), never people.
+- avatar: one emoji for the player's marker (a person or vehicle doing the interest).
+- verb: one short submit-button word in the interest's language (e.g. "Send", "Push", "Bake", "Dig", "Drop").
+- meter.up must match the scene: false for ocean and dig, true otherwise.
 - font: pick the one whose mood matches the interest best: "Rubik" (friendly, neutral), "Bricolage Grotesque" (quirky, artsy, indie), "Fraunces" (warm, crafty, food, books, history), "Space Grotesk" (tech, science, space, gaming), "Saira Condensed" (speed, motorsport, sports stats), "Baloo 2" (cute, pets, kids, cozy), "DM Serif Display" (elegant, fashion, music, film, classical), "Archivo Black" (loud, bold, extreme sports, hype). Don't default to one; match the mood.
 
 Reply with only JSON:
-{"title","tagline","host":{"name","emoji","intro"},"meter":{"label","unit","perPoint","up","icon"},"tiers":[6 strings],"palette":{"bg","bg2","card","primary","accent","text"},"font","prompts":[{"q","hint"}]}`;
+{"title","tagline","scene":{"kind","start":[2 hex],"end":[2 hex],"ground","props":[emoji]},"avatar","verb","host":{"name","emoji","intro"},"meter":{"label","unit","perPoint","up","icon"},"tiers":[6 strings],"palette":{"bg","bg2","card","primary","accent","text"},"font","prompts":[{"q","hint"}]}`;
 
 const ANSWERS_SYSTEM = `You write the answer key for a trivia prompt where any correct answer counts and rarer answers score more.
 
@@ -53,7 +65,11 @@ function sanitizeWorld(raw: Record<string, unknown>, interest: string): World & 
     .filter((p) => p.q)
     .slice(0, PROMPTS_PER_GAME);
   const per = Number(meter.perPoint);
+  const scened = withScene({ interest, scene: raw.scene as Scene | undefined, avatar: raw.avatar as string | undefined, verb: cleanText(raw.verb, 10) || undefined } as Parameters<typeof withScene>[0]);
   return {
+    scene: scened.scene,
+    avatar: scened.avatar,
+    verb: scened.verb,
     interest,
     title: cleanText(raw.title, 26) || `${interest} deep cuts`,
     tagline: cleanText(raw.tagline, 60) || "Name the answer nobody else will.",
@@ -62,7 +78,7 @@ function sanitizeWorld(raw: Record<string, unknown>, interest: string): World & 
       label: cleanText(meter.label, 16) || "Score",
       unit: cleanText(meter.unit, 6),
       perPoint: Number.isFinite(per) && per > 0 && per < 10000 ? per : 10,
-      up: meter.up !== false,
+      up: scened.scene.kind === "ocean" || scened.scene.kind === "dig" ? false : meter.up !== false,
       icon: typeof meter.icon === "string" && meter.icon.length <= 8 ? meter.icon : "⭐",
     },
     tiers: [0, 1, 2, 3, 4, 5].map((i) => tiers[i] || defaultsT[i]) as World["tiers"],

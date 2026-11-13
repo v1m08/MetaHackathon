@@ -1,8 +1,10 @@
-// Rarity trivia client. Home → (generate) → lobby → 7 prompts (answer, reveal) → results with friends.
-import { fmt, SECONDS_PER_PROMPT, TIER_POINTS, ONLY_YOU_BONUS, type PublicPack, type Verdict } from "../../../shared/rarity";
+// Deep Cuts client. A pixel world runs behind every screen; the camera travels as you score.
+// Home → (build) → lobby → 7 prompts (answer → reveal) → results with friends on the gauge.
+import { fmt, ONLY_YOU_BONUS, SECONDS_PER_PROMPT, TIER_POINTS, withScene, type PublicPack, type Verdict } from "../../../shared/rarity";
 import { Audio } from "../engine/audio";
 import { mix } from "../engine/util";
 import { contrastText } from "../theme";
+import { SceneView, type Marker } from "./scene";
 
 interface PromptView {
   mine: { a: string; raw: string; tier: number; points: number; onlyYou: boolean } | null;
@@ -18,11 +20,27 @@ interface RoomView {
   prompts: PromptView[];
 }
 
-const app = document.getElementById("app")!;
+const ui = document.getElementById("ui")!;
+const worldEl = document.getElementById("world")!;
 const audio = new Audio();
-const EXAMPLES = ["Rock climbing", "F1", "Sourdough", "Taylor Swift", "Ancient Rome", "Pokémon", "Coffee", "Skateboarding"];
+const EXAMPLES = ["Rock climbing", "F1", "Sourdough", "Scuba diving", "Dinosaurs", "Space", "Coffee", "Taylor Swift"];
 
-// ---------- small utils ----------
+const HOME_WORLD: PublicPack = withScene({
+  interest: "home",
+  title: "Deep Cuts",
+  tagline: "",
+  host: { name: "", emoji: "🎙️", intro: "" },
+  meter: { label: "Height", unit: "m", perPoint: 10, up: true, icon: "⭐" },
+  tiers: ["Common", "Known", "Nice", "Deep cut", "Rare", "Legendary"],
+  palette: { bg: "#7cc4f2", bg2: "#d8eefb", card: "#232838", primary: "#ff5d8f", accent: "#7cf2d0", text: "#ffffff" },
+  font: "Rubik",
+  scene: { kind: "trail", start: ["#7cc4f2", "#e3f4fb"], end: ["#ff9a5a", "#ffd39a"], ground: "#4f8a3a", props: ["🌲", "🍄", "🦋", "🌼"] },
+  avatar: "🎒",
+  verb: "Go",
+  prompts: [],
+});
+
+// ---------- utils ----------
 const esc = (s: string) => s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 const store = {
@@ -58,65 +76,68 @@ async function api<T>(path: string, body?: unknown): Promise<T> {
   return data;
 }
 const view = (id: string) => api<RoomView>(`/api/x/${id}?me=${pid}`);
+const units = (p: PublicPack, points: number) => points * p.meter.perPoint;
+const meterText = (p: PublicPack, points: number) => `${fmt(units(p, points))}${p.meter.unit}`;
+const deeper = (p: PublicPack) => (p.meter.up ? "climb higher" : "go deeper");
 
-function render(html: string) {
-  app.innerHTML = `<div class="col enter">${html}</div>`;
-  window.scrollTo(0, 0);
-  return app.firstElementChild as HTMLElement;
-}
-
-// ---------- theming: the world restyles everything ----------
-function applyWorld(p: PublicPack | null) {
+// ---------- the world behind everything ----------
+let scene: SceneView | null = null;
+let sceneKey = "";
+function setWorld(key: string, p: PublicPack) {
+  const pal = p.palette;
   const root = document.documentElement.style;
-  const pal = p?.palette ?? { bg: "#14161f", bg2: "#1f2433", card: "#232838", primary: "#ffb020", accent: "#6ee7b7", text: "#f6f3ee" };
-  for (const [k, v] of Object.entries(pal)) root.setProperty(`--${k}`, v);
+  root.setProperty("--primary", pal.primary);
+  root.setProperty("--accent", pal.accent);
   root.setProperty("--on-primary", contrastText(pal.primary));
   root.setProperty("--on-accent", contrastText(pal.accent));
-  // six tier colors from quiet to loud, each with readable text
-  const tiers = [mix(pal.card, pal.text, 0.22), mix(pal.card, pal.accent, 0.35), mix(pal.card, pal.accent, 0.6), pal.accent, mix(pal.accent, pal.primary, 0.6), pal.primary];
+  const tiers = ["#5a6072", mix("#2a3142", pal.accent, 0.45), mix("#2a3142", pal.accent, 0.75), pal.accent, mix(pal.accent, pal.primary, 0.6), pal.primary];
   tiers.forEach((c, i) => {
     root.setProperty(`--t${i + 1}`, c);
     root.setProperty(`--on-t${i + 1}`, contrastText(c));
   });
-  const font = p?.font ?? "Rubik";
-  root.setProperty("--display", `"${font}"`);
-  if (font !== "Rubik") {
-    const href = `https://fonts.googleapis.com/css2?family=${font.replace(/ /g, "+")}:wght@400;700;800&display=swap`;
-    if (!document.querySelector(`link[href="${href}"]`)) {
-      const l = document.createElement("link");
-      l.rel = "stylesheet";
-      l.href = href;
-      document.head.appendChild(l);
-    }
+  document.querySelector('meta[name="theme-color"]')?.setAttribute("content", p.scene.start[0]);
+  document.title = p.interest === "home" ? "Deep Cuts" : p.title;
+  if (sceneKey !== key) {
+    scene?.destroy();
+    scene = new SceneView(worldEl, p);
+    sceneKey = key;
   }
-  document.querySelector('meta[name="theme-color"]')?.setAttribute("content", pal.bg);
-  document.title = p ? p.title : "Sidequest";
+  return scene!;
 }
-const tierStyle = (t: number) => `background:var(--t${t});color:var(--on-t${t})`;
-const meterText = (p: PublicPack, points: number) => `${fmt(points * p.meter.perPoint)}${p.meter.unit ? ` ${p.meter.unit}` : ""}`;
 
-function ladderHtml(p: PublicPack, you?: number, mini = false) {
-  return `<div class="ladder${mini ? " mini" : ""}">${p.tiers
-    .map((name, i) => `<div class="rung" data-t="${i + 1}"><span>${esc(name)}</span><small>${TIER_POINTS[i]}</small></div>`)
-    .join("")}</div>`.replace(/data-t="(\d)"/g, (m, t) => (you && Number(t) === you ? `${m} data-you` : m));
+function screen(html: string, cls = "") {
+  ui.innerHTML = `<div class="center ${cls}" style="display:flex;flex-direction:column;flex:1;min-height:0">${html}</div>`;
+  return ui.firstElementChild as HTMLElement;
 }
+const muteBtn = () => `<button class="btn dark icon-btn" id="mute" aria-label="Sound">${audio.muted ? "SND OFF" : "SND ON"}</button>`;
+function wireMute(el: HTMLElement) {
+  el.querySelector("#mute")?.addEventListener("click", (e) => {
+    audio.unlock();
+    (e.currentTarget as HTMLElement).textContent = audio.toggleMute() ? "SND OFF" : "SND ON";
+  });
+}
+const markersFor = (v: RoomView): Marker[] => v.board.map((b) => ({ name: b.name, value: units(v.pack, b.score), me: b.me }));
 
 // ---------- home ----------
 function home(error = "") {
-  applyWorld(null);
   history.replaceState(null, "", "/x");
-  const el = render(`
-    <div class="home-hero">
-      <div class="mark">🔎</div>
-      <h1>Deep Cuts</h1>
-      <p>Pick something you're into. Name the answers nobody else thinks of. Send it to the group chat.</p>
+  const s = setWorld("home", HOME_WORLD);
+  s.setProgress(0, true);
+  s.setMarkers([]);
+  s.avatarVisible = true;
+  const el = screen(`
+    <div class="title-wrap pop">
+      <h1 class="title">DEEP<br/>CUTS</h1>
+      <p class="subtitle">Name the answer nobody else thinks of</p>
     </div>
-    <form class="col" id="f">
-      <input class="field" id="i" maxlength="60" autocomplete="off" placeholder="What are you into?" aria-label="Your interest" />
-      <button class="btn" type="submit">Make the game</button>
-    </form>
-    <div class="chips">${EXAMPLES.map((x) => `<button class="chip" data-x="${esc(x)}">${esc(x)}</button>`).join("")}</div>
-    ${error ? `<p class="error">${esc(error)}</p>` : ""}`);
+    <div class="bottom stack pop" style="padding-right:56px">
+      <form class="stack" id="f">
+        <input class="field" id="i" maxlength="60" autocomplete="off" placeholder="What are you into?" aria-label="Your interest" />
+        <button class="btn big" type="submit">Make the game</button>
+      </form>
+      <div class="chips">${EXAMPLES.map((x) => `<button class="chip" data-x="${esc(x)}">${esc(x)}</button>`).join("")}</div>
+      ${error ? `<p class="error">${esc(error)}</p>` : ""}
+    </div>`);
   const input = el.querySelector<HTMLInputElement>("#i")!;
   el.querySelector("form")!.addEventListener("submit", (e) => {
     e.preventDefault();
@@ -128,22 +149,15 @@ function home(error = "") {
 
 async function make(interest: string) {
   audio.unlock();
-  const lines = [
-    `Building a world around ${interest}`,
-    "Casting your host",
-    "Writing seven prompts",
-    "Digging up the deep cuts",
-    "Ranking answers from obvious to legendary",
-    "Checking the answer keys",
-    "Almost there",
-  ];
-  const el = render(`<div class="making"><div class="spin">⛏️</div><h2 style="margin-top:18px">${esc(interest)}</h2><p id="s">${esc(lines[0])}…</p><p id="t" style="font-size:13px"></p></div>`);
+  const lines = [`Building a world for ${interest}`, "Casting your host", "Writing seven prompts", "Digging up deep cuts", "Ranking answers, obvious to legendary", "Checking the answer keys", "Almost there"];
+  const el = screen(`<div class="making pop"><h1>${esc(interest)}</h1><p id="s" class="blink">${esc(lines[0])}</p><p id="t"></p></div>`);
   const s = el.querySelector("#s")!, t = el.querySelector("#t")!;
   const t0 = Date.now();
   const tick = setInterval(() => {
     const sec = Math.floor((Date.now() - t0) / 1000);
-    s.textContent = `${lines[Math.min(lines.length - 1, Math.floor(sec / 12))]}…`;
-    t.textContent = sec > 4 ? `${sec}s · new games take about a minute, then they're instant` : "";
+    s.textContent = lines[Math.min(lines.length - 1, Math.floor(sec / 12))];
+    t.textContent = sec > 5 ? `${sec}s · new games take about a minute` : "";
+    scene?.setProgress(sec * 22); // wander up the trail while waiting
   }, 500);
   try {
     const { id } = await api<{ id: string }>("/api/x/new", { interest });
@@ -164,49 +178,51 @@ async function room(id: string) {
   } catch {
     return home("That game link doesn't exist anymore. Make a new one.");
   }
-  applyWorld(v.pack);
+  v.pack = withScene(v.pack);
+  const s = setWorld(id, v.pack);
   if (v.me?.finished) return results(v);
+  s.setProgress(units(v.pack, v.me?.score ?? 0), true);
+  s.setMarkers(markersFor(v));
   lobby(v);
 }
 
+function tiersHtml(p: PublicPack, you = 0) {
+  return `<div class="tiers">${p.tiers.map((n, i) => `<div class="tier ${you && i + 1 !== you ? "dim" : ""} ${i + 1 === you ? "you" : ""}" data-t="${i + 1}"><b>${TIER_POINTS[i]}</b>${esc(n)}</div>`).join("")}</div>`;
+}
 function boardHtml(v: RoomView, limit = 8) {
-  if (!v.board.length) return "";
-  const medal = ["🥇", "🥈", "🥉"];
   return `<ul class="board">${v.board
     .slice(0, limit)
-    .map(
-      (b, i) =>
-        `<li class="${b.me ? "me" : ""}"><span class="pos">${medal[i] ?? i + 1}</span><span class="who">${esc(b.name)}${b.me ? " (you)" : ""}${
-          b.answered < v.pack.prompts.length ? ` <span class="sub">· ${b.answered}/${v.pack.prompts.length}</span>` : ""
-        }</span><span class="pts">${meterText(v.pack, b.score)}</span></li>`,
-    )
+    .map((b, i) => `<li class="${b.me ? "me" : ""}"><span class="pos">${i + 1}.</span><span class="who">${esc(b.name)}${b.me ? " (you)" : ""}${b.answered < v.pack.prompts.length ? ` <span class="label">${b.answered}/${v.pack.prompts.length}</span>` : ""}</span><span class="pts">${meterText(v.pack, b.score)}</span></li>`)
     .join("")}</ul>`;
 }
 
 function lobby(v: RoomView) {
   const p = v.pack;
   const resume = v.me && v.me.done > 0;
-  const leader = v.board.find((b) => !b.me);
-  const el = render(`
-    <div class="lobby-head">
-      <div class="host-badge">${esc(p.host.emoji)}</div>
-      <h1>${esc(p.title)}</h1>
-      <p class="tag">${esc(p.tagline)}</p>
+  const el = screen(`
+    <div class="hud"><span></span><span></span><div class="hud-right">${muteBtn()}</div></div>
+    <div class="scroll" style="flex:1;padding-right:56px">
+      <div class="title-wrap pop" style="margin-top:3vh">
+        <h1 class="title" style="font-size:clamp(34px,10vw,64px)">${esc(p.title)}</h1>
+        <p class="subtitle">${esc(p.tagline)}</p>
+      </div>
+      <div class="stack pop" style="margin-top:22px">
+        <div class="panel speech"><span class="who">${esc(p.host.emoji)}</span><div><div class="label hot">${esc(p.host.name)}</div><p>${esc(p.host.intro)}</p></div></div>
+        <div class="panel">
+          <div class="label">${p.prompts.length} prompts · ${SECONDS_PER_PROMPT}s each · rarer answers ${deeper(p)}</div>
+          <div style="margin-top:10px">${tiersHtml(p)}</div>
+          <div class="label" style="margin-top:10px">Only you said it? +${ONLY_YOU_BONUS}</div>
+        </div>
+        ${v.board.length ? `<div class="panel"><div class="label">${v.board.length} playing</div><div style="margin-top:6px">${boardHtml(v, 6)}</div></div>` : ""}
+      </div>
     </div>
-    <div class="speech"><b>${esc(p.host.name)}</b>${esc(p.host.intro)}</div>
-    <div class="card how">
-      <span>✍️</span><span><b>${p.prompts.length} prompts, ${SECONDS_PER_PROMPT} seconds each.</b> Name anything that fits.</span>
-      <span>💎</span><span><b>Rarer answers climb higher.</b> Obvious ones barely count.</span>
-      <span>👀</span><span><b>Only you said it?</b> +${ONLY_YOU_BONUS} bonus. Same as a friend? No bonus.</span>
-    </div>
-    ${ladderHtml(p, undefined, true)}
-    ${leader ? `<p class="section-title">${esc(leader.name)} leads with ${meterText(p, leader.score)} ${esc(p.meter.icon)}</p>${boardHtml(v, 5)}` : ""}
-    <input class="field" id="name" maxlength="16" placeholder="Your name" autocomplete="nickname" value="${esc(v.me?.name && v.me.name !== "Player" ? v.me.name : myName())}" aria-label="Your name" />
-    <button class="btn" id="go">${resume ? `Keep going (${v.me!.done}/${p.prompts.length})` : "Start"}</button>
-    <button class="btn alt" id="invite">Invite the group chat</button>
-    <p class="toast" id="toast"></p>
-    <button class="link" id="new">Make a game about something else</button>`);
-  el.querySelectorAll(".rung").forEach((r) => r.classList.add("lit"));
+    <div class="stack pop" style="padding-right:56px;margin-top:10px">
+      <input class="field" id="name" maxlength="16" placeholder="Your name" autocomplete="nickname" value="${esc(v.me?.name && v.me.name !== "Player" ? v.me.name : myName())}" aria-label="Your name" />
+      <button class="btn big" id="go">${resume ? `Keep going ${v.me!.done}/${p.prompts.length}` : "Start"}</button>
+      <div class="row"><button class="btn dark wide" id="invite">Invite friends</button><button class="btn dark wide" id="new">New topic</button></div>
+      <p class="toast" id="toast"></p>
+    </div>`);
+  wireMute(el);
   const name = el.querySelector<HTMLInputElement>("#name")!;
   el.querySelector("#go")!.addEventListener("click", () => {
     const n = name.value.trim().slice(0, 16);
@@ -225,6 +241,15 @@ function lobby(v: RoomView) {
   el.querySelector("#new")!.addEventListener("click", () => home());
 }
 
+function hud(v: RoomView, i: number, score: number, doneUpTo: number) {
+  const p = v.pack;
+  return `<div class="hud">
+    <div class="panel thin meter-box"><div class="label">${esc(p.meter.label)}</div><div class="v" id="mv">${meterText(p, score)}</div></div>
+    <div class="panel thin progress"><div class="pips">${p.prompts.map((_, k) => `<i class="pip ${k < doneUpTo ? "done" : k === i ? "now" : ""}"></i>`).join("")}</div><div class="label">Prompt ${i + 1} of ${p.prompts.length}</div></div>
+    <div class="hud-right">${muteBtn()}<button class="btn dark icon-btn" id="quit">Quit</button></div>
+  </div>`;
+}
+
 // ---------- play ----------
 async function play(v: RoomView, i: number) {
   if (i < 0 || i >= v.pack.prompts.length) return results(await view(v.id));
@@ -233,29 +258,38 @@ async function play(v: RoomView, i: number) {
   const open = await api<{ ok: boolean; secondsLeft: number; done: boolean }>(`/api/x/${v.id}/open`, { pid, name: myName(), i });
   if (open.done) return play(await view(v.id), i + 1);
   const score = v.me?.score ?? 0;
-  const el = render(`
-    <div class="topbar">
-      <div class="pips">${p.prompts.map((_, k) => `<i class="pip ${k < i ? "done" : k === i ? "now" : ""}"></i>`).join("")}</div>
-      <div class="meter">${esc(p.meter.icon)} <span>${meterText(p, score)}</span></div>
-    </div>
-    <div class="card prompt-card">
-      <div class="k">${i + 1} of ${p.prompts.length}</div>
-      <h2>${esc(pr.q)}</h2>
+  scene?.setProgress(units(p, score));
+  scene?.setMarkers(markersFor(v).map((m) => (m.me ? { ...m, value: units(p, score) } : m)));
+  const C = 2 * Math.PI * 22;
+  const el = screen(`
+    ${hud(v, i, score, i)}
+    <div class="panel prompt pop" style="margin-right:56px">
+      <div class="label hot">${["Warm up", "Easy", "Getting deeper", "Deep", "Deeper", "Deep cuts only", "Final prompt"][Math.min(6, Math.round((i / Math.max(1, p.prompts.length - 1)) * 6))]}</div>
+      <h1>${esc(pr.q)}</h1>
       ${pr.hint ? `<p class="hint">${esc(pr.hint)}</p>` : ""}
-      <div class="clock" id="clock"><i></i></div>
+      <p class="sub">▼ rarer answers ${deeper(p)} ▼</p>
     </div>
-    <form class="answer-row" id="f">
-      <input class="field" id="a" maxlength="60" autocomplete="off" autocapitalize="words" enterkeyhint="send" placeholder="Your answer" aria-label="Your answer" />
-      <button class="btn" type="submit" id="send">Go</button>
-    </form>
-    <div class="tries" id="tries"><i></i><i></i><i></i></div>
-    <p class="feedback" id="fb" aria-live="polite"></p>
-    <button class="link giveup" id="pass">Pass</button>`);
+    <div class="bottom" style="padding-right:56px">
+      <p class="feedback" id="fb" aria-live="polite"></p>
+      <form class="answer-bar" id="f">
+        <div class="timer" id="timer"><svg viewBox="0 0 54 54"><circle class="track" cx="27" cy="27" r="22"/><circle class="left" id="arc" cx="27" cy="27" r="22" stroke-dasharray="${C}" stroke-dashoffset="0"/></svg><span id="sec">${Math.ceil(open.secondsLeft)}</span></div>
+        <input class="field" id="a" maxlength="60" autocomplete="off" autocapitalize="words" enterkeyhint="send" placeholder="Type one answer…" aria-label="Your answer" />
+        <button class="btn dark icon-btn" type="button" id="pass">Pass</button>
+        <button class="btn" type="submit" id="send">${esc(p.verb)}</button>
+      </form>
+      <div class="tries" id="tries" aria-label="Tries left"><i></i><i></i><i></i></div>
+    </div>`);
+  wireMute(el);
+  el.querySelector("#quit")!.addEventListener("click", () => {
+    done = true;
+    void room(v.id);
+  });
   const input = el.querySelector<HTMLInputElement>("#a")!;
   const send = el.querySelector<HTMLButtonElement>("#send")!;
   const fb = el.querySelector<HTMLElement>("#fb")!;
-  const clock = el.querySelector<HTMLElement>("#clock")!;
-  const bar = clock.querySelector("i")!;
+  const timer = el.querySelector<HTMLElement>("#timer")!;
+  const arc = el.querySelector<SVGCircleElement>("#arc")!;
+  const secEl = el.querySelector<HTMLElement>("#sec")!;
   const tries = [...el.querySelectorAll<HTMLElement>("#tries i")];
   input.focus();
 
@@ -265,12 +299,13 @@ async function play(v: RoomView, i: number) {
   const frame = (now: number) => {
     if (done) return;
     const left = Math.max(0, (endAt - now) / 1000);
-    bar.style.transform = `scaleX(${left / SECONDS_PER_PROMPT})`;
-    clock.classList.toggle("low", left < 6);
+    arc.style.strokeDashoffset = String(C * (1 - left / SECONDS_PER_PROMPT));
     const sec = Math.ceil(left);
-    if (left < 5.5 && sec !== lastSec && sec > 0) {
+    if (sec !== lastSec) {
       lastSec = sec;
-      audio.tick(true);
+      secEl.textContent = String(sec);
+      timer.classList.toggle("low", left < 6);
+      if (left < 5.5 && sec > 0) audio.tick(true);
     }
     if (left <= 0 && !busy) return void finish(true);
     requestAnimationFrame(frame);
@@ -282,7 +317,7 @@ async function play(v: RoomView, i: number) {
     busy = true;
     send.disabled = true;
     if (!giveUp) {
-      fb.className = "feedback checking";
+      fb.className = "feedback checking blink";
       fb.textContent = "Checking…";
     }
     let verdict: Verdict;
@@ -292,6 +327,7 @@ async function play(v: RoomView, i: number) {
       verdict = { ok: false, locked: false, reason: "Connection hiccup, try again" };
     }
     busy = false;
+    if (done) return;
     if (verdict.locked) {
       done = true;
       return reveal(v, i, verdict, text);
@@ -308,20 +344,19 @@ async function play(v: RoomView, i: number) {
     input.select();
     if (performance.now() >= endAt) void finish(true);
   }
-
   el.querySelector("#f")!.addEventListener("submit", (e) => {
     e.preventDefault();
     const t = input.value.trim();
-    if (!t || busy) return;
-    void finish(false, t);
+    if (t && !busy) void finish(false, t);
   });
   el.querySelector("#pass")!.addEventListener("click", () => !busy && finish(true));
 }
 
-// ---------- reveal ----------
+// ---------- reveal: the camera travels by your points ----------
 async function reveal(v: RoomView, i: number, verdict: Verdict, typed: string) {
   const p = v.pack;
   const fresh = await view(v.id).catch(() => v);
+  fresh.pack = withScene(fresh.pack);
   const pv = fresh.prompts[i];
   const t = verdict.tier ?? 0;
   const hit = verdict.ok && t > 0;
@@ -329,89 +364,100 @@ async function reveal(v: RoomView, i: number, verdict: Verdict, typed: string) {
   const before = v.me?.score ?? 0;
   const after = fresh.me?.score ?? before;
   const last = i === p.prompts.length - 1;
-  const el = render(`
-    <div class="topbar">
-      <div class="pips">${p.prompts.map((_, k) => `<i class="pip ${k <= i ? "done" : ""}"></i>`).join("")}</div>
-      <div class="meter">${esc(p.meter.icon)} <span id="m">${meterText(p, before)}</span></div>
-    </div>
-    <div class="reveal">
-      <div class="verdict ${hit ? "" : "miss"}">
-        <div class="your">${esc(p.prompts[i].q)}</div>
-        <h2>${esc(hit ? verdict.answer! : typed ? typed : "No answer")}</h2>
-        ${hit ? `<span class="tier-name" id="tn" style="${tierStyle(t)};opacity:0">${esc(p.tiers[t - 1])}</span>` : `<p class="note">${esc(verdict.reason ?? "Time's up")}</p>`}
-      </div>
-      ${hit ? ladderHtml(p, t) : ""}
+  const gained = after - before;
+  const el = screen(`
+    ${hud(fresh, i, before, i + 1)}
+    <div class="panel reveal pop ${hit ? "" : "miss"}" style="margin-right:56px">
+      <div class="q">${esc(p.prompts[i].q)}</div>
+      <h1>${esc(hit ? verdict.answer! : typed || "No answer")}</h1>
+      ${hit ? tiersHtml(p, t) : `<p class="note">${esc(verdict.reason ?? "Time's up")}</p>`}
+      ${hit ? `<p class="gain" id="gain" style="margin:12px 0 0;opacity:0">+${fmt(units(p, gained))}${esc(p.meter.unit)} · ${esc(p.tiers[t - 1])}</p>` : ""}
       ${hit && verdict.note ? `<p class="note">${esc(verdict.note)}</p>` : ""}
-      ${hit ? `<p class="same">${same.length ? `Same as ${esc(same.join(", "))}. No bonus.` : pv.friends.length ? `<span class="only">Only you</span> nobody else said it (+${ONLY_YOU_BONUS})` : "First to answer. If nobody matches you, that's +" + ONLY_YOU_BONUS + "."}</p>` : ""}
-      ${pv.gem && pv.gem.a !== verdict.answer ? `<div class="card gem"><span class="g">💎</span><p>Deepest cut on the list: <b>${esc(pv.gem.a)}</b>${pv.gem.note ? `. ${esc(pv.gem.note)}` : ""}</p></div>` : ""}
-      ${pv.friends.length ? `<p class="section-title">What friends said</p><div class="friends">${pv.friends.map((f) => `<span class="fa" data-t="${f.tier}"><small>${esc(f.name)}</small><b>${esc(f.a || "pass")}</b></span>`).join("")}</div>` : ""}
-      <button class="btn" id="next">${last ? "See results" : "Next prompt"}</button>
-    </div>`);
-  // climb the ladder to the player's tier, one rung at a time
+      ${hit ? `<p class="social">${same.length ? `Same as ${esc(same.join(", "))}. No bonus.` : pv.friends.length ? `<span class="only">Only you</span> +${ONLY_YOU_BONUS} bonus` : `First to answer. Unique answers get +${ONLY_YOU_BONUS}.`}</p>` : ""}
+      ${pv.gem && pv.gem.a !== verdict.answer ? `<div class="gem"><span>💎</span><span>Deepest cut: <b>${esc(pv.gem.a)}</b>${pv.gem.note ? `. ${esc(pv.gem.note)}` : ""}</span></div>` : ""}
+      ${pv.friends.length ? `<div class="friends">${pv.friends.map((f) => `<span class="fa"><small>${esc(f.name)}</small>${esc(f.a || "pass")}</span>`).join("")}</div>` : ""}
+    </div>
+    <div class="bottom" style="padding-right:56px"><button class="btn big" id="next">${last ? "See where you landed" : "Next prompt"}</button></div>`);
+  wireMute(el);
+  el.querySelector("#quit")!.addEventListener("click", () => void room(v.id));
+  const next = el.querySelector<HTMLButtonElement>("#next")!;
+  next.addEventListener("click", () => void play(fresh, i + 1));
   if (hit) {
-    const rungs = [...el.querySelectorAll<HTMLElement>(".rung")];
+    // light the tier, then travel
+    const tiers = [...el.querySelectorAll<HTMLElement>(".tier")];
+    tiers.forEach((x) => x.classList.add("dim"));
     for (let k = 0; k < t; k++) {
-      await sleep(k === 0 ? 120 : 140);
-      rungs[k].classList.add("lit");
+      await sleep(110);
+      tiers[k].classList.remove("dim");
       audio.step(k * 2);
     }
-    rungs[t - 1].classList.add("you");
-    const tn = el.querySelector<HTMLElement>("#tn");
-    if (tn) tn.style.opacity = "1";
+    for (let k = 0; k < t - 1; k++) tiers[k].classList.add("dim");
     if (t >= 5) audio.word(7, true);
     else audio.word(3 + t, false);
     navigator.vibrate?.(t >= 5 ? [15, 40, 25] : 12);
+    const gain = el.querySelector<HTMLElement>("#gain");
+    if (gain) gain.style.opacity = "1";
   } else audio.thud();
-  const m = el.querySelector<HTMLElement>("#m")!;
-  if (after !== before) {
-    m.textContent = meterText(p, after);
-    m.classList.add("bump");
+  scene?.setProgress(units(p, after));
+  scene?.setMarkers(markersFor(fresh));
+  const mv = el.querySelector<HTMLElement>("#mv");
+  if (mv && after !== before) {
+    const start = performance.now();
+    const roll = (now: number) => {
+      const k = Math.min(1, (now - start) / 900);
+      mv.textContent = meterText(p, before + (after - before) * (1 - (1 - k) ** 3));
+      if (k < 1) requestAnimationFrame(roll);
+      else mv.classList.add("bump");
+    };
+    requestAnimationFrame(roll);
   }
-  const next = el.querySelector<HTMLButtonElement>("#next")!;
   next.focus();
-  next.addEventListener("click", () => void play(fresh, i + 1));
 }
 
 // ---------- results ----------
 let poll = 0;
 function results(v: RoomView) {
   clearInterval(poll);
+  v.pack = withScene(v.pack);
   const p = v.pack;
   const me = v.me!;
+  scene?.setProgress(units(p, me.score));
+  scene?.setMarkers(markersFor(v));
   const pos = v.board.findIndex((b) => b.me);
   const others = v.board.length - 1;
   const standing =
-    others <= 0 ? "Send it to the group chat and see who digs deeper." : pos === 0 ? `You're leading ${others} friend${others > 1 ? "s" : ""}. For now.` : `#${pos + 1} of ${v.board.length}. ${esc(v.board[0].name)} is ahead by ${meterText(p, v.board[0].score - me.score)}.`;
-  const el = render(`
-    <div class="card total">
-      <div style="font-size:40px">${esc(p.host.emoji)}</div>
-      <div class="big">${meterText(p, me.score)}</div>
-      <div class="unit">${esc(p.meter.label)} ${esc(p.meter.icon)} · ${fmt(me.score)} points</div>
-      <p class="standing">${standing}</p>
-    </div>
-    <button class="btn" id="share">Send to the group chat</button>
-    <p class="toast" id="toast"></p>
-    ${v.board.length > 1 ? `<p class="section-title">Leaderboard</p>${boardHtml(v)}` : ""}
-    <p class="section-title">Your answers</p>
-    <div class="rows">${p.prompts
-      .map((pr, i) => {
-        const x = v.prompts[i];
-        const mine = x.mine;
-        return `<div class="card row">
-          <div class="q">${esc(pr.q)}</div>
-          <div class="mine-line">${mine && mine.a ? `<span class="mine" style="${tierStyle(mine.tier)}">${esc(mine.a)} <small>${esc(p.tiers[mine.tier - 1])} · ${mine.points + (mine.onlyYou ? ONLY_YOU_BONUS : 0)}</small></span>${mine.onlyYou ? `<span class="only">Only you</span>` : ""}` : `<span class="mine" style="background:var(--line)">${esc(mine?.raw ? `${mine.raw} (not accepted)` : "Passed")}</span>`}</div>
-          ${x.friends.length ? `<div class="friends">${x.friends.map((f) => `<span class="fa" data-t="${f.tier}"><small>${esc(f.name)}</small><b>${esc(f.a || "pass")}</b></span>`).join("")}</div>` : ""}
-          ${x.gem ? `<p class="note" style="text-align:left;margin-top:8px">💎 ${esc(x.gem.a)}${x.gem.note ? `: ${esc(x.gem.note)}` : ""}</p>` : ""}
-        </div>`;
-      })
-      .join("")}</div>
-    <button class="link" id="new">Make a game about something else</button>`);
+    others <= 0 ? "Send it to the group chat. See who digs deeper." : pos === 0 ? `You lead ${others} friend${others > 1 ? "s" : ""}. For now.` : `#${pos + 1} of ${v.board.length} · ${esc(v.board[0].name)} is ${meterText(p, v.board[0].score - me.score)} ahead`;
+  const el = screen(`
+    <div class="hud"><span></span><span></span><div class="hud-right">${muteBtn()}</div></div>
+    <div class="scroll" style="flex:1;padding-right:56px">
+      <div class="total pop">
+        <div class="label" style="color:#fff;text-shadow:2px 2px 0 #000">${esc(p.meter.label)} reached</div>
+        <div class="big">${meterText(p, me.score)}</div>
+        <p class="standing">${standing}</p>
+      </div>
+      <div class="stack pop" style="margin-top:22px">
+        <button class="btn big" id="share">Send to the group chat</button>
+        <p class="toast" id="toast"></p>
+        ${v.board.length > 1 ? `<div class="panel"><div class="label">Leaderboard</div><div style="margin-top:6px">${boardHtml(v)}</div></div>` : ""}
+        <div class="answers">${p.prompts
+          .map((pr, i) => {
+            const x = v.prompts[i];
+            const m = x.mine;
+            const chip = m && m.a ? `<span class="mine" style="background:var(--t${m.tier});color:var(--on-t${m.tier})">${esc(m.a)}<small>${esc(p.tiers[m.tier - 1])} ${m.points + (m.onlyYou ? ONLY_YOU_BONUS : 0)}</small></span>${m.onlyYou ? `<span class="only">Only you</span>` : ""}` : `<span class="mine" style="background:rgba(255,255,255,.08)">${esc(m?.raw ? `${m.raw} ✕` : "Passed")}</span>`;
+            return `<div class="panel ans"><div class="q">${esc(pr.q)}</div><div class="mine-line">${chip}</div>
+              ${x.friends.length ? `<div class="friends">${x.friends.map((f) => `<span class="fa"><small>${esc(f.name)}</small>${esc(f.a || "pass")}</span>`).join("")}</div>` : ""}
+              ${x.gem ? `<p class="gemline">💎 ${esc(x.gem.a)}${x.gem.note ? `: ${esc(x.gem.note)}` : ""}</p>` : ""}</div>`;
+          })
+          .join("")}</div>
+        <button class="btn dark wide" id="new" style="margin:8px 0 20px">Make a game about something else</button>
+      </div>
+    </div>`);
+  wireMute(el);
   el.querySelector("#share")!.addEventListener("click", () => share(v, `${p.title}: I reached ${meterText(p, me.score)} ${p.meter.icon}. How deep do your ${p.interest} cuts go?`, el.querySelector("#toast")!));
   el.querySelector("#new")!.addEventListener("click", () => {
     clearInterval(poll);
     home();
   });
-  // friends keep playing: refresh quietly
   const sig = JSON.stringify(v.board) + v.prompts.map((x) => x.friends.length).join();
   poll = window.setInterval(async () => {
     if (document.hidden) return;
