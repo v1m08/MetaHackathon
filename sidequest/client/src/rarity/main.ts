@@ -97,8 +97,6 @@ async function api<T>(path: string, body?: unknown): Promise<T> {
 const view = (id: string) => api<RoomView>(`/api/x/${id}?me=${pid}`);
 const units = (p: PublicPack, points: number) => points * p.meter.perPoint;
 const meterText = (p: PublicPack, points: number) => `${fmt(units(p, points))}${p.meter.unit}`;
-/** The side gauge needs room; on phones it only shows on the results screen. */
-const wide = () => innerWidth >= 700;
 const deeper = (p: PublicPack) => (p.meter.up ? "climb higher" : "go deeper");
 
 // ---------- the world behind everything ----------
@@ -145,14 +143,13 @@ function home(error = "") {
   const s = setWorld("home", HOME_WORLD);
   s.setProgress(0, true);
   s.setMarkers([]);
-  s.showGauge(false);
   s.avatarVisible = true;
   const el = screen(`
     <div class="title-wrap pop">
       <h1 class="title">Deep Cuts</h1>
       <p class="subtitle">Name the answer nobody else thinks of</p>
     </div>
-    <div class="bottom stack pop">
+    <div class="bottom stack pop" style="padding-right:var(--gutter)">
       <form class="stack" id="f">
         <input class="field" id="i" maxlength="60" autocomplete="off" placeholder="What are you into?" aria-label="Your interest" />
         <button class="btn big" type="submit">Make the game</button>
@@ -205,7 +202,6 @@ async function room(id: string) {
   if (v.me?.finished) return results(v);
   s.setProgress(units(v.pack, v.me?.score ?? 0), true);
   s.setMarkers(markersFor(v));
-  s.showGauge(wide());
   lobby(v);
 }
 
@@ -224,17 +220,22 @@ function lobby(v: RoomView) {
   const resume = v.me && v.me.done > 0;
   const el = screen(`
     <div class="hud"><span></span><span></span><div class="hud-right">${muteBtn()}${closeBtn()}</div></div>
-    <div class="scroll lobby" style="flex:1">
-      <div class="title-wrap pop">
-        <div class="host-emoji">${esc(p.host.emoji)}</div>
-        <h1 class="title">${esc(p.title)}</h1>
+    <div class="scroll" style="flex:1;padding-right:var(--gutter)">
+      <div class="title-wrap pop" style="margin-top:3vh">
+        <h1 class="title" style="font-size:clamp(34px,10vw,64px)">${esc(p.title)}</h1>
         <p class="subtitle">${esc(p.tagline)}</p>
-        <p class="quote">“${esc(p.host.intro)}” <span>— ${esc(p.host.name)}</span></p>
-        <p class="rules">${p.prompts.length} prompts · rarer answers ${deeper(p)}</p>
       </div>
-      ${v.board.length ? `<div class="panel pop lobby-board">${boardHtml(v, 4)}</div>` : ""}
+      <div class="stack pop" style="margin-top:22px">
+        <div class="panel speech"><span class="who">${esc(p.host.emoji)}</span><div><div class="label hot">${esc(p.host.name)}</div><p>${esc(p.host.intro)}</p></div></div>
+        <div class="panel">
+          <div class="label">${p.prompts.length} prompts · ${SECONDS_PER_PROMPT}s each · rarer answers ${deeper(p)}</div>
+          <div style="margin-top:10px">${tiersHtml(p)}</div>
+          <div class="label" style="margin-top:10px">Only you said it? +${ONLY_YOU_BONUS}</div>
+        </div>
+        ${v.board.length ? `<div class="panel"><div class="label">${v.board.length} playing</div><div style="margin-top:6px">${boardHtml(v, 6)}</div></div>` : ""}
+      </div>
     </div>
-    <div class="stack pop lobby-actions">
+    <div class="stack pop" style="padding-right:var(--gutter);margin-top:10px">
       ${EMBED ? "" : `<input class="field" id="name" maxlength="16" placeholder="Your name" autocomplete="nickname" value="${esc(v.me?.name && v.me.name !== "Player" ? v.me.name : myName())}" aria-label="Your name" />`}
       <button class="btn big" id="go">${resume ? `Keep going ${v.me!.done}/${p.prompts.length}` : "Start"}</button>
       ${EMBED ? "" : `<div class="row"><button class="btn dark wide" id="invite">Invite friends</button><button class="btn dark wide" id="new">New topic</button></div>`}
@@ -279,17 +280,16 @@ async function play(v: RoomView, i: number) {
   const score = v.me?.score ?? 0;
   scene?.setProgress(units(p, score));
   scene?.setMarkers(markersFor(v).map((m) => (m.me ? { ...m, value: units(p, score) } : m)));
-  scene?.showGauge(wide());
   const C = 2 * Math.PI * 22;
   const el = screen(`
     ${hud(v, i, score, i)}
-    <div class="panel prompt pop">
+    <div class="panel prompt pop" style="margin-right:var(--gutter)">
       <div class="label hot">${["Warm up", "Easy", "Getting deeper", "Deep", "Deeper", "Deep cuts only", "Final prompt"][Math.min(6, Math.round((i / Math.max(1, p.prompts.length - 1)) * 6))]}</div>
       <h1>${esc(pr.q)}</h1>
       ${pr.hint ? `<p class="hint">${esc(pr.hint)}</p>` : ""}
       <p class="sub">▼ rarer answers ${deeper(p)} ▼</p>
     </div>
-    <div class="bottom">
+    <div class="bottom" style="padding-right:var(--gutter)">
       <p class="feedback" id="fb" aria-live="polite"></p>
       <form class="answer" id="f">
         <div class="answer-row">
@@ -391,21 +391,17 @@ async function reveal(v: RoomView, i: number, verdict: Verdict, typed: string) {
   const gained = after - before;
   const el = screen(`
     ${hud(fresh, i, before, i + 1)}
-    <div class="panel reveal pop ${hit ? "" : "miss"}">
+    <div class="panel reveal pop ${hit ? "" : "miss"}" style="margin-right:var(--gutter)">
       <div class="q">${esc(p.prompts[i].q)}</div>
       <h1>${esc(hit ? verdict.answer! : typed || "No answer")}</h1>
-      ${
-        hit
-          ? `<div class="tier-badge" id="badge" data-t="${t}" style="opacity:0">${esc(p.tiers[t - 1])} <b>+${fmt(units(p, gained))}${esc(p.meter.unit)}</b></div>
-             <div class="tier-pips">${p.tiers.map((_, k) => `<i data-k="${k}"></i>`).join("")}</div>`
-          : `<p class="note">${esc(verdict.reason ?? "Time's up")}</p>`
-      }
+      ${hit ? tiersHtml(p, t) : `<p class="note">${esc(verdict.reason ?? "Time's up")}</p>`}
+      ${hit ? `<p class="gain" id="gain" style="margin:12px 0 0;opacity:0">+${fmt(units(p, gained))}${esc(p.meter.unit)} · ${esc(p.tiers[t - 1])}</p>` : ""}
       ${hit && verdict.note ? `<p class="note">${esc(verdict.note)}</p>` : ""}
-      ${hit && (same.length || pv.friends.length) ? `<p class="social">${same.length ? `Same as ${esc(same.join(", "))}` : `<span class="only">Only you</span> +${ONLY_YOU_BONUS}`}</p>` : ""}
+      ${hit ? `<p class="social">${same.length ? `Same as ${esc(same.join(", "))}. No bonus.` : pv.friends.length ? `<span class="only">Only you</span> +${ONLY_YOU_BONUS} bonus` : `First to answer. Unique answers get +${ONLY_YOU_BONUS}.`}</p>` : ""}
       ${pv.gem && pv.gem.a !== verdict.answer ? `<div class="gem"><span>💎</span><span>Deepest cut: <b>${esc(pv.gem.a)}</b>${pv.gem.note ? `. ${esc(pv.gem.note)}` : ""}</span></div>` : ""}
       ${pv.friends.length ? `<div class="friends">${pv.friends.map((f) => `<span class="fa"><small>${esc(f.name)}</small>${esc(f.a || "pass")}</span>`).join("")}</div>` : ""}
     </div>
-    <div class="bottom"><button class="btn big" id="next">${last ? "See where you landed" : "Next prompt"}</button></div>`);
+    <div class="bottom" style="padding-right:var(--gutter)"><button class="btn big" id="next">${last ? "See where you landed" : "Next prompt"}</button></div>`);
   wireMute(el);
   el.querySelector("#quit")!.addEventListener("click", () => void room(v.id));
   const next = el.querySelector<HTMLButtonElement>("#next")!;
@@ -415,25 +411,22 @@ async function reveal(v: RoomView, i: number, verdict: Verdict, typed: string) {
   });
   if (hit) {
     // light the tier, then travel
-    const pips = [...el.querySelectorAll<HTMLElement>(".tier-pips i")];
+    const tiers = [...el.querySelectorAll<HTMLElement>(".tier")];
+    tiers.forEach((x) => x.classList.add("dim"));
     for (let k = 0; k < t; k++) {
       await sleep(110);
-      pips[k].classList.add("on");
-      pips[k].style.background = `var(--t${t})`;
+      tiers[k].classList.remove("dim");
       audio.step(k * 2);
     }
+    for (let k = 0; k < t - 1; k++) tiers[k].classList.add("dim");
     if (t >= 5) audio.word(7, true);
     else audio.word(3 + t, false);
     navigator.vibrate?.(t >= 5 ? [15, 40, 25] : 12);
-    const badge = el.querySelector<HTMLElement>("#badge");
-    if (badge) {
-      badge.style.opacity = "1";
-      badge.classList.add("pop");
-    }
+    const gain = el.querySelector<HTMLElement>("#gain");
+    if (gain) gain.style.opacity = "1";
   } else audio.thud();
   scene?.setProgress(units(p, after));
   scene?.setMarkers(markersFor(fresh));
-  scene?.showGauge(wide());
   const mv = el.querySelector<HTMLElement>("#mv");
   if (mv && after !== before) {
     const start = performance.now();
@@ -457,7 +450,6 @@ function results(v: RoomView) {
   const me = v.me!;
   scene?.setProgress(units(p, me.score));
   scene?.setMarkers(markersFor(v));
-  scene?.showGauge(true);
   const pos = v.board.findIndex((b) => b.me);
   const others = v.board.length - 1;
   const standing =
@@ -468,7 +460,7 @@ function results(v: RoomView) {
   }
   const el = screen(`
     <div class="hud"><span></span><span></span><div class="hud-right">${muteBtn()}${closeBtn()}</div></div>
-    <div class="scroll" style="flex:1">
+    <div class="scroll" style="flex:1;padding-right:var(--gutter)">
       <div class="total pop">
         <div class="label" style="color:#fff;text-shadow:2px 2px 0 #000">${esc(p.meter.label)} reached</div>
         <div class="big">${meterText(p, me.score)}</div>
