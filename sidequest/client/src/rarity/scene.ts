@@ -99,6 +99,9 @@ export class SceneView {
       }
     }
   }
+  showGauge(on: boolean) {
+    this.gauge.style.display = on ? "" : "none";
+  }
   destroy() {
     cancelAnimationFrame(this.raf);
     removeEventListener("resize", this.onResize);

@@ -177,6 +177,25 @@
       .making p { font: 500 15px/1.5 var(--font); text-shadow: 0 1px 8px #000; }
       .error { color: #ffb0a8; text-align: center; font-size: 15px; text-shadow: 0 1px 6px #000; }
 
+      /* ---------- simplified lobby + reveal ---------- */
+      .lobby { display: flex; flex-direction: column; justify-content: center; }
+      .lobby .title-wrap { margin-top: 0; }
+      .host-emoji { font-size: 52px; line-height: 1; margin-bottom: 10px; filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.4)); }
+      .quote { margin: 16px auto 0; max-width: 30ch; font: 500 16px/1.45 var(--font); color: #fff; text-shadow: 0 1px 8px rgba(0, 0, 0, 0.8); }
+      .quote span { color: var(--accent); font-weight: 600; white-space: nowrap; }
+      .rules { display: inline-block; margin: 16px 0 0; padding: 7px 14px; border-radius: 99px; background: var(--panel); border: 1px solid var(--line); font: 600 14px var(--font); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
+      .lobby-board { margin: 18px auto 0; width: 100%; max-width: 380px; padding: 6px 14px; }
+      .lobby-actions { width: 100%; max-width: 420px; margin: 12px auto 0; }
+      .tier-badge { display: inline-flex; align-items: baseline; gap: 10px; padding: 9px 18px; border-radius: 99px; font: 700 17px var(--font); }
+      .tier-badge b { font-weight: 800; }
+      .tier-badge[data-t="1"] { background: var(--t1); color: var(--on-t1); } .tier-badge[data-t="2"] { background: var(--t2); color: var(--on-t2); }
+      .tier-badge[data-t="3"] { background: var(--t3); color: var(--on-t3); } .tier-badge[data-t="4"] { background: var(--t4); color: var(--on-t4); }
+      .tier-badge[data-t="5"] { background: var(--t5); color: var(--on-t5); } .tier-badge[data-t="6"] { background: var(--t6); color: var(--on-t6); }
+      .tier-pips { display: flex; justify-content: center; gap: 5px; margin-top: 12px; }
+      .tier-pips i { width: 26px; height: 6px; border-radius: 3px; background: rgba(255, 255, 255, 0.16); transition: background 0.15s; }
+      .reveal, .prompt { text-align: center; }
+      .hud .progress { align-items: center; }
+
       @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 1ms !important; transition-duration: 1ms !important; } }
     </style>
   </head>
