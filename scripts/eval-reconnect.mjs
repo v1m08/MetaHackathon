@@ -22,8 +22,8 @@ const BANNED = /\b(depress\w*|anxi\w*|lonely|loneliness|grie\w+|sick|illness|hos
 const MONEY = /\$\s?\d|\b\d+\s?(dollars|bucks)\b/i;
 
 await post("/api/admin/reset", {}, "maya");
-const dump = await get("/api/admin/dump", "maya");
-const users = dump.users ?? [];
+const dump = { users: await get("/api/admin/dump?what=users", "maya"), events: await get("/api/admin/dump?what=events", "maya"), rides: await get("/api/admin/dump?what=rides", "maya") };
+const users = dump.users;
 const t0 = Date.now();
 
 // 1. why-now over drifted pairs with shared history (the only pairs a nudge can exist for)

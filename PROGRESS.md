@@ -76,6 +76,13 @@ Earlier: **$0.26** at 02:50 PST (probes ≈$0.03 by hand + ledger $0.23: media i
 - UX restructure (19:50): Trips is the one feature with an intake (`/travel/setup`: travel style + the agent toggle); Open Door is that toggle, not a profile feature; trip page ends in **Your trip plan** that only the traveler can confirm.
 - Known issues: the validator now attaches a visible friend's ride when the model prices by bus (logged as a repair); `main` still needs its force-reset to the mockup commit by a human; deck/animations still describe the first feature (script.md has an Open Door section).
 
+## Milestone 15 — Reconnect (branch `reconnect`) ✔ (17:10 PST)
+- Pivot after judge + mentor feedback (travel niche; "AI event planning" automates a solved problem). The product is the step before the plan: silence detection, a reason to reach out, a private mutual signal; the travel engine becomes the plan.
+- Built: `src/lib/reconnect/{drift,evidence,whynow,plan,send,store}.ts`; routes under `/api/reconnect`; pages `/reconnect`, `/reconnect/[id]`, `/reconnect/plan/[id]`; feed strip under the drifted friend's post; Messenger plan chip + draft; `reconnect` notifications; Friends row; menu entry. Seed: shared-history posts/events, Nadia's trigger post, culture group, three private picks, Maya↔Nadia thread re-dated.
+- Verified: `npm test` 30/30; `npm run qa:reconnect` 28/28 live (two-person path: nudge → mutual → plan → draft → send → Event → I'm in → confirm); browser pass on every surface as Maya and Nadia.
+- Eval (`EVAL-RECONNECT.md`, live, 252 s): why-now 9/9 shown, 9/9 citations real and shared, 0 banned words; plans 12/12 ids real, 12/12 cost adds up, 0 model-written prices, avg 51 s, $0.46; reactivation 154/250 friendships asleep (62%), 38 with history, 111 with a fresh post.
+- Docs: README (Reconnect-first; travel README kept as README-travel.md), DECISIONS (8 entries), pitch/{runbook,script,submission}.md, deck + demo video (see pitch/).
+
 ## Not done / cut
 - Recap (post-trip story) was the stretch goal and was not built; everything in the Definition of Done ahead of it is.
 - A third persona swarm after the last round of wording fixes was not run (noted in PERSONAS.md).

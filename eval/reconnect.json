@@ -1,0 +1,895 @@
+{
+  "ranAt": "2026-11-13T00:06:56.977Z",
+  "seconds": 252,
+  "whynow": {
+    "summary": {
+      "pairs": 9,
+      "shown": 9,
+      "dropped": 0,
+      "dropReasons": {},
+      "bannedShown": 0,
+      "citedSharedShown": 9
+    },
+    "rows": [
+      {
+        "viewer": "maya",
+        "friend": "nadia",
+        "shown": true,
+        "line": "from that last town lake full loop for breakfast tacos to her doing 7 miles at 19° in chicago",
+        "evidenceIds": [
+          "p_0001"
+        ],
+        "mode": "cached",
+        "banned": false,
+        "citedShared": true,
+        "indexSize": 9
+      },
+      {
+        "viewer": "maya",
+        "friend": "hannah",
+        "shown": true,
+        "line": "tell her that UT Austin to 4th-grade classroom is a pretty iconic pipeline",
+        "evidenceIds": [
+          "fact:school:hannah"
+        ],
+        "mode": "cached",
+        "banned": false,
+        "citedShared": true,
+        "indexSize": 5
+      },
+      {
+        "viewer": "maya",
+        "friend": "raj",
+        "shown": true,
+        "line": "raj still owes you a rematch from that run club hill where you dropped everyone, perfect excuse to take the guest room",
+        "evidenceIds": [
+          "p_0008"
+        ],
+        "mode": "live",
+        "banned": false,
+        "citedShared": true,
+        "indexSize": 3
+      },
+      {
+        "viewer": "nadia",
+        "friend": "maya",
+        "shown": true,
+        "line": "your 3-year roommate who stole your hot cheetos finally made something for the apartment that isn't food",
+        "evidenceIds": [
+          "p_0002"
+        ],
+        "mode": "cached",
+        "banned": false,
+        "citedShared": true,
+        "indexSize": 9
+      },
+      {
+        "viewer": "nadia",
+        "friend": "arjun",
+        "shown": true,
+        "line": "you walked the turkey trot while arjun actually ran it, perfect excuse to claim that wicker park couch",
+        "evidenceIds": [
+          "p_0003",
+          "e_turkey_trot_2024"
+        ],
+        "mode": "cached",
+        "banned": false,
+        "citedShared": true,
+        "indexSize": 7
+      },
+      {
+        "viewer": "priya",
+        "friend": "arjun",
+        "shown": true,
+        "line": "he called out ut people so you gotta pull up to wicker park and get him back for the bean tourist-trap saga.",
+        "evidenceIds": [
+          "fact:school:arjun",
+          "p_00nn"
+        ],
+        "mode": "live",
+        "banned": false,
+        "citedShared": true,
+        "indexSize": 5
+      },
+      {
+        "viewer": "arjun",
+        "friend": "maya",
+        "shown": true,
+        "line": "after the UT design show in the art building atrium, makes sense maya's now making lopsided bowls that actually survive",
+        "evidenceIds": [
+          "e_ut_design_show"
+        ],
+        "mode": "cached",
+        "banned": false,
+        "citedShared": true,
+        "indexSize": 6
+      },
+      {
+        "viewer": "arjun",
+        "friend": "nadia",
+        "shown": true,
+        "line": "that town lake 7am full loop before graduation is still your benchmark, time to join her lakefront version",
+        "evidenceIds": [
+          "p_0001"
+        ],
+        "mode": "cached",
+        "banned": false,
+        "citedShared": true,
+        "indexSize": 7
+      },
+      {
+        "viewer": "arjun",
+        "friend": "priya",
+        "shown": true,
+        "line": "your fellow sugar land hackathon teammate locked it in, trade that bean photoshoot debt for dec 1 moving help",
+        "evidenceIds": [
+          "fact:hometown:priya",
+          "fact:how:priya",
+          "p_00nn"
+        ],
+        "mode": "cached",
+        "banned": false,
+        "citedShared": true,
+        "indexSize": 5
+      }
+    ]
+  },
+  "plans": {
+    "summary": {
+      "targets": 4,
+      "plans": 12,
+      "allIdsReal": 12,
+      "costAddsUp": 12,
+      "modelMoney": 0,
+      "avgLatencyMs": 50656,
+      "costUsd": 0.46
+    },
+    "rows": [
+      {
+        "viewer": "maya",
+        "ids": [
+          "nadia"
+        ],
+        "shape": "event",
+        "title": "arjun's birthday second city night with nadia",
+        "start": "2026-12-05",
+        "each": 307,
+        "peopleOk": true,
+        "eventOk": true,
+        "rideOk": true,
+        "costAddsUp": true,
+        "modelMoney": false,
+        "repairs": [],
+        "mode": "live",
+        "latencyMs": 39650,
+        "costUsd": 0.0309
+      },
+      {
+        "viewer": "maya",
+        "ids": [
+          "nadia"
+        ],
+        "shape": "visit",
+        "title": "chicago weekend with nadia",
+        "start": "2026-12-04",
+        "each": 293,
+        "peopleOk": true,
+        "eventOk": true,
+        "rideOk": true,
+        "costAddsUp": true,
+        "modelMoney": false,
+        "repairs": [],
+        "mode": "live",
+        "latencyMs": 39650,
+        "costUsd": 0.0309
+      },
+      {
+        "viewer": "maya",
+        "ids": [
+          "nadia"
+        ],
+        "shape": "call",
+        "title": "quick call with nadia to lock chicago",
+        "start": "2026-11-20",
+        "each": 0,
+        "peopleOk": true,
+        "eventOk": true,
+        "rideOk": true,
+        "costAddsUp": true,
+        "modelMoney": false,
+        "repairs": [],
+        "mode": "live",
+        "latencyMs": 39650,
+        "costUsd": 0.0309
+      },
+      {
+        "viewer": "maya",
+        "ids": [
+          "cole",
+          "harper",
+          "kenji",
+          "tess",
+          "bri"
+        ],
+        "shape": "visit",
+        "title": "dallas weekend with cole, harper and kenji",
+        "start": "2026-12-11",
+        "each": 81,
+        "peopleOk": true,
+        "eventOk": true,
+        "rideOk": true,
+        "costAddsUp": true,
+        "modelMoney": false,
+        "repairs": [
+          "dropped a reason with a model-written price"
+        ],
+        "mode": "live",
+        "latencyMs": 55250,
+        "costUsd": 0.0445
+      },
+      {
+        "viewer": "maya",
+        "ids": [
+          "cole",
+          "harper",
+          "kenji",
+          "tess",
+          "bri"
+        ],
+        "shape": "event",
+        "title": "nashville songwriter night with tess and bri",
+        "start": "2026-12-04",
+        "each": 253,
+        "peopleOk": true,
+        "eventOk": true,
+        "rideOk": true,
+        "costAddsUp": true,
+        "modelMoney": false,
+        "repairs": [],
+        "mode": "live",
+        "latencyMs": 55250,
+        "costUsd": 0.0445
+      },
+      {
+        "viewer": "maya",
+        "ids": [
+          "cole",
+          "harper",
+          "kenji",
+          "tess",
+          "bri"
+        ],
+        "shape": "call",
+        "title": "group call to lock december with everyone",
+        "start": "2026-11-22",
+        "each": 0,
+        "peopleOk": true,
+        "eventOk": true,
+        "rideOk": true,
+        "costAddsUp": true,
+        "modelMoney": false,
+        "repairs": [],
+        "mode": "live",
+        "latencyMs": 55250,
+        "costUsd": 0.0445
+      },
+      {
+        "viewer": "priya",
+        "ids": [
+          "raj"
+        ],
+        "shape": "event",
+        "title": "montrose night market with raj",
+        "start": "2026-11-28",
+        "each": 57,
+        "peopleOk": true,
+        "eventOk": true,
+        "rideOk": true,
+        "costAddsUp": true,
+        "modelMoney": false,
+        "repairs": [],
+        "mode": "live",
+        "latencyMs": 49421,
+        "costUsd": 0.0405
+      },
+      {
+        "viewer": "priya",
+        "ids": [
+          "raj"
+        ],
+        "shape": "visit",
+        "title": "houston weekend with raj",
+        "start": "2026-11-20",
+        "each": 111,
+        "peopleOk": true,
+        "eventOk": true,
+        "rideOk": true,
+        "costAddsUp": true,
+        "modelMoney": false,
+        "repairs": [
+          "dropped a reason with a model-written price"
+        ],
+        "mode": "live",
+        "latencyMs": 49421,
+        "costUsd": 0.0405
+      },
+      {
+        "viewer": "priya",
+        "ids": [
+          "raj"
+        ],
+        "shape": "call",
+        "title": "call with raj to pick a date",
+        "start": "2026-11-20",
+        "each": 0,
+        "peopleOk": true,
+        "eventOk": true,
+        "rideOk": true,
+        "costAddsUp": true,
+        "modelMoney": false,
+        "repairs": [],
+        "mode": "live",
+        "latencyMs": 49421,
+        "costUsd": 0.0405
+      },
+      {
+        "viewer": "cole",
+        "ids": [
+          "maya"
+        ],
+        "shape": "event",
+        "title": "deep ellum vintage market with maya",
+        "start": "2026-12-12",
+        "each": 28,
+        "peopleOk": true,
+        "eventOk": true,
+        "rideOk": true,
+        "costAddsUp": true,
+        "modelMoney": false,
+        "repairs": [],
+        "mode": "live",
+        "latencyMs": 58301,
+        "costUsd": 0.0374
+      },
+      {
+        "viewer": "cole",
+        "ids": [
+          "maya"
+        ],
+        "shape": "visit",
+        "title": "austin weekend with maya",
+        "start": "2026-11-20",
+        "each": 112,
+        "peopleOk": true,
+        "eventOk": true,
+        "rideOk": true,
+        "costAddsUp": true,
+        "modelMoney": false,
+        "repairs": [],
+        "mode": "live",
+        "latencyMs": 58301,
+        "costUsd": 0.0374
+      },
+      {
+        "viewer": "cole",
+        "ids": [
+          "maya"
+        ],
+        "shape": "call",
+        "title": "call with maya",
+        "start": "2026-11-15",
+        "each": 0,
+        "peopleOk": true,
+        "eventOk": true,
+        "rideOk": true,
+        "costAddsUp": true,
+        "modelMoney": false,
+        "repairs": [],
+        "mode": "live",
+        "latencyMs": 58301,
+        "costUsd": 0.0374
+      }
+    ]
+  },
+  "reactivation": {
+    "summary": {
+      "users": 61,
+      "friends": 250,
+      "asleep": 154,
+      "napping": 152,
+      "withHistory": 38,
+      "withTrigger": 111,
+      "asleepShare": 0.62
+    },
+    "rows": [
+      {
+        "id": "maya",
+        "friends": 28,
+        "asleep": 13,
+        "napping": 13,
+        "withHistory": 6,
+        "withTrigger": 12
+      },
+      {
+        "id": "jordan",
+        "friends": 10,
+        "asleep": 4,
+        "napping": 4,
+        "withHistory": 0,
+        "withTrigger": 3
+      },
+      {
+        "id": "priya",
+        "friends": 8,
+        "asleep": 5,
+        "napping": 5,
+        "withHistory": 1,
+        "withTrigger": 5
+      },
+      {
+        "id": "devon",
+        "friends": 8,
+        "asleep": 1,
+        "napping": 1,
+        "withHistory": 0,
+        "withTrigger": 0
+      },
+      {
+        "id": "sofia",
+        "friends": 10,
+        "asleep": 7,
+        "napping": 6,
+        "withHistory": 2,
+        "withTrigger": 5
+      },
+      {
+        "id": "ethan",
+        "friends": 9,
+        "asleep": 3,
+        "napping": 3,
+        "withHistory": 1,
+        "withTrigger": 1
+      },
+      {
+        "id": "aisha",
+        "friends": 10,
+        "asleep": 4,
+        "napping": 4,
+        "withHistory": 1,
+        "withTrigger": 1
+      },
+      {
+        "id": "lucas",
+        "friends": 8,
+        "asleep": 4,
+        "napping": 4,
+        "withHistory": 1,
+        "withTrigger": 2
+      },
+      {
+        "id": "hannah",
+        "friends": 7,
+        "asleep": 4,
+        "napping": 4,
+        "withHistory": 1,
+        "withTrigger": 3
+      },
+      {
+        "id": "marcus",
+        "friends": 6,
+        "asleep": 2,
+        "napping": 2,
+        "withHistory": 0,
+        "withTrigger": 1
+      },
+      {
+        "id": "zoe",
+        "friends": 6,
+        "asleep": 5,
+        "napping": 5,
+        "withHistory": 1,
+        "withTrigger": 4
+      },
+      {
+        "id": "tyler",
+        "friends": 8,
+        "asleep": 2,
+        "napping": 2,
+        "withHistory": 0,
+        "withTrigger": 1
+      },
+      {
+        "id": "nina",
+        "friends": 6,
+        "asleep": 1,
+        "napping": 1,
+        "withHistory": 0,
+        "withTrigger": 0
+      },
+      {
+        "id": "sam",
+        "friends": 9,
+        "asleep": 5,
+        "napping": 5,
+        "withHistory": 1,
+        "withTrigger": 2
+      },
+      {
+        "id": "omar",
+        "friends": 8,
+        "asleep": 5,
+        "napping": 5,
+        "withHistory": 1,
+        "withTrigger": 2
+      },
+      {
+        "id": "grace",
+        "friends": 10,
+        "asleep": 3,
+        "napping": 3,
+        "withHistory": 2,
+        "withTrigger": 2
+      },
+      {
+        "id": "kai",
+        "friends": 5,
+        "asleep": 4,
+        "napping": 4,
+        "withHistory": 0,
+        "withTrigger": 3
+      },
+      {
+        "id": "tess",
+        "friends": 2,
+        "asleep": 1,
+        "napping": 1,
+        "withHistory": 0,
+        "withTrigger": 1
+      },
+      {
+        "id": "ruben",
+        "friends": 1,
+        "asleep": 1,
+        "napping": 1,
+        "withHistory": 0,
+        "withTrigger": 1
+      },
+      {
+        "id": "leah",
+        "friends": 2,
+        "asleep": 2,
+        "napping": 1,
+        "withHistory": 1,
+        "withTrigger": 2
+      },
+      {
+        "id": "marisol",
+        "friends": 2,
+        "asleep": 2,
+        "napping": 2,
+        "withHistory": 0,
+        "withTrigger": 2
+      },
+      {
+        "id": "andre",
+        "friends": 4,
+        "asleep": 4,
+        "napping": 4,
+        "withHistory": 0,
+        "withTrigger": 2
+      },
+      {
+        "id": "simone",
+        "friends": 1,
+        "asleep": 1,
+        "napping": 1,
+        "withHistory": 1,
+        "withTrigger": 1
+      },
+      {
+        "id": "kwame",
+        "friends": 2,
+        "asleep": 2,
+        "napping": 2,
+        "withHistory": 0,
+        "withTrigger": 2
+      },
+      {
+        "id": "bri",
+        "friends": 2,
+        "asleep": 1,
+        "napping": 1,
+        "withHistory": 0,
+        "withTrigger": 1
+      },
+      {
+        "id": "noah",
+        "friends": 2,
+        "asleep": 2,
+        "napping": 2,
+        "withHistory": 0,
+        "withTrigger": 1
+      },
+      {
+        "id": "ivy",
+        "friends": 2,
+        "asleep": 2,
+        "napping": 2,
+        "withHistory": 0,
+        "withTrigger": 1
+      },
+      {
+        "id": "mateo",
+        "friends": 2,
+        "asleep": 2,
+        "napping": 2,
+        "withHistory": 1,
+        "withTrigger": 1
+      },
+      {
+        "id": "jules",
+        "friends": 2,
+        "asleep": 2,
+        "napping": 2,
+        "withHistory": 1,
+        "withTrigger": 2
+      },
+      {
+        "id": "arjun",
+        "friends": 4,
+        "asleep": 4,
+        "napping": 4,
+        "withHistory": 3,
+        "withTrigger": 3
+      },
+      {
+        "id": "nadia",
+        "friends": 2,
+        "asleep": 2,
+        "napping": 2,
+        "withHistory": 2,
+        "withTrigger": 2
+      },
+      {
+        "id": "colin",
+        "friends": 1,
+        "asleep": 1,
+        "napping": 1,
+        "withHistory": 0,
+        "withTrigger": 1
+      },
+      {
+        "id": "mei",
+        "friends": 2,
+        "asleep": 2,
+        "napping": 2,
+        "withHistory": 1,
+        "withTrigger": 2
+      },
+      {
+        "id": "beau",
+        "friends": 3,
+        "asleep": 3,
+        "napping": 3,
+        "withHistory": 0,
+        "withTrigger": 2
+      },
+      {
+        "id": "camille",
+        "friends": 3,
+        "asleep": 3,
+        "napping": 3,
+        "withHistory": 1,
+        "withTrigger": 3
+      },
+      {
+        "id": "elijah",
+        "friends": 2,
+        "asleep": 1,
+        "napping": 1,
+        "withHistory": 0,
+        "withTrigger": 1
+      },
+      {
+        "id": "dani",
+        "friends": 2,
+        "asleep": 2,
+        "napping": 2,
+        "withHistory": 1,
+        "withTrigger": 2
+      },
+      {
+        "id": "theo",
+        "friends": 4,
+        "asleep": 4,
+        "napping": 4,
+        "withHistory": 0,
+        "withTrigger": 2
+      },
+      {
+        "id": "rosa",
+        "friends": 2,
+        "asleep": 2,
+        "napping": 2,
+        "withHistory": 0,
+        "withTrigger": 2
+      },
+      {
+        "id": "wes",
+        "friends": 2,
+        "asleep": 1,
+        "napping": 1,
+        "withHistory": 0,
+        "withTrigger": 1
+      },
+      {
+        "id": "ava",
+        "friends": 2,
+        "asleep": 2,
+        "napping": 2,
+        "withHistory": 1,
+        "withTrigger": 1
+      },
+      {
+        "id": "ibrahim",
+        "friends": 1,
+        "asleep": 1,
+        "napping": 1,
+        "withHistory": 0,
+        "withTrigger": 1
+      },
+      {
+        "id": "cole",
+        "friends": 3,
+        "asleep": 0,
+        "napping": 0,
+        "withHistory": 0,
+        "withTrigger": 0
+      },
+      {
+        "id": "harper",
+        "friends": 3,
+        "asleep": 1,
+        "napping": 1,
+        "withHistory": 0,
+        "withTrigger": 0
+      },
+      {
+        "id": "diego",
+        "friends": 1,
+        "asleep": 1,
+        "napping": 1,
+        "withHistory": 0,
+        "withTrigger": 1
+      },
+      {
+        "id": "sienna",
+        "friends": 2,
+        "asleep": 2,
+        "napping": 2,
+        "withHistory": 1,
+        "withTrigger": 1
+      },
+      {
+        "id": "raj",
+        "friends": 5,
+        "asleep": 5,
+        "napping": 5,
+        "withHistory": 2,
+        "withTrigger": 4
+      },
+      {
+        "id": "layla",
+        "friends": 1,
+        "asleep": 1,
+        "napping": 1,
+        "withHistory": 0,
+        "withTrigger": 1
+      },
+      {
+        "id": "tj",
+        "friends": 3,
+        "asleep": 3,
+        "napping": 3,
+        "withHistory": 0,
+        "withTrigger": 3
+      },
+      {
+        "id": "maddie",
+        "friends": 1,
+        "asleep": 1,
+        "napping": 1,
+        "withHistory": 0,
+        "withTrigger": 1
+      },
+      {
+        "id": "gabe",
+        "friends": 2,
+        "asleep": 2,
+        "napping": 2,
+        "withHistory": 0,
+        "withTrigger": 1
+      },
+      {
+        "id": "lena",
+        "friends": 2,
+        "asleep": 1,
+        "napping": 1,
+        "withHistory": 0,
+        "withTrigger": 1
+      },
+      {
+        "id": "june",
+        "friends": 3,
+        "asleep": 3,
+        "napping": 3,
+        "withHistory": 1,
+        "withTrigger": 1
+      },
+      {
+        "id": "silas",
+        "friends": 2,
+        "asleep": 2,
+        "napping": 2,
+        "withHistory": 1,
+        "withTrigger": 2
+      },
+      {
+        "id": "kenji",
+        "friends": 3,
+        "asleep": 1,
+        "napping": 1,
+        "withHistory": 0,
+        "withTrigger": 1
+      },
+      {
+        "id": "amara",
+        "friends": 1,
+        "asleep": 1,
+        "napping": 1,
+        "withHistory": 0,
+        "withTrigger": 1
+      },
+      {
+        "id": "finn",
+        "friends": 1,
+        "asleep": 1,
+        "napping": 1,
+        "withHistory": 0,
+        "withTrigger": 1
+      },
+      {
+        "id": "yara",
+        "friends": 2,
+        "asleep": 2,
+        "napping": 2,
+        "withHistory": 2,
+        "withTrigger": 2
+      },
+      {
+        "id": "owen",
+        "friends": 2,
+        "asleep": 2,
+        "napping": 2,
+        "withHistory": 0,
+        "withTrigger": 1
+      },
+      {
+        "id": "ella",
+        "friends": 2,
+        "asleep": 2,
+        "napping": 2,
+        "withHistory": 0,
+        "withTrigger": 1
+      },
+      {
+        "id": "ravi",
+        "friends": 1,
+        "asleep": 1,
+        "napping": 1,
+        "withHistory": 0,
+        "withTrigger": 1
+      }
+    ]
+  }
+}

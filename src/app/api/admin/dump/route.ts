@@ -12,7 +12,7 @@ export const GET = route((req) => {
     case "events":
       return d.events.map((e) => ({ id: e.id, title: e.title, city: e.city, startsAt: e.startsAt, going: e.going }));
     case "users":
-      return d.users.map((u) => ({ id: u.id, name: u.name, city: u.city, openToHosting: u.openToHosting, hasCar: u.hasCar, privacy: u.privacy, interests: u.interests, openDoor: u.openDoor, friends: u.friendIds.length }));
+      return d.users.map((u) => ({ id: u.id, name: u.name, city: u.city, openToHosting: u.openToHosting, hasCar: u.hasCar, privacy: u.privacy, interests: u.interests, openDoor: u.openDoor, friends: u.friendIds.length, friendIds: u.friendIds }));
     case "posts":
       return d.posts.map((p) => ({ id: p.id, authorId: p.authorId, text: p.text, city: p.city, audience: p.audience, createdAt: p.createdAt }));
     case "trips":
