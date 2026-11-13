@@ -1,13 +1,15 @@
 "use client";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { GameCard, GamePlayer, GameTray, type Finished } from "@/components/DeepCuts";
+import { useMe } from "@/components/Shell";
 import { ArrowLeft, Image as ImageIcon, Info, Phone, Plus, Send, Smile, ThumbsUp, Video } from "lucide-react";
 import { Avatar, Photo, cx } from "@/components/ui";
 import { api, refresh, useApi } from "@/lib/api";
 import { messageTime } from "@/lib/format";
 import { useSession } from "@/lib/session";
-import type { Conversation, Listing } from "@/types";
+import type { Conversation, Listing, Message } from "@/types";
 
 type Card = { id: string; name: string; avatar: string };
 type Conv = Conversation & { name: string; participants: Card[]; others: Card[] };
@@ -39,23 +41,35 @@ export default function ThreadPage() {
     refresh("/api/me");
   }, [count]);
 
-  async function send(body = text) {
-    if (!body.trim() || !c) return;
+  async function send(body = text, attachment?: Message["attachment"]) {
+    if ((!body.trim() && !attachment) || !c) return;
     setSending(true);
-    setText("");
-    const optimistic = { id: `tmp_${Date.now()}`, senderId: userId, text: body, createdAt: new Date().toISOString(), readBy: [userId] };
+    if (!attachment) setText("");
+    const optimistic = { id: `tmp_${Date.now()}`, senderId: userId, text: body, createdAt: new Date().toISOString(), readBy: [userId], attachment };
     mutate({ ...c, messages: [...c.messages, optimistic] }, { revalidate: false });
-    await api(`/api/conversations/${c.id}/messages`, { method: "POST", json: { text: body } });
+    await api(`/api/conversations/${c.id}/messages`, { method: "POST", json: { text: body, attachment } });
     await mutate();
     refresh("/api/conversations");
     setSending(false);
   }
 
+  // ---------- Deep Cuts ----------
+  const { data: me } = useMe();
+  const [tray, setTray] = useState(false);
+  const [playing, setPlaying] = useState<string | null>(null);
+  const closeGame = useCallback(() => setPlaying(null), []);
+  const sendRef = useRef(send);
+  sendRef.current = send;
+  const finished = useCallback((f: Finished) => {
+    const place = f.players > 1 ? (f.rank === 1 ? " and took the lead" : ` (#${f.rank} of ${f.players})`) : "";
+    void sendRef.current(`${f.icon} I reached ${f.reached} in ${f.title}${place}`, { type: "game", ref: f.room });
+  }, []);
+
   const byId = Object.fromEntries((c?.participants ?? []).map((p) => [p.id, p]));
   const other = c?.others[0];
 
   return (
-    <div className="flex h-full flex-col bg-white">
+    <div className="relative flex h-full flex-col bg-white">
       <header className="safe-top sticky top-0 z-10 border-b border-line/60 bg-white">
         <div className="flex h-14 items-center gap-2 px-2">
           <button onClick={() => router.back()} className="rounded-full p-2 text-messenger"><ArrowLeft size={22} /></button>
@@ -92,7 +106,8 @@ export default function ThreadPage() {
                 <div className={cx("flex max-w-[75%] flex-col", mine ? "items-end" : "items-start")}>
                   {m.attachment?.type === "listing" && <ListingChip id={m.attachment.ref} />}
                   {m.attachment?.type === "image" && <Photo src={m.attachment.ref} className="mb-1 max-h-60 rounded-2xl object-cover" />}
-                  {m.text && (
+                  {m.attachment?.type === "game" && <GameCard roomId={m.attachment.ref} userId={userId} onOpen={setPlaying} />}
+                  {m.text && !(m.attachment?.type === "game" && m.text.startsWith("🎮")) && (
                     <div
                       className={cx(
                         "px-3 py-2 text-[15px] leading-snug break-words whitespace-pre-wrap",
@@ -116,7 +131,7 @@ export default function ThreadPage() {
       </div>
 
       <div className="safe-bottom sticky bottom-0 flex items-center gap-1 border-t border-line/60 bg-white px-2 py-2">
-        <button className="p-1.5 text-messenger"><Plus size={24} /></button>
+        <button onClick={() => setTray(true)} className="p-1.5 text-messenger" aria-label="Games"><Plus size={24} /></button>
         <button className="p-1.5 text-messenger"><ImageIcon size={22} /></button>
         <div className="flex flex-1 items-center rounded-full bg-[#f0f2f5] pr-2">
           <input value={text} onChange={(e) => setText(e.target.value)} onKeyDown={(e) => e.key === "Enter" && send()} placeholder="Aa" className="flex-1 bg-transparent px-3 py-2 text-[15px] outline-none" />
@@ -128,6 +143,17 @@ export default function ThreadPage() {
           <button onClick={() => send("👍")} className="p-1.5 text-messenger"><ThumbsUp size={24} className="fill-messenger" /></button>
         )}
       </div>
+
+      {tray && (
+        <GameTray
+          onClose={() => setTray(false)}
+          onCreate={(roomId, interest) => {
+            setTray(false);
+            void send(`🎮 Deep Cuts: ${interest}`, { type: "game", ref: roomId });
+          }}
+        />
+      )}
+      {playing && <GamePlayer roomId={playing} userId={userId} name={me?.name.split(" ")[0] ?? userId} onClose={closeGame} onFinished={finished} />}
     </div>
   );
 }

@@ -4,7 +4,7 @@ import type { PublicPack, SceneKind } from "../../../shared/rarity";
 import { fmt, TIER_POINTS, PROMPTS_PER_GAME } from "../../../shared/rarity";
 import { mix } from "../engine/util";
 
-const PX = 3; // CSS pixels per art pixel
+
 const JOURNEY_POINTS = 480; // a great run; the scene's "far end" colors arrive here
 
 const hash = (n: number) => {
@@ -38,11 +38,14 @@ export class SceneView {
   private k: number;
   private step: number;
   private emojiCache = new Map<string, HTMLCanvasElement>();
+  /** CSS pixels per art pixel */
+  private px = 3;
   /** Where the avatar sits on screen (0..1 of height). */
   anchor: number;
   avatarVisible = true;
 
-  constructor(private host: HTMLElement, private w: PublicPack) {
+  constructor(private host: HTMLElement, private w: PublicPack, opts: { gauge?: boolean; px?: number } = {}) {
+    if (opts.px) this.px = opts.px;
     this.kind = w.scene.kind;
     this.up = w.meter.up;
     this.anchor = this.up ? 0.62 : 0.4;
@@ -53,11 +56,12 @@ export class SceneView {
     const p10 = Math.pow(10, Math.floor(Math.log10(raw)));
     this.step = [1, 2, 5, 10].map((m) => m * p10).find((s) => s >= raw) ?? raw;
 
-    host.innerHTML = `<canvas class="scene-canvas"></canvas><div class="gauge" aria-hidden="true"><div class="gauge-line"></div></div>`;
+    const gauge = opts.gauge !== false;
+    host.innerHTML = `<canvas class="scene-canvas" style="position:absolute;left:0;top:0;image-rendering:pixelated"></canvas>${gauge ? `<div class="gauge" aria-hidden="true"><div class="gauge-line"></div></div>` : ""}`;
     const canvas = host.querySelector("canvas")!;
     this.ctx = canvas.getContext("2d", { alpha: false })!;
-    this.gauge = host.querySelector(".gauge")!;
-    for (let i = 0; i < 14; i++) {
+    this.gauge = host.querySelector<HTMLElement>(".gauge") ?? document.createElement("div");
+    for (let i = 0; i < (gauge ? 14 : 0); i++) {
       const t = document.createElement("div");
       t.className = "tick";
       this.gauge.appendChild(t);
@@ -102,13 +106,13 @@ export class SceneView {
 
   private resize() {
     const r = this.host.getBoundingClientRect();
-    this.W = Math.max(60, Math.ceil(r.width / PX));
-    this.H = Math.max(80, Math.ceil(r.height / PX));
+    this.W = Math.max(20, Math.ceil(r.width / this.px));
+    this.H = Math.max(20, Math.ceil(r.height / this.px));
     const c = this.ctx.canvas;
     c.width = this.W;
     c.height = this.H;
-    c.style.width = `${this.W * PX}px`;
-    c.style.height = `${this.H * PX}px`;
+    c.style.width = `${this.W * this.px}px`;
+    c.style.height = `${this.H * this.px}px`;
     this.ctx.imageSmoothingEnabled = false;
   }
 
@@ -220,8 +224,8 @@ export class SceneView {
     const first = Math.floor(this.unitsAt(this.up ? H : 0) / this.step) - 1;
     this.ticks.forEach((el, i) => {
       const units = (first + i) * this.step;
-      const y = this.sy(units * this.k) * PX;
-      if (units < 0 || y < -20 || y > H * PX + 20) {
+      const y = this.sy(units * this.k) * this.px;
+      if (units < 0 || y < -20 || y > H * this.px + 20) {
         el.style.display = "none";
         return;
       }
@@ -232,9 +236,9 @@ export class SceneView {
     for (const m of this.markers) {
       const el = this.markerEls.get(m.name + (m.me ? "*" : ""));
       if (!el) continue;
-      const y = this.sy(m.value * this.k) * PX;
-      el.style.transform = `translateY(${Math.max(-30, Math.min(H * PX + 30, y))}px)`;
-      el.classList.toggle("off", y < 0 || y > H * PX);
+      const y = this.sy(m.value * this.k) * this.px;
+      el.style.transform = `translateY(${Math.max(-30, Math.min(H * this.px + 30, y))}px)`;
+      el.classList.toggle("off", y < 0 || y > H * this.px);
     }
   }
   private unitsAt(screenY: number) {

@@ -77,6 +77,21 @@ export function cachePack(p: Pack) {
   writeFileSync(join(PACKS, `${packKey(p.interest)}.json`), JSON.stringify(p));
 }
 export const listCachedPacks = () => (existsSync(PACKS) ? readdirSync(PACKS).map((f) => f.replace(/\.json$/, "")) : []);
+/** Topics that are ready instantly: [{ interest, title, emoji }]. */
+export function readyTopics() {
+  if (!existsSync(PACKS)) return [];
+  return readdirSync(PACKS)
+    .filter((f) => f.endsWith(".json"))
+    .map((f) => {
+      try {
+        const p = JSON.parse(readFileSync(join(PACKS, f), "utf8")) as Pack;
+        return { interest: p.interest, title: p.title, emoji: p.host?.emoji ?? "🎮" };
+      } catch {
+        return null;
+      }
+    })
+    .filter(Boolean);
+}
 
 // ---------- players ----------
 const validPid = (pid: unknown): pid is string => typeof pid === "string" && /^[a-z0-9]{6,32}$/i.test(pid);

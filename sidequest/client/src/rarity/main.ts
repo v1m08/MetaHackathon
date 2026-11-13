@@ -59,7 +59,22 @@ const store = {
     }
   },
 };
+// Embedded in the messenger: identity comes from the chat app, and we talk to it with postMessage.
+const params = new URLSearchParams(location.search);
+const EMBED = params.has("embed");
+const embedPid = params.get("pid") ?? "";
+const embedName = (params.get("name") ?? "").slice(0, 16);
+const toChat = (msg: Record<string, unknown>) => {
+  try {
+    parent.postMessage({ source: "deepcuts", ...msg }, "*");
+  } catch {
+    /* not framed */
+  }
+};
+let justFinished = false;
+
 const pid = (() => {
+  if (EMBED && /^[a-z0-9]{6,32}$/.test(embedPid)) return embedPid;
   let id = store.get("sq.pid");
   if (!id || !/^[a-z0-9]{6,32}$/.test(id)) {
     id = Array.from(crypto.getRandomValues(new Uint8Array(12)), (b) => "abcdefghijklmnopqrstuvwxyz0123456789"[b % 36]).join("");
@@ -67,7 +82,11 @@ const pid = (() => {
   }
   return id;
 })();
-const myName = () => store.get("sq.name") ?? "";
+const myName = () => (EMBED && embedName ? embedName : store.get("sq.name") ?? "");
+const closeBtn = () => (EMBED ? `<button class="btn dark icon-btn" id="close" aria-label="Back to chat">✕</button>` : "");
+function wireClose(el: HTMLElement) {
+  el.querySelector("#close")?.addEventListener("click", () => toChat({ type: "close" }));
+}
 
 async function api<T>(path: string, body?: unknown): Promise<T> {
   const res = await fetch(path, body === undefined ? { cache: "no-store" } : { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) });
@@ -200,7 +219,7 @@ function lobby(v: RoomView) {
   const p = v.pack;
   const resume = v.me && v.me.done > 0;
   const el = screen(`
-    <div class="hud"><span></span><span></span><div class="hud-right">${muteBtn()}</div></div>
+    <div class="hud"><span></span><span></span><div class="hud-right">${muteBtn()}${closeBtn()}</div></div>
     <div class="scroll" style="flex:1;padding-right:56px">
       <div class="title-wrap pop" style="margin-top:3vh">
         <h1 class="title" style="font-size:clamp(34px,10vw,64px)">${esc(p.title)}</h1>
@@ -217,13 +236,14 @@ function lobby(v: RoomView) {
       </div>
     </div>
     <div class="stack pop" style="padding-right:56px;margin-top:10px">
-      <input class="field" id="name" maxlength="16" placeholder="Your name" autocomplete="nickname" value="${esc(v.me?.name && v.me.name !== "Player" ? v.me.name : myName())}" aria-label="Your name" />
+      ${EMBED ? "" : `<input class="field" id="name" maxlength="16" placeholder="Your name" autocomplete="nickname" value="${esc(v.me?.name && v.me.name !== "Player" ? v.me.name : myName())}" aria-label="Your name" />`}
       <button class="btn big" id="go">${resume ? `Keep going ${v.me!.done}/${p.prompts.length}` : "Start"}</button>
-      <div class="row"><button class="btn dark wide" id="invite">Invite friends</button><button class="btn dark wide" id="new">New topic</button></div>
+      ${EMBED ? "" : `<div class="row"><button class="btn dark wide" id="invite">Invite friends</button><button class="btn dark wide" id="new">New topic</button></div>`}
       <p class="toast" id="toast"></p>
     </div>`);
   wireMute(el);
-  const name = el.querySelector<HTMLInputElement>("#name")!;
+  wireClose(el);
+  const name = el.querySelector<HTMLInputElement>("#name") ?? Object.assign(document.createElement("input"), { value: myName() || "Player" });
   el.querySelector("#go")!.addEventListener("click", () => {
     const n = name.value.trim().slice(0, 16);
     if (!n) {
@@ -237,8 +257,8 @@ function lobby(v: RoomView) {
     audio.unlock();
     void play(v, v.prompts.findIndex((x) => !x.mine));
   });
-  el.querySelector("#invite")!.addEventListener("click", () => share(v, `${p.title}: how deep do your ${p.interest} cuts go?`, el.querySelector("#toast")!));
-  el.querySelector("#new")!.addEventListener("click", () => home());
+  el.querySelector("#invite")?.addEventListener("click", () => share(v, `${p.title}: how deep do your ${p.interest} cuts go?`, el.querySelector("#toast")!));
+  el.querySelector("#new")?.addEventListener("click", () => home());
 }
 
 function hud(v: RoomView, i: number, score: number, doneUpTo: number) {
@@ -381,7 +401,10 @@ async function reveal(v: RoomView, i: number, verdict: Verdict, typed: string) {
   wireMute(el);
   el.querySelector("#quit")!.addEventListener("click", () => void room(v.id));
   const next = el.querySelector<HTMLButtonElement>("#next")!;
-  next.addEventListener("click", () => void play(fresh, i + 1));
+  next.addEventListener("click", () => {
+    if (last) justFinished = true;
+    void play(fresh, i + 1);
+  });
   if (hit) {
     // light the tier, then travel
     const tiers = [...el.querySelectorAll<HTMLElement>(".tier")];
@@ -427,8 +450,12 @@ function results(v: RoomView) {
   const others = v.board.length - 1;
   const standing =
     others <= 0 ? "Send it to the group chat. See who digs deeper." : pos === 0 ? `You lead ${others} friend${others > 1 ? "s" : ""}. For now.` : `#${pos + 1} of ${v.board.length} · ${esc(v.board[0].name)} is ${meterText(p, v.board[0].score - me.score)} ahead`;
+  if (justFinished) {
+    justFinished = false;
+    toChat({ type: "finished", room: v.id, score: me.score, reached: meterText(p, me.score), icon: p.meter.icon, title: p.title, rank: pos + 1, players: v.board.length });
+  }
   const el = screen(`
-    <div class="hud"><span></span><span></span><div class="hud-right">${muteBtn()}</div></div>
+    <div class="hud"><span></span><span></span><div class="hud-right">${muteBtn()}${closeBtn()}</div></div>
     <div class="scroll" style="flex:1;padding-right:56px">
       <div class="total pop">
         <div class="label" style="color:#fff;text-shadow:2px 2px 0 #000">${esc(p.meter.label)} reached</div>
@@ -436,7 +463,7 @@ function results(v: RoomView) {
         <p class="standing">${standing}</p>
       </div>
       <div class="stack pop" style="margin-top:22px">
-        <button class="btn big" id="share">Send to the group chat</button>
+        <button class="btn big" id="share">${EMBED ? "Back to chat" : "Send to the group chat"}</button>
         <p class="toast" id="toast"></p>
         ${v.board.length > 1 ? `<div class="panel"><div class="label">Leaderboard</div><div style="margin-top:6px">${boardHtml(v)}</div></div>` : ""}
         <div class="answers">${p.prompts
@@ -449,12 +476,15 @@ function results(v: RoomView) {
               ${x.gem ? `<p class="gemline">💎 ${esc(x.gem.a)}${x.gem.note ? `: ${esc(x.gem.note)}` : ""}</p>` : ""}</div>`;
           })
           .join("")}</div>
-        <button class="btn dark wide" id="new" style="margin:8px 0 20px">Make a game about something else</button>
+        ${EMBED ? "<div style=\"height:20px\"></div>" : `<button class="btn dark wide" id="new" style="margin:8px 0 20px">Make a game about something else</button>`}
       </div>
     </div>`);
   wireMute(el);
-  el.querySelector("#share")!.addEventListener("click", () => share(v, `${p.title}: I reached ${meterText(p, me.score)} ${p.meter.icon}. How deep do your ${p.interest} cuts go?`, el.querySelector("#toast")!));
-  el.querySelector("#new")!.addEventListener("click", () => {
+  wireClose(el);
+  el.querySelector("#share")!.addEventListener("click", () =>
+    EMBED ? toChat({ type: "close" }) : share(v, `${p.title}: I reached ${meterText(p, me.score)} ${p.meter.icon}. How deep do your ${p.interest} cuts go?`, el.querySelector("#toast")!),
+  );
+  el.querySelector("#new")?.addEventListener("click", () => {
     clearInterval(poll);
     home();
   });

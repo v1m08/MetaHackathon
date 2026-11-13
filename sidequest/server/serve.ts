@@ -10,7 +10,7 @@ import { createRoom, getRoom, sortedScores, submitScore, type ScoreRow } from ".
 import { FRAME_CSP, framePage, playPage } from "./gen/pages";
 import { loadGame } from "./gen/pipeline";
 import { generatePack } from "./rarity/generate";
-import { cachedPack, cachePack, createXRoom, getXRoom, openPrompt, roomView, submitAnswer } from "./rarity/rooms";
+import { cachedPack, cachePack, createXRoom, getXRoom, openPrompt, readyTopics, roomView, submitAnswer } from "./rarity/rooms";
 
 /** Never expose playerIds (they act as the write key); mark the caller's own row instead. */
 const publicBoard = (rows: ScoreRow[], me: string | null) => rows.map((r) => ({ name: r.name, score: r.score, plays: r.plays, me: !!me && r.playerId === me }));
@@ -97,6 +97,16 @@ export async function startServer(port: number): Promise<Server> {
         res.writeHead(code, { "content-type": "application/json", "cache-control": "no-store" });
         res.end(JSON.stringify(v));
       };
+      // The messenger app (another origin) creates games and reads rooms for its chat cards.
+      if (url.pathname.startsWith("/api/x")) {
+        res.setHeader("access-control-allow-origin", "*");
+        res.setHeader("access-control-allow-headers", "content-type");
+        res.setHeader("access-control-allow-methods", "GET, POST, OPTIONS");
+        if (req.method === "OPTIONS") {
+          res.writeHead(204);
+          return res.end();
+        }
+      }
       // ---------- rarity trivia ----------
       const xPage = url.pathname === "/x" || /^\/x\/[a-z0-9]{4,12}$/.test(url.pathname);
       if (req.method === "GET" && xPage) {
@@ -108,6 +118,7 @@ export async function startServer(port: number): Promise<Server> {
         res.writeHead(200, { "content-type": "text/javascript; charset=utf-8", "cache-control": "no-store" });
         return res.end(xjs);
       }
+      if (req.method === "GET" && url.pathname === "/api/x/topics") return json(200, readyTopics());
       if (req.method === "POST" && url.pathname === "/api/x/new") {
         const body = await readJson(req, 2000);
         const interest = String(body.interest ?? "").slice(0, 60).trim();
