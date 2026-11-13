@@ -1,9 +1,10 @@
 "use client";
-// The chat games in Messenger (Deep Cuts and Order Up!): the game cards in the thread, the full-screen player,
+// The chat games in Messenger (Deep Cuts, Order Up!, Ghost Run, Sketch Off): the game cards in the thread, the full-screen player,
 // and the games tray behind the composer's "+" button. The games run on the Sidequest server (port 5180).
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { X } from "lucide-react";
+import { api } from "@/lib/api";
 import { SceneView } from "../../sidequest/client/src/rarity/scene";
 import { fmt, withScene, type PublicPack } from "../../sidequest/shared/rarity";
 import type { Menu } from "../../sidequest/shared/kitchen";
@@ -445,10 +446,11 @@ export const gameFor = (topic: string): GameKind => (FOOD.test(topic) ? "orderup
 
 const SUGGESTIONS = ["Rock climbing", "F1", "Skiing", "Animals", "Space", "Taylor Swift", "Ramen", "Burgers"];
 
-export function GameTray({ onCreate, onClose }: { onCreate: (ref: string, interest: string, game: GameKind) => void; onClose: () => void }) {
+export function GameTray({ conversationId, onCreate, onClose }: { conversationId?: string; onCreate: (ref: string, interest: string, game: GameKind) => void; onClose: () => void }) {
   const [topic, setTopic] = useState("");
   const [ready, setReady] = useState<{ interest: string; game: GameKind }[]>([]);
   const [building, setBuilding] = useState<{ topic: string; game: GameKind } | null>(null);
+  const [smart, setSmart] = useState<{ forChat: { chip: string; reason: string }[]; discover: { chip: string; reason: string }[] } | null>(null);
   const [secs, setSecs] = useState(0);
   const [error, setError] = useState("");
   const [choice, setChoice] = useState<GameKind | "auto">("auto");
@@ -465,6 +467,13 @@ export function GameTray({ onCreate, onClose }: { onCreate: (ref: string, intere
       .then((lists) => setReady(lists.flat()))
       .catch(() => setError("Game server isn't running. Start it with: npm run sidequest"));
   }, []);
+  useEffect(() => {
+    if (!conversationId) return;
+    const g = choice === "orderup" ? "orderup" : "deepcuts";
+    api<{ forChat: { chip: string; reason: string }[]; discover: { chip: string; reason: string }[] }>(`/api/context/tray?conversationId=${encodeURIComponent(conversationId)}&game=${g}`)
+      .then(setSmart)
+      .catch(() => setSmart(null));
+  }, [conversationId, choice]);
   useEffect(() => {
     if (!building) return;
     const t0 = Date.now();
@@ -494,7 +503,11 @@ export function GameTray({ onCreate, onClose }: { onCreate: (ref: string, intere
   const readyHere = ready.filter((r) => (choice === "auto" ? gameFor(r.interest) === r.game : r.game === choice));
   const readySet = new Set(readyHere.map((r) => r.interest.toLowerCase()));
   const suggestions = choice === "auto" ? SUGGESTIONS : SUGGESTIONS.filter((s) => gameFor(s) === choice);
-  const chips = [...readyHere.map((r) => r.interest), ...suggestions.filter((s) => !readySet.has(s.toLowerCase()))].slice(0, 10);
+  const smartChips = smart ? [...smart.forChat, ...smart.discover].slice(0, 5) : [];
+  const smartSet = new Set(smartChips.map((s) => s.chip.toLowerCase()));
+  const chips = [...readyHere.map((r) => r.interest), ...suggestions.filter((s) => !readySet.has(s.toLowerCase()))]
+    .filter((c) => !smartSet.has(c.toLowerCase()))
+    .slice(0, 8);
   const picked = choice !== "auto" ? GAMES[choice] : topic.trim() ? GAMES[gameFor(topic)] : null;
 
   return (
@@ -568,6 +581,24 @@ export function GameTray({ onCreate, onClose }: { onCreate: (ref: string, intere
                 "Auto picks the game from your topic: food opens a restaurant, sports a race, visual topics a drawing game, anything else trivia."
               )}
             </div>
+            {smartChips.length > 0 && (
+              <div className="mt-3">
+                <div className="mb-1.5 text-[11.5px] font-semibold text-[#6ee7b7]">Picked for this chat</div>
+                <div className="flex flex-wrap gap-1.5">
+                  {smartChips.map((s) => (
+                    <button
+                      key={s.chip}
+                      onClick={() => create(s.chip)}
+                      title={s.reason}
+                      className="rounded-full bg-[#6ee7b7]/15 px-3 py-1 text-[13px] font-medium text-[#a7f3d0] ring-1 ring-[#6ee7b7]/30 active:bg-[#6ee7b7]/25"
+                    >
+                      {readySet.has(s.chip.toLowerCase()) ? "⚡ " : ""}
+                      {s.chip}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
             <div className="mt-3 flex flex-wrap gap-2">
               {chips.map((c) => (
                 <button key={c} onClick={() => create(c)} className="rounded-full bg-white/10 px-3 py-1.5 text-[14px] font-medium active:bg-white/20">

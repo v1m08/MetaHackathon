@@ -128,6 +128,6 @@ for (const [a, b] of edges) {
   users.find((u) => u.id === a)!.friendIds.push(b);
   users.find((u) => u.id === b)!.friendIds.push(a);
 }
-for (const u of users) Object.assign(u, { city: "austin", privacy: u.id === "aisha" || u.id === "zoe" ? "friends" : "public" });
+for (const u of users) u.privacy = u.id === "aisha" || u.id === "zoe" ? "friends" : "public";
 
 export const userById = (id: string) => users.find((u) => u.id === id);

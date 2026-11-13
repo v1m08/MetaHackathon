@@ -73,13 +73,6 @@ export const events: FBEvent[] = [
     description: "We moved in. Come see the house. Three teachers live here so it ends at 11 sharp.",
     going: ["maya", "grace", "nina", "aisha", "priya", "tyler", "lucas", "jordan"], interested: ["ethan", "devon"],
   },
-  {
-    id: "e_dumpling_night", title: "Dumpling Night: fold, eat, mahjong", cover: photo("event-dumpling-night", 1200, 600),
-    startsAt: inDays(9, 18), endsAt: inDays(9, 22), location: "Hannah's house (North Loop)", address: "North Loop, Austin, TX",
-    hostGroupId: "g_atx_lny", hostId: "hannah", category: "Culture", price: "Bring a filling or $10",
-    description: "Pre-new-year practice round. Hannah's grandma's wrapper recipe. Two tables of mahjong, one of them friendly.",
-    going: ["hannah", "zoe", "grace", "ethan"], interested: ["priya"], city: "austin",
-  },
 ];
 
 export const eventById = (id: string) => events.find((e) => e.id === id);
