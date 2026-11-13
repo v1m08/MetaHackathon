@@ -37,13 +37,15 @@ const INDIE_PACK: Pack = {
   ],
 };
 
-function writeIfMissing(path: string, data: unknown) {
-  if (!existsSync(path)) writeFileSync(path, JSON.stringify(data));
+function writeSeedRoom(path: string, data: unknown) {
+  writeFileSync(path, JSON.stringify(data));
 }
 
 /** Ensures seeded Sidequest room files exist on disk and appends seeded game cards/logs to `d.conversations`. */
 export function seedSidequestIntoDb(d: Database) {
   const now = Date.now();
+  const DAY = 864e5;
+  const dAgo = (days: number, minsOffset = 0) => new Date(now - days * DAY + minsOffset * 60e3).toISOString();
   const hAgo = (h: number) => new Date(now - h * 3600e3).toISOString();
 
   try {
@@ -55,63 +57,88 @@ export function seedSidequestIntoDb(d: Database) {
     const burgers = PRESET_MENUS.find((m) => m.interest === "burgers")!;
     const ramen = PRESET_MENUS.find((m) => m.interest === "ramen")!;
 
-    writeIfMissing(join(KITCHEN_DIR, "sqtaco01.json"), {
+    writeSeedRoom(join(KITCHEN_DIR, "sqmjrm05.json"), {
+      id: "sqmjrm05",
+      menu: ramen,
+      seed: 31094,
+      createdAt: dAgo(3),
+      players: {
+        [sqPid("maya")]: { name: "Maya", best: 192, plays: 2, served: 15, lost: 1, combo: 5 },
+        [sqPid("jordan")]: { name: "Jordan", best: 205, plays: 2, served: 16, lost: 0, combo: 6 },
+      },
+    });
+
+    writeSeedRoom(join(KITCHEN_DIR, "sqtaco01.json"), {
       id: "sqtaco01",
       menu: tacos,
       seed: 40219,
-      createdAt: hAgo(22),
+      createdAt: dAgo(2),
       players: {
         [sqPid("jordan")]: { name: "Jordan", best: 214, plays: 2, served: 16, lost: 1, combo: 6 },
         [sqPid("maya")]: { name: "Maya", best: 188, plays: 2, served: 14, lost: 1, combo: 5 },
       },
     });
 
-    writeIfMissing(join(PACKS_DIR, "indie-bands.json"), INDIE_PACK);
-    writeIfMissing(join(RARITY_DIR, "sqmusc04.json"), {
+    if (!existsSync(join(PACKS_DIR, "indie-bands.json"))) writeFileSync(join(PACKS_DIR, "indie-bands.json"), JSON.stringify(INDIE_PACK));
+    writeSeedRoom(join(RARITY_DIR, "sqmusc04.json"), {
       id: "sqmusc04",
       interest: "indie bands",
       pack: INDIE_PACK,
-      createdAt: hAgo(14),
+      createdAt: dAgo(1),
       players: {
         [sqPid("maya")]: {
           name: "Maya",
-          opened: { 0: now - 14 * 3600e3 },
+          opened: { 0: now - DAY },
           tries: {},
-          joinedAt: hAgo(13.9),
+          joinedAt: dAgo(1, 5),
           picks: {
-            0: { raw: "Spoon", a: "Spoon", r: 4, at: hAgo(13.9) },
-            1: { raw: "Phoebe Bridgers", a: "Phoebe Bridgers", r: 1, at: hAgo(13.9) },
-            2: { raw: "Fleet Foxes", a: "Fleet Foxes", r: 3, at: hAgo(13.9) },
-            3: { raw: "Sun June", a: "Sun June", r: 5, at: hAgo(13.9) },
-            4: { raw: "Alvvays", a: "Alvvays", r: 4, at: hAgo(13.9) },
-            5: { raw: "Synth", a: "Synth", r: 2, at: hAgo(13.9) },
-            6: { raw: "ACL", a: "ACL", r: 2, at: hAgo(13.9) },
+            0: { raw: "Spoon", a: "Spoon", r: 4, at: dAgo(1, 5) },
+            1: { raw: "Phoebe Bridgers", a: "Phoebe Bridgers", r: 1, at: dAgo(1, 5) },
+            2: { raw: "Fleet Foxes", a: "Fleet Foxes", r: 3, at: dAgo(1, 5) },
+            3: { raw: "Sun June", a: "Sun June", r: 5, at: dAgo(1, 5) },
+            4: { raw: "Alvvays", a: "Alvvays", r: 4, at: dAgo(1, 5) },
+            5: { raw: "Synth", a: "Synth", r: 2, at: dAgo(1, 5) },
+            6: { raw: "ACL", a: "ACL", r: 2, at: dAgo(1, 5) },
           },
         },
         [sqPid("jordan")]: {
           name: "Jordan",
-          opened: { 0: now - 13.5 * 3600e3 },
+          opened: { 0: now - DAY + 600e3 },
           tries: {},
-          joinedAt: hAgo(13.5),
+          joinedAt: dAgo(1, 15),
           picks: {
-            0: { raw: "Spoon", a: "Spoon", r: 4, at: hAgo(13.5) },
-            1: { raw: "Elliott Smith", a: "Elliott Smith", r: 2, at: hAgo(13.5) },
+            0: { raw: "Spoon", a: "Spoon", r: 4, at: dAgo(1, 15) },
+            1: { raw: "Elliott Smith", a: "Elliott Smith", r: 2, at: dAgo(1, 15) },
             2: { raw: "Tame Impala", a: "Tame Impala", r: 1, at: hAgo(13.5) },
-            3: { raw: "Sun June", a: "Sun June", r: 5, at: hAgo(13.5) },
-            4: { raw: "Beach House", a: "Beach House", r: 1, at: hAgo(13.5) },
-            5: { raw: "Synth", a: "Synth", r: 2, at: hAgo(13.5) },
-            6: { raw: "SXSW", a: "SXSW", r: 2, at: hAgo(13.5) },
+            3: { raw: "Sun June", a: "Sun June", r: 5, at: dAgo(1, 15) },
+            4: { raw: "Beach House", a: "Beach House", r: 1, at: dAgo(1, 15) },
+            5: { raw: "Synth", a: "Synth", r: 2, at: dAgo(1, 15) },
+            6: { raw: "SXSW", a: "SXSW", r: 2, at: dAgo(1, 15) },
           },
         },
       },
       judged: {},
     });
 
-    writeIfMissing(join(KITCHEN_DIR, "sqburg03.json"), {
+    writeSeedRoom(join(KITCHEN_DIR, "sqvbtac6.json"), {
+      id: "sqvbtac6",
+      menu: tacos,
+      seed: 77123,
+      createdAt: dAgo(2),
+      players: {
+        [sqPid("devon")]: { name: "Devon", best: 184, plays: 1, served: 14, lost: 1, combo: 4 },
+        [sqPid("tyler")]: { name: "Tyler", best: 170, plays: 1, served: 13, lost: 1, combo: 4 },
+        [sqPid("marcus")]: { name: "Marcus", best: 165, plays: 1, served: 12, lost: 2, combo: 3 },
+        [sqPid("nina")]: { name: "Nina", best: 198, plays: 2, served: 15, lost: 0, combo: 5 },
+        [sqPid("jordan")]: { name: "Jordan", best: 232, plays: 2, served: 18, lost: 0, combo: 7 },
+      },
+    });
+
+    writeSeedRoom(join(KITCHEN_DIR, "sqburg03.json"), {
       id: "sqburg03",
       menu: burgers,
       seed: 88412,
-      createdAt: hAgo(18),
+      createdAt: dAgo(1),
       players: {
         [sqPid("devon")]: { name: "Devon", best: 196, plays: 1, served: 15, lost: 1, combo: 5 },
         [sqPid("sam")]: { name: "Sam", best: 204, plays: 2, served: 16, lost: 0, combo: 6 },
@@ -121,7 +148,7 @@ export function seedSidequestIntoDb(d: Database) {
       },
     });
 
-    writeIfMissing(join(KITCHEN_DIR, "sqramn02.json"), {
+    writeSeedRoom(join(KITCHEN_DIR, "sqramn02.json"), {
       id: "sqramn02",
       menu: ramen,
       seed: 55102,
@@ -135,36 +162,46 @@ export function seedSidequestIntoDb(d: Database) {
     /* read-only fs fallback: message logs below still carry full context */
   }
 
-  const inject = (convId: ID, msgs: { id: string; senderId: ID; h: number; text: string; attachment: Message["attachment"] }[]) => {
+  const inject = (convId: ID, msgs: { id: string; senderId: ID; at: string; text: string; attachment: Message["attachment"] }[]) => {
     const c = d.conversations.find((x) => x.id === convId);
     if (!c) return;
     for (const m of msgs) {
       if (c.messages.some((x) => x.id === m.id)) continue;
-      c.messages.push({ id: m.id, senderId: m.senderId, text: m.text, createdAt: hAgo(m.h), attachment: m.attachment, readBy: [...c.participantIds] });
+      c.messages.push({ id: m.id, senderId: m.senderId, text: m.text, createdAt: m.at, attachment: m.attachment, readBy: [...c.participantIds] });
     }
     c.messages.sort((a, b) => a.createdAt.localeCompare(b.createdAt));
   };
 
   inject("c_maya_jordan", [
-    { id: "m_sq_mj_1", senderId: "jordan", h: 22, text: "🎮 Order Up!: Tacos", attachment: { type: "sqgame", ref: "k:sqtaco01" } },
-    { id: "m_sq_mj_2", senderId: "jordan", h: 21.9, text: "played Taco 'Bout It · $214", attachment: { type: "sqgamelog", ref: "k:sqtaco01" } },
-    { id: "m_sq_mj_3", senderId: "maya", h: 21.7, text: "played Taco 'Bout It · $188 · #2 of 2", attachment: { type: "sqgamelog", ref: "k:sqtaco01" } },
-    { id: "m_sq_mj_4", senderId: "maya", h: 14, text: "🎮 Deep Cuts: Indie bands", attachment: { type: "sqgame", ref: "sqmusc04" } },
-    { id: "m_sq_mj_5", senderId: "maya", h: 13.9, text: "played East Side Soundcheck · 1,020 fans", attachment: { type: "sqgamelog", ref: "sqmusc04" } },
-    { id: "m_sq_mj_6", senderId: "jordan", h: 13.5, text: "played East Side Soundcheck · 840 fans · #2 of 2", attachment: { type: "sqgamelog", ref: "sqmusc04" } },
+    { id: "m_sq_mj_0a", senderId: "maya", at: dAgo(3, 0), text: "🎮 Order Up!: Ramen", attachment: { type: "sqgame", ref: "k:sqmjrm05" } },
+    { id: "m_sq_mj_0b", senderId: "maya", at: dAgo(3, 4), text: "played Night Owl Noodles · $192", attachment: { type: "sqgamelog", ref: "k:sqmjrm05" } },
+    { id: "m_sq_mj_0c", senderId: "jordan", at: dAgo(3, 9), text: "played Night Owl Noodles · $205 · took the lead", attachment: { type: "sqgamelog", ref: "k:sqmjrm05" } },
+    { id: "m_sq_mj_1", senderId: "jordan", at: dAgo(2, 0), text: "🎮 Order Up!: Tacos", attachment: { type: "sqgame", ref: "k:sqtaco01" } },
+    { id: "m_sq_mj_2", senderId: "jordan", at: dAgo(2, 4), text: "played Taco 'Bout It · $214", attachment: { type: "sqgamelog", ref: "k:sqtaco01" } },
+    { id: "m_sq_mj_3", senderId: "maya", at: dAgo(2, 12), text: "played Taco 'Bout It · $188 · #2 of 2", attachment: { type: "sqgamelog", ref: "k:sqtaco01" } },
+    { id: "m_sq_mj_4", senderId: "maya", at: dAgo(1, 0), text: "🎮 Deep Cuts: Indie bands", attachment: { type: "sqgame", ref: "sqmusc04" } },
+    { id: "m_sq_mj_5", senderId: "maya", at: dAgo(1, 5), text: "played East Side Soundcheck · 1,020 fans", attachment: { type: "sqgamelog", ref: "sqmusc04" } },
+    { id: "m_sq_mj_6", senderId: "jordan", at: dAgo(1, 15), text: "played East Side Soundcheck · 840 fans · #2 of 2", attachment: { type: "sqgamelog", ref: "sqmusc04" } },
   ]);
 
   inject("c_volleyball", [
-    { id: "m_sq_vb_1", senderId: "sam", h: 18, text: "🎮 Order Up!: Burgers", attachment: { type: "sqgame", ref: "k:sqburg03" } },
-    { id: "m_sq_vb_2", senderId: "sam", h: 17.9, text: "played Bun Voyage · $204", attachment: { type: "sqgamelog", ref: "k:sqburg03" } },
-    { id: "m_sq_vb_3", senderId: "devon", h: 17.7, text: "played Bun Voyage · $196 · #2 of 2", attachment: { type: "sqgamelog", ref: "k:sqburg03" } },
-    { id: "m_sq_vb_4", senderId: "jordan", h: 17.4, text: "played Bun Voyage · $228 · took the lead", attachment: { type: "sqgamelog", ref: "k:sqburg03" } },
-    { id: "m_sq_vb_5", senderId: "grace", h: 17.1, text: "played Bun Voyage · $175 · #4 of 4", attachment: { type: "sqgamelog", ref: "k:sqburg03" } },
+    { id: "m_sq_vb_0a", senderId: "jordan", at: dAgo(2, 0), text: "🎮 Order Up!: Tacos", attachment: { type: "sqgame", ref: "k:sqvbtac6" } },
+    { id: "m_sq_vb_0b", senderId: "jordan", at: dAgo(2, 3), text: "played Taco 'Bout It · $232", attachment: { type: "sqgamelog", ref: "k:sqvbtac6" } },
+    { id: "m_sq_vb_0c", senderId: "nina", at: dAgo(2, 8), text: "played Taco 'Bout It · $198 · #2 of 2", attachment: { type: "sqgamelog", ref: "k:sqvbtac6" } },
+    { id: "m_sq_vb_0d", senderId: "devon", at: dAgo(2, 14), text: "played Taco 'Bout It · $184 · #3 of 3", attachment: { type: "sqgamelog", ref: "k:sqvbtac6" } },
+    { id: "m_sq_vb_0e", senderId: "tyler", at: dAgo(2, 20), text: "played Taco 'Bout It · $170 · #4 of 4", attachment: { type: "sqgamelog", ref: "k:sqvbtac6" } },
+    { id: "m_sq_vb_0f", senderId: "marcus", at: dAgo(2, 25), text: "played Taco 'Bout It · $165 · #5 of 5", attachment: { type: "sqgamelog", ref: "k:sqvbtac6" } },
+    { id: "m_sq_vb_1", senderId: "sam", at: dAgo(1, 0), text: "🎮 Order Up!: Burgers", attachment: { type: "sqgame", ref: "k:sqburg03" } },
+    { id: "m_sq_vb_2", senderId: "sam", at: dAgo(1, 4), text: "played Bun Voyage · $204", attachment: { type: "sqgamelog", ref: "k:sqburg03" } },
+    { id: "m_sq_vb_3", senderId: "devon", at: dAgo(1, 10), text: "played Bun Voyage · $196 · #2 of 2", attachment: { type: "sqgamelog", ref: "k:sqburg03" } },
+    { id: "m_sq_vb_4", senderId: "jordan", at: dAgo(1, 18), text: "played Bun Voyage · $228 · took the lead", attachment: { type: "sqgamelog", ref: "k:sqburg03" } },
+    { id: "m_sq_vb_5", senderId: "grace", at: dAgo(1, 24), text: "played Bun Voyage · $175 · #4 of 4", attachment: { type: "sqgamelog", ref: "k:sqburg03" } },
+    { id: "m_sq_vb_6", senderId: "tyler", at: dAgo(1, 30), text: "played Bun Voyage · $162 · #5 of 5", attachment: { type: "sqgamelog", ref: "k:sqburg03" } },
   ]);
 
   inject("c_ethan_priya", [
-    { id: "m_sq_ep_1", senderId: "priya", h: 16, text: "🎮 Order Up!: Ramen", attachment: { type: "sqgame", ref: "k:sqramn02" } },
-    { id: "m_sq_ep_2", senderId: "priya", h: 15.9, text: "played Night Owl Noodles · $189", attachment: { type: "sqgamelog", ref: "k:sqramn02" } },
-    { id: "m_sq_ep_3", senderId: "ethan", h: 15.6, text: "played Night Owl Noodles · $172 · #2 of 2", attachment: { type: "sqgamelog", ref: "k:sqramn02" } },
+    { id: "m_sq_ep_1", senderId: "priya", at: hAgo(16), text: "🎮 Order Up!: Ramen", attachment: { type: "sqgame", ref: "k:sqramn02" } },
+    { id: "m_sq_ep_2", senderId: "priya", at: hAgo(15.9), text: "played Night Owl Noodles · $189", attachment: { type: "sqgamelog", ref: "k:sqramn02" } },
+    { id: "m_sq_ep_3", senderId: "ethan", at: hAgo(15.6), text: "played Night Owl Noodles · $172 · #2 of 2", attachment: { type: "sqgamelog", ref: "k:sqramn02" } },
   ]);
 }

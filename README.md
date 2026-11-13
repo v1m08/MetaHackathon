@@ -205,12 +205,14 @@ Young adults stay connected in Messenger through two GamePigeon-style pixel game
    - Tapping **`+`** in any Messenger chat shows **"Picked for this chat"** topic chips computed from the strict visibility intersection of chat members (shared Groups, co-attended Events, visible posts/interests) plus unexplored local Austin categories (`blindSpotTopicsFor`).
 2. **Play Deep Cuts or Order Up! (`sidequest/`, `:5180`):**
    - Muse generates a themed pixel world (**Deep Cuts**) or 75-second restaurant (**Order Up!**) for any topic; cards (`sqgame`) and GamePigeon completion lines (`sqgamelog`) post live in the thread.
-3. **Context & Closeness Graph (`src/lib/context/index.ts`, `/dev/context`):**
+3. **Context, Streak & Connection-Scoring Engine (`src/lib/context/index.ts`, `src/lib/context/day.ts`, `/dev/context`):**
    - Ingests `sqgame` / `sqgamelog` messages + Sidequest room caches (`sidequest/.cache/{rarity,kitchen}/*.json`) with zero legacy quiz dependencies.
-   - Updates per-user **Taste Affinities** (14-day decay, flagging `NEW` discovered topics absent from static profile tags) and chat-scoped **Closeness Scores (`0–100`)** (co-played rooms, replay runs, post-game chat banter, and Deep Cuts same-answer mind-melds).
-   - Open **Menu → Context Inspector (`/dev/context`)** to inspect Before (Cold Profile) vs. After (Learned Context) for any user.
-4. **Ecosystem Personalization (`Events`, `Groups`, `Marketplace`):**
-   - `socialMatchFor` ranks **Events (`/events`)**, **Groups (`/groups`)**, and **Marketplace (`/marketplace`)** using personal affinity + co-played shared-chat matches (*"Matches your games with Jordan · live music"*) with a **1-tap `Send to [Friend/Chat]`** button.
+   - **Austin-timezone (`America/Chicago`) Snapchat-style streaks:** counts days where a strict majority played before local midnight, with **1 automatic streak freeze per 7 days**, **3 / 7 / 14 / 30-day milestones**, and an **evening hourglass** after 6pm.
+   - **Anti-hijack group agreement (`mean × coverage × (1 − SD)`):** discounts 1 loud spammer in a group chat until $\ge 50\%$ of members play on a topic.
+   - **4-part `0–100` Connection Score & Commitment Thresholds:** `40%` turnout + `20%` streak + `20%` post-game banter & Deep Cuts mind-melds + `20%` shared topic confidence, gating tiers at **`40` (Group) → `60` (Event) → `75` (Marketplace)**.
+   - Open **Menu → Context Inspector (`/dev/context`)** to inspect Before vs. After affinities, 4-part Connection Score & streak breakdown, and downstream rankings.
+4. **Multi-Factor Ecosystem Ranking (`Events`, `Groups`, `Marketplace`):**
+   - `socialMatchFor` combines **topic fit** + **threshold-gated shared-chat overlap** + **mutual friends going (`+0.05` each, cap `+0.15`)** + **event soonness (`+0.10` over 21 days)** + **saturation filtering** (omits `Send to X` when `X` is already RSVPed going) + **RSVP / Join / Save feedback loop** back into user affinity.
 
 ### Privacy Guardrails (Enforced in Code)
 - **Strict Audience Intersection on Input:** Private Reel/Marketplace saves (`savedBy`), unshared private Groups, restricted (`friends`-only) profiles when non-friends are present, and other threads' messages are excluded from `GameTray` topic suggestions.

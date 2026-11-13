@@ -1,3 +1,8 @@
-import { route } from "@/server/http";
+import { clearFeedbackSignals } from "@/lib/context";
 import { resetDb } from "@/server/db";
-export const POST = route(() => { resetDb(); return { ok: true, reset: true }; });
+import { route } from "@/server/http";
+export const POST = route(() => {
+  clearFeedbackSignals();
+  resetDb();
+  return { ok: true, reset: true };
+});
