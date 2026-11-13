@@ -46,7 +46,7 @@ Phones must be on the same Wi-Fi as the laptop. If the venue Wi-Fi isolates devi
 
 | # | Who | Do | What the room sees |
 |---|---|---|---|
-| 1 | all | Open the link. | The chat, with **Today's game** already in it, tagged **Live**. Nobody started it. Score bar: 58, 🔥 4 days, "Event unlocks at 60". |
+| 1 | all | Open the link. (Or open `/notifications?as=<name>` and tap "Today's game is ready in Zilker Sunday 🏐".) | The chat, with **Today's game** already in it, tagged **Live**. Nobody started it; everyone was notified. Score bar: 58, 🔥 4 days, "Event unlocks at 60". |
 | 2 | all | Tap **Play**, spread 10 points over the three real things, tap **Lock in & see results**. | The card counts up: 2, 3, 4 of 8 played. |
 | 3 | fourth to finish | (nothing extra) | Score 61, 🔥 5 days, and an **Event card unlocks** in everyone's chat with its reason ("32 of 50 points went to this in today's Wager, ..."). |
 | 4 | all | Tap **I'm in**. | Faces appear on the card. Open the event: they are going. |
@@ -87,7 +87,7 @@ So: stage today's game before you walk on, and tap ⚡ topics on stage. Ready on
 ## What is not real
 
 - The drop is triggered by the first open of the chat that day (the prep script does it), not by a scheduler.
-- Nobody is notified when a game drops; the chat row goes bold with "Today's game". Unlocks do notify.
+- The drop notification is in-app (the Notifications tab and its badge). Nothing reaches a locked phone.
 - Sketch Off and the other Sidequest games are started by a person from the tray.
 - There are two scores: the chat score in the thread (daily game) and the connection score in `/dev/context` (Sidequest play). They use the same weights and thresholds and are not merged.
 - The people, chats, events and photos are seeded.

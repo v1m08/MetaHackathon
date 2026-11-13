@@ -2,31 +2,32 @@
 
 Demo: Fri Nov 13, 10:30am PST. 5 min (problem, one live journey, how Muse powers it, how we built it) + 3 min Q&A.
 
-**Status, Fri 01:35 PST: built on local branch `demo-stage`. Nothing is pushed.** How to run it is in [DEMO-RUNBOOK.md](DEMO-RUNBOOK.md).
+**Status, Fri 02:10 PST: built on branch `demo-stage`, up to date with `main` (`d79135b`). `main` itself is untouched.** How to run it is in [DEMO-RUNBOOK.md](DEMO-RUNBOOK.md).
 
 ## 1. What this branch is
 
-`main` as of 00:42 (Sidequest with four games and the context engine), plus the daily AI Chat Games that main deleted, plus the Hangout streaks screen, plus the context-scoring commit that was not on main yet.
+`main` as of 01:01 (Sidequest with four games and the context engine), plus the daily AI Chat Games that main deleted, plus the Hangout streaks screen.
 
 `main` on its own can only show a game somebody starts by hand. The automatic drop, the chat score in the thread, the streak and the "here is a real thing to do" card live in the daily Chat Games code that main removed (`eeb657c`). This branch brings that back next to Sidequest instead of in place of it.
 
 ## 2. What changed after the plan was approved
 
-- **Pulled the new games.** `origin/main` moved to `875e903`: Ghost Run, Sketch Off, the game picker with Auto, generated Deep Cuts backdrops.
-- **Merged `origin/sidequest-context` (`a90628a`)**, pushed at 00:41 and not on main yet: a 0-100 connection score, Austin-day streaks and multi-factor ranking over Sidequest sessions.
+- **Pulled the new games.** Ghost Run, Sketch Off, the game picker with Auto, generated Deep Cuts backdrops (`875e903`).
+- **Pulled the context engine's scoring** (`a90628a`): a 0-100 connection score, Austin-day streaks and multi-factor ranking over Sidequest sessions.
+- **Merged main again at `d79135b` (PR #3).** apnahata's `e0eae97` supports all four Sidequest games in the context engine. It covers the same ground as glue first written here, so that glue was dropped: the context engine on this branch is main's, file for file.
 - **The journey is a group of five**, not the Maya and Jordan pair. The pair still works and is the optional extra.
-- **"Krillion style" was read as skribbl.io style**, which is Sketch Off: everyone draws a word, friends and the AI guess. If that is not what was meant, the group journey works with any of the four games; only step 5 of the runbook changes.
+- **The second game is Sketch Off** (skribbl.io style: everyone draws a word, friends and the AI guess). Confirmed.
+- **A game drop now sends a notification** (section 7).
 
 ## 3. What each branch contains
 
 | Branch (tip) | By | What is in it | Verdict |
 |---|---|---|---|
-| `main` (875e903) | all | Facebook clone base. Sidequest: Deep Cuts, Order Up!, Ghost Run, Sketch Off, started from the "+" tray, own server on :5180. Context engine (`src/lib/context`): reads Sidequest play, suggests topics for a chat, ranks Events / Groups / Marketplace with "Send to". Daily Chat Games removed. | **Base** |
-| `sidequest-context` (a90628a) | apnahata | One commit ahead of main: connection score with 40 / 60 / 75 thresholds, Austin-day streaks with a weekly freeze, friends-going and soonness in the ranking, RSVP / join / save as signals. | **In** |
+| `main` (d79135b) | all | Facebook clone base. Sidequest: Deep Cuts, Order Up!, Ghost Run, Sketch Off, started from the "+" tray, own server on :5180. Context engine (`src/lib/context`): reads play in all four games, suggests topics for a chat, keeps a connection score and streak per chat, ranks Events / Groups / Marketplace with "Send to". Daily Chat Games removed. | **Base** |
 | `streaks-screen` (3daa6c8) | Keira | On daily Chat Games. Messenger as the home screen, "Your Hangout" card, `/streaks` room with a drawn critter per friend, 🔥/⏳ on chat rows, five seeded Maya DMs with play history. | **In** |
 | daily Chat Games (`991c5eb`, removed by `eeb657c`; original on `games`) | Vedansh, apnahata | One Muse-written game per chat per day from that chat's own material, six formats, chat score, unlock cards with real RSVP / join / save, `/dev/play`. | **Back in** (`git revert eeb657c`) |
 | `score-events` (da07e3c) | Keira | Streak rules v2 for the daily games: Austin-day rollover, weekly freeze, hourglass, milestones, friends-going on unlock cards. | **Cut** (see 6.4) |
-| `sidequest-cli`, `remove-daily-chat-games` | nivang | Already in main. | Nothing to take |
+| `sidequest-cli`, `sidequest-context`, `remove-daily-chat-games` | nivang, apnahata | Already in main. | Nothing to take |
 | `games` (d130d99), `reconnect` (e24c0bf), `travel` (694d6c6) | Vedansh | Trips, Open Door, Reconnect, ~60 people in 12 cities, budget ledger, evals, and the persona swarm (`sim/`, `scripts/sim.mjs`, `PERSONAS.md`). | **Cut** (reference for 8.5) |
 | `reconnect-prototype` (e2e85be) | Keira | Hang Again: own cast, Muse Image critters, sleep math, `/demo` controls. | **Cut** (its critter art rides in with `streaks-screen`) |
 | stash `before-demo-stage` | you | Your Tag along (intros) work on the old Trips stack. | **Untouched** |
@@ -38,7 +39,7 @@ SEEDED WORLD  src/data: 16 people in Austin, 17 chats, posts, events, groups, li
    |  buildContext(chat): only what every member can already see      src/lib/play/context.ts
    v
 DAILY GAME (automatic)   code picks topic + format -> Muse writes it -> code checks every id and quote
-   |  card lands in the thread, once per chat per day                 src/lib/play/{select,generate,daily}.ts
+   |  card lands in the thread, once per chat per day; members are notified   src/lib/play/{select,generate,daily}.ts
    v
 CHAT SCORE + STREAK  0-100 in the thread's score bar                  src/lib/play/score.ts
    |-> Hangout critters (awake / sleepy / celebrating)                src/lib/streaks
@@ -82,15 +83,15 @@ Group chat **Zilker Sunday 🏐** (eight members). Five teammates each open a li
 
 **6.3 Home screen: Facebook feed (main) or Messenger (`streaks-screen`).** Messenger. The feed is at `/feed`.
 
-**6.4 `score-events` or `streaks-screen`.** They cannot both land with tests untouched: the weekly freeze changes three seeded streaks (Sofia 12 to 15, Ethan 5 to 8, Jordan 2 to 5), `streaks-screen`'s tests pin the old numbers and `score-events`' own tests need the new ones. Took `streaks-screen`. Having both means editing expectations in `tests/streaks.test.ts`, which is your call. Note that `a90628a` re-implements the same streak rules for Sidequest sessions.
+**6.4 `score-events` or `streaks-screen`.** They cannot both land with tests untouched: the weekly freeze changes three seeded streaks (Sofia 12 to 15, Ethan 5 to 8, Jordan 2 to 5), `streaks-screen`'s tests pin the old numbers and `score-events`' own tests need the new ones. Took `streaks-screen`. Having both means editing expectations in `tests/streaks.test.ts`, which is your call. Note that main's context engine now has the same streak rules for Sidequest sessions.
 
 **6.5 Old line (Trips, Open Door, Reconnect, Hang Again) or clean main.** Clean main.
 
 ## 7. What I added (small, connects existing code)
 
-1. **Conflict resolution**: 13 files for the restore, 1 for `streaks-screen`. Both game systems in one thread, both inspectors in the menu, reset clears both stores.
+1. **Conflict resolution**: 13 files for the restore, 1 for `streaks-screen`, 1 for PR #3 (main's version taken). Both game systems in one thread, both inspectors in the menu, reset clears both stores.
 2. **Sidequest card lines are never daily-game evidence.** Without this a game could quote "played Taco 'Bout It · $214" as something Jordan said.
-3. **The context engine knows Ghost Run and Sketch Off.** The two landed in parallel; their sessions were being filed as Deep Cuts with a wrong room id.
+3. **A notification when a game drops.** Every member of the chat gets "Today's game is ready in Zilker Sunday 🏐: ...", except the one whose open made it drop. It has its own type (`"game"`) so the existing rule, one `"play"` notification per member when a chat unlocks something, still holds.
 4. **`npm run demo:prep`** and **`DEMO-RUNBOOK.md`**.
 
 Fixes found while testing, all in existing code:
@@ -100,16 +101,14 @@ Fixes found while testing, all in existing code:
 7. **New cards scroll fully into view** instead of ending up half behind the composer.
 8. **An unreachable photo host no longer stalls cards.** It is skipped for five minutes after a failure.
 
-New tests: `tests/demo-glue.test.ts` (4). No existing test was edited.
-
-**Not added:** a notification when a game drops. It is about 10 lines and still yours to switch on.
+New tests: `tests/demo-glue.test.ts` (4: the evidence filter and the drop notification). No test written by anyone else was edited. Three tests of my own went out with the context-engine glue they covered.
 
 ## 8. Missing pieces (not built)
 
 | # | Missing | Where it plugs in | Effort |
 |---|---|---|---|
 | 8.1 | **Scheduled drop.** A game is generated the first time a member opens the chat that day (the prep script does this). | `ensureDaily()` in `src/lib/play/daily.ts` needs a caller: a tick route or cron looping chats. One Muse call per chat per day, about 15 s each. | Small, ~45 min |
-| 8.2 | **Notification on drop.** Only unlocks notify. | `postGame()` in `daily.ts` to `notify()` in `src/server/db.ts`, with a new type `"game"` (a test pins exactly one `"play"` notification per member). | Tiny, ~15 min |
+| 8.2 | **A real push.** The drop notification is in-app: the Notifications tab and its badge. Nothing reaches a locked phone, and Messenger's own header has no bell. | A bell in `src/components/messenger/MessengerShell.tsx` reading `/api/notifications`; a web push would need a service worker. | Small for the bell; medium for push |
 | 8.3 | **Automatic Sidequest games.** The tray suggests topics for the chat and Auto picks the game, but a person taps. | `selectGame()` picks the topic, `chipForTopic()` in `src/lib/context/taxonomy.ts` maps it (same 16 topic ids), then a server call to Sidequest `/api/s/new` and an `sqgame` card. New topics take 15 to 95 s, so pre-generate. | Medium, 1-2 h |
 | 8.4 | **One score.** Two 0-100 scores with the same weights and thresholds: the chat score (daily games, drives unlock cards) and the connection score (Sidequest, drives ranking). | `connectionScoreFor()` in `src/lib/context/index.ts` and `chatScore()` in `src/lib/play/score.ts`; feed Sidequest sessions into the latter or unlock cards from the former. Both test suites pin seeded numbers. | Medium, 2-3 h |
 | 8.5 | **Swarm to games.** The 16 Muse-played personas only drive Trips endpoints on `travel` / `reconnect` / `games`. No persona plays a game or writes a chat line; games read the hand-written seed. | New `scripts/sim-play.mjs` modelled on `scripts/sim.mjs`, a "play" stage in `src/app/api/sim/persona/route.ts`, reuse `sim/personas.json` (14 of 16 ids exist here). | Medium to large, 2-4 h, about $1 of Muse |
@@ -118,7 +117,7 @@ New tests: `tests/demo-glue.test.ts` (4). No existing test was edited.
 
 ## 9. Checked and not checked
 
-**Checked on this branch:** 67 unit tests (50 play, 7 context, 6 streaks, 4 glue); typecheck; production build; `qa:play` 57/57 in mock.
+**Checked on this branch, after the last merge:** 67 unit tests (50 play, 7 context, 6 streaks, 4 glue); typecheck; production build; `qa:play` 57/57 in mock.
 
 - *Mock, over the API:* five members finish today's game, the Event unlocks, all five RSVP, five people draw and guess in a Sketch Off, and the context engine picks the session up.
 - *Live Muse:* today's game written for the group chat and the DM (five runs), five members finish and the Event unlocks with a Muse-written line, a new topic generated for each of the four Sidequest games, and the AI's guess on two drawings.
@@ -126,9 +125,9 @@ New tests: `tests/demo-glue.test.ts` (4). No existing test was edited.
 
 **Not checked:** five real phones at once on one Wi-Fi; the Sketch Off guessing screens beyond the API; Ghost Run and Order Up! inside the chat (their servers and cards were exercised, not the play screens). Event photos could not load here tonight: the placeholder host was unreachable, so they showed as grey blocks.
 
-**Muse spent tonight:** about $0.50 ($0.42 in the ledger, the rest in timing tests made outside it).
+**Muse spent tonight:** about $0.55 ($0.45 in the ledger, the rest in timing tests made outside it).
 
-## 10. Commits on `demo-stage` (local only)
+## 10. Commits on `demo-stage`, on top of `main`
 
 ```
 76df425  Merge origin/sidequest-context
@@ -137,5 +136,7 @@ New tests: `tests/demo-glue.test.ts` (4). No existing test was edited.
 0844e7a  Glue: evidence filter, Ghost Run and Sketch Off in the context engine
 4cafbe7  Demo prep script; unlock line no longer stalls the finishing player
 e4ff5bd  Thread header pinned, cards scroll into view, image host fails fast
-         then the docs commit that carries this file
+36ec9a6  Demo plan, runbook and README
+915f5a4  Merge origin/main (PR #3); main's context engine replaces the glue from 0844e7a
+         then the drop notification, and the docs commit that carries this file
 ```
