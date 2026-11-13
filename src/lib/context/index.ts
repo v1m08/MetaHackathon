@@ -1,4 +1,4 @@
-// Context, Streak & Connection-Scoring Engine for Sidequest Messenger Games (Deep Cuts, Order Up!, Ghost Run, Sketch Off).
+// Context, Streak & Connection-Scoring Engine for Sidequest Messenger Games (Deep Cuts + Order Up!).
 // Implements the full multi-signal scoring & surfacing pipeline over `sqgame` / `sqgamelog` + `.cache` rooms:
 //   1. Austin-timezone (`America/Chicago`) Snapchat-style streaks: strict majority by local midnight,
 //      1 automatic freeze every 7 days, milestones at 3/7/14/30 days, and evening hourglass after 6pm.
@@ -64,7 +64,6 @@ interface CachedXRoom {
   createdAt?: string;
   players?: Record<string, { name?: string; picks?: Record<string, { a?: string; r?: number; at?: string }> }>;
 }
-
 interface CachedRRoom {
   id: string;
   course?: { interest?: string; title?: string; tagline?: string };
@@ -73,10 +72,17 @@ interface CachedRRoom {
 }
 interface CachedSRoom {
   id: string;
-  pack?: { interest?: string; title?: string; tagline?: string };
+  pack?: { interest?: string; title?: string; tagline?: string; words?: { w?: string }[] };
   createdAt?: string;
-  drawings?: { artist?: string; at?: string; guesses?: Record<string, unknown> }[];
+  drawings?: { artist?: string; at?: string; guesses?: Record<string, { correct?: boolean }> }[];
 }
+
+const GAME_LABEL: Record<GameKind, string> = {
+  deepcuts: "Deep Cuts",
+  orderup: "Order Up!",
+  ghostrun: "Ghost Run",
+  sketchoff: "Sketch Off",
+};
 
 function readJsonSafe<T>(file: string): T | null {
   if (!existsSync(file)) return null;
@@ -112,12 +118,6 @@ export interface SidequestSession {
 
 const pairKey = (a: ID, b: ID) => (a < b ? `${a}|${b}` : `${b}|${a}`);
 
-/** Card refs, same scheme as ChatGames.tsx: "<id>" Deep Cuts, "k:<id>" Order Up!, "r:<id>" Ghost Run, "s:<id>" Sketch Off. */
-const REF_KIND: Record<string, GameKind> = { k: "orderup", r: "ghostrun", s: "sketchoff" };
-export const kindOfRef = (ref: string): GameKind => REF_KIND[ref.match(/^([krs]):/)?.[1] ?? ""] ?? "deepcuts";
-const roomIdOfRef = (ref: string) => ref.replace(/^[krs]:/, "");
-export const GAME_LABEL: Record<GameKind, string> = { deepcuts: "Deep Cuts", orderup: "Order Up!", ghostrun: "Ghost Run", sketchoff: "Sketch Off" };
-
 function parseCardInterest(text: string): string {
   const m = text.match(/(?:Order Up!|Deep Cuts|Ghost Run|Sketch Off)\s*:\s*(.+)$/i);
   return m ? m[1].trim() : text.replace(/^🎮\s*/, "").trim();
@@ -134,8 +134,8 @@ export function ingestSidequestSessions(): SidequestSession[] {
       const att = m.attachment;
       if (!att || (att.type !== "sqgame" && att.type !== "sqgamelog")) continue;
       const ref = att.ref;
-      const gameKind = kindOfRef(ref);
-      const roomId = roomIdOfRef(ref);
+      const gameKind: GameKind = ref.startsWith("k:") ? "orderup" : ref.startsWith("r:") ? "ghostrun" : ref.startsWith("s:") ? "sketchoff" : "deepcuts";
+      const roomId = ref.replace(/^[krs]:/, "");
 
       let sess = byRef.get(ref);
       if (!sess) {
@@ -176,7 +176,7 @@ export function ingestSidequestSessions(): SidequestSession[] {
           summary: m.text,
         });
         if (!sess.title) {
-          const tm = m.text.match(/^(?:played|ran)\s+([^·]+)/i);
+          const tm = m.text.match(/^played\s+([^·]+)/i);
           if (tm) sess.title = tm[1].trim();
         }
       }
@@ -203,29 +203,42 @@ export function ingestSidequestSessions(): SidequestSession[] {
             });
           }
         }
-      } else if (sess.gameKind === "ghostrun" || sess.gameKind === "sketchoff") {
-        const run = sess.gameKind === "ghostrun";
-        const room = readJsonSafe<CachedRRoom & CachedSRoom>(join(CACHE_ROOT, run ? "run" : "sketch", `${sess.roomId}.json`));
-        const meta = run ? room?.course : room?.pack;
-        if (room && meta) {
-          if (meta.interest) sess.interest ||= meta.interest;
-          if (meta.title) sess.title = meta.title;
-          extraText = meta.tagline ?? "";
-          // A member played once they finished a race, or drew or guessed a drawing.
-          const played = new Map<string, number>();
-          if (run) for (const [pid, pl] of Object.entries(room.players ?? {})) if (pl.best != null) played.set(pid, Math.max(1, pl.plays ?? 1));
-          if (!run) for (const d of room.drawings ?? []) for (const pid of [d.artist, ...Object.keys(d.guesses ?? {})]) if (pid) played.set(pid, 1);
-          for (const [pid, plays] of played) {
+      } else if (sess.gameKind === "ghostrun") {
+        const rr = readJsonSafe<CachedRRoom>(join(CACHE_ROOT, "run", `${sess.roomId}.json`));
+        if (rr) {
+          if (rr.course?.interest) sess.interest ||= rr.course.interest;
+          if (rr.course?.title) sess.title = rr.course.title;
+          extraText = rr.course?.tagline ?? "";
+          for (const [pid, pl] of Object.entries(rr.players ?? {})) {
             const uid = pidToMember.get(pid);
-            if (!uid) continue;
+            if (!uid || !(pl.plays && pl.plays > 0)) continue;
             const cur = sess.players.get(uid);
             sess.players.set(uid, {
               userId: uid,
-              plays: Math.max(cur?.plays ?? 0, plays),
-              finishedAt: cur?.finishedAt ?? room.createdAt ?? sess.createdAt,
+              plays: Math.max(cur?.plays ?? 0, pl.plays),
+              finishedAt: cur?.finishedAt ?? rr.createdAt ?? sess.createdAt,
               repliedAfter: cur?.repliedAfter ?? false,
               summary: cur?.summary,
             });
+          }
+        }
+      } else if (sess.gameKind === "sketchoff") {
+        const sr = readJsonSafe<CachedSRoom>(join(CACHE_ROOT, "sketch", `${sess.roomId}.json`));
+        if (sr) {
+          if (sr.pack?.interest) sess.interest ||= sr.pack.interest;
+          if (sr.pack?.title) sess.title = sr.pack.title;
+          extraText = [sr.pack?.tagline ?? "", ...(sr.pack?.words ?? []).map((w) => w.w ?? "")].join(" ");
+          for (const d of sr.drawings ?? []) {
+            const artistUid = d.artist ? pidToMember.get(d.artist) : undefined;
+            if (artistUid && !sess.players.has(artistUid)) {
+              sess.players.set(artistUid, { userId: artistUid, plays: 1, finishedAt: d.at ?? sess.createdAt, repliedAfter: false });
+            }
+            for (const gPid of Object.keys(d.guesses ?? {})) {
+              const gUid = pidToMember.get(gPid);
+              if (gUid && !sess.players.has(gUid)) {
+                sess.players.set(gUid, { userId: gUid, plays: 1, finishedAt: d.at ?? sess.createdAt, repliedAfter: false });
+              }
+            }
           }
         }
       } else {
@@ -605,7 +618,7 @@ export function blindSpotTopicsFor(memberIds: ID[], sessions = ingestSidequestSe
     .map((x) => x.t);
 }
 
-export function traySuggestionsFor(conversationId: ID, viewerId: ID, game: GameKind) {
+export function traySuggestionsFor(conversationId: ID, viewerId: ID, game: GameKind | "auto" = "auto") {
   const c = getConversation(conversationId);
   if (!c || !c.participantIds.includes(viewerId)) throw Object.assign(new Error("Conversation not found"), { status: 404 });
   const ids = c.participantIds;
