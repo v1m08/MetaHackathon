@@ -463,7 +463,8 @@ function results(v: RoomView) {
     others <= 0 ? "Send it to the group chat. See who digs deeper." : pos === 0 ? `You lead ${others} friend${others > 1 ? "s" : ""}. For now.` : `#${pos + 1} of ${v.board.length} · ${esc(v.board[0].name)} is ${meterText(p, v.board[0].score - me.score)} ahead`;
   if (justFinished) {
     justFinished = false;
-    toChat({ type: "finished", room: v.id, score: me.score, reached: meterText(p, me.score), icon: p.meter.icon, title: p.title, rank: pos + 1, players: v.board.length });
+    const place = v.board.length > 1 ? (pos === 0 ? " · took the lead" : ` · #${pos + 1} of ${v.board.length}`) : "";
+    toChat({ type: "finished", ref: v.id, text: `played ${p.title} · ${meterText(p, me.score)}${place}` });
   }
   const el = screen(`
     <div class="hud"><span></span><span></span><div class="hud-right">${muteBtn()}${closeBtn()}</div></div>

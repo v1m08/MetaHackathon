@@ -61,7 +61,8 @@ export default function ThreadPage() {
   const sendRef = useRef(send);
   sendRef.current = send;
   const finished = useCallback((f: Finished) => {
-    if (f.text && f.ref) return void sendRef.current(f.text, { type: "game", ref: f.ref });
+    // GamePigeon style: a quiet "Maya played … · score" line, not a new card
+    if (f.text && f.ref) return void sendRef.current(f.text, { type: "gamelog", ref: f.ref });
     const players = f.players ?? 1;
     const place = players > 1 ? (f.rank === 1 ? " and took the lead" : ` (#${f.rank} of ${players})`) : "";
     void sendRef.current(`${f.icon} I reached ${f.reached} in ${f.title}${place}`, { type: "game", ref: f.room ?? "" });
@@ -99,6 +100,14 @@ export default function ThreadPage() {
           const firstOfRun = !prev || prev.senderId !== m.senderId || gap;
           const lastOfRun = !next || next.senderId !== m.senderId;
           const sender = byId[m.senderId];
+          if (m.attachment?.type === "gamelog")
+            return (
+              <div key={m.id} className="my-2 flex justify-center">
+                <button onClick={() => setPlaying(m.attachment!.ref)} className="max-w-[85%] rounded-full bg-[#f0f2f5] px-3 py-1 text-center text-[12px] text-ink-2">
+                  🎮 <b className="font-semibold text-ink">{mine ? "You" : (sender?.name.split(" ")[0] ?? "Someone")}</b> {m.text}
+                </button>
+              </div>
+            );
           return (
             <div key={m.id}>
               {gap && <div className="my-3 text-center text-[11px] font-semibold text-ink-2 uppercase">{messageTime(m.createdAt)}</div>}

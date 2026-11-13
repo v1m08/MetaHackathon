@@ -40,6 +40,23 @@
       .pill.combo.on { display: inline-flex; animation: pop 0.3s cubic-bezier(.3,1.7,.5,1); }
       .icon { width: 40px; height: 40px; border-radius: 50%; background: rgba(26,18,12,.85); color: #fff; font-size: 18px; display: grid; place-items: center; margin-left: auto; }
 
+      /* pixel art: crisp scaling everywhere */
+      .px { image-rendering: pixelated; image-rendering: crisp-edges; display: block; }
+      .wall-art { position: absolute; left: 0; top: 0; width: 100%; height: 100%; z-index: 0; image-rendering: pixelated; }
+      .room > *:not(.wall-art) { position: relative; z-index: 1; }
+      .room > .menu-board { position: absolute; }
+      .person { width: 64px; height: 88px; margin-top: 10px; filter: drop-shadow(0 4px 0 rgba(0,0,0,.12)); }
+      .cust.served .person { animation: hop .5s; }
+      .items { gap: 3px !important; }
+      .items img { width: 28px; height: 28px; }
+      .plate span { display: inline-flex; }
+      .ing .e img { width: 40px; height: 40px; }
+      .mb-items { display: inline-flex; gap: 2px; }
+      .overlay .dishes { display: flex; gap: 6px; justify-content: center; }
+      .counter { background:
+          repeating-linear-gradient(90deg, rgba(0,0,0,.12) 0 2px, transparent 2px 36px),
+          linear-gradient(180deg, color-mix(in srgb, var(--counter) 65%, #fff) 0 6px, var(--counter) 6px 18px, color-mix(in srgb, var(--counter) 65%, #000) 18px) !important; }
+
       /* chalk menu board on the back wall */
       .menu-board { position: absolute; top: 92px; left: 50%; transform: translateX(-50%); width: min(340px, calc(100% - 28px)); padding: 10px 14px 8px;
         background: #26302b; color: #f3efe6; border-radius: 10px; border: 6px solid #8a5a3a; box-shadow: 0 8px 16px rgba(0,0,0,.25); font-size: 13px; }

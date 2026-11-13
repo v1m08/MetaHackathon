@@ -3,6 +3,10 @@
 import { BURN_SECONDS, COOK_SECONDS, MAX_PLATE, plateMatches, ROUND_SECONDS, schedule, SEATS, type Arrival, type Ingredient, type Menu } from "../../../shared/kitchen";
 import { Audio } from "../engine/audio";
 import { contrastText } from "../theme";
+import { drawWall, foodSprite, personSprite, type Mood } from "./pixel";
+
+/** A food item as pixel art. */
+const food = (emoji: string, size: number, cls = "") => `<img class="px ${cls}" src="${foodSprite(emoji)}" width="${size}" height="${size}" alt="" draggable="false">`;
 
 interface View {
   id: string;
@@ -13,6 +17,7 @@ interface View {
 }
 
 const app = document.getElementById("app")!;
+let currentMenu: Menu | null = null;
 const audio = new Audio();
 const params = new URLSearchParams(location.search);
 const EMBED = params.has("embed");
@@ -74,10 +79,11 @@ function sceneHtml(m: Menu) {
           ${EMBED ? `<button class="icon" id="close" aria-label="Back to chat" style="margin-left:0">✕</button>` : ""}
         </div>
       </div>
+      <canvas class="wall-art" aria-hidden="true"></canvas>
       <div class="menu-board" aria-label="Menu">
         <div class="mb-title">${esc(m.name)}</div>
         ${m.dishes
-          .map((d) => `<div class="mb-row"><span class="mb-name">${esc(d.name)}</span><span class="mb-items">${d.items.map((id) => m.ingredients.find((i) => i.id === id)?.emoji ?? "").join("")}</span><span class="mb-price">$${d.price}</span></div>`)
+          .map((d) => `<div class="mb-row"><span class="mb-name">${esc(d.name)}</span><span class="mb-items">${d.items.map((id) => food(m.ingredients.find((i) => i.id === id)?.emoji ?? "❓", 18)).join("")}</span><span class="mb-price">$${d.price}</span></div>`)
           .join("")}
       </div>
       <div class="seats" id="seats">${Array.from({ length: SEATS }, (_, i) => `<div class="seat" data-seat="${i}"></div>`).join("")}</div>
@@ -89,13 +95,20 @@ function sceneHtml(m: Menu) {
           <button class="trash" id="trash" aria-label="Clear plate">🗑️</button>
         </div>
         <div class="pantry">${m.ingredients
-          .map((ing) => `<button class="ing" data-ing="${esc(ing.id)}"><span class="e">${ing.emoji}</span><span class="n">${esc(ing.name)}</span>${ing.cook ? `<span class="fire">🔥</span>` : ""}</button>`)
+          .map((ing) => `<button class="ing" data-ing="${esc(ing.id)}"><span class="e">${food(ing.emoji, 40)}</span><span class="n">${esc(ing.name)}</span>${ing.cook ? `<span class="fire">🔥</span>` : ""}</button>`)
           .join("")}</div>
       </div>
     </div>`;
 }
 
+function paintWall(m: Menu) {
+  const c = document.querySelector<HTMLCanvasElement>(".wall-art");
+  if (c) drawWall(c, m.theme, m.ingredients.map((i) => i.emoji));
+}
+
 function wireCommon() {
+  const menu = currentMenu;
+  if (menu) requestAnimationFrame(() => paintWall(menu));
   document.getElementById("mute")?.addEventListener("click", (e) => {
     audio.unlock();
     (e.currentTarget as HTMLElement).textContent = audio.toggleMute() ? "🔇" : "🔊";
@@ -143,7 +156,7 @@ function lobby(v: View) {
       <div class="chef">${m.chef.emoji}</div>
       <h1>${esc(m.name)}</h1>
       <p class="tag">${esc(m.tagline)}</p>
-      <div class="dishes">${[...new Set(m.ingredients.slice(0, 5).map((i) => i.emoji))].join("")}</div>
+      <div class="dishes">${[...new Set(m.ingredients.slice(0, 5).map((i) => i.emoji))].map((e) => food(e, 40)).join("")}</div>
       <div class="actions">
         ${leadersHtml(v)}
         <button class="btn" id="go">${v.me ? "Play again" : "Open the restaurant"}</button>
@@ -175,7 +188,14 @@ interface Cust {
   a: Arrival;
   left: number; // patience seconds left
   el: HTMLElement;
+  who: number; // which pixel person
+  mood: Mood;
 }
+const setMood = (c: Cust, mood: Mood) => {
+  if (c.mood === mood) return;
+  c.mood = mood;
+  c.el.querySelector<HTMLImageElement>(".person")!.src = personSprite(c.who, mood);
+};
 interface Slot {
   ing: Ingredient;
   t: number; // seconds on the grill
@@ -205,7 +225,7 @@ async function play(v: View) {
 
   const arrivals = schedule(m, v.seed);
   let next = 0;
-  const queue: Arrival[] = [];
+  const queue: { a: Arrival; who: number }[] = [];
   const seats: (Cust | null)[] = Array(SEATS).fill(null);
   const grill: (Slot | null)[] = [null, null];
   let plate: string[] = [];
@@ -213,7 +233,7 @@ async function play(v: View) {
   let t = 0, running = true, lastTick = -1;
 
   const renderPlate = () => {
-    plateEl.innerHTML = plate.map((id) => `<span>${byId.get(id)?.emoji ?? ""}</span>`).join("");
+    plateEl.innerHTML = plate.map((id) => `<span>${food(byId.get(id)?.emoji ?? "❓", 38)}</span>`).join("");
     plabel.textContent = plate.length ? plate.map((id) => byId.get(id)?.name).join(" + ") : "Tap ingredients to plate";
     // highlight customers whose order is on the plate, and tick off what's there
     seats.forEach((c, i) => {
@@ -233,14 +253,14 @@ async function play(v: View) {
     comboEl.textContent = `🔥 x${combo}`;
   };
 
-  function seat(i: number, a: Arrival) {
+  function seat(i: number, a: Arrival, who: number) {
     const dish = m.dishes[a.dish];
     const el = document.createElement("div");
     el.className = "cust enter";
-    el.innerHTML = `<div class="bubble"><div class="dish-name">${esc(dish.name)}</div><div class="items">${dish.items.map((id) => `<span data-id="${esc(id)}">${byId.get(id)?.emoji ?? "?"}</span>`).join("")}</div><div class="patience"><i></i></div></div><div class="face">${a.face}</div>`;
+    el.innerHTML = `<div class="bubble"><div class="dish-name">${esc(dish.name)}</div><div class="items">${dish.items.map((id) => `<span data-id="${esc(id)}">${food(byId.get(id)?.emoji ?? "❓", 28)}</span>`).join("")}</div><div class="patience"><i></i></div></div><img class="px person" src="${personSprite(who, "wait")}" width="64" height="88" alt="Customer" draggable="false">`;
     seatsEl[i].appendChild(el);
     requestAnimationFrame(() => requestAnimationFrame(() => el.classList.remove("enter")));
-    seats[i] = { a, left: a.patience, el };
+    seats[i] = { a, left: a.patience, el, who, mood: "wait" };
     audio.step(1);
     renderPlate();
   }
@@ -248,7 +268,7 @@ async function play(v: View) {
     const c = seats[i];
     if (!c) return;
     seats[i] = null;
-    if (!happy) c.el.querySelector(".face")!.textContent = "😠";
+    if (!happy) setMood(c, "angry");
     c.el.classList.add("leave");
     setTimeout(() => c.el.remove(), 400);
     seatsEl[i].classList.remove("tap-hint");
@@ -317,7 +337,7 @@ async function play(v: View) {
         served++;
         plate = [];
         c.el.classList.add("served");
-        c.el.querySelector(".face")!.textContent = "😋";
+        setMood(c, "happy");
         floatAt(el, `+${money(earned)}${tip ? `  tip ${money(tip)}` : ""}`);
         audio.word(dish.items.length + 2, combo >= 3);
         navigator.vibrate?.(15);
@@ -345,8 +365,11 @@ async function play(v: View) {
     last = now;
     t += dt;
     // arrivals
-    while (next < arrivals.length && arrivals[next].at <= t) queue.push(arrivals[next++]);
-    for (let i = 0; i < SEATS && queue.length; i++) if (!seats[i]) seat(i, queue.shift()!);
+    while (next < arrivals.length && arrivals[next].at <= t) queue.push({ a: arrivals[next], who: v.seed % 997 + next++ });
+    for (let i = 0; i < SEATS && queue.length; i++) if (!seats[i]) {
+      const q = queue.shift()!;
+      seat(i, q.a, q.who);
+    }
     // patience
     seats.forEach((c, i) => {
       if (!c) return;
@@ -355,6 +378,7 @@ async function play(v: View) {
       const bar = c.el.querySelector<HTMLElement>(".patience i")!;
       bar.style.transform = `scaleX(${f})`;
       bar.style.background = f > 0.5 ? "var(--accent)" : f > 0.25 ? "#f4a100" : "#e53935";
+      if (c.mood !== "happy" && c.mood !== "angry") setMood(c, f < 0.3 ? "worried" : "wait");
       if (c.left <= 0) {
         lost++;
         combo = 0;
@@ -381,7 +405,7 @@ async function play(v: View) {
       if (el.dataset.state !== state) {
         el.dataset.state = state;
         el.className = `slot ${state}`;
-        el.innerHTML = `<span>${s.ing.emoji}</span>${state === "cooking" ? `<svg viewBox="0 0 50 50"><circle class="ring" cx="25" cy="25" r="21" stroke-dasharray="132" stroke-dashoffset="132"/></svg>` : ""}`;
+        el.innerHTML = `<span>${food(s.ing.emoji, 36)}</span>${state === "cooking" ? `<svg viewBox="0 0 50 50"><circle class="ring" cx="25" cy="25" r="21" stroke-dasharray="132" stroke-dashoffset="132"/></svg>` : ""}`;
         if (state === "ready" && was < COOK_SECONDS) audio.step(10);
         if (state === "burnt") audio.thud();
       }
@@ -421,8 +445,8 @@ function results(v: View, r: { coins: number; served: number; lost: number; best
   const m = v.menu;
   const pos = v.board.findIndex((b) => b.me);
   const best = v.me?.best ?? r.coins;
-  const place = v.board.length > 1 ? (pos === 0 ? " and took the top spot" : ` (#${pos + 1} of ${v.board.length})`) : "";
-  toChat({ type: "finished", ref: `k:${v.id}`, text: `${m.chef.emoji} I made ${money(r.coins)} at ${m.name}${place}` });
+  const place = v.board.length > 1 ? (pos === 0 ? " · took the lead" : ` · #${pos + 1} of ${v.board.length}`) : "";
+  toChat({ type: "finished", ref: `k:${v.id}`, text: `played ${m.name} · ${money(r.coins)}${place}` });
   app.innerHTML = sceneHtml(m);
   app.querySelector(".room")!.insertAdjacentHTML(
     "beforeend",
@@ -448,6 +472,7 @@ function results(v: View, r: { coins: number; served: number; lost: number; best
   try {
     const v = await api<View>(`/api/k/${roomId}?me=${pid}`);
     theme(v.menu);
+    currentMenu = v.menu;
     lobby(v);
   } catch {
     app.innerHTML = `<div style="color:#fff;padding:40px 20px;text-align:center;font-family:var(--font)">This restaurant has closed. Start a new one from the chat.</div>`;

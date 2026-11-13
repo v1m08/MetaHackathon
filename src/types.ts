@@ -128,7 +128,7 @@ export interface Message {
   text: string;
   createdAt: string;
   reactions?: Record<ID, string>;
-  attachment?: { type: "image" | "listing" | "event" | "game"; ref: string };
+  attachment?: { type: "image" | "listing" | "event" | "game" | "gamelog"; ref: string };
   readBy?: ID[];
 }
 
