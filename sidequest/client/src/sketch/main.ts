@@ -5,6 +5,8 @@ import { Audio } from "../engine/audio";
 import { drawWall } from "../kitchen/pixel";
 import { contrastText } from "../theme";
 import { renderStrokes, strokesCanvas } from "./draw";
+/** 1 → "1st", 2 → "2nd", 11 → "11th" */
+const ordinal = (n: number) => `${n}${n % 100 >= 11 && n % 100 <= 13 ? "th" : (["th", "st", "nd", "rd"][n % 10] ?? "th")}`;
 
 interface DrawingView {
   id: string;
@@ -321,8 +323,8 @@ function results(v: View, justPlayed: boolean) {
   const me = v.me;
   const pos = v.board.findIndex((b) => b.me);
   if (justPlayed && me) {
-    const place = v.board.length > 1 ? (pos === 0 ? " · took the lead" : ` · #${pos + 1} of ${v.board.length}`) : "";
-    toChat({ type: "finished", ref: `s:${v.id}`, text: `played ${p.title} · ${me.score} pts${place}` });
+    const place = v.board.length > 1 ? ` · ${ordinal(pos + 1)} of ${v.board.length}` : "";
+    toChat({ type: "finished", ref: `s:${v.id}`, text: `scored ${me.score} pts${place}` });
   }
   const mine = v.drawings.find((d) => d.own);
   const seen = v.drawings.filter((d) => d.own || d.guessed);

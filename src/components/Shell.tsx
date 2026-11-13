@@ -37,7 +37,26 @@ export function useDesktopStage() {
   return frame && wide;
 }
 
+// How many in-app pages this tab has visited since it loaded. Someone who opened a deep link (a demo QR code
+// straight into a chat) has nothing to go back to, so back arrows fall back to a parent page instead of doing nothing.
+let pagesVisited = 0;
+let lastPath = "";
+function useCountPages() {
+  const path = usePathname();
+  useEffect(() => {
+    // count path changes, not effect runs (dev mode runs effects twice)
+    if (path !== lastPath) pagesVisited++;
+    lastPath = path;
+  }, [path]);
+}
+/** Back arrow handler: browser back when there's in-app history, otherwise go to `fallback`. */
+export function useBack(fallback = "/") {
+  const router = useRouter();
+  return () => (pagesVisited > 1 ? router.back() : router.push(fallback));
+}
+
 export function PhoneFrame({ children }: { children: React.ReactNode }) {
+  useCountPages();
   const stage = useDesktopStage();
   // Render exactly one copy of the app: two copies meant double data fetching and polling.
   if (!stage) return <div className="app-viewport h-dvh bg-bg">{children}</div>;
@@ -51,14 +70,14 @@ export function PhoneFrame({ children }: { children: React.ReactNode }) {
   );
 }
 
-export function TopBar({ title, back, right, transparent }: { title?: string; back?: boolean; right?: React.ReactNode; transparent?: boolean }) {
-  const router = useRouter();
+export function TopBar({ title, back, right, transparent, backTo = "/" }: { title?: string; back?: boolean; right?: React.ReactNode; transparent?: boolean; backTo?: string }) {
+  const goBack = useBack(backTo);
   const { data: me } = useMe();
   return (
     <header className={cx("safe-top sticky top-0 z-40", transparent ? "bg-transparent" : "border-b border-line/50 bg-white")}>
       <div className="flex h-14 items-center justify-between px-3">
         {back ? (
-          <button onClick={() => router.back()} className="flex h-9 w-9 items-center justify-center rounded-full hover:bg-hover">
+          <button onClick={goBack} aria-label="Back" className="flex h-9 w-9 items-center justify-center rounded-full hover:bg-hover">
             <ArrowLeft size={22} />
           </button>
         ) : (
@@ -80,11 +99,23 @@ export function TopBar({ title, back, right, transparent }: { title?: string; ba
                 <MessageCircle size={20} />
                 {!!me?.unreadMessages && <Badge n={me.unreadMessages} />}
               </Link>
+              <MyProfileButton />
             </>
           )}
         </div>
       </div>
     </header>
+  );
+}
+
+/** One tap to your own profile, from any top bar. */
+export function MyProfileButton() {
+  const { data: me } = useMe();
+  if (!me) return null;
+  return (
+    <Link href={`/profile/${me.id}`} className="flex h-9 w-9 items-center justify-center rounded-full" aria-label="Your profile" title="Your profile">
+      <Avatar src={me.avatar} name={me.name} size={36} />
+    </Link>
   );
 }
 

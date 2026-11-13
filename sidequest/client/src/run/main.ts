@@ -378,8 +378,8 @@ function results(v: View, time: number) {
   const c = v.course;
   const pos = v.board.findIndex((b) => b.me);
   const best = v.me?.best ?? time;
-  const place = v.board.length > 1 ? (pos === 0 ? " · took the lead" : ` · #${pos + 1} of ${v.board.length}`) : "";
-  toChat({ type: "finished", ref: `r:${v.id}`, text: `ran ${c.title} · ${secs(time)}${place}` });
+  const place = v.board.length > 1 ? ` · ${ordinal(pos + 1)} of ${v.board.length}` : "";
+  toChat({ type: "finished", ref: `r:${v.id}`, text: `finished in ${secs(time)}${place}` });
   view.setCam(COURSE_LENGTH);
   view.overlay = drawCourse(buildCourse(c, v.seed), c, { player: { pos: COURSE_LENGTH, lane: 1 } });
   worldEl.classList.add("dim");

@@ -4,6 +4,8 @@ import { BURN_SECONDS, COOK_SECONDS, MAX_PLATE, plateMatches, ROUND_SECONDS, sch
 import { Audio } from "../engine/audio";
 import { contrastText } from "../theme";
 import { drawWall, foodSprite, personSprite, type Mood } from "./pixel";
+/** 1 → "1st", 2 → "2nd", 11 → "11th" */
+const ordinal = (n: number) => `${n}${n % 100 >= 11 && n % 100 <= 13 ? "th" : (["th", "st", "nd", "rd"][n % 10] ?? "th")}`;
 
 /** A food item as pixel art. */
 const food = (emoji: string, size: number, cls = "") => `<img class="px ${cls}" src="${foodSprite(emoji)}" width="${size}" height="${size}" alt="" draggable="false">`;
@@ -446,8 +448,8 @@ function results(v: View, r: { coins: number; served: number; lost: number; best
   const m = v.menu;
   const pos = v.board.findIndex((b) => b.me);
   const best = v.me?.best ?? r.coins;
-  const place = v.board.length > 1 ? (pos === 0 ? " · took the lead" : ` · #${pos + 1} of ${v.board.length}`) : "";
-  toChat({ type: "finished", ref: `k:${v.id}`, text: `played ${m.name} · ${money(r.coins)}${place}` });
+  const place = v.board.length > 1 ? ` · ${ordinal(pos + 1)} of ${v.board.length}` : "";
+  toChat({ type: "finished", ref: `k:${v.id}`, text: `made ${money(r.coins)} in tips${place}` });
   app.innerHTML = sceneHtml(m);
   app.querySelector(".room")!.classList.add("posing");
   app.querySelector(".room")!.insertAdjacentHTML(

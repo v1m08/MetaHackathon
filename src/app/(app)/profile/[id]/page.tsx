@@ -113,7 +113,7 @@ export default function ProfilePage() {
             </div>
           </div>
           <div className="mt-2">
-            {mine && <ComposerCard />}
+            {mine && <ComposerCard fromProfile />}
             {u.posts.length === 0 && <div className="bg-white py-10 text-center text-ink-2">No posts yet</div>}
             {u.posts.map((p) => <PostCard key={p.id} post={p} />)}
           </div>

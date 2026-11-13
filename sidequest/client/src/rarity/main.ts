@@ -5,6 +5,8 @@ import { Audio } from "../engine/audio";
 import { mix } from "../engine/util";
 import { contrastText } from "../theme";
 import { SceneView, type Marker } from "./scene";
+/** 1 → "1st", 2 → "2nd", 11 → "11th" */
+const ordinal = (n: number) => `${n}${n % 100 >= 11 && n % 100 <= 13 ? "th" : (["th", "st", "nd", "rd"][n % 10] ?? "th")}`;
 
 interface PromptView {
   mine: { a: string; raw: string; tier: number; points: number; onlyYou: boolean } | null;
@@ -59,6 +61,25 @@ const store = {
     }
   },
 };
+// Fit the UI above the on-screen keyboard. iOS doesn't shrink the page when the keyboard opens, it slides it up,
+// so a full-height layout ends up half hidden. "short" switches to the compact play layout (see rarity.html).
+{
+  const vv = window.visualViewport;
+  const root = document.documentElement;
+  const fit = () => {
+    const h = vv ? vv.height : innerHeight;
+    root.style.setProperty("--vv-h", `${h}px`);
+    root.style.setProperty("--vv-top", `${vv ? vv.offsetTop : 0}px`);
+    root.classList.toggle("short", h < 560);
+  };
+  vv?.addEventListener("resize", fit);
+  vv?.addEventListener("scroll", fit);
+  addEventListener("resize", fit);
+  // iOS scrolls the (overflow: hidden) document to reveal a focused input; the layout already handles that.
+  addEventListener("focusin", () => setTimeout(() => scrollTo(0, 0), 50));
+  fit();
+}
+
 // Embedded in the messenger: identity comes from the chat app, and we talk to it with postMessage.
 const params = new URLSearchParams(location.search);
 const EMBED = params.has("embed");
@@ -96,7 +117,8 @@ async function api<T>(path: string, body?: unknown): Promise<T> {
 }
 const view = (id: string) => api<RoomView>(`/api/x/${id}?me=${pid}`);
 const units = (p: PublicPack, points: number) => points * p.meter.perPoint;
-const meterText = (p: PublicPack, points: number) => `${fmt(units(p, points))}${p.meter.unit}`;
+// Scores are plain points everywhere (same numbers as the chat). The themed meter only drives how far the world scrolls.
+const meterText = (_p: PublicPack, points: number) => `${fmt(points)} pts`;
 const deeper = (p: PublicPack) => (p.meter.up ? "climb higher" : "go deeper");
 
 // ---------- the world behind everything ----------
@@ -227,7 +249,7 @@ function lobby(v: RoomView) {
       <p class="subtitle">${esc(p.tagline)}</p>
     </div>
     <div class="poster-actions pop">
-      ${v.board.length ? `<p class="leaders">${v.board.slice(0, 3).map((b) => `${esc(b.me ? "You" : b.name)} <b>${meterText(p, b.score)}</b>`).join('<span class="sep">·</span>')}</p>` : ""}
+      ${v.board.length ? `<p class="leaders">${v.board.slice(0, 3).map((b) => `${esc(b.me ? "You" : b.name)} <b>${fmt(b.score)}</b>`).join('<span class="sep">·</span>')}</p>` : ""}
       ${EMBED ? "" : `<input class="field" id="name" maxlength="16" placeholder="Your name" autocomplete="nickname" value="${esc(v.me?.name && v.me.name !== "Player" ? v.me.name : myName())}" aria-label="Your name" />`}
       <button class="btn big" id="go">${resume ? `Keep going ${v.me!.done}/${p.prompts.length}` : "Start"}</button>
       <button class="link-btn" id="how">How to play</button>
@@ -269,7 +291,7 @@ function lobby(v: RoomView) {
 function hud(v: RoomView, i: number, score: number, doneUpTo: number) {
   const p = v.pack;
   return `<div class="hud">
-    <div class="panel thin meter-box"><div class="label">${esc(p.meter.label)}</div><div class="v" id="mv">${meterText(p, score)}</div></div>
+    <div class="panel thin meter-box"><div class="label">Score</div><div class="v" id="mv">${meterText(p, score)}</div></div>
     <div class="panel thin progress"><div class="pips">${p.prompts.map((_, k) => `<i class="pip ${k < doneUpTo ? "done" : k === i ? "now" : ""}"></i>`).join("")}</div><div class="label">${i + 1} of ${p.prompts.length}</div></div>
     <div class="hud-right">${muteBtn()}<button class="btn dark icon-btn" id="quit" aria-label="Quit to lobby">✕</button></div>
   </div>`;
@@ -401,7 +423,7 @@ async function reveal(v: RoomView, i: number, verdict: Verdict, typed: string) {
       <div class="q">${esc(p.prompts[i].q)}</div>
       <h1>${esc(hit ? verdict.answer! : typed || "No answer")}</h1>
       ${hit ? tiersHtml(p, t) : `<p class="note">${esc(verdict.reason ?? "Time's up")}</p>`}
-      ${hit ? `<p class="gain" id="gain" style="margin:12px 0 0;opacity:0">+${fmt(units(p, gained))}${esc(p.meter.unit)} · ${esc(p.tiers[t - 1])}</p>` : ""}
+      ${hit ? `<p class="gain" id="gain" style="margin:12px 0 0;opacity:0">+${fmt(gained)} pts · ${esc(p.tiers[t - 1])}</p>` : ""}
       ${hit && verdict.note ? `<p class="note">${esc(verdict.note)}</p>` : ""}
       ${hit ? `<p class="social">${same.length ? `Same as ${esc(same.join(", "))}. No bonus.` : pv.friends.length ? `<span class="only">Only you</span> +${ONLY_YOU_BONUS} bonus` : `First to answer. Unique answers get +${ONLY_YOU_BONUS}.`}</p>` : ""}
       ${pv.gem && pv.gem.a !== verdict.answer ? `<div class="gem"><span>💎</span><span>Deepest cut: <b>${esc(pv.gem.a)}</b>${pv.gem.note ? `. ${esc(pv.gem.note)}` : ""}</span></div>` : ""}
@@ -463,18 +485,19 @@ function results(v: RoomView) {
     others <= 0 ? "Send it to the group chat. See who digs deeper." : pos === 0 ? `You lead ${others} friend${others > 1 ? "s" : ""}. For now.` : `#${pos + 1} of ${v.board.length} · ${esc(v.board[0].name)} is ${meterText(p, v.board[0].score - me.score)} ahead`;
   if (justFinished) {
     justFinished = false;
-    const place = v.board.length > 1 ? (pos === 0 ? " · took the lead" : ` · #${pos + 1} of ${v.board.length}`) : "";
-    toChat({ type: "finished", ref: v.id, text: `played ${p.title} · ${meterText(p, me.score)}${place}` });
+    const place = v.board.length > 1 ? ` · ${ordinal(pos + 1)} of ${v.board.length}` : "";
+    // Plain points in the chat: the themed meter ("2,380 OVO") only makes sense inside the game.
+    toChat({ type: "finished", ref: v.id, text: `scored ${me.score} pts${place}` });
   }
   const el = screen(`
     <div class="hud"><span></span><span></span><div class="hud-right">${muteBtn()}${closeBtn()}</div></div>
     <div class="scroll results" style="flex:1">
       <div class="total pop">
-        <div class="label">${esc(p.meter.label)} reached</div>
+        <div class="label">Your score</div>
         <div class="big">${meterText(p, me.score)}</div>
         <p class="standing">${standing}</p>
       </div>
-      ${v.board.length > 1 ? `<p class="leaders pop">${v.board.slice(0, 4).map((b, k) => `<span class="${b.me ? "me" : ""}">${k + 1}. ${esc(b.me ? "You" : b.name)} <b>${meterText(p, b.score)}</b></span>`).join('<span class="sep">·</span>')}</p>` : ""}
+      ${v.board.length > 1 ? `<p class="leaders pop">${v.board.slice(0, 4).map((b, k) => `<span class="${b.me ? "me" : ""}">${k + 1}. ${esc(b.me ? "You" : b.name)} <b>${fmt(b.score)}</b></span>`).join('<span class="sep">·</span>')}</p>` : ""}
       <div class="panel pop quiet-list"><ul class="ans-list">${p.prompts
         .map((_, i) => {
           const m = v.prompts[i].mine;
@@ -491,7 +514,7 @@ function results(v: RoomView) {
   wireMute(el);
   wireClose(el);
   el.querySelector("#share")!.addEventListener("click", () =>
-    EMBED ? toChat({ type: "close" }) : share(v, `${p.title}: I reached ${meterText(p, me.score)} ${p.meter.icon}. How deep do your ${p.interest} cuts go?`, el.querySelector("#toast")!),
+    EMBED ? toChat({ type: "close" }) : share(v, `${p.title}: I scored ${meterText(p, me.score)} ${p.meter.icon}. How deep do your ${p.interest} cuts go?`, el.querySelector("#toast")!),
   );
   el.querySelector("#new")?.addEventListener("click", () => {
     clearInterval(poll);

@@ -187,6 +187,8 @@ export async function submitAnswer(r: XRoom, pid: unknown, name: unknown, i: num
     const v = lock(r, pid, i, { raw, a: verdict.a, r: verdict.r ?? 3, at: new Date().toISOString() });
     return { ...v, note: verdict.note };
   }
+  // A check that failed (timeout, network) isn't the player's fault: don't burn one of their tries.
+  if (verdict.reason?.startsWith("Couldn't")) return { ok: false, locked: false, reason: verdict.reason };
   p.tries[i] = (p.tries[i] ?? 0) + 1;
   save(r);
   if (p.tries[i] >= MAX_TRIES) return { ...lock(r, pid, i, { raw, a: "", r: 0, at: new Date().toISOString() }), ok: false, reason: verdict.reason ?? "Not quite" };
