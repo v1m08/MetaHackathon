@@ -9,8 +9,8 @@ export const GET = route((req, { userId }) => {
   const list = db()
     .listings.filter((l) => (!q || l.title.toLowerCase().includes(q) || l.description.toLowerCase().includes(q)) && (!cat || l.category === cat))
     .map((l) => {
-      const m = l.sellerId === userId || l.status !== "available" ? { fit: 0 } : socialMatchFor(userId, topicsOfListing(l), cache);
-      return { ...l, seller: cardFor(l.sellerId), saved: l.savedBy.includes(userId), fit: m.fit, fitLabel: m.fitLabel, shareTarget: m.shareTarget };
+      const m = l.sellerId === userId || l.status !== "available" ? undefined : socialMatchFor(userId, topicsOfListing(l), cache, { tier: "listing" });
+      return { ...l, seller: cardFor(l.sellerId), saved: l.savedBy.includes(userId), fit: m?.fit ?? 0, fitLabel: m?.fitLabel, shareTarget: m?.shareTarget };
     });
   return !q && !cat ? [...list].sort((a, b) => (b.fit ?? 0) - (a.fit ?? 0)) : list;
 });

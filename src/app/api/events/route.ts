@@ -7,7 +7,7 @@ export const GET = route((_req, { userId }) => {
   const cache = socialMatchCache(userId);
   return db()
     .events.map((e) => {
-      const m = socialMatchFor(userId, topicsOfEvent(e), cache);
+      const m = socialMatchFor(userId, topicsOfEvent(e), cache, { tier: "event", startsAt: e.startsAt, alreadyInIds: [...e.going, ...(e.hostId ? [e.hostId] : [])] });
       return {
         ...e,
         host: e.hostId ? cardFor(e.hostId) : undefined,
