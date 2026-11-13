@@ -6,7 +6,7 @@ export const GET = route((_req, { userId }) => {
   requireUser(userId);
   const cache = socialMatchCache(userId);
   return db().groups.map((g) => {
-    const m = socialMatchFor(userId, topicsOfGroup(g), cache);
+    const m = socialMatchFor(userId, topicsOfGroup(g), cache, { tier: "group", alreadyInIds: g.memberIds });
     return {
       ...g,
       memberCount: g.memberIds.length,

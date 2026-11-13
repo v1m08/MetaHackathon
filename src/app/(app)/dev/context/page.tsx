@@ -14,13 +14,19 @@ type CrewEntry = {
   isGroup: boolean;
   avatar: string;
   closenessScore: number;
+  parts: { participation: number; streak: number; reciprocity: number; confidence: number };
+  streakDays: number;
+  streakFreezes: number;
+  streakMilestone?: number;
+  hourglass: boolean;
+  earnedTiers: string[];
   coPlayed: number;
   totalRuns: number;
   sameAnswers: number;
   sharedGames: string[];
-  sharedTopics: { topic: string; label: string; strength: number }[];
+  sharedTopics: { topic: string; label: string; strength: number; agreement: number; settled: boolean }[];
 };
-type RecItem = { id: string; title: string; fit: number; fitLabel?: string; price?: number; location?: string };
+type RecItem = { id: string; title: string; fit: number; fitLabel?: string; price?: number; location?: string; parts?: { topicFit: number; chatOverlap: number; friendsGoing: number; soonness: number } };
 type ContextPayload = {
   users: { id: string; name: string; first: string; avatar: string }[];
   profile: {
@@ -142,16 +148,26 @@ export default function ContextInspectorPage() {
                           </span>
                         </div>
                         <div className="text-[11.5px] text-ink-2">
-                          {m.coPlayed} co-played · {m.totalRuns} total runs
-                          {m.sameAnswers > 0 ? <> · <b>{m.sameAnswers}</b> Deep Cuts mind-meld{m.sameAnswers === 1 ? "" : "s"}</> : null}
+                          {m.coPlayed} co-played · {m.totalRuns} runs
+                          {m.streakDays > 0 ? <> · <b>{m.streakDays}d streak</b>{m.streakFreezes > 0 ? ` (${m.streakFreezes} freeze)` : ""}</> : null}
+                          {m.sameAnswers > 0 ? <> · <b>{m.sameAnswers}</b> mind-meld{m.sameAnswers === 1 ? "" : "s"}</> : null}
                         </div>
                       </div>
+                    </div>
+                    <div className="mt-1.5 flex flex-wrap gap-1 pl-9 text-[10.5px] text-ink-2">
+                      <span className="rounded bg-[#f0f2f5] px-1.5 py-0.5">turnout {Math.round(m.parts.participation * 100)}%</span>
+                      <span className="rounded bg-[#f0f2f5] px-1.5 py-0.5">streak {Math.round(m.parts.streak * 100)}%</span>
+                      <span className="rounded bg-[#f0f2f5] px-1.5 py-0.5">banter {Math.round(m.parts.reciprocity * 100)}%</span>
+                      <span className="rounded bg-[#f0f2f5] px-1.5 py-0.5">agreement {Math.round(m.parts.confidence * 100)}%</span>
+                      {m.earnedTiers.map((tier) => (
+                        <span key={tier} className="rounded bg-emerald-50 px-1.5 py-0.5 font-semibold text-emerald-800">{tier} ✓</span>
+                      ))}
                     </div>
                     {m.sharedTopics.length > 0 && (
                       <div className="mt-1.5 flex flex-wrap gap-1 pl-9">
                         {m.sharedTopics.map((t) => (
                           <span key={t.topic} className="rounded-full bg-[#f0f2f5] px-2 py-0.5 text-[11px]">
-                            {t.label} <b className="tabular-nums">{t.strength.toFixed(2)}</b>
+                            {t.label} <b className="tabular-nums">{t.strength.toFixed(2)}</b> · agree {Math.round(t.agreement * 100)}%
                           </span>
                         ))}
                       </div>
