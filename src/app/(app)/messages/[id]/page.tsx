@@ -2,13 +2,17 @@
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { GAMES, GameCard, GamePlayer, GameTray, type Finished } from "@/components/ChatGames";
+import { Critter } from "@/components/hangout/Critter";
 import { useMe } from "@/components/Shell";
-import { ArrowLeft, CalendarDays, Image as ImageIcon, Info, Phone, Plus, Send, Smile, ThumbsUp, Video, X } from "lucide-react";
+import { ArrowLeft, CalendarDays, Flame, Image as ImageIcon, Info, Phone, Plus, Send, Smile, Sparkles, ThumbsUp, Video, X } from "lucide-react";
 import { Avatar, Photo, cx } from "@/components/ui";
 import { api, refresh, useApi } from "@/lib/api";
 import { eventDate, messageTime } from "@/lib/format";
 import { useSession } from "@/lib/session";
+import { endsLabel, STATUS, statusLine } from "@/lib/streaks/copy";
+import type { DayMark, StreakDetail } from "@/lib/streaks/views";
 import type { Conversation, FBEvent, Listing, Message } from "@/types";
 
 type Card = { id: string; name: string; avatar: string };
@@ -93,7 +97,14 @@ export default function ThreadPage() {
   // ---------- Sidequest chat games (Deep Cuts, Order Up!, Ghost Run, Sketch Off) ----------
   const { data: me } = useMe();
   const [tray, setTray] = useState(false);
+  const [streakOpen, setStreakOpen] = useState(false);
   const [playing, setPlaying] = useState<string | null>(null);
+  useEffect(() => {
+    if (typeof window !== "undefined" && new URLSearchParams(window.location.search).get("play") === "1") {
+      setTray(true);
+      window.history.replaceState(null, "", window.location.pathname);
+    }
+  }, []);
   const closeGame = useCallback(() => setPlaying(null), []);
   const sendRef = useRef(send);
   sendRef.current = send;
@@ -106,7 +117,21 @@ export default function ThreadPage() {
   const other = c?.others[0];
   const ctx = c?.chatContext;
   const bridgeEvent = ctx?.matchedEvent && !ctx.matchedEvent.alreadyShared && dismissedEventId !== ctx.matchedEvent.id ? ctx.matchedEvent : undefined;
-  const streakHref = ctx?.critterFriendId ? `/streaks/${ctx.critterFriendId}` : "/dev/context";
+  const { data: streakInfo, mutate: mutateStreak } = useApi<StreakDetail>(ctx?.critterFriendId && streakOpen ? `/api/streaks/${ctx.critterFriendId}` : null);
+  const [simBusy, setSimBusy] = useState(false);
+  async function simulateFriendPlay() {
+    if (!ctx?.critterFriendId || simBusy) return;
+    setSimBusy(true);
+    try {
+      const next = await api<StreakDetail>(`/api/streaks/${ctx.critterFriendId}`, { method: "POST", json: { action: "friendPlays" } });
+      await mutateStreak(next, { revalidate: false });
+      await mutate();
+      refresh("/api/streaks");
+      refresh("/api/conversations");
+    } finally {
+      setSimBusy(false);
+    }
+  }
 
   return (
     <div className="relative flex h-full flex-col bg-white">
@@ -123,16 +148,29 @@ export default function ThreadPage() {
             </Link>
           )}
           {ctx && ctx.streakDays > 0 && (
-            <Link
-              href={streakHref}
-              className={cx(
-                "shrink-0 rounded-full px-2.5 py-1 text-[12px] font-bold tabular-nums",
-                ctx.lockedInToday ? "bg-orange-50 text-orange-600" : "bg-[#fff1d6] text-[#a35a00]",
-              )}
-              title="View game streak"
-            >
-              {ctx.lockedInToday ? "🔥" : "⏳"} {ctx.streakDays}d
-            </Link>
+            ctx.critterFriendId ? (
+              <button
+                type="button"
+                onClick={() => setStreakOpen(true)}
+                className={cx(
+                  "shrink-0 rounded-full px-2.5 py-1 text-[12px] font-bold tabular-nums",
+                  ctx.lockedInToday ? "bg-orange-50 text-orange-600" : "bg-[#fff1d6] text-[#a35a00]",
+                )}
+                title="View game streak"
+              >
+                {ctx.lockedInToday ? "🔥" : "⏳"} {ctx.streakDays}d
+              </button>
+            ) : (
+              <Link
+                href="/dev/context"
+                className={cx(
+                  "shrink-0 rounded-full px-2.5 py-1 text-[12px] font-bold tabular-nums",
+                  ctx.lockedInToday ? "bg-orange-50 text-orange-600" : "bg-[#fff1d6] text-[#a35a00]",
+                )}
+              >
+                {ctx.lockedInToday ? "🔥" : "⏳"} {ctx.streakDays}d
+              </Link>
+            )
           )}
           <button className="p-1.5 text-messenger"><Phone size={20} /></button>
           <button className="p-1.5 text-messenger"><Video size={22} /></button>
@@ -248,6 +286,75 @@ export default function ThreadPage() {
         />
       )}
       {playing && <GamePlayer roomId={playing} userId={userId} name={me?.name.split(" ")[0] ?? userId} onClose={closeGame} onFinished={finished} />}
+      {streakOpen &&
+        typeof document !== "undefined" &&
+        createPortal(
+          <div className={`${document.querySelector(".phone") ? "absolute" : "fixed"} inset-0 z-[60] flex flex-col justify-end`} onClick={() => setStreakOpen(false)}>
+            <div className="fadein absolute inset-0 bg-black/45" />
+            <div className="slideup relative rounded-t-3xl bg-white px-4 pb-6 pt-3" onClick={(e) => e.stopPropagation()}>
+              <div className="mx-auto mb-2.5 h-1 w-10 rounded-full bg-line" />
+              <div className="mb-2 flex items-center justify-between">
+                <span className="text-[16px] font-bold">{streakInfo ? `${streakInfo.first}'s Hangout Streak` : "Streak"}</span>
+                <button type="button" onClick={() => setStreakOpen(false)} className="rounded-full bg-[#e4e6eb] p-1.5"><X size={16} /></button>
+              </div>
+              {streakInfo && (
+                <>
+                  <div className="flex items-center gap-3 rounded-2xl bg-[#FFF6E9] p-3">
+                    <Critter design={streakInfo.design} state={streakInfo.state} size={80} showKeepsakes={false} label={`${streakInfo.first}'s critter`} />
+                    <div className="min-w-0 flex-1">
+                      <span className={cx("inline-block rounded-full px-2 py-0.5 text-[11px] font-semibold", STATUS[streakInfo.status].chip)}>
+                        {STATUS[streakInfo.status].label}
+                      </span>
+                      <div className="mt-1 flex items-baseline gap-1 text-[24px] font-extrabold leading-none tabular-nums">
+                        <Flame size={20} className={streakInfo.streak > 0 ? "fill-orange-500 text-orange-600" : "text-ink-2"} />
+                        {streakInfo.streak} <span className="text-[14px] font-semibold text-ink-2">day streak</span>
+                      </div>
+                      <div className="mt-1 text-[13px] text-ink-2">{statusLine(streakInfo, endsLabel(streakInfo.endsAt))}</div>
+                    </div>
+                  </div>
+                  <div className="mt-3 flex items-center justify-between gap-1">
+                    {streakInfo.days.slice(-7).map((d: { date: string; mark: DayMark }, idx: number) => (
+                      <div key={d.date} className="flex flex-1 flex-col items-center gap-1">
+                        <span
+                          className={cx(
+                            "flex h-7 w-7 items-center justify-center rounded-full text-[11px]",
+                            d.mark === "both" ? "bg-orange-500 text-white" : d.mark === "one" ? "border-2 border-orange-400 bg-orange-50 text-orange-500" : "border border-line bg-[#f7f8fa] text-ink-2",
+                          )}
+                        >
+                          {(d.mark === "both" || d.mark === "one") && <Flame size={13} className={d.mark === "both" ? "fill-current" : ""} />}
+                        </span>
+                        <span className="text-[10.5px] text-ink-2">{idx === 6 ? "Today" : new Date(`${d.date}T12:00:00Z`).toLocaleDateString("en-US", { weekday: "narrow", timeZone: "UTC" })}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="mt-4 flex gap-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setStreakOpen(false);
+                        setTray(true);
+                      }}
+                      className="flex-1 rounded-full bg-messenger py-2 text-[14px] font-semibold text-white"
+                    >
+                      Play a game
+                    </button>
+                    {!streakInfo.today.them && (
+                      <button
+                        type="button"
+                        onClick={() => void simulateFriendPlay()}
+                        disabled={simBusy}
+                        className="inline-flex items-center justify-center gap-1 rounded-full bg-[#f0f2f5] px-3.5 py-2 text-[13px] font-semibold text-ink"
+                      >
+                        <Sparkles size={13} /> {simBusy ? "…" : `Have ${streakInfo.first} play`}
+                      </button>
+                    )}
+                  </div>
+                </>
+              )}
+            </div>
+          </div>,
+          document.querySelector<HTMLElement>(".phone") ?? document.body,
+        )}
     </div>
   );
 }
