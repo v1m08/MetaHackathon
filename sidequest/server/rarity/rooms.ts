@@ -3,7 +3,7 @@
 import { randomBytes } from "node:crypto";
 import { existsSync, mkdirSync, readFileSync, readdirSync, renameSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { cleanText } from "../../shared/schema";
+import { cleanText } from "../../shared/text";
 import { matchAnswer, norm, ONLY_YOU_BONUS, publicPack, SECONDS_PER_PROMPT, TIER_POINTS, type Pack, type Verdict } from "../../shared/rarity";
 import { judgeAnswer } from "./generate";
 

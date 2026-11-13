@@ -1,6 +1,6 @@
 // interest → a rarity-trivia pack: a themed world plus 7 prompts with big answer sets.
 // Step 1 builds the world and prompts; step 2 fetches each prompt's answers in parallel.
-import { cleanText, ensureContrast, normalizeInterest, parseHex } from "../../shared/schema";
+import { cleanText, ensureContrast, normalizeInterest, parseHex } from "../../shared/text";
 import { FONTS, norm, PROMPTS_PER_GAME, withScene, type Answer, type Font, type Pack, type Prompt, type Scene, type World } from "../../shared/rarity";
 import { chatJSON, extractJson } from "../llm";
 

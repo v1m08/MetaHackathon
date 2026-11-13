@@ -1,22 +1,20 @@
-// Tiny static + API server. Bundles the client with esbuild in memory (rebuilt on each page load, so edits
-// show up on refresh). Routes: GET / (game page), GET /app.js, GET /api/health, POST /api/generate.
+// Game server for the two chat games. Bundles each game's client with esbuild in memory (rebuilt on every
+// page load, so edits show up on refresh).
+//   Deep Cuts  (rarity trivia):  /x, /x/:id, /rarity.js,  /api/x/topics, /api/x/new, /api/x/:id[/open|/answer]
+//   Order Up!  (restaurant):     /k/:id,     /kitchen.js, /api/k/topics, /api/k/new, /api/k/:id[/score]
+// The messenger app is another origin, so /api/* allows CORS.
 import { readFileSync } from "node:fs";
-import { createServer, type Server } from "node:http";
+import { createServer, type IncomingMessage, type Server } from "node:http";
 import { networkInterfaces } from "node:os";
 import { join } from "node:path";
 import * as esbuild from "esbuild";
-import { generate } from "./generate";
-import { createRoom, getRoom, sortedScores, submitScore, type ScoreRow } from "./rooms";
-import { FRAME_CSP, framePage, playPage } from "./gen/pages";
-import { loadGame } from "./gen/pipeline";
-import { generatePack } from "./rarity/generate";
 import { createKRoom, generateMenu, getKRoom, kRoomView, readyKitchenTopics, submitKScore } from "./kitchen";
+import { generatePack } from "./rarity/generate";
 import { cachedPack, cachePack, createXRoom, getXRoom, openPrompt, readyTopics, roomView, submitAnswer } from "./rarity/rooms";
 
-/** Never expose playerIds (they act as the write key); mark the caller's own row instead. */
-const publicBoard = (rows: ScoreRow[], me: string | null) => rows.map((r) => ({ name: r.name, score: r.score, plays: r.plays, me: !!me && r.playerId === me }));
+const CLIENT = join(__dirname, "..", "client");
 
-async function readJson(req: import("node:http").IncomingMessage, max = 64_000): Promise<Record<string, unknown>> {
+async function readJson(req: IncomingMessage, max = 4000): Promise<Record<string, unknown>> {
   let body = "";
   for await (const chunk of req) {
     body += chunk;
@@ -29,8 +27,6 @@ async function readJson(req: import("node:http").IncomingMessage, max = 64_000):
     return {};
   }
 }
-
-const CLIENT = join(__dirname, "..", "client");
 
 export function lanAddress(): string | null {
   for (const list of Object.values(networkInterfaces())) for (const a of list ?? []) if (a.family === "IPv4" && !a.internal) return a.address;
@@ -46,215 +42,108 @@ export async function isOurServer(port: number): Promise<boolean> {
   }
 }
 
-export async function startServer(port: number): Promise<Server> {
-  const ctx = await esbuild.context({
-    entryPoints: [join(CLIENT, "src", "main.ts")],
-    bundle: true,
-    format: "iife",
-    target: "es2020",
-    write: false,
-    sourcemap: "inline",
-    logLevel: "silent",
-  });
+/** An in-memory client bundle that rebuilds on demand; build errors show up in the page. */
+async function bundle(entry: string) {
+  const ctx = await esbuild.context({ entryPoints: [join(CLIENT, "src", entry)], bundle: true, format: "iife", target: "es2020", write: false, sourcemap: "inline", logLevel: "silent" });
   let js = "";
-  const build = async () => {
+  const rebuild = async () => {
     try {
-      const r = await ctx.rebuild();
-      js = r.outputFiles?.[0]?.text ?? js;
+      js = (await ctx.rebuild()).outputFiles?.[0]?.text ?? js;
     } catch (err) {
       const msg = (err as Error).message;
-      console.error("\n[client build failed]\n" + msg);
+      console.error(`\n[${entry} build failed]\n${msg}`);
       js = `document.body.innerHTML = ${JSON.stringify("<pre style='color:#fff;padding:16px;white-space:pre-wrap'>Client build failed:\n" + msg.replace(/</g, "&lt;") + "</pre>")}`;
     }
   };
-  await build();
+  await rebuild();
+  return { rebuild, get js() {
+    return js;
+  } };
+}
 
-  const xctx = await esbuild.context({
-    entryPoints: [join(CLIENT, "src", "rarity", "main.ts")],
-    bundle: true,
-    format: "iife",
-    target: "es2020",
-    write: false,
-    sourcemap: "inline",
-    logLevel: "silent",
-  });
-  let xjs = "";
-  const buildX = async () => {
-    try {
-      const r = await xctx.rebuild();
-      xjs = r.outputFiles?.[0]?.text ?? xjs;
-    } catch (err) {
-      const msg = (err as Error).message;
-      console.error("\n[rarity client build failed]\n" + msg);
-      xjs = `document.body.innerHTML = ${JSON.stringify("<pre style='color:#fff;padding:16px;white-space:pre-wrap'>Client build failed:\n" + msg.replace(/</g, "&lt;") + "</pre>")}`;
-    }
-  };
-  await buildX();
-
-  const kctx = await esbuild.context({
-    entryPoints: [join(CLIENT, "src", "kitchen", "main.ts")],
-    bundle: true,
-    format: "iife",
-    target: "es2020",
-    write: false,
-    sourcemap: "inline",
-    logLevel: "silent",
-  });
-  let kjs = "";
-  const buildK = async () => {
-    try {
-      const r = await kctx.rebuild();
-      kjs = r.outputFiles?.[0]?.text ?? kjs;
-    } catch (err) {
-      const msg = (err as Error).message;
-      console.error("\n[kitchen client build failed]\n" + msg);
-      kjs = `document.body.innerHTML = ${JSON.stringify("<pre style='color:#fff;padding:16px;white-space:pre-wrap'>Client build failed:\n" + msg.replace(/</g, "&lt;") + "</pre>")}`;
-    }
-  };
-  await buildK();
+export async function startServer(port: number): Promise<Server> {
+  const deepCuts = await bundle("rarity/main.ts");
+  const orderUp = await bundle("kitchen/main.ts");
 
   const server = createServer(async (req, res) => {
     const url = new URL(req.url ?? "/", "http://x");
+    const path = url.pathname;
+    const json = (code: number, v: unknown) => {
+      res.writeHead(code, { "content-type": "application/json", "cache-control": "no-store" });
+      res.end(JSON.stringify(v));
+    };
+    const page = async (file: string, b: { rebuild: () => Promise<void> }) => {
+      await b.rebuild();
+      res.writeHead(200, { "content-type": "text/html; charset=utf-8", "cache-control": "no-store" });
+      res.end(readFileSync(join(CLIENT, file)));
+    };
+    const script = (js: string) => {
+      res.writeHead(200, { "content-type": "text/javascript; charset=utf-8", "cache-control": "no-store" });
+      res.end(js);
+    };
     try {
-      const json = (code: number, v: unknown) => {
-        res.writeHead(code, { "content-type": "application/json", "cache-control": "no-store" });
-        res.end(JSON.stringify(v));
-      };
-      // The messenger app (another origin) creates games and reads rooms for its chat cards.
-      if (url.pathname.startsWith("/api/x") || url.pathname.startsWith("/api/k")) {
+      if (path.startsWith("/api/")) {
         res.setHeader("access-control-allow-origin", "*");
         res.setHeader("access-control-allow-headers", "content-type");
         res.setHeader("access-control-allow-methods", "GET, POST, OPTIONS");
-        if (req.method === "OPTIONS") {
-          res.writeHead(204);
-          return res.end();
+        if (req.method === "OPTIONS") return void res.writeHead(204).end();
+      }
+      if (path === "/api/health") return json(200, { app: "sidequest" });
+      if (req.method === "GET" && path === "/") return void res.writeHead(302, { location: "/x" }).end();
+
+      // ---------- Deep Cuts ----------
+      if (req.method === "GET" && (path === "/x" || /^\/x\/[a-z0-9]{4,12}$/.test(path))) return page("rarity.html", deepCuts);
+      if (req.method === "GET" && path === "/rarity.js") return script(deepCuts.js);
+      if (req.method === "GET" && path === "/api/x/topics") return json(200, readyTopics());
+      if (req.method === "POST" && path === "/api/x/new") {
+        const interest = String((await readJson(req)).interest ?? "").slice(0, 60).trim();
+        if (!interest) return json(400, { error: "topic required" });
+        try {
+          const pack = cachedPack(interest) ?? (await generatePack(interest)).pack;
+          cachePack(pack);
+          const room = createXRoom(pack);
+          console.log(`  [web] Deep Cuts ${JSON.stringify(interest)} → /x/${room.id}`);
+          return json(200, { id: room.id });
+        } catch (e) {
+          return json(502, { error: `Couldn't build that one (${(e as Error).message}). Try again or another topic.` });
         }
       }
-      // ---------- Order Up! (restaurant) ----------
-      if (req.method === "GET" && /^\/k\/[a-z0-9]{4,12}$/.test(url.pathname)) {
-        await buildK();
-        res.writeHead(200, { "content-type": "text/html; charset=utf-8", "cache-control": "no-store" });
-        return res.end(readFileSync(join(CLIENT, "kitchen.html")));
+      const x = path.match(/^\/api\/x\/([a-z0-9]{4,12})(\/open|\/answer)?$/);
+      if (x) {
+        const room = getXRoom(x[1]);
+        if (!room) return json(404, { error: "room not found" });
+        if (req.method === "GET" && !x[2]) return json(200, roomView(room, url.searchParams.get("me")));
+        if (req.method === "POST" && x[2]) {
+          const b = await readJson(req);
+          const i = Number(b.i);
+          if (x[2] === "/open") return json(200, openPrompt(room, b.pid, b.name, i));
+          return json(200, await submitAnswer(room, b.pid, b.name, i, b.text, b.giveUp === true));
+        }
       }
-      if (req.method === "GET" && url.pathname === "/kitchen.js") {
-        res.writeHead(200, { "content-type": "text/javascript; charset=utf-8", "cache-control": "no-store" });
-        return res.end(kjs);
-      }
-      if (req.method === "GET" && url.pathname === "/api/k/topics") return json(200, readyKitchenTopics());
-      if (req.method === "POST" && url.pathname === "/api/k/new") {
-        const body = await readJson(req, 2000);
-        const interest = String(body.interest ?? "").slice(0, 60).trim();
+
+      // ---------- Order Up! ----------
+      if (req.method === "GET" && /^\/k\/[a-z0-9]{4,12}$/.test(path)) return page("kitchen.html", orderUp);
+      if (req.method === "GET" && path === "/kitchen.js") return script(orderUp.js);
+      if (req.method === "GET" && path === "/api/k/topics") return json(200, readyKitchenTopics());
+      if (req.method === "POST" && path === "/api/k/new") {
+        const interest = String((await readJson(req)).interest ?? "").slice(0, 60).trim();
         if (!interest) return json(400, { error: "topic required" });
         try {
           const room = createKRoom(await generateMenu(interest));
-          console.log(`  [web] kitchen ${JSON.stringify(interest)} → /k/${room.id}`);
+          console.log(`  [web] Order Up! ${JSON.stringify(interest)} → /k/${room.id}`);
           return json(200, { id: room.id });
         } catch (e) {
           return json(502, { error: `Couldn't open that restaurant (${(e as Error).message}). Try another topic.` });
         }
       }
-      const kApi = url.pathname.match(/^\/api\/k\/([a-z0-9]{4,12})(\/score)?$/);
-      if (kApi) {
-        const room = getKRoom(kApi[1]);
+      const k = path.match(/^\/api\/k\/([a-z0-9]{4,12})(\/score)?$/);
+      if (k) {
+        const room = getKRoom(k[1]);
         if (!room) return json(404, { error: "room not found" });
-        if (req.method === "GET" && !kApi[2]) return json(200, kRoomView(room, url.searchParams.get("me")));
-        if (req.method === "POST" && kApi[2]) return json(200, submitKScore(room, await readJson(req, 2000)));
+        if (req.method === "GET" && !k[2]) return json(200, kRoomView(room, url.searchParams.get("me")));
+        if (req.method === "POST" && k[2]) return json(200, submitKScore(room, await readJson(req)));
       }
 
-      // ---------- rarity trivia ----------
-      const xPage = url.pathname === "/x" || /^\/x\/[a-z0-9]{4,12}$/.test(url.pathname);
-      if (req.method === "GET" && xPage) {
-        await buildX();
-        res.writeHead(200, { "content-type": "text/html; charset=utf-8", "cache-control": "no-store" });
-        return res.end(readFileSync(join(CLIENT, "rarity.html")));
-      }
-      if (req.method === "GET" && url.pathname === "/rarity.js") {
-        res.writeHead(200, { "content-type": "text/javascript; charset=utf-8", "cache-control": "no-store" });
-        return res.end(xjs);
-      }
-      if (req.method === "GET" && url.pathname === "/api/x/topics") return json(200, readyTopics());
-      if (req.method === "POST" && url.pathname === "/api/x/new") {
-        const body = await readJson(req, 2000);
-        const interest = String(body.interest ?? "").slice(0, 60).trim();
-        if (!interest) return json(400, { error: "interest required" });
-        try {
-          const pack = cachedPack(interest) ?? (await generatePack(interest)).pack;
-          cachePack(pack);
-          const room = createXRoom(pack);
-          console.log(`  [web] ${JSON.stringify(interest)} → room /x/${room.id}`);
-          return json(200, { id: room.id });
-        } catch (e) {
-          return json(502, { error: `Couldn't build that one (${(e as Error).message}). Try again or another interest.` });
-        }
-      }
-      const xApi = url.pathname.match(/^\/api\/x\/([a-z0-9]{4,12})(\/open|\/answer)?$/);
-      if (xApi) {
-        const room = getXRoom(xApi[1]);
-        if (!room) return json(404, { error: "room not found" });
-        if (req.method === "GET" && !xApi[2]) return json(200, roomView(room, url.searchParams.get("me")));
-        if (req.method === "POST" && xApi[2]) {
-          const b = await readJson(req, 2000);
-          const i = Number(b.i);
-          if (xApi[2] === "/open") return json(200, openPrompt(room, b.pid, b.name, i));
-          return json(200, await submitAnswer(room, b.pid, b.name, i, b.text, b.giveUp === true));
-        }
-      }
-
-      const gameRoute = url.pathname.match(/^\/(play|frame)\/([a-z0-9]{4,16})$/);
-      if (req.method === "GET" && gameRoute) {
-        const g = loadGame(gameRoute[2]);
-        if (!g) {
-          res.writeHead(404, { "content-type": "text/plain" });
-          return res.end("game not found");
-        }
-        if (gameRoute[1] === "play") {
-          res.writeHead(200, { "content-type": "text/html; charset=utf-8", "cache-control": "no-store" });
-          return res.end(playPage(g));
-        }
-        res.writeHead(200, { "content-type": "text/html; charset=utf-8", "cache-control": "no-store", "content-security-policy": FRAME_CSP });
-        return res.end(await framePage(g));
-      }
-      const roomPath = url.pathname.match(/^\/api\/rooms\/([a-z0-9]{4,12})(\/scores)?$/);
-      if (req.method === "POST" && url.pathname === "/api/rooms") {
-        const body = await readJson(req);
-        const room = createRoom(body.config);
-        return json(200, { id: room.id });
-      }
-      if (roomPath && req.method === "GET" && !roomPath[2]) {
-        const room = getRoom(roomPath[1]);
-        if (!room) return json(404, { error: "room not found" });
-        return json(200, { id: room.id, config: room.config, seed: room.seed, puzzle: room.puzzle, scores: publicBoard(sortedScores(room), url.searchParams.get("me")) });
-      }
-      if (roomPath && req.method === "POST" && roomPath[2]) {
-        const body = await readJson(req, 2000);
-        const rows = submitScore(roomPath[1], body);
-        if (!rows) return json(404, { error: "room not found" });
-        return json(200, { scores: publicBoard(rows, typeof body.playerId === "string" ? body.playerId : null) });
-      }
-      if (req.method === "GET" && (url.pathname === "/" || url.pathname === "/index.html" || /^\/g\/[a-z0-9]{4,12}$/.test(url.pathname))) {
-        await build();
-        res.writeHead(200, { "content-type": "text/html; charset=utf-8", "cache-control": "no-store" });
-        return res.end(readFileSync(join(CLIENT, "index.html")));
-      }
-      if (req.method === "GET" && url.pathname === "/app.js") {
-        res.writeHead(200, { "content-type": "text/javascript; charset=utf-8", "cache-control": "no-store" });
-        return res.end(js);
-      }
-      if (req.method === "GET" && url.pathname === "/api/health") {
-        res.writeHead(200, { "content-type": "application/json" });
-        return res.end(JSON.stringify({ app: "sidequest" }));
-      }
-      if (req.method === "POST" && url.pathname === "/api/generate") {
-        const interest = String((await readJson(req, 4000)).interest ?? "").slice(0, 60);
-        if (!interest.trim()) {
-          res.writeHead(400, { "content-type": "application/json" });
-          return res.end(JSON.stringify({ error: "interest required" }));
-        }
-        const r = await generate(interest);
-        const room = createRoom(r.config);
-        console.log(`  [web] ${JSON.stringify(interest)} → ${r.config.template} "${r.config.title}" (${r.source}, ${r.ms}ms) room ${room.id}`);
-        return json(200, { config: room.config, roomId: room.id, seed: room.seed, puzzle: room.puzzle });
-      }
       res.writeHead(404).end("not found");
     } catch (err) {
       console.error(err);

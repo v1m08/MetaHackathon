@@ -1,6 +1,6 @@
 "use client";
-// Deep Cuts inside Messenger: a game card in the thread (live pixel cover), a full-screen player, and the
-// games tray behind the composer's "+" button. The game itself runs on the Sidequest server (port 5180).
+// The chat games in Messenger (Deep Cuts and Order Up!): the game cards in the thread, the full-screen player,
+// and the games tray behind the composer's "+" button. The games run on the Sidequest server (port 5180).
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { X } from "lucide-react";

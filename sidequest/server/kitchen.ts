@@ -3,7 +3,7 @@ import { randomBytes } from "node:crypto";
 import { existsSync, mkdirSync, readFileSync, readdirSync, renameSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { PRESET_MENUS, sanitizeMenu, type Menu } from "../shared/kitchen";
-import { cleanText, normalizeInterest } from "../shared/schema";
+import { cleanText, normalizeInterest } from "../shared/text";
 import { chatJSON, extractJson } from "./llm";
 
 const ROOT = join(__dirname, "..", ".cache");

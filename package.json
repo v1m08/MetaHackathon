@@ -12,8 +12,7 @@
     "typecheck": "tsc --noEmit",
     "warm": "curl -s http://localhost:3000/api/admin/warm-images",
     "reset": "curl -s -X POST http://localhost:3000/api/admin/reset",
-    "sidequest": "tsx sidequest/cli.ts",
-    "sidequest:test": "tsx sidequest/scripts/test.ts"
+    "sidequest": "tsx sidequest/cli.ts"
   },
   "dependencies": {
     "lucide-react": "^0.468.0",
@@ -30,8 +29,6 @@
     "esbuild": "^0.25.12",
     "tailwindcss": "^4.0.0",
     "tsx": "^4.20.6",
-    "typescript": "^5.7.0",
-    "wordlist-english": "^1.2.1",
-    "zod": "^4.1.12"
+    "typescript": "^5.7.0"
   }
 }
