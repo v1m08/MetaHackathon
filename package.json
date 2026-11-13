@@ -13,6 +13,7 @@
     "warm": "curl -s http://localhost:3000/api/admin/warm-images",
     "reset": "curl -s -X POST http://localhost:3000/api/admin/reset",
     "sidequest": "tsx sidequest/cli.ts",
+    "demo:events": "node scripts/demo-event-unlock.mjs",
     "test": "node --import tsx --test \"tests/**/*.test.ts\""
   },
   "dependencies": {

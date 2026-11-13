@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { GAMES, GameCard, GamePlayer, GameTray, type Finished } from "@/components/ChatGames";
+import { EventPicksSheet } from "@/components/events/EventPicksSheet";
 import { useMe } from "@/components/Shell";
 import { ArrowLeft, Image as ImageIcon, Info, Phone, Plus, Send, Smile, ThumbsUp, Video } from "lucide-react";
 import { Avatar, Photo, cx } from "@/components/ui";
@@ -72,12 +73,21 @@ export default function ThreadPage() {
   const { data: me } = useMe();
   const [tray, setTray] = useState(false);
   const [playing, setPlaying] = useState<string | null>(null);
-  const closeGame = useCallback(() => setPlaying(null), []);
+  // Event unlock popup: after a scored game, closing the game asks the server whether the chat earned event picks
+  const [picksFor, setPicksFor] = useState<string | null>(null);
+  const scored = useRef<{ ref: string; sent: Promise<void> } | null>(null);
+  const closeGame = useCallback(() => {
+    setPlaying(null);
+    const s = scored.current;
+    scored.current = null;
+    if (s) void s.sent.catch(() => {}).then(() => setPicksFor(s.ref));
+  }, []);
+  const closePicks = useCallback(() => setPicksFor(null), []);
   const sendRef = useRef(send);
   sendRef.current = send;
   const finished = useCallback((f: Finished) => {
     // GamePigeon style: a quiet "Maya played … · score" line, not a new card
-    if (f.text && f.ref) void sendRef.current(f.text, { type: "sqgamelog", ref: f.ref });
+    if (f.text && f.ref) scored.current = { ref: f.ref, sent: sendRef.current(f.text, { type: "sqgamelog", ref: f.ref }) };
   }, []);
 
   const byId = Object.fromEntries((c?.participants ?? []).map((p) => [p.id, p]));
@@ -180,6 +190,9 @@ export default function ThreadPage() {
         />
       )}
       {playing && <GamePlayer roomId={playing} userId={userId} name={me?.name.split(" ")[0] ?? userId} onClose={closeGame} onFinished={finished} />}
+      {picksFor && c && (
+        <EventPicksSheet conversationId={c.id} gameRef={picksFor} onClose={closePicks} onSend={(e) => send(`Wait should we go to ${e.title}?`, { type: "event", ref: e.id })} />
+      )}
     </div>
   );
 }
