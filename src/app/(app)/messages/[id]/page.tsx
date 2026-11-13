@@ -192,7 +192,7 @@ export default function ThreadPage() {
   }, [isDemoChat, museGame, id]);
 
   return (
-    <div className="relative flex h-full flex-col bg-white">
+    <div className="relative flex min-h-full flex-col bg-white">
       <header className="safe-top sticky top-0 z-10 border-b border-line/60 bg-white">
         <div className="flex h-14 items-center gap-1.5 px-2">
           <button onClick={goBack} aria-label="Back to chats" className="rounded-full p-2 text-messenger"><ArrowLeft size={22} /></button>
