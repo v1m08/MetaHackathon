@@ -2,6 +2,7 @@
 // Deep Cuts inside Messenger: a game card in the thread (live pixel cover), a full-screen player, and the
 // games tray behind the composer's "+" button. The game itself runs on the Sidequest server (port 5180).
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { X } from "lucide-react";
 import { SceneView } from "../../sidequest/client/src/rarity/scene";
 import { fmt, withScene, type PublicPack } from "../../sidequest/shared/rarity";
@@ -55,8 +56,6 @@ function Cover({ pack }: { pack: PublicPack }) {
   return <div ref={ref} className="absolute inset-0 overflow-hidden" aria-hidden="true" />;
 }
 
-const PIXEL = { fontFamily: '"Pixelify Sans", system-ui, sans-serif' };
-const LABEL = { fontFamily: '"Silkscreen", "Pixelify Sans", monospace' };
 
 export function GameCard({ roomId, userId, onOpen }: { roomId: string; userId: string; onOpen: (id: string) => void }) {
   const { room, missing } = useRoom(roomId, userId);
@@ -84,25 +83,25 @@ export function GameCard({ roomId, userId, onOpen }: { roomId: string; userId: s
           {p && (
             <>
               <div className="text-[26px] leading-none" style={{ filter: "drop-shadow(2px 2px 0 rgba(0,0,0,.35))" }}>{p.host.emoji}</div>
-              <div className="mt-1 text-[24px] font-bold leading-[0.95] text-white" style={{ ...PIXEL, textShadow: `2px 2px 0 ${p.palette.primary}, 4px 4px 0 rgba(0,0,0,.5)` }}>
+              <div className="mt-1 text-[22px] font-extrabold leading-[1.05] tracking-[-0.01em] text-white" style={{ textShadow: `0 2px 0 ${p.palette.primary}, 0 3px 10px rgba(0,0,0,.55)` }}>
                 {p.title}
               </div>
             </>
           )}
         </div>
-        <div className="absolute left-2 top-2 px-1.5 py-0.5 text-[9px] tracking-[0.14em] text-white" style={{ ...LABEL, background: "rgba(10,12,20,.75)" }}>
-          DEEP CUTS
+        <div className="absolute left-2 top-2 rounded-full px-2 py-0.5 text-[11px] font-semibold text-white" style={{ background: "rgba(10,12,20,.6)", backdropFilter: "blur(4px)" }}>
+          Deep Cuts
         </div>
       </div>
       <div className="flex items-center gap-2 px-3 py-2.5 text-white">
         <div className="min-w-0 flex-1">
-          <div className="truncate text-[14px] font-semibold leading-tight" style={PIXEL}>{status}</div>
-          <div className="mt-0.5 truncate text-[10px] tracking-[0.08em] text-[#a9b0c4]" style={LABEL}>
+          <div className="truncate text-[14px] font-semibold leading-tight">{status}</div>
+          <div className="mt-0.5 truncate text-[12px] text-[#a9b0c4]">
             {p ? `${p.interest} · ${room!.board.length} played` : ""}
           </div>
         </div>
-        <span className="px-2.5 py-1.5 text-[11px] font-bold tracking-[0.12em]" style={{ ...LABEL, background: p?.palette.primary ?? "#ffb020", color: "#111" }}>
-          {cta.toUpperCase()}
+        <span className="rounded-full px-3.5 py-1.5 text-[13px] font-bold" style={{ background: p?.palette.primary ?? "#ffb020", color: "#111" }}>
+          {cta}
         </span>
       </div>
     </button>
@@ -119,6 +118,20 @@ export interface Finished {
   players: number;
 }
 
+/** Full-screen layer: inside the desktop phone mockup when there is one, otherwise over the whole screen. */
+function Overlay({ children, className = "", onClick }: { children: React.ReactNode; className?: string; onClick?: () => void }) {
+  const [host, setHost] = useState<HTMLElement | null>(null);
+  useEffect(() => setHost(document.querySelector<HTMLElement>(".phone") ?? document.body), []);
+  if (!host) return null;
+  const inFrame = host !== document.body;
+  return createPortal(
+    <div className={`${inFrame ? "absolute" : "fixed"} inset-0 z-[60] ${className}`} onClick={onClick}>
+      {children}
+    </div>,
+    host,
+  );
+}
+
 export function GamePlayer({ roomId, userId, name, onClose, onFinished }: { roomId: string; userId: string; name: string; onClose: () => void; onFinished: (f: Finished) => void }) {
   const src = `${sqUrl()}/x/${roomId}?embed=1&pid=${sqPid(userId)}&name=${encodeURIComponent(name)}`;
   useEffect(() => {
@@ -132,9 +145,9 @@ export function GamePlayer({ roomId, userId, name, onClose, onFinished }: { room
     return () => removeEventListener("message", on);
   }, [onClose, onFinished]);
   return (
-    <div className="fixed inset-0 z-[60] bg-black">
+    <Overlay className="bg-black">
       <iframe src={src} title="Deep Cuts" allow="autoplay; clipboard-write" className="h-full w-full border-0" />
-    </div>
+    </Overlay>
   );
 }
 
@@ -178,21 +191,21 @@ export function GameTray({ onCreate, onClose }: { onCreate: (roomId: string, int
   const chips = [...ready.map((r) => r.interest), ...SUGGESTIONS.filter((s) => !readySet.has(s.toLowerCase()))].slice(0, 10);
 
   return (
-    <div className="fixed inset-0 z-[60] flex flex-col justify-end bg-black/40" onClick={onClose}>
+    <Overlay className="flex flex-col justify-end bg-black/40" onClick={onClose}>
       <div className="rounded-t-[22px] px-4 pb-6 pt-3 text-white" style={{ background: "#11131b" }} onClick={(e) => e.stopPropagation()}>
         <div className="mx-auto mb-3 h-1 w-10 rounded-full bg-white/25" />
         <div className="flex items-center justify-between">
           <div>
-            <div className="text-[22px] font-bold leading-none" style={{ ...PIXEL, textShadow: "2px 2px 0 #ff5d8f" }}>Deep Cuts</div>
-            <div className="mt-1 text-[10px] tracking-[0.12em] text-[#a9b0c4]" style={LABEL}>NAME THE ANSWER NOBODY ELSE THINKS OF</div>
+            <div className="text-[22px] font-extrabold leading-none">Deep Cuts</div>
+            <div className="mt-1 text-[13px] text-[#a9b0c4]">Name the answer nobody else thinks of</div>
           </div>
           <button onClick={onClose} className="rounded-full p-1.5 text-white/70" aria-label="Close"><X size={20} /></button>
         </div>
         {building ? (
-          <div className="py-8 text-center" style={PIXEL}>
+          <div className="py-8 text-center">
             <div className="text-[20px] font-bold">Building {building}…</div>
-            <div className="mt-2 text-[12px] tracking-[0.1em] text-[#a9b0c4]" style={LABEL}>
-              {readySet.has(building.toLowerCase()) ? "ALMOST READY" : `${secs}S · NEW TOPICS TAKE ABOUT A MINUTE`}
+            <div className="mt-2 text-[13px] text-[#a9b0c4]">
+              {readySet.has(building.toLowerCase()) ? "Almost ready" : `${secs}s · new topics take about a minute`}
             </div>
           </div>
         ) : (
@@ -209,27 +222,26 @@ export function GameTray({ onCreate, onClose }: { onCreate: (roomId: string, int
                 onChange={(e) => setTopic(e.target.value)}
                 maxLength={60}
                 placeholder="Pick a topic for the chat"
-                className="min-w-0 flex-1 rounded-[10px] bg-black/50 px-3 py-3 text-[17px] text-white outline-none ring-2 ring-[#6ee7b7]/60 placeholder:text-white/35 focus:ring-[#6ee7b7]"
-                style={PIXEL}
+                className="min-w-0 flex-1 rounded-full bg-white/10 px-4 py-3 text-[16px] text-white outline-none ring-2 ring-transparent placeholder:text-white/40 focus:ring-[#6ee7b7]"
                 autoFocus
               />
-              <button type="submit" className="rounded-[10px] px-4 text-[12px] font-bold tracking-[0.12em] text-[#111]" style={{ ...LABEL, background: "#ffb020" }}>
-                SEND
+              <button type="submit" className="rounded-full px-5 text-[15px] font-bold text-[#111]" style={{ background: "#ffb020" }}>
+                Send
               </button>
             </form>
             <div className="mt-3 flex flex-wrap gap-2">
               {chips.map((c) => (
-                <button key={c} onClick={() => create(c)} className="rounded-[8px] bg-white/10 px-2.5 py-1.5 text-[11px] tracking-[0.08em]" style={LABEL}>
+                <button key={c} onClick={() => create(c)} className="rounded-full bg-white/10 px-3 py-1.5 text-[14px] font-medium active:bg-white/20">
                   {readySet.has(c.toLowerCase()) ? "⚡ " : ""}
-                  {c.toUpperCase()}
+                  {c}
                 </button>
               ))}
             </div>
-            <div className="mt-2 text-[10px] tracking-[0.08em] text-[#a9b0c4]" style={LABEL}>⚡ READY INSTANTLY</div>
+            <div className="mt-2.5 text-[12px] text-[#a9b0c4]">⚡ ready instantly</div>
           </>
         )}
-        {error && <div className="mt-3 text-[14px] text-[#ffb0a8]" style={PIXEL}>{error}</div>}
+        {error && <div className="mt-3 text-[14px] text-[#ffb0a8]">{error}</div>}
       </div>
-    </div>
+    </Overlay>
   );
 }

@@ -128,11 +128,11 @@ function screen(html: string, cls = "") {
   ui.innerHTML = `<div class="center ${cls}" style="display:flex;flex-direction:column;flex:1;min-height:0">${html}</div>`;
   return ui.firstElementChild as HTMLElement;
 }
-const muteBtn = () => `<button class="btn dark icon-btn" id="mute" aria-label="Sound">${audio.muted ? "SND OFF" : "SND ON"}</button>`;
+const muteBtn = () => `<button class="btn dark icon-btn" id="mute" aria-label="Sound on or off">${audio.muted ? "🔇" : "🔊"}</button>`;
 function wireMute(el: HTMLElement) {
   el.querySelector("#mute")?.addEventListener("click", (e) => {
     audio.unlock();
-    (e.currentTarget as HTMLElement).textContent = audio.toggleMute() ? "SND OFF" : "SND ON";
+    (e.currentTarget as HTMLElement).textContent = audio.toggleMute() ? "🔇" : "🔊";
   });
 }
 const markersFor = (v: RoomView): Marker[] => v.board.map((b) => ({ name: b.name, value: units(v.pack, b.score), me: b.me }));
@@ -146,10 +146,10 @@ function home(error = "") {
   s.avatarVisible = true;
   const el = screen(`
     <div class="title-wrap pop">
-      <h1 class="title">DEEP<br/>CUTS</h1>
+      <h1 class="title">Deep Cuts</h1>
       <p class="subtitle">Name the answer nobody else thinks of</p>
     </div>
-    <div class="bottom stack pop" style="padding-right:56px">
+    <div class="bottom stack pop" style="padding-right:var(--gutter)">
       <form class="stack" id="f">
         <input class="field" id="i" maxlength="60" autocomplete="off" placeholder="What are you into?" aria-label="Your interest" />
         <button class="btn big" type="submit">Make the game</button>
@@ -220,7 +220,7 @@ function lobby(v: RoomView) {
   const resume = v.me && v.me.done > 0;
   const el = screen(`
     <div class="hud"><span></span><span></span><div class="hud-right">${muteBtn()}${closeBtn()}</div></div>
-    <div class="scroll" style="flex:1;padding-right:56px">
+    <div class="scroll" style="flex:1;padding-right:var(--gutter)">
       <div class="title-wrap pop" style="margin-top:3vh">
         <h1 class="title" style="font-size:clamp(34px,10vw,64px)">${esc(p.title)}</h1>
         <p class="subtitle">${esc(p.tagline)}</p>
@@ -235,7 +235,7 @@ function lobby(v: RoomView) {
         ${v.board.length ? `<div class="panel"><div class="label">${v.board.length} playing</div><div style="margin-top:6px">${boardHtml(v, 6)}</div></div>` : ""}
       </div>
     </div>
-    <div class="stack pop" style="padding-right:56px;margin-top:10px">
+    <div class="stack pop" style="padding-right:var(--gutter);margin-top:10px">
       ${EMBED ? "" : `<input class="field" id="name" maxlength="16" placeholder="Your name" autocomplete="nickname" value="${esc(v.me?.name && v.me.name !== "Player" ? v.me.name : myName())}" aria-label="Your name" />`}
       <button class="btn big" id="go">${resume ? `Keep going ${v.me!.done}/${p.prompts.length}` : "Start"}</button>
       ${EMBED ? "" : `<div class="row"><button class="btn dark wide" id="invite">Invite friends</button><button class="btn dark wide" id="new">New topic</button></div>`}
@@ -265,8 +265,8 @@ function hud(v: RoomView, i: number, score: number, doneUpTo: number) {
   const p = v.pack;
   return `<div class="hud">
     <div class="panel thin meter-box"><div class="label">${esc(p.meter.label)}</div><div class="v" id="mv">${meterText(p, score)}</div></div>
-    <div class="panel thin progress"><div class="pips">${p.prompts.map((_, k) => `<i class="pip ${k < doneUpTo ? "done" : k === i ? "now" : ""}"></i>`).join("")}</div><div class="label">Prompt ${i + 1} of ${p.prompts.length}</div></div>
-    <div class="hud-right">${muteBtn()}<button class="btn dark icon-btn" id="quit">Quit</button></div>
+    <div class="panel thin progress"><div class="pips">${p.prompts.map((_, k) => `<i class="pip ${k < doneUpTo ? "done" : k === i ? "now" : ""}"></i>`).join("")}</div><div class="label">${i + 1} of ${p.prompts.length}</div></div>
+    <div class="hud-right">${muteBtn()}<button class="btn dark icon-btn" id="quit" aria-label="Quit to lobby">✕</button></div>
   </div>`;
 }
 
@@ -283,19 +283,23 @@ async function play(v: RoomView, i: number) {
   const C = 2 * Math.PI * 22;
   const el = screen(`
     ${hud(v, i, score, i)}
-    <div class="panel prompt pop" style="margin-right:56px">
+    <div class="panel prompt pop" style="margin-right:var(--gutter)">
       <div class="label hot">${["Warm up", "Easy", "Getting deeper", "Deep", "Deeper", "Deep cuts only", "Final prompt"][Math.min(6, Math.round((i / Math.max(1, p.prompts.length - 1)) * 6))]}</div>
       <h1>${esc(pr.q)}</h1>
       ${pr.hint ? `<p class="hint">${esc(pr.hint)}</p>` : ""}
       <p class="sub">▼ rarer answers ${deeper(p)} ▼</p>
     </div>
-    <div class="bottom" style="padding-right:56px">
+    <div class="bottom" style="padding-right:var(--gutter)">
       <p class="feedback" id="fb" aria-live="polite"></p>
-      <form class="answer-bar" id="f">
-        <div class="timer" id="timer"><svg viewBox="0 0 54 54"><circle class="track" cx="27" cy="27" r="22"/><circle class="left" id="arc" cx="27" cy="27" r="22" stroke-dasharray="${C}" stroke-dashoffset="0"/></svg><span id="sec">${Math.ceil(open.secondsLeft)}</span></div>
-        <input class="field" id="a" maxlength="60" autocomplete="off" autocapitalize="words" enterkeyhint="send" placeholder="Type one answer…" aria-label="Your answer" />
-        <button class="btn dark icon-btn" type="button" id="pass">Pass</button>
-        <button class="btn" type="submit" id="send">${esc(p.verb)}</button>
+      <form class="answer" id="f">
+        <div class="answer-row">
+          <div class="timer" id="timer"><svg viewBox="0 0 54 54"><circle class="track" cx="27" cy="27" r="22"/><circle class="left" id="arc" cx="27" cy="27" r="22" stroke-dasharray="${C}" stroke-dashoffset="0"/></svg><span id="sec">${Math.ceil(open.secondsLeft)}</span></div>
+          <input class="field" id="a" maxlength="60" autocomplete="off" autocapitalize="words" enterkeyhint="send" placeholder="Type one answer…" aria-label="Your answer" />
+        </div>
+        <div class="answer-actions">
+          <button class="btn dark" type="button" id="pass">Pass</button>
+          <button class="btn" type="submit" id="send">${esc(p.verb)}</button>
+        </div>
       </form>
       <div class="tries" id="tries" aria-label="Tries left"><i></i><i></i><i></i></div>
     </div>`);
@@ -387,7 +391,7 @@ async function reveal(v: RoomView, i: number, verdict: Verdict, typed: string) {
   const gained = after - before;
   const el = screen(`
     ${hud(fresh, i, before, i + 1)}
-    <div class="panel reveal pop ${hit ? "" : "miss"}" style="margin-right:56px">
+    <div class="panel reveal pop ${hit ? "" : "miss"}" style="margin-right:var(--gutter)">
       <div class="q">${esc(p.prompts[i].q)}</div>
       <h1>${esc(hit ? verdict.answer! : typed || "No answer")}</h1>
       ${hit ? tiersHtml(p, t) : `<p class="note">${esc(verdict.reason ?? "Time's up")}</p>`}
@@ -397,7 +401,7 @@ async function reveal(v: RoomView, i: number, verdict: Verdict, typed: string) {
       ${pv.gem && pv.gem.a !== verdict.answer ? `<div class="gem"><span>💎</span><span>Deepest cut: <b>${esc(pv.gem.a)}</b>${pv.gem.note ? `. ${esc(pv.gem.note)}` : ""}</span></div>` : ""}
       ${pv.friends.length ? `<div class="friends">${pv.friends.map((f) => `<span class="fa"><small>${esc(f.name)}</small>${esc(f.a || "pass")}</span>`).join("")}</div>` : ""}
     </div>
-    <div class="bottom" style="padding-right:56px"><button class="btn big" id="next">${last ? "See where you landed" : "Next prompt"}</button></div>`);
+    <div class="bottom" style="padding-right:var(--gutter)"><button class="btn big" id="next">${last ? "See where you landed" : "Next prompt"}</button></div>`);
   wireMute(el);
   el.querySelector("#quit")!.addEventListener("click", () => void room(v.id));
   const next = el.querySelector<HTMLButtonElement>("#next")!;
@@ -456,7 +460,7 @@ function results(v: RoomView) {
   }
   const el = screen(`
     <div class="hud"><span></span><span></span><div class="hud-right">${muteBtn()}${closeBtn()}</div></div>
-    <div class="scroll" style="flex:1;padding-right:56px">
+    <div class="scroll" style="flex:1;padding-right:var(--gutter)">
       <div class="total pop">
         <div class="label" style="color:#fff;text-shadow:2px 2px 0 #000">${esc(p.meter.label)} reached</div>
         <div class="big">${meterText(p, me.score)}</div>
