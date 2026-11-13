@@ -48,7 +48,7 @@ export default function GroupsPage() {
                   <div className="mt-1 flex items-center gap-1 text-[13px] text-ink-2">
                     {g.privacy === "private" ? <Lock size={12} /> : <Globe size={12} />} {g.privacy === "private" ? "Private" : "Public"} · {g.memberCount} members · {g.postsPerDay} posts a day
                   </div>
-                  {(g.fit ?? 0) > 0.15 && <div className="mt-1 text-[12px] font-medium text-fb">From your games{g.fitLabel ? ` · ${g.fitLabel}` : ""}</div>}
+                  {(g.fit ?? 0) > 0.15 && <div className="mt-1 text-[12px] font-medium text-fb">{g.fitLabel ?? "From your games"}</div>}
                 </div>
               </Link>
             ))}

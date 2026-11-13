@@ -32,8 +32,7 @@ export function canSeeReel(viewerId: ID, r: Reel): boolean {
   if (r.authorId === viewerId) return true;
   const author = getUser(r.authorId);
   if (!author) return false;
-  const restricted = r.audience === "friends" || author.privacy === "friends";
-  return restricted ? isFriend(viewerId, r.authorId) : true;
+  return author.privacy === "friends" ? isFriend(viewerId, r.authorId) : true;
 }
 
 export function canSeeEvent(viewerId: ID, e: FBEvent): boolean {

@@ -22,7 +22,6 @@ export interface User {
   friendIds: ID[];
   interests: string[];
   birthday?: string; // MM-DD
-  city?: string;
   privacy?: "public" | "friends";
 }
 
@@ -51,7 +50,6 @@ export interface Post {
   shares: number;
   /** Who this post is visible to when not in a group. */
   audience?: "public" | "friends";
-  city?: string;
 }
 
 export interface Story {
@@ -92,7 +90,6 @@ export interface FBEvent {
   invited?: ID[];
   category: string;
   price?: string;
-  city?: string;
 }
 
 export interface Listing {
@@ -124,8 +121,6 @@ export interface Reel {
   savedBy: ID[];
   tags: string[];
   createdAt: string;
-  city?: string;
-  audience?: "public" | "friends";
 }
 
 export interface Message {
@@ -134,11 +129,9 @@ export interface Message {
   text: string;
   createdAt: string;
   reactions?: Record<ID, string>;
-  /** game/unlock: daily Chat Games (src/lib/play). sqgame/sqgamelog: sidequest Deep Cuts + Order Up! card / "played" line. */
-  attachment?: { type: "image" | "listing" | "event" | "game" | "unlock" | "sqgame" | "sqgamelog"; ref: string };
+  /** sqgame / sqgamelog: a Deep Cuts or Order Up! game card / "played" line (src/components/ChatGames.tsx). */
+  attachment?: { type: "image" | "listing" | "event" | "sqgame" | "sqgamelog"; ref: string };
   readBy?: ID[];
-  status?: "draft" | "sent";
-  system?: boolean;
 }
 
 export interface Conversation {
@@ -183,8 +176,7 @@ export type NotificationType =
   | "birthday"
   | "marketplace"
   | "memory"
-  | "mention"
-  | "play";
+  | "mention";
 
 export interface Notification {
   id: ID;
