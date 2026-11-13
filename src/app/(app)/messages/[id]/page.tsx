@@ -4,9 +4,10 @@ import { useParams } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { GAMES, GameCard, GamePlayer, GameTray, type Finished } from "@/components/ChatGames";
+import { EventPicksSheet } from "@/components/events/EventPicksSheet";
 import { Critter } from "@/components/hangout/Critter";
 import { useBack, useMe } from "@/components/Shell";
-import { ArrowLeft, CalendarDays, Flame, Image as ImageIcon, Info, Phone, Plus, Send, Smile, Sparkles, ThumbsUp, Video, X } from "lucide-react";
+import { ArrowLeft, Flame, Image as ImageIcon, Info, Phone, Plus, Send, Smile, Sparkles, ThumbsUp, Video, X } from "lucide-react";
 import { Avatar, Photo, cx } from "@/components/ui";
 import { api, refresh, useApi } from "@/lib/api";
 import { eventDate, messageTime } from "@/lib/format";
@@ -16,7 +17,6 @@ import type { DayMark, StreakDetail } from "@/lib/streaks/views";
 import type { Conversation, FBEvent, Listing, Message } from "@/types";
 
 type Card = { id: string; name: string; avatar: string };
-type MatchedEvent = { id: string; title: string; startsAt: string; location: string; topicLabel: string; alreadyShared: boolean };
 type Conv = Conversation & {
   name: string;
   participants: Card[];
@@ -27,7 +27,6 @@ type Conv = Conversation & {
     hourglass: boolean;
     closenessScore: number;
     critterFriendId?: string;
-    matchedEvent?: MatchedEvent;
   };
 };
 
@@ -67,7 +66,6 @@ export default function ThreadPage() {
   const { data: c, mutate } = useApi<Conv>(`/api/conversations/${id}`, { poll: 1500 });
   const [text, setText] = useState("");
   const [sending, setSending] = useState(false);
-  const [dismissedEventId, setDismissedEventId] = useState<string | null>(null);
   const bottom = useRef<HTMLDivElement>(null);
   const count = c?.messages.length ?? 0;
   const scrollToEnd = useCallback(() => {
@@ -105,18 +103,26 @@ export default function ThreadPage() {
       window.history.replaceState(null, "", window.location.pathname);
     }
   }, []);
-  const closeGame = useCallback(() => setPlaying(null), []);
+  // Event unlock popup: after a scored game, closing the game asks the server whether the chat earned event picks
+  const [picksFor, setPicksFor] = useState<string | null>(null);
+  const scored = useRef<{ ref: string; sent: Promise<void> } | null>(null);
+  const closeGame = useCallback(() => {
+    setPlaying(null);
+    const s = scored.current;
+    scored.current = null;
+    if (s) void s.sent.catch(() => {}).then(() => setPicksFor(s.ref));
+  }, []);
+  const closePicks = useCallback(() => setPicksFor(null), []);
   const sendRef = useRef(send);
   sendRef.current = send;
   const finished = useCallback((f: Finished) => {
     // GamePigeon style: a quiet "Maya played … · score" line, not a new card
-    if (f.text && f.ref) void sendRef.current(f.text, { type: "sqgamelog", ref: f.ref });
+    if (f.text && f.ref) scored.current = { ref: f.ref, sent: sendRef.current(f.text, { type: "sqgamelog", ref: f.ref }) };
   }, []);
 
   const byId = Object.fromEntries((c?.participants ?? []).map((p) => [p.id, p]));
   const other = c?.others[0];
   const ctx = c?.chatContext;
-  const bridgeEvent = ctx?.matchedEvent && !ctx.matchedEvent.alreadyShared && dismissedEventId !== ctx.matchedEvent.id ? ctx.matchedEvent : undefined;
   const { data: streakInfo, mutate: mutateStreak } = useApi<StreakDetail>(ctx?.critterFriendId && streakOpen ? `/api/streaks/${ctx.critterFriendId}` : null);
   const [simBusy, setSimBusy] = useState(false);
   async function simulateFriendPlay() {
@@ -237,52 +243,21 @@ export default function ThreadPage() {
         {c && c.messages.length > 0 && c.messages.at(-1)!.senderId === userId && (
           <div className="mr-1 text-right text-[11px] text-ink-2">{(c.messages.at(-1)!.readBy?.length ?? 1) > 1 ? "Seen" : "Delivered"}</div>
         )}
-        <div ref={bottom} className="h-3 scroll-mb-28" />
+        <div ref={bottom} className="h-3 scroll-mb-20" />
       </div>
 
-      <div className="safe-bottom sticky bottom-0 z-10 bg-white">
-        {bridgeEvent && (
-          <div className="border-t border-line/50 bg-[#f7f9fc] px-3 py-2">
-            <div className="flex items-center justify-between gap-2">
-              <Link href={`/events/${bridgeEvent.id}`} className="min-w-0 flex-1">
-                <div className="flex items-center gap-1 text-[11px] font-semibold text-fb">
-                  <CalendarDays size={12} />
-                  <span className="truncate">
-                    From your {bridgeEvent.topicLabel} games{ctx && ctx.streakDays > 0 ? ` · ${ctx.streakDays}d streak` : ""}
-                  </span>
-                </div>
-                <div className="truncate text-[13px] font-semibold text-ink">{bridgeEvent.title}</div>
-              </Link>
-              <button
-                onClick={() => void send(`Wait should we go to ${bridgeEvent.title}?`, { type: "event", ref: bridgeEvent.id })}
-                disabled={sending}
-                className="shrink-0 rounded-full bg-messenger px-2.5 py-1 text-[12px] font-semibold text-white"
-              >
-                Invite
-              </button>
-              <Link href="/events" className="shrink-0 rounded-full bg-[#e4e6eb] px-2.5 py-1 text-[12px] font-semibold text-ink">
-                Events
-              </Link>
-              <button onClick={() => setDismissedEventId(bridgeEvent.id)} className="rounded-full p-1 text-ink-2" aria-label="Dismiss">
-                <X size={14} />
-              </button>
-            </div>
-          </div>
-        )}
-
-        <div className="flex items-center gap-1 border-t border-line/60 bg-white px-2 py-2">
-          <button onClick={() => setTray(true)} className="p-1.5 text-messenger" aria-label="Games"><Plus size={24} /></button>
-          <button className="p-1.5 text-messenger"><ImageIcon size={22} /></button>
-          <div className="flex flex-1 items-center rounded-full bg-[#f0f2f5] pr-2">
-            <input value={text} onChange={(e) => setText(e.target.value)} onKeyDown={(e) => e.key === "Enter" && send()} placeholder="Aa" className="flex-1 bg-transparent px-3 py-2 text-[15px] outline-none" />
-            <Smile size={20} className="text-messenger" />
-          </div>
-          {text.trim() ? (
-            <button onClick={() => send()} disabled={sending} className="p-1.5 text-messenger"><Send size={24} /></button>
-          ) : (
-            <button onClick={() => send("👍")} className="p-1.5 text-messenger"><ThumbsUp size={24} className="fill-messenger" /></button>
-          )}
+      <div className="safe-bottom sticky bottom-0 z-10 flex items-center gap-1 border-t border-line/60 bg-white px-2 py-2">
+        <button onClick={() => setTray(true)} className="p-1.5 text-messenger" aria-label="Games"><Plus size={24} /></button>
+        <button className="p-1.5 text-messenger"><ImageIcon size={22} /></button>
+        <div className="flex flex-1 items-center rounded-full bg-[#f0f2f5] pr-2">
+          <input value={text} onChange={(e) => setText(e.target.value)} onKeyDown={(e) => e.key === "Enter" && send()} placeholder="Aa" className="flex-1 bg-transparent px-3 py-2 text-[15px] outline-none" />
+          <Smile size={20} className="text-messenger" />
         </div>
+        {text.trim() ? (
+          <button onClick={() => send()} disabled={sending} className="p-1.5 text-messenger"><Send size={24} /></button>
+        ) : (
+          <button onClick={() => send("👍")} className="p-1.5 text-messenger"><ThumbsUp size={24} className="fill-messenger" /></button>
+        )}
       </div>
 
       {tray && (
@@ -296,6 +271,9 @@ export default function ThreadPage() {
         />
       )}
       {playing && <GamePlayer roomId={playing} userId={userId} name={me?.name.split(" ")[0] ?? userId} onClose={closeGame} onFinished={finished} />}
+      {picksFor && c && (
+        <EventPicksSheet conversationId={c.id} gameRef={picksFor} onClose={closePicks} onSend={(e) => send(`Wait should we go to ${e.title}?`, { type: "event", ref: e.id })} />
+      )}
       {streakOpen &&
         typeof document !== "undefined" &&
         createPortal(
