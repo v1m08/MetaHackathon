@@ -10,10 +10,11 @@ const WORLD_SYSTEM = `You build one round of a trivia game played by friends in 
 Given a player's interest, design the game so it feels made by a fan of that interest:
 
 PROMPTS (exactly ${PROMPTS_PER_GAME + 1}; the best ${PROMPTS_PER_GAME} are used):
-- Each is a short "Name a ..." / "Name any ..." style prompt with a LARGE, well-defined, checkable answer set (at least 40 real answers), from obvious to obscure.
-- Answers must be short names (1-4 words): places, things, gear, techniques, terms, events, characters, works, people, slang. Never opinions ("best", "favorite"), sentences or numbers.
-- Each prompt covers a different kind of thing. Include at least one playful one only fans would get (jargon, things people shout, in-jokes).
-- Order from easiest to hardest. The first prompt should be answerable by a casual fan.
+- This is a party game, not an exam. EVERY prompt must be fun and answerable by a casual player in a few seconds: anyone with a passing interest should be able to name at least 3 answers right away. The challenge is finding a RARE answer, never finding any answer at all.
+- Pick categories people actually talk about and have fun naming: foods and dishes, famous places and sights, things you see or do there, songs, movies, characters, slang and things people say, gear, nicknames. AVOID dry or niche categories (company headquarters, museums, transit lines, statistics, dates, laws, scientific names, records).
+- Each is a short, playful "Name a ..." / "Name any ..." prompt with a LARGE, well-defined, checkable answer set (at least 40 real answers), from obvious to obscure.
+- Answers must be short names (1-4 words): places, things, foods, terms, events, characters, works, people, slang. Never opinions ("best", "favorite"), sentences or numbers.
+- Each prompt covers a different kind of thing. Include one playful prompt with an in-joke feel (things people say, stereotypes, iconic moments), still easy to answer.
 - "hint" says exactly what counts, in under 70 characters (e.g. "Any named route, any style, anywhere").
 
 WORLD:
@@ -35,7 +36,8 @@ WORLD:
 - backdrop: 1-2 vivid sentences describing a custom pixel-art game background for THIS interest, which an image model will paint.
   Describe the actual places, landmarks, gear and objects a fan would recognise instantly (for chess: giant marble pieces on
   checkered platforms; for Fortnite: the battle bus over a colorful island with loot llamas and the storm wall), laid out as a
-  journey from start to legendary finish. No text, no real people.
+  journey from start to legendary finish. ALWAYS feature the topic's single most iconic, instantly recognisable landmark or symbol,
+  big and unmistakable (for a city: its most famous sight, e.g. the Golden Gate Bridge for San Francisco). No text, no real people.
 - avatar: one emoji for the player's marker (a person or vehicle doing the interest).
 - verb: one short submit-button word in the interest's language (e.g. "Send", "Push", "Bake", "Dig", "Drop").
 - meter.up must match the scene: false for ocean and dig, true otherwise.

@@ -50,7 +50,7 @@ export default function ProfilePage() {
         </div>
         <div className="mt-14 px-4">
           <h1 className="text-[26px] font-bold leading-tight">{u.name}</h1>
-          <div className="text-[15px] text-ink-2">{u.pronouns} · <b className="font-semibold text-ink">{u.friends.length} friends</b>{!mine && u.mutualCount > 0 && <> · {u.mutualCount} mutual</>}</div>
+          <div className="text-[15px] text-ink-2">{u.pronouns && <>{u.pronouns} · </>}<b className="font-semibold text-ink">{u.friends.length} friends</b>{!mine && u.mutualCount > 0 && <> · {u.mutualCount} mutual</>}</div>
           <p className="mt-2 text-[15px] leading-snug">{u.bio}</p>
           <div className="mt-3 flex gap-2">
             {mine ? (

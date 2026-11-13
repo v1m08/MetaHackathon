@@ -7,6 +7,7 @@ import { ArrowLeft, Bell, Home, LayoutGrid, MessageCircle, Plus, Search, Store, 
 import { useApi } from "@/lib/api";
 import { useSession } from "@/lib/session";
 import { Avatar, cx } from "./ui";
+import { DemoGuide } from "./DemoGuide";
 import type { User } from "@/types";
 
 export type Me = User & { unreadMessages: number; unreadNotifications: number; friendRequests: number; groupIds: string[] };
@@ -153,6 +154,7 @@ export function Shell({ children, title, back, right, tabs: showTabs = true, dar
   return (
     <div className={cx("flex min-h-full flex-col", dark ? "bg-black" : "bg-bg")}>
       {title !== null && <TopBar title={title} back={back} right={right} />}
+      <DemoGuide />
       <main className={cx("flex-1", className)}>{children}</main>
       {showTabs && <TabBar dark={dark} />}
     </div>

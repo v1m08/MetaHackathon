@@ -21,6 +21,7 @@ function prompt(p: Source) {
     "Tall vertical pixel-art video game background, detailed 16-bit style, rich colors, strong depth.",
     "No text, no letters, no numbers, no logos, no UI, no people or characters.",
     `Theme: ${p.interest}. ${world}`,
+    "Feature the theme's single most iconic, instantly recognisable landmark or symbol large and unmistakable (for a city, its most famous sight: e.g. the Golden Gate Bridge for San Francisco).",
     up
       ? "It is one continuous journey read from the BOTTOM (the start, at ground level) up to the TOP (the summit, the legendary finish)."
       : "It is one continuous journey read from the TOP (the start, at the surface) down to the BOTTOM (the deepest, legendary finish).",

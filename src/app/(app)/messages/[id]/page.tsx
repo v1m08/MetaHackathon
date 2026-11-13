@@ -4,6 +4,8 @@ import { useParams } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { GAMES, GameCard, GamePlayer, GameTray, type Finished } from "@/components/ChatGames";
 import { useBack, useMe } from "@/components/Shell";
+import { DemoGuide, type GuideStep } from "@/components/DemoGuide";
+import { DEMO_CHAT, MUSE_ID } from "@/lib/demo";
 import { ArrowLeft, Image as ImageIcon, Info, Phone, Plus, Send, Smile, ThumbsUp, Video } from "lucide-react";
 import { Avatar, Photo, cx } from "@/components/ui";
 import { api, refresh, useApi } from "@/lib/api";
@@ -83,6 +85,25 @@ export default function ThreadPage() {
   const byId = Object.fromEntries((c?.participants ?? []).map((p) => [p.id, p]));
   const other = c?.others[0];
 
+  // ---------- hackathon demo: Muse sends the group a game, then suggests a plan ----------
+  const isDemoChat = id === DEMO_CHAT;
+  useEffect(() => {
+    if (isDemoChat) void api("/api/demo/kickoff", { method: "POST", json: { conversationId: id } }).then(() => mutate()).catch(() => {});
+  }, [isDemoChat, id, mutate]);
+  const museGame = c?.messages.find((m) => m.senderId === MUSE_ID && m.attachment?.type === "sqgame");
+  const musePlan = c?.messages.find((m) => m.senderId === MUSE_ID && m.attachment?.type === "event");
+  const done = new Set(c?.messages.filter((m) => m.attachment?.type === "sqgamelog" && m.attachment.ref === museGame?.attachment?.ref).map((m) => m.senderId));
+  const people = Math.max(1, (c?.participantIds.length ?? 2) - 1);
+  const guide: GuideStep | null = !isDemoChat
+    ? null
+    : musePlan
+      ? { step: 4, text: "Muse found a plan for your group 👀", href: `/events/${musePlan.attachment!.ref}`, cta: "See it →" }
+      : !museGame
+        ? { step: 3, text: "Muse is reading the room and making your group a game…" }
+        : done.has(userId)
+          ? { step: 3, text: `Nice! Muse suggests a plan once ${Math.ceil(people / 2)} of ${people} finish (${done.size}/${people} done).` }
+          : { step: 3, text: "Muse sent your group a game. Tap Play!" };
+
   return (
     <div className="relative flex h-full flex-col bg-white">
       <header className="safe-top sticky top-0 z-10 border-b border-line/60 bg-white">
@@ -101,6 +122,7 @@ export default function ThreadPage() {
           <button className="p-2 text-messenger"><Video size={24} /></button>
           <button className="p-2 text-messenger"><Info size={22} /></button>
         </div>
+        {isDemoChat && <div className="pb-2"><DemoGuide guide={guide} /></div>}
       </header>
 
       <div className="flex-1 px-3 py-3">

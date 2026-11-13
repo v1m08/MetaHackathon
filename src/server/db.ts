@@ -2,6 +2,7 @@
 // Every mutation the UI needs lives here so API routes stay thin and AI tools can reuse them.
 import { buildSeed } from "@/data";
 import { seedSidequestIntoDb } from "@/lib/context/seed";
+import { isDemoUser } from "@/lib/demo";
 import { photoUrl } from "@/lib/img";
 import type { Comment, Conversation, Database, FBEvent, Group, ID, Listing, Message, Notification, Post, ReactionType, User } from "@/types";
 
@@ -60,6 +61,8 @@ export type HydratedPost = ReturnType<typeof hydratePost>;
 /** Home feed: friends' posts + posts in my groups + public posts, newest first. */
 export function feedFor(userId: ID): Post[] {
   const me = requireUser(userId);
+  // Demo judges only see their SF friends' posts (no public posts from the Austin crowd).
+  if (isDemoUser(userId)) return db().posts.filter((p) => !p.groupId && !p.eventId && (p.authorId === userId || me.friendIds.includes(p.authorId))).sort((a, b) => b.createdAt.localeCompare(a.createdAt));
   const myGroups = db().groups.filter((g) => g.memberIds.includes(userId)).map((g) => g.id);
   return db()
     .posts.filter((p) => {

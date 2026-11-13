@@ -1,5 +1,6 @@
 import type { Database, Notification } from "@/types";
 import { conversations } from "./conversations";
+import { demoConversation, demoEvents, demoPosts, demoStories, demoUsers, museUser } from "./demo";
 import { dating } from "./dating";
 import { events } from "./events";
 import { feedPosts, stories } from "./feedPosts";
@@ -61,14 +62,14 @@ function buildNotifications(): Notification[] {
 
 export function buildSeed(): Database {
   return {
-    users: structuredClone(users),
-    posts: structuredClone([...feedPosts, ...groupPosts]).sort((a, b) => b.createdAt.localeCompare(a.createdAt)),
-    stories: structuredClone(stories),
+    users: structuredClone([...users, ...demoUsers, museUser]),
+    posts: structuredClone([...feedPosts, ...groupPosts, ...demoPosts]).sort((a, b) => b.createdAt.localeCompare(a.createdAt)),
+    stories: structuredClone([...demoStories, ...stories]),
     groups: structuredClone(groups),
-    events: structuredClone(events),
+    events: structuredClone([...events, ...demoEvents]),
     listings: structuredClone(listings),
     reels: structuredClone(reels),
-    conversations: structuredClone(conversations),
+    conversations: structuredClone([demoConversation, ...conversations]),
     dating: structuredClone(dating),
     games: structuredClone(games),
     notifications: buildNotifications(),
