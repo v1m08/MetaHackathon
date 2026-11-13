@@ -14,7 +14,7 @@ import { eventDate, messageTime } from "@/lib/format";
 import { useSession } from "@/lib/session";
 import { endsLabel, STATUS, statusLine } from "@/lib/streaks/copy";
 import type { DayMark, StreakDetail } from "@/lib/streaks/views";
-import type { Conversation, FBEvent, Listing, Message } from "@/types";
+import type { Conversation, FBEvent, Group, Listing, Message } from "@/types";
 
 type Card = { id: string; name: string; avatar: string };
 type Conv = Conversation & {
@@ -30,13 +30,38 @@ type Conv = Conversation & {
   };
 };
 
-function ListingChip({ id }: { id: string }) {
+function ListingChip({ id, onReady }: { id: string; onReady?: () => void }) {
   const { data } = useApi<Listing>(`/api/marketplace/${id}`);
+  useEffect(() => {
+    if (data) onReady?.();
+  }, [data, onReady]);
   if (!data) return null;
   return (
     <Link href={`/marketplace/${id}`} className="mb-1 flex w-60 items-center gap-2 overflow-hidden rounded-xl border border-line/60 bg-white">
-      <Photo src={data.images[0]} className="h-16 w-16 object-cover" />
-      <div className="min-w-0 pr-2"><div className="truncate text-[13px] font-semibold text-ink">{data.title}</div><div className="text-[13px] text-ink-2">${data.price}</div></div>
+      <Photo src={data.images[0]} className="h-16 w-16 shrink-0 bg-[#f0f2f5] object-cover" />
+      <div className="min-w-0 pr-2">
+        <div className="text-[10.5px] font-bold text-emerald-700 uppercase">Marketplace</div>
+        <div className="truncate text-[13px] font-semibold text-ink">{data.title}</div>
+        <div className="text-[12.5px] text-ink-2">${data.price}</div>
+      </div>
+    </Link>
+  );
+}
+
+function GroupChip({ id, onReady }: { id: string; onReady?: () => void }) {
+  const { data } = useApi<Group & { memberCount?: number }>(`/api/groups/${id}`);
+  useEffect(() => {
+    if (data) onReady?.();
+  }, [data, onReady]);
+  if (!data) return null;
+  return (
+    <Link href={`/groups/${id}`} className="mb-1 flex w-60 items-center gap-2 overflow-hidden rounded-xl border border-line/60 bg-white">
+      <Photo src={data.cover} className="h-16 w-16 shrink-0 bg-[#f0f2f5] object-cover" />
+      <div className="min-w-0 py-1 pr-2">
+        <div className="text-[10.5px] font-bold text-indigo-600 uppercase">Group</div>
+        <div className="truncate text-[13px] font-semibold text-ink">{data.name}</div>
+        <div className="truncate text-[11.5px] text-ink-2">{data.memberCount ?? data.memberIds.length} members</div>
+      </div>
     </Link>
   );
 }
@@ -49,7 +74,7 @@ function EventChip({ id, onReady }: { id: string; onReady?: () => void }) {
   if (!data) return null;
   return (
     <Link href={`/events/${id}`} className="mb-1 flex w-60 items-center gap-2 overflow-hidden rounded-xl border border-line/60 bg-white">
-      <Photo src={data.cover} className="h-16 w-16 shrink-0 object-cover" />
+      <Photo src={data.cover} className="h-16 w-16 shrink-0 bg-[#f0f2f5] object-cover" />
       <div className="min-w-0 py-1 pr-2">
         <div className="truncate text-[11px] font-semibold text-red-600 uppercase">{eventDate(data.startsAt)}</div>
         <div className="truncate text-[13px] font-semibold text-ink">{data.title}</div>
@@ -219,7 +244,8 @@ export default function ThreadPage() {
                   </span>
                 )}
                 <div className={cx("flex max-w-[75%] flex-col", mine ? "items-end" : "items-start")}>
-                  {m.attachment?.type === "listing" && <ListingChip id={m.attachment.ref} />}
+                  {m.attachment?.type === "listing" && <ListingChip id={m.attachment.ref} onReady={scrollToEnd} />}
+                  {m.attachment?.type === "group" && <GroupChip id={m.attachment.ref} onReady={scrollToEnd} />}
                   {m.attachment?.type === "event" && <EventChip id={m.attachment.ref} onReady={scrollToEnd} />}
                   {m.attachment?.type === "image" && <Photo src={m.attachment.ref} className="mb-1 max-h-60 rounded-2xl object-cover" />}
                   {m.attachment?.type === "sqgame" && <GameCard roomId={m.attachment.ref} userId={userId} onOpen={setPlaying} />}
@@ -272,7 +298,21 @@ export default function ThreadPage() {
       )}
       {playing && <GamePlayer roomId={playing} userId={userId} name={me?.name.split(" ")[0] ?? userId} onClose={closeGame} onFinished={finished} />}
       {picksFor && c && (
-        <EventPicksSheet conversationId={c.id} gameRef={picksFor} onClose={closePicks} onSend={(e) => send(`Wait should we go to ${e.title}?`, { type: "event", ref: e.id })} />
+        <EventPicksSheet
+          conversationId={c.id}
+          gameRef={picksFor}
+          onClose={closePicks}
+          onSend={(item) =>
+            send(
+              item.kind === "event"
+                ? `Wait should we go to ${item.title}?`
+                : item.kind === "group"
+                  ? `Should we check out ${item.name}?`
+                  : `Saw this on Marketplace and thought of our chat`,
+              { type: item.kind, ref: item.id },
+            )
+          }
+        />
       )}
       {streakOpen &&
         typeof document !== "undefined" &&
