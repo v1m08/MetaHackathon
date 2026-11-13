@@ -10,7 +10,8 @@ const PRICES: Record<string, { input: number; cached: number; output: number }> 
   "muse-ember-1.0": { input: 0.1, cached: 0.004, output: 0.5 },
   "muse-spark": { input: 1.25, cached: 0.15, output: 4.25 },
 };
-const PRICE = env.model.startsWith("muse-ember") ? PRICES["muse-ember-1.0"] : PRICES["muse-spark"];
+PRICES["muse-wonder"] = { input: 4, cached: 0.2, output: 20 };
+const priceFor = (model: string) => (model.startsWith("muse-ember") ? PRICES["muse-ember-1.0"] : model.startsWith("muse-wonder") ? PRICES["muse-wonder"] : PRICES["muse-spark"]);
 const MARGIN = 1.5;
 
 export class LLMError extends Error {
@@ -52,18 +53,32 @@ export function spentUsd() {
   return readLedger().entries.reduce((s, e) => s + (e.status === "pending" ? e.reservedUsd : e.costUsd || 0), 0);
 }
 
-export async function chatJSON(messages: Message[], opts: { maxTokens?: number; task?: string } = {}): Promise<{ text: string; ms: number; costUsd: number }> {
+export interface ChatOpts {
+  maxTokens?: number;
+  task?: string;
+  /** JSON mode (default true). Set false for code or prose. */
+  json?: boolean;
+  model?: string;
+  timeoutMs?: number;
+  reasoning?: "low" | "medium" | "high";
+  temperature?: number;
+}
+
+export async function chatJSON(messages: Message[], opts: ChatOpts = {}): Promise<{ text: string; ms: number; costUsd: number; finish?: string }> {
   const maxTokens = opts.maxTokens ?? 3000;
+  const model = opts.model ?? env.model;
+  const timeoutMs = opts.timeoutMs ?? env.timeoutMs;
+  const PRICE = priceFor(model);
   const limit = env.budgetUsd - env.reserveUsd;
   if (spentUsd() >= limit) throw new LLMError(`budget guard: $${spentUsd().toFixed(2)} of $${limit} spent`);
 
   const body = {
-    model: env.model,
+    model,
     messages,
     max_tokens: maxTokens,
-    reasoning_effort: "low",
-    temperature: 0.8,
-    response_format: { type: "json_object" },
+    reasoning_effort: opts.reasoning ?? "low",
+    temperature: opts.temperature ?? 0.8,
+    ...(opts.json === false ? {} : { response_format: { type: "json_object" } }),
   };
   const t0 = performance.now();
   let res: Response;
@@ -72,14 +87,14 @@ export async function chatJSON(messages: Message[], opts: { maxTokens?: number; 
       method: "POST",
       headers: { "content-type": "application/json", authorization: `Bearer ${env.key}` },
       body: JSON.stringify(body),
-      signal: AbortSignal.timeout(env.timeoutMs),
+      signal: AbortSignal.timeout(timeoutMs),
     });
   } catch (err) {
     const name = (err as Error).name;
     // The request may still be billed: book a worst-case estimate.
     const est = ((JSON.stringify(messages).length / 2.5) * PRICE.input + maxTokens * PRICE.output) / 1e6 * MARGIN;
-    book({ id: `sq-${Date.now().toString(36)}`, ts: new Date().toISOString(), task: opts.task ?? "sidequest.generate", model: env.model, kind: "json", status: "error", reservedUsd: est, costUsd: est, note: name });
-    throw new LLMError(name === "TimeoutError" ? `timeout after ${env.timeoutMs}ms` : `network: ${(err as Error).message}`);
+    book({ id: `sq-${Date.now().toString(36)}`, ts: new Date().toISOString(), task: opts.task ?? "sidequest.generate", model, kind: opts.json === false ? "text" : "json", status: "error", reservedUsd: est, costUsd: est, note: name });
+    throw new LLMError(name === "TimeoutError" ? `timeout after ${timeoutMs}ms` : `network: ${(err as Error).message}`);
   }
   const raw = await res.text();
   const ms = Math.round(performance.now() - t0);
@@ -98,8 +113,8 @@ export async function chatJSON(messages: Message[], opts: { maxTokens?: number; 
     id: `sq-${Date.now().toString(36)}`,
     ts: new Date().toISOString(),
     task: opts.task ?? "sidequest.generate",
-    model: env.model,
-    kind: "json",
+    model,
+    kind: opts.json === false ? "text" : "json",
     status: res.ok ? "ok" : "error",
     reservedUsd: costUsd,
     costUsd,
@@ -111,7 +126,7 @@ export async function chatJSON(messages: Message[], opts: { maxTokens?: number; 
   if (!res.ok) throw new LLMError(data.error?.message ?? `Model API ${res.status}: ${raw.slice(0, 200)}`, res.status);
   const text = data.choices?.[0]?.message?.content ?? "";
   if (!text.trim()) throw new LLMError(`empty completion (finish_reason=${data.choices?.[0]?.finish_reason})`);
-  return { text, ms, costUsd };
+  return { text, ms, costUsd, finish: data.choices?.[0]?.finish_reason };
 }
 
 /** Pull the first JSON object out of a completion (tolerates ```json fences or stray prose). */

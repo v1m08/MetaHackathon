@@ -49,7 +49,7 @@ export function mix(a: string, b: string, t: number) {
   return "#" + c.map((v) => v.toString(16).padStart(2, "0")).join("");
 }
 
-export const FONT = `"Fredoka", ui-rounded, "SF Pro Rounded", system-ui, sans-serif`;
+export const FONT = `"Rubik", system-ui, sans-serif`;
 export const font = (px: number, weight = 600) => `${weight} ${px}px ${FONT}`;
 
 export function wrapText(ctx: CanvasRenderingContext2D, text: string, maxW: number): string[] {

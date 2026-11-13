@@ -10,6 +10,7 @@ import { createInterface } from "node:readline";
 import "./server/env";
 import { env, liveEnabled } from "./server/env";
 import { generate } from "./server/generate";
+import { findByInterest, generateGame, type Stage } from "./server/gen/pipeline";
 import { spentUsd } from "./server/llm";
 import { isOurServer, lanAddress, startServer } from "./server/serve";
 import { encodeShare } from "./shared/share";
@@ -23,6 +24,35 @@ const port = portIdx >= 0 ? Number(args[portIdx + 1]) : Number(process.env.SIDEQ
 const interests = args.filter((a, i) => !a.startsWith("--") && args[i - 1] !== "--port");
 
 const c = { dim: "\x1b[2m", bold: "\x1b[1m", cyan: "\x1b[36m", green: "\x1b[32m", yellow: "\x1b[33m", reset: "\x1b[0m" };
+
+const STAGES: Record<Stage, string> = { design: "designing the game", code: "writing the code", check: "checking the code", playtest: "playtesting", repair: "fixing what the playtest found", done: "done" };
+
+/** v3: generate a brand-new game from scratch for the interest. */
+async function makeGame(interest: string) {
+  const t0 = performance.now();
+  const cached = flag("--fresh") ? null : findByInterest(interest);
+  const g =
+    cached ??
+    (await generateGame(interest, (stage, info) => {
+      const secs = ((performance.now() - t0) / 1000).toFixed(0).padStart(3);
+      console.log(`  ${c.dim}${secs}s  ${STAGES[stage]}${c.reset}${info ? `  ${c.dim}${info}${c.reset}` : ""}`);
+    }).catch((e: Error) => {
+      console.log(`  ${c.yellow}generation failed: ${e.message}${c.reset}\n`);
+      return null;
+    }));
+  if (!g) return;
+  const st = g.stats;
+  console.log(`\n  ${c.bold}${g.design.title}${c.reset} ${c.dim}— ${g.design.tagline}${c.reset}`);
+  console.log(`  ${c.dim}${String(g.design.howToPlay ?? "")}${c.reset}`);
+  const verdict = st.issues.length ? `${c.yellow}${st.issues.length} unresolved issue(s): ${st.issues.join(" | ").slice(0, 200)}${c.reset}` : `${c.green}passed playtest${c.reset}`;
+  console.log(`  ${cached ? "cached · " : ""}${verdict}${c.dim} · ${((st.designMs + st.codeMs) / 1000).toFixed(0)}s model time · ${st.repairs} repair(s) · $${st.costUsd.toFixed(3)} · ${st.model}${c.reset}`);
+  const local = `http://localhost:${port}/play/${g.id}`;
+  console.log(`  ${c.green}${local}${c.reset}`);
+  const lan = lanAddress();
+  if (lan) console.log(`  ${c.dim}phones on the same wifi:${c.reset} ${c.cyan}http://${lan}:${port}/play/${g.id}${c.reset}`);
+  console.log();
+  if (flag("--open")) execFile("open", [local]);
+}
 
 async function makeLink(interest: string, preset?: unknown) {
   process.stdout.write(`${c.dim}  generating…${c.reset}`);
@@ -71,7 +101,8 @@ async function main() {
   }
   console.log();
   if (flag("--demo")) await makeLink("F1", WORDHUNT_F1); // Phase 0: hand-made F1 word hunt
-  for (const i of interests) await makeLink(i);
+  const make = flag("--legacy") ? (i: string) => makeLink(i) : makeGame;
+  for (const i of interests) await make(i);
 
   if (!process.stdin.isTTY && interests.length) return process.exit(0);
   const rl = createInterface({ input: process.stdin, output: process.stdout });
@@ -82,7 +113,7 @@ async function main() {
         rl.close();
         return process.exit(0);
       }
-      await makeLink(t);
+      await make(t);
       ask();
     });
   ask();

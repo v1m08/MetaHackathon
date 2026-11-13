@@ -7,6 +7,8 @@ import { join } from "node:path";
 import * as esbuild from "esbuild";
 import { generate } from "./generate";
 import { createRoom, getRoom, sortedScores, submitScore, type ScoreRow } from "./rooms";
+import { FRAME_CSP, framePage, playPage } from "./gen/pages";
+import { loadGame } from "./gen/pipeline";
 
 /** Never expose playerIds (they act as the write key); mark the caller's own row instead. */
 const publicBoard = (rows: ScoreRow[], me: string | null) => rows.map((r) => ({ name: r.name, score: r.score, plays: r.plays, me: !!me && r.playerId === me }));
@@ -71,6 +73,20 @@ export async function startServer(port: number): Promise<Server> {
         res.writeHead(code, { "content-type": "application/json", "cache-control": "no-store" });
         res.end(JSON.stringify(v));
       };
+      const gameRoute = url.pathname.match(/^\/(play|frame)\/([a-z0-9]{4,16})$/);
+      if (req.method === "GET" && gameRoute) {
+        const g = loadGame(gameRoute[2]);
+        if (!g) {
+          res.writeHead(404, { "content-type": "text/plain" });
+          return res.end("game not found");
+        }
+        if (gameRoute[1] === "play") {
+          res.writeHead(200, { "content-type": "text/html; charset=utf-8", "cache-control": "no-store" });
+          return res.end(playPage(g));
+        }
+        res.writeHead(200, { "content-type": "text/html; charset=utf-8", "cache-control": "no-store", "content-security-policy": FRAME_CSP });
+        return res.end(await framePage(g));
+      }
       const roomPath = url.pathname.match(/^\/api\/rooms\/([a-z0-9]{4,12})(\/scores)?$/);
       if (req.method === "POST" && url.pathname === "/api/rooms") {
         const body = await readJson(req);
