@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useEffect } from "react";
-import { Bell, Cake, CalendarDays, Gamepad2, MessageSquare, Store, ThumbsUp, UserPlus, Users } from "lucide-react";
+import { Bell, Cake, CalendarDays, Dices, Gamepad2, MessageSquare, Store, ThumbsUp, UserPlus, Users } from "lucide-react";
 import { Shell } from "@/components/Shell";
 import { Avatar, RichText, cx } from "@/components/ui";
 import { api, refresh, useApi } from "@/lib/api";
@@ -20,6 +20,7 @@ const ICON: Record<string, { icon: React.ElementType; bg: string }> = {
   memory: { icon: Bell, bg: "bg-fb" },
   mention: { icon: MessageSquare, bg: "bg-fb" },
   play: { icon: Gamepad2, bg: "bg-fb" },
+  game: { icon: Dices, bg: "bg-messenger" },
 };
 
 export default function NotificationsPage() {

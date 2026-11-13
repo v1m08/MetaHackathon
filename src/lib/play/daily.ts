@@ -2,7 +2,8 @@
 // Code enforces: only participants trigger it, muted chats get nothing, a thread nobody has sent a real message in
 // (empty, or holding only an unsent draft) gets nothing, concurrent loads share one generation (so one model call
 // per chat per day), and a failed generation is not retried on every page load.
-import { getConversation, sendMessage } from "@/server/db";
+// When a game drops, every member is told with a "game" notification, except the one whose open made it drop.
+import { getConversation, getUser, notify, sendMessage } from "@/server/db";
 import type { Conversation, ID } from "@/types";
 import { generateGame } from "./generate";
 import { dayKey, FORMAT_LABEL, getGame, playStore, saveGame, type Format, type PlayGame } from "./store";
@@ -13,8 +14,17 @@ const RETRY_AFTER_MS = 10 * 60e3;
  *  (a visible, non-draft message) would open it for them. Earlier cards and other system lines don't count. */
 export const hasStarted = (c: Conversation) => c.messages.some((m) => m.status !== "draft" && !m.system);
 
-/** Save a game as its chat's game for that day and post its card. The card is a system line from the chat itself, not from whoever opened it. */
-export function postGame(game: PlayGame): PlayGame {
+/** What a member calls this chat: its name, or who it is with. */
+function chatNameFor(c: Conversation, memberId: ID) {
+  if (c.name) return c.name;
+  const others = c.participantIds.filter((id) => id !== memberId).map((id) => (getUser(id)?.name ?? id).split(" ")[0]);
+  return others.length === 1 ? `your chat with ${others[0]}` : "your group chat";
+}
+
+/** Save a game as its chat's game for that day, post its card and tell the members. The card is a system line from the
+ *  chat itself, not from whoever opened it. `openedBy` is the member whose open made the game drop: they are already
+ *  looking at the thread, so they get no notification. */
+export function postGame(game: PlayGame, openedBy?: ID): PlayGame {
   const c = getConversation(game.conversationId);
   if (!c) throw Object.assign(new Error("Conversation not found"), { status: 404 });
   saveGame(game);
@@ -22,6 +32,10 @@ export function postGame(game: PlayGame): PlayGame {
   m.system = true;
   m.readBy = [];
   game.messageId = m.id;
+  // Its own type, "game": "play" stays what it was, one notification per member when the chat unlocks something.
+  for (const id of c.participantIds) {
+    if (id !== openedBy) notify(id, { type: "game", text: `Today's game is ready in **${chatNameFor(c, id)}**: ${game.title}`, href: `/messages/${game.conversationId}` });
+  }
   return game;
 }
 
@@ -59,7 +73,7 @@ export async function ensureDaily(conversationId: ID, viewerId: ID): Promise<Pla
       const raced = today();
       if (raced) return raced;
       if (playStore().muted.has(conversationId) || !game.rounds.length) { if (!game.rounds.length) s.failed.set(key, Date.now()); return null; }
-      return postGame(game);
+      return postGame(game, viewerId);
     } catch (err) {
       console.error("[play] daily game failed:", (err as Error).message);
       s.failed.set(key, Date.now());

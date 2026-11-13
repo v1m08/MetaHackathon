@@ -184,7 +184,9 @@ export type NotificationType =
   | "marketplace"
   | "memory"
   | "mention"
-  | "play";
+  /** play: the chat unlocked something. game: today's game dropped in a chat (src/lib/play). */
+  | "play"
+  | "game";
 
 export interface Notification {
   id: ID;
