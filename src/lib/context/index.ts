@@ -64,6 +64,25 @@ interface CachedXRoom {
   createdAt?: string;
   players?: Record<string, { name?: string; picks?: Record<string, { a?: string; r?: number; at?: string }> }>;
 }
+interface CachedRRoom {
+  id: string;
+  course?: { interest?: string; title?: string; tagline?: string };
+  createdAt?: string;
+  players?: Record<string, { name?: string; best?: number | null; plays?: number }>;
+}
+interface CachedSRoom {
+  id: string;
+  pack?: { interest?: string; title?: string; tagline?: string; words?: { w?: string }[] };
+  createdAt?: string;
+  drawings?: { artist?: string; at?: string; guesses?: Record<string, { correct?: boolean }> }[];
+}
+
+const GAME_LABEL: Record<GameKind, string> = {
+  deepcuts: "Deep Cuts",
+  orderup: "Order Up!",
+  ghostrun: "Ghost Run",
+  sketchoff: "Sketch Off",
+};
 
 function readJsonSafe<T>(file: string): T | null {
   if (!existsSync(file)) return null;
@@ -100,7 +119,7 @@ export interface SidequestSession {
 const pairKey = (a: ID, b: ID) => (a < b ? `${a}|${b}` : `${b}|${a}`);
 
 function parseCardInterest(text: string): string {
-  const m = text.match(/(?:Order Up!|Deep Cuts)\s*:\s*(.+)$/i);
+  const m = text.match(/(?:Order Up!|Deep Cuts|Ghost Run|Sketch Off)\s*:\s*(.+)$/i);
   return m ? m[1].trim() : text.replace(/^🎮\s*/, "").trim();
 }
 
@@ -115,8 +134,8 @@ export function ingestSidequestSessions(): SidequestSession[] {
       const att = m.attachment;
       if (!att || (att.type !== "sqgame" && att.type !== "sqgamelog")) continue;
       const ref = att.ref;
-      const gameKind: GameKind = ref.startsWith("k:") ? "orderup" : "deepcuts";
-      const roomId = ref.replace(/^k:/, "");
+      const gameKind: GameKind = ref.startsWith("k:") ? "orderup" : ref.startsWith("r:") ? "ghostrun" : ref.startsWith("s:") ? "sketchoff" : "deepcuts";
+      const roomId = ref.replace(/^[krs]:/, "");
 
       let sess = byRef.get(ref);
       if (!sess) {
@@ -184,6 +203,44 @@ export function ingestSidequestSessions(): SidequestSession[] {
             });
           }
         }
+      } else if (sess.gameKind === "ghostrun") {
+        const rr = readJsonSafe<CachedRRoom>(join(CACHE_ROOT, "run", `${sess.roomId}.json`));
+        if (rr) {
+          if (rr.course?.interest) sess.interest ||= rr.course.interest;
+          if (rr.course?.title) sess.title = rr.course.title;
+          extraText = rr.course?.tagline ?? "";
+          for (const [pid, pl] of Object.entries(rr.players ?? {})) {
+            const uid = pidToMember.get(pid);
+            if (!uid || !(pl.plays && pl.plays > 0)) continue;
+            const cur = sess.players.get(uid);
+            sess.players.set(uid, {
+              userId: uid,
+              plays: Math.max(cur?.plays ?? 0, pl.plays),
+              finishedAt: cur?.finishedAt ?? rr.createdAt ?? sess.createdAt,
+              repliedAfter: cur?.repliedAfter ?? false,
+              summary: cur?.summary,
+            });
+          }
+        }
+      } else if (sess.gameKind === "sketchoff") {
+        const sr = readJsonSafe<CachedSRoom>(join(CACHE_ROOT, "sketch", `${sess.roomId}.json`));
+        if (sr) {
+          if (sr.pack?.interest) sess.interest ||= sr.pack.interest;
+          if (sr.pack?.title) sess.title = sr.pack.title;
+          extraText = [sr.pack?.tagline ?? "", ...(sr.pack?.words ?? []).map((w) => w.w ?? "")].join(" ");
+          for (const d of sr.drawings ?? []) {
+            const artistUid = d.artist ? pidToMember.get(d.artist) : undefined;
+            if (artistUid && !sess.players.has(artistUid)) {
+              sess.players.set(artistUid, { userId: artistUid, plays: 1, finishedAt: d.at ?? sess.createdAt, repliedAfter: false });
+            }
+            for (const gPid of Object.keys(d.guesses ?? {})) {
+              const gUid = pidToMember.get(gPid);
+              if (gUid && !sess.players.has(gUid)) {
+                sess.players.set(gUid, { userId: gUid, plays: 1, finishedAt: d.at ?? sess.createdAt, repliedAfter: false });
+              }
+            }
+          }
+        }
       } else {
         const xr = readJsonSafe<CachedXRoom>(join(CACHE_ROOT, "rarity", `${sess.roomId}.json`));
         if (xr) {
@@ -221,7 +278,7 @@ export function ingestSidequestSessions(): SidequestSession[] {
         }
       }
 
-      sess.title ||= sess.interest || (sess.gameKind === "orderup" ? "Order Up!" : "Deep Cuts");
+      sess.title ||= sess.interest || GAME_LABEL[sess.gameKind];
       sess.interest ||= sess.title;
       const direct = topicsOfText(`${sess.interest} ${sess.title}`);
       sess.topics = direct.length ? direct : topicsOfText(extraText);
@@ -561,7 +618,7 @@ export function blindSpotTopicsFor(memberIds: ID[], sessions = ingestSidequestSe
     .map((x) => x.t);
 }
 
-export function traySuggestionsFor(conversationId: ID, viewerId: ID, game: GameKind) {
+export function traySuggestionsFor(conversationId: ID, viewerId: ID, game: GameKind | "auto" = "auto") {
   const c = getConversation(conversationId);
   if (!c || !c.participantIds.includes(viewerId)) throw Object.assign(new Error("Conversation not found"), { status: 404 });
   const ids = c.participantIds;
@@ -740,7 +797,7 @@ export function userContextFor(userId: ID) {
       return {
         ref: s.ref,
         gameKind: s.gameKind,
-        gameLabel: s.gameKind === "orderup" ? "Order Up!" : "Deep Cuts",
+        gameLabel: GAME_LABEL[s.gameKind],
         title: s.title,
         interest: s.interest,
         date: s.date,

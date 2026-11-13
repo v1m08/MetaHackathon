@@ -173,10 +173,22 @@ test("playing a new Deep Cuts or Order Up! game live updates affinity, closeness
   sendMessage(MJ, "maya", "played Peloton Legends · 620 km", { type: "sqgamelog", ref: "sqcycl99" });
   sendMessage(MJ, "jordan", "played Peloton Legends · 580 km · #2 of 2", { type: "sqgamelog", ref: "sqcycl99" });
 
+  // Also test Ghost Run (r:) and Sketch Off (s:) ingestion:
+  sendMessage(MJ, "jordan", "🎮 Ghost Run: Rock climbing", { type: "sqgame", ref: "r:sqrun01" });
+  sendMessage(MJ, "jordan", "played Crag Dash · 22.4s", { type: "sqgamelog", ref: "r:sqrun01" });
+  sendMessage(MJ, "maya", "played Crag Dash · 21.8s · took the lead", { type: "sqgamelog", ref: "r:sqrun01" });
+
+  sendMessage(MJ, "maya", "🎮 Sketch Off: Anime", { type: "sqgame", ref: "s:sqsk01" });
+  sendMessage(MJ, "maya", "played Pixel Studio · 340 pts", { type: "sqgamelog", ref: "s:sqsk01" });
+  sendMessage(MJ, "jordan", "played Pixel Studio · 290 pts", { type: "sqgamelog", ref: "s:sqsk01" });
+
   const ctx = userContextFor("maya")!;
   const cycEntry = ctx.after.learnedTopics.find((t) => t.topic === "cycling")!;
   assert.ok(cycEntry && cycEntry.newlyDiscovered);
+  assert.ok(ctx.after.recentGames.some((g) => g.gameKind === "ghostrun" && g.gameLabel === "Ghost Run"));
+  assert.ok(ctx.after.recentGames.some((g) => g.gameKind === "sketchoff" && g.gameLabel === "Sketch Off"));
   assert.match(socialMatchFor("maya", ["cycling"]).fitLabel ?? "", /Matches your games with Jordan · cycling/);
+  assert.match(socialMatchFor("maya", ["film"]).fitLabel ?? "", /Matches your games with Jordan · movies & anime/);
 });
 
 test("privacy: cross-chat Sidequest games, private saves, and non-member trays never leak", () => {

@@ -469,8 +469,7 @@ export function GameTray({ conversationId, onCreate, onClose }: { conversationId
   }, []);
   useEffect(() => {
     if (!conversationId) return;
-    const g = choice === "orderup" ? "orderup" : "deepcuts";
-    api<{ forChat: { chip: string; reason: string }[]; discover: { chip: string; reason: string }[] }>(`/api/context/tray?conversationId=${encodeURIComponent(conversationId)}&game=${g}`)
+    api<{ forChat: { chip: string; reason: string }[]; discover: { chip: string; reason: string }[] }>(`/api/context/tray?conversationId=${encodeURIComponent(conversationId)}&game=${choice}`)
       .then(setSmart)
       .catch(() => setSmart(null));
   }, [conversationId, choice]);
@@ -592,8 +591,8 @@ export function GameTray({ conversationId, onCreate, onClose }: { conversationId
                       title={s.reason}
                       className="rounded-full bg-[#6ee7b7]/15 px-3 py-1 text-[13px] font-medium text-[#a7f3d0] ring-1 ring-[#6ee7b7]/30 active:bg-[#6ee7b7]/25"
                     >
-                      {readySet.has(s.chip.toLowerCase()) ? "⚡ " : ""}
-                      {s.chip}
+                      {GAMES[pick(s.chip)].emoji} {s.chip}
+                      {readySet.has(s.chip.toLowerCase()) ? " ⚡" : ""}
                     </button>
                   ))}
                 </div>
