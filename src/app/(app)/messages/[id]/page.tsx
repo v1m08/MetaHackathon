@@ -52,8 +52,15 @@ export default function ThreadPage() {
   const [sending, setSending] = useState(false);
   const bottom = useRef<HTMLDivElement>(null);
   const count = c?.messages.length ?? 0;
+  // Keep the newest message in view, past the sticky composer. Game and unlock cards load after their message arrives
+  // and grow, so follow them down once they have, unless the reader has scrolled up in the meantime.
   useEffect(() => {
-    bottom.current?.scrollIntoView({ block: "end" });
+    const view = bottom.current?.closest<HTMLElement>(".app-viewport");
+    if (!view) return;
+    const toEnd = () => { view.scrollTop = view.scrollHeight; };
+    toEnd();
+    const timers = [400, 1200].map((ms) => setTimeout(() => { if (view.scrollHeight - view.scrollTop - view.clientHeight < 400) toEnd(); }, ms));
+    return () => timers.forEach(clearTimeout);
   }, [count]);
   useEffect(() => {
     refresh("/api/me");
@@ -94,7 +101,7 @@ export default function ThreadPage() {
   const other = c?.others[0];
 
   return (
-    <div className="relative flex h-full flex-col bg-white">
+    <div className="relative flex min-h-full flex-col bg-white">
       <header className="safe-top sticky top-0 z-10 border-b border-line/60 bg-white">
         <div className="flex h-14 items-center gap-2 px-2">
           <button onClick={() => router.back()} className="rounded-full p-2 text-messenger"><ArrowLeft size={22} /></button>

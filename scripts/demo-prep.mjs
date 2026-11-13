@@ -123,6 +123,20 @@ try {
   say("  Not running. Start it in a second terminal: npm run sidequest");
 }
 
+// ---------- photos ----------
+// Event and listing photos are placeholders fetched through the app's image cache. Ask for one first: if its host is
+// unreachable the app remembers that for a few minutes, so cards show their gradient at once instead of a blank wait.
+const events = (await get("/api/events", ON_STAGE[0])) ?? [];
+const covers = [...new Set(events.map((e) => e.cover).filter((c) => typeof c === "string" && c.startsWith("/api/img")))];
+const loads = async (path) => (await fetch(`${BASE}${path}`).catch(() => null))?.ok === true;
+if (covers.length) {
+  const t0 = Date.now();
+  const firstOk = await loads(covers[0]);
+  const rest = await Promise.all(covers.slice(1).map(loads));
+  const ok = Number(firstOk) + rest.filter(Boolean).length;
+  say(`\nEvent photos: ${ok} of ${covers.length} load [${secs(t0)}]${ok < covers.length ? ". The rest will show as grey blocks: the placeholder host is not reachable from here. Run npm run warm on a network where it is." : ""}`);
+}
+
 // ---------- links ----------
 const lan = Object.values(networkInterfaces()).flat().find((a) => a && a.family === "IPv4" && !a.internal)?.address;
 const port = new URL(BASE).port || "80";
