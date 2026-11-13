@@ -8,5 +8,8 @@ export const MUSE_ID = "muse";
 /** Events Muse can pick from at the end. */
 export const DEMO_EVENT_IDS = ["e_lands_end_hike", "e_burrito_crawl"] as const;
 
+/** Muse sends its plan once this many people have finished the group's first game. */
+export const PLAN_AFTER_PLAYERS = 2;
+
 export const isDemoUser = (id?: string | null) => !!id && (DEMO_IDS as readonly string[]).includes(id);
 export const demoNumber = (id: string) => (DEMO_IDS as readonly string[]).indexOf(id) + 1;

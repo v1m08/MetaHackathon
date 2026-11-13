@@ -8,6 +8,7 @@ import { useApi } from "@/lib/api";
 import { useSession } from "@/lib/session";
 import { Avatar, cx } from "./ui";
 import { DemoGuide } from "./DemoGuide";
+import { MuseToast } from "./MuseToast";
 import type { User } from "@/types";
 
 export type Me = User & { unreadMessages: number; unreadNotifications: number; friendRequests: number; groupIds: string[] };
@@ -60,12 +61,19 @@ export function PhoneFrame({ children }: { children: React.ReactNode }) {
   useCountPages();
   const stage = useDesktopStage();
   // Render exactly one copy of the app: two copies meant double data fetching and polling.
-  if (!stage) return <div className="app-viewport h-dvh bg-bg">{children}</div>;
+  if (!stage)
+    return (
+      <>
+        <div className="app-viewport h-dvh bg-bg">{children}</div>
+        <MuseToast inFrame={false} />
+      </>
+    );
   return (
     <div className="phone-stage">
       <div className="phone">
         <div className="phone-notch" />
         <div className="app-viewport">{children}</div>
+        <MuseToast inFrame />
       </div>
     </div>
   );
@@ -100,7 +108,8 @@ export function TopBar({ title, back, right, transparent, backTo = "/" }: { titl
                 <MessageCircle size={20} />
                 {!!me?.unreadMessages && <Badge n={me.unreadMessages} />}
               </Link>
-              <MyProfileButton />
+              {/* no room for it next to a centered page title */}
+              {!title && <MyProfileButton />}
             </>
           )}
         </div>

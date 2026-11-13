@@ -18,7 +18,7 @@ PROMPTS (exactly ${PROMPTS_PER_GAME + 1}; the best ${PROMPTS_PER_GAME} are used)
 - "hint" says exactly what counts, in under 70 characters (e.g. "Any named route, any style, anywhere").
 
 WORLD:
-- title: original and punchy, <= 26 chars, no brand names.
+- title: original and punchy, <= 26 chars, no brand names, no regional slang or words not everyone uses (no "hella", "lit", "bussin").
 - tagline: <= 60 chars.
 - host: a character who would host this in-world (name <= 18 chars, one emoji, intro <= 90 chars in their voice).
 - meter: a progress metaphor that fits the interest. Points convert to it. label (e.g. "Altitude"), unit (e.g. "m"), perPoint (number, so 700 points feels big), up (true if it climbs, false if it descends), icon (one emoji).
@@ -39,7 +39,7 @@ WORLD:
   journey from start to legendary finish. ALWAYS feature the topic's single most iconic, instantly recognisable landmark or symbol,
   big and unmistakable (for a city: its most famous sight, e.g. the Golden Gate Bridge for San Francisco). No text, no real people.
 - avatar: one emoji for the player's marker (a person or vehicle doing the interest).
-- verb: one short submit-button word in the interest's language (e.g. "Send", "Push", "Bake", "Dig", "Drop").
+- verb: one short, plain submit-button word anyone understands (e.g. "Send", "Push", "Bake", "Dig", "Drop"). No slang.
 - meter.up must match the scene: false for ocean and dig, true otherwise.
 - font: pick the one whose mood matches the interest best: "Rubik" (friendly, neutral), "Bricolage Grotesque" (quirky, artsy, indie), "Fraunces" (warm, crafty, food, books, history), "Space Grotesk" (tech, science, space, gaming), "Saira Condensed" (speed, motorsport, sports stats), "Baloo 2" (cute, pets, kids, cozy), "DM Serif Display" (elegant, fashion, music, film, classical), "Archivo Black" (loud, bold, extreme sports, hype). Don't default to one; match the mood.
 
@@ -57,8 +57,13 @@ Never invent answers. If unsure something is real, leave it out.
 
 Reply with only JSON: {"answers":[{"a","alias","r","note"}]}`;
 
+/** Regional slang the model likes to sprinkle into titles and buttons; nobody outside the region says it. */
+const SLANG = /\b(hella|lit|bussin|finna|deadass|no cap|yeet)\b/gi;
+const unslang = (v: unknown) => (typeof v === "string" ? v.replace(SLANG, "").replace(/\s{2,}/g, " ").trim() : v);
+
 function sanitizeWorld(raw: Record<string, unknown>, interest: string): World & { prompts: { q: string; hint?: string }[] } {
   const o = (v: unknown) => (v && typeof v === "object" ? (v as Record<string, unknown>) : {});
+  raw = { ...raw, title: unslang(raw.title), verb: unslang(raw.verb) || "Send", tagline: unslang(raw.tagline) };
   const host = o(raw.host), meter = o(raw.meter), pal = o(raw.palette);
   const hex = (v: unknown, d: string) => (parseHex(v) ? String(v) : d);
   const bg = hex(pal.bg, "#1d2b3a");
@@ -120,7 +125,7 @@ function sanitizeAnswers(raw: unknown): Answer[] {
   return out;
 }
 
-export async function generatePack(rawInterest: string, onStage: (s: string) => void = () => {}): Promise<{ pack: Pack; ms: number; costUsd: number }> {
+export async function generatePack(rawInterest: string, onStage: (s: string) => void = () => {}, angles?: string[]): Promise<{ pack: Pack; ms: number; costUsd: number }> {
   const interest = normalizeInterest(rawInterest) || "trivia";
   const t0 = performance.now();
   let cost = 0;
@@ -128,7 +133,10 @@ export async function generatePack(rawInterest: string, onStage: (s: string) => 
   const w = await chatJSON(
     [
       { role: "system", content: WORLD_SYSTEM },
-      { role: "user", content: `Interest: ${JSON.stringify(interest)}` },
+      {
+        role: "user",
+        content: `Interest: ${JSON.stringify(interest)}${angles?.length ? `\nThis round is for a specific group of friends. Every prompt must be about the interest above; use these angles as flavor within it (one prompt each, still easy and fun), and ignore any angle that isn't part of the interest: ${angles.join("; ")}` : ""}`,
+      },
     ],
     { maxTokens: 5000, timeoutMs: 60000, reasoning: "low", temperature: 0.9, task: "rarity.world" },
   );

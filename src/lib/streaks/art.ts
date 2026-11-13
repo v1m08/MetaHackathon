@@ -14,6 +14,12 @@ export const CRITTER_ART: Record<ID, Art> = {
   grace: { art: "jess", animal: "bunny with a flower", body: "bean", color: "lilac", accessory: "flower" },
   hannah: { art: "alex", animal: "baby frog with a swim ring", body: "pebble", color: "mint", accessory: "flower" },
   lucas: { art: "sam", animal: "baby turtle in a bandana", body: "pebble", color: "sky", accessory: "bandana" },
+  // the hackathon demo's SF cast
+  nivan: { art: "chris", animal: "bear cub in a sweatband", body: "pebble", color: "coral", accessory: "bandana" },
+  armaan: { art: "maya", animal: "baby otter with a ramen bowl", body: "noodle", color: "peach", accessory: "scarf" },
+  vedansh: { art: "dev", animal: "fluffy baby goose", body: "puff", color: "butter", accessory: "feather" },
+  keira: { art: "jess", animal: "bunny with a flower", body: "bean", color: "lilac", accessory: "flower" },
+  abishek: { art: "sam", animal: "baby turtle in a bandana", body: "pebble", color: "sky", accessory: "bandana" },
 };
 
 type Mood = "awake" | "sleepy" | "napping" | "celebrating";

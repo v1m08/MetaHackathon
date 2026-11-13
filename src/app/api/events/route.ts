@@ -2,11 +2,13 @@ import { route } from "@/server/http";
 import { cardFor, db } from "@/server/db";
 import { socialMatchCache, socialMatchFor } from "@/lib/context";
 import { topicsOfEvent } from "@/lib/context/taxonomy";
+import { canSeeEvent } from "@/lib/context/visibility";
 export const GET = route((_req, { userId }) => {
   const me = db().users.find((u) => u.id === userId)!;
   const cache = socialMatchCache(userId);
   return db()
-    .events.map((e) => {
+    .events.filter((e) => canSeeEvent(userId, e))
+    .map((e) => {
       const m = socialMatchFor(userId, topicsOfEvent(e), cache, { tier: "event", startsAt: e.startsAt, alreadyInIds: [...e.going, ...(e.hostId ? [e.hostId] : [])] });
       return {
         ...e,

@@ -1,6 +1,7 @@
 import type { Database, Notification } from "@/types";
 import { conversations } from "./conversations";
-import { demoConversation, demoEvents, demoPosts, demoStories, demoUsers, museUser } from "./demo";
+import { demoConversation, demoDMs, demoEvents, demoPosts, demoStories, demoUsers, museUser } from "./demo";
+import { dayStartMs } from "@/lib/context/day";
 import { dating } from "./dating";
 import { events } from "./events";
 import { feedPosts, stories } from "./feedPosts";
@@ -69,7 +70,7 @@ export function buildSeed(): Database {
     events: structuredClone([...events, ...demoEvents]),
     listings: structuredClone(listings),
     reels: structuredClone(reels),
-    conversations: structuredClone([demoConversation, ...conversations]),
+    conversations: structuredClone([demoConversation, ...demoDMs(Date.now(), dayStartMs()), ...conversations]),
     dating: structuredClone(dating),
     games: structuredClone(games),
     notifications: buildNotifications(),

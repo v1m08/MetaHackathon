@@ -3,7 +3,7 @@
 // the URL; the group chat passes its own (it knows whether you've played and whether Muse has suggested a plan).
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { DEMO_CHAT, DEMO_EVENT_IDS, isDemoUser } from "@/lib/demo";
+import { isDemoUser } from "@/lib/demo";
 import { useMe } from "./Shell";
 
 export type GuideStep = { step?: number; text: string; href?: string; cta?: string };
@@ -30,11 +30,8 @@ export function DemoGuide({ guide }: { guide?: GuideStep | null }) {
   );
 }
 
+/** Only the first screen gets a nudge: after the profile, judges find their own way. */
 function stepFor(path: string, myId: string, name: string): GuideStep | null {
-  const chat = `/messages/${DEMO_CHAT}`;
-  if (path === `/profile/${myId}`) return { step: 1, text: `Hi ${name}! This is you. Peek at your posts, then tap Next.`, href: "/messages", cta: "Next →" };
-  if (path === "/messages") return { step: 2, text: "Open your group chat with the other judges.", href: chat, cta: "Open chat →" };
-  if ((DEMO_EVENT_IDS as readonly string[]).some((id) => path === `/events/${id}`)) return { step: 4, text: "Muse picked this plan for your group. Tap Going if you'd go 🎉", href: chat, cta: "Back to chat" };
-  if (path.startsWith("/messages/")) return null; // the chat sets its own
-  return { text: "Your group chat is waiting.", href: chat, cta: "Open chat →" };
+  if (path === `/profile/${myId}`) return { text: `Hi ${name}! This is you. Peek at your posts, then tap Next.`, href: "/", cta: "Next →" };
+  return null;
 }

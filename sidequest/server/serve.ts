@@ -109,11 +109,15 @@ export async function startServer(port: number): Promise<Server> {
       }
       if (req.method === "GET" && path === "/api/x/topics") return json(200, readyTopics());
       if (req.method === "POST" && path === "/api/x/new") {
-        const interest = String((await readJson(req)).interest ?? "").slice(0, 60).trim();
+        const body = await readJson(req);
+        const interest = String(body.interest ?? "").slice(0, 60).trim();
+        // optional: what the questions should touch, so a game feels made for one group (e.g. "Bay Area tech")
+        const angles = Array.isArray(body.angles) ? body.angles.map((a) => String(a).slice(0, 60).trim()).filter(Boolean).slice(0, 3) : undefined;
         if (!interest) return json(400, { error: "topic required" });
         try {
-          const pack = cachedPack(interest) ?? (await generatePack(interest)).pack;
-          cachePack(pack);
+          const cached = cachedPack(interest, angles);
+          const pack = cached ?? (await generatePack(interest, undefined, angles)).pack;
+          if (!cached) cachePack(pack, angles);
           const room = createXRoom(pack);
           console.log(`  [web] Deep Cuts ${JSON.stringify(interest)} → /x/${room.id}`);
           return json(200, { id: room.id });

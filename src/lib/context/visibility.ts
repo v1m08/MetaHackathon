@@ -1,5 +1,6 @@
 import { db, getUser } from "@/server/db";
 import type { FBEvent, ID, Post, Reel, User } from "@/types";
+import { DEMO_EVENT_IDS, isDemoUser } from "@/lib/demo";
 
 export const isFriend = (viewerId: ID, otherId: ID) => viewerId === otherId || (getUser(viewerId)?.friendIds.includes(otherId) ?? false);
 
@@ -36,6 +37,8 @@ export function canSeeReel(viewerId: ID, r: Reel): boolean {
 }
 
 export function canSeeEvent(viewerId: ID, e: FBEvent): boolean {
+  // The hackathon demo's SF accounts live in their own world: SF events are only theirs, Austin events never are.
+  if ((DEMO_EVENT_IDS as readonly string[]).includes(e.id) !== isDemoUser(viewerId)) return false;
   if (e.hostGroupId) {
     const g = db().groups.find((x) => x.id === e.hostGroupId);
     if (g && g.privacy === "private" && !g.memberIds.includes(viewerId)) return false;

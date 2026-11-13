@@ -1,9 +1,11 @@
 import { ingestSidequestSessions, streakInfoFor } from "@/lib/context";
+import { DEMO_CHAT, isDemoUser } from "@/lib/demo";
 import { route } from "@/server/http";
 import { cardFor, conversationsFor } from "@/server/db";
 export const GET = route((_req, { userId }) => {
   const sessions = ingestSidequestSessions();
-  return conversationsFor(userId).map((c) => {
+  // demo judges see just their group chat here; their 1:1 DMs live behind the Hangout's critters
+  return conversationsFor(userId).filter((c) => !isDemoUser(userId) || c.id === DEMO_CHAT).map((c) => {
     const others = c.participantIds.filter((id) => id !== userId).map(cardFor);
     const last = c.messages.at(-1);
     const st = streakInfoFor(c.id, sessions);

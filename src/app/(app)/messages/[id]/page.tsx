@@ -7,7 +7,6 @@ import { GAMES, GameCard, GamePlayer, GameTray, type Finished } from "@/componen
 import { EventPicksSheet } from "@/components/events/EventPicksSheet";
 import { Critter } from "@/components/hangout/Critter";
 import { useBack, useMe } from "@/components/Shell";
-import { DemoGuide, type GuideStep } from "@/components/DemoGuide";
 import { DEMO_CHAT, MUSE_ID } from "@/lib/demo";
 import { ArrowLeft, Flame, Image as ImageIcon, Info, Phone, Plus, Send, Smile, Sparkles, ThumbsUp, Video, X } from "lucide-react";
 import { Avatar, Photo, cx } from "@/components/ui";
@@ -137,8 +136,8 @@ export default function ThreadPage() {
     setPlaying(null);
     const s = scored.current;
     scored.current = null;
-    if (s) void s.sent.catch(() => {}).then(() => setPicksFor(s.ref));
-  }, []);
+    if (s && id !== DEMO_CHAT) void s.sent.catch(() => {}).then(() => setPicksFor(s.ref));
+  }, [id]);
   const closePicks = useCallback(() => setPicksFor(null), []);
   const sendRef = useRef(send);
   sendRef.current = send;
@@ -171,19 +170,13 @@ export default function ThreadPage() {
   useEffect(() => {
     if (isDemoChat) void api("/api/demo/kickoff", { method: "POST", json: { conversationId: id } }).then(() => mutate()).catch(() => {});
   }, [isDemoChat, id, mutate]);
-  const museGame = c?.messages.find((m) => m.senderId === MUSE_ID && m.attachment?.type === "sqgame");
-  const musePlan = c?.messages.find((m) => m.senderId === MUSE_ID && m.attachment?.type === "event");
-  const done = new Set(c?.messages.filter((m) => m.attachment?.type === "sqgamelog" && m.attachment.ref === museGame?.attachment?.ref).map((m) => m.senderId));
-  const people = Math.max(1, (c?.participantIds.length ?? 2) - 1);
-  const guide: GuideStep | null = !isDemoChat
-    ? null
-    : musePlan
-      ? { step: 4, text: "Muse found a plan for your group 👀", href: `/events/${musePlan.attachment!.ref}`, cta: "See it →" }
-      : !museGame
-        ? { step: 3, text: "Muse is reading the room and making your group a game…" }
-        : done.has(userId)
-          ? { step: 3, text: `Nice! Muse suggests a plan once ${Math.ceil(people / 2)} of ${people} finish (${done.size}/${people} done).` }
-          : { step: 3, text: "Muse sent your group a game. Tap Play!" };
+  // no canned fallback if the model was unreachable: keep nudging Muse until its game shows up
+  const museGame = c?.messages.some((m) => m.senderId === MUSE_ID && m.attachment?.type === "sqgame");
+  useEffect(() => {
+    if (!isDemoChat || museGame) return;
+    const t = setInterval(() => void api("/api/demo/kickoff", { method: "POST", json: { conversationId: id } }).catch(() => {}), 15_000);
+    return () => clearInterval(t);
+  }, [isDemoChat, museGame, id]);
 
   return (
     <div className="relative flex h-full flex-col bg-white">
@@ -228,7 +221,6 @@ export default function ThreadPage() {
           <button className="p-1.5 text-messenger"><Video size={22} /></button>
           <button className="p-1.5 text-messenger"><Info size={20} /></button>
         </div>
-        {isDemoChat && <div className="pb-2"><DemoGuide guide={guide} /></div>}
       </header>
 
       <div className="flex-1 px-3 py-3">

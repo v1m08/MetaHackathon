@@ -123,17 +123,6 @@ async function main() {
   if (!(await waitFor(`http://127.0.0.1:${APP_PORT}/demo`, 60_000))) die(`app didn't start on :${APP_PORT} (port in use?)`);
   if (!(await waitFor(`http://127.0.0.1:${APP_PORT}/api/x/topics`, 5000))) die("app is up but can't reach the game server through the proxy");
 
-  // Muse picks the game from the group's data and generates it now, so it's instant for the judges.
-  // Cached: only the first run (or a run after the data changed) takes a minute or two.
-  console.log(`• Muse is picking the group's game ${c.dim}(first time: 1-2 minutes)${c.reset}`);
-  try {
-    const r = await fetch(`http://127.0.0.1:${APP_PORT}/api/demo/warm`, { method: "POST", signal: AbortSignal.timeout(300_000) });
-    const w = (await r.json()) as { topic?: string; why?: string; seconds?: number; error?: string };
-    if (!r.ok) throw new Error(w.error ?? String(r.status));
-    console.log(`  ${c.green}✓ ${w.topic}${c.reset} ${c.dim}(${w.seconds}s) ${w.why ?? ""}${c.reset}`);
-  } catch (e) {
-    console.log(`  ${c.yellow}couldn't prepare it ahead (${(e as Error).message}); Muse will make it when the chat is opened${c.reset}`);
-  }
 
   // 4. Tunnel.
   console.log("• opening the public tunnel");

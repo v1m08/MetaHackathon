@@ -88,6 +88,10 @@ export const demoPosts: Post[] = [
     comments: [["keira", "finally someone said it"], ["armaan", "twin peaks has a parking lot though"]],
   }),
   post("nivan", daysAgo(9), "Battery Spencer with the fog under the bridge. this city is unfair", { image: "golden-gate", location: "Battery Spencer", love: 2 }),
+  post("nivan", hoursAgo(3), "hackathon day 2. 4 laptops, 1 whiteboard, 0 sleep. we're building a game bot for group chats and it's actually working 💻", {
+    location: "Meta, Menlo Park", love: 3,
+    comments: [["vedansh", "it worked ONCE. let's not jinx it"], ["keira", "the demo is going to slap"], ["abishek", "who ate my bao"]],
+  }),
 
   post("armaan", hoursAgo(9), "official burrito ranking update 🌯 1. La Taqueria 2. El Farolito 3. Taqueria Cancún. don't @ me", {
     image: "burrito", location: "The Mission, San Francisco", love: 1,
@@ -114,6 +118,9 @@ export const demoPosts: Post[] = [
   post("abishek", hoursAgo(14), "Off the Grid Fridays are back. the bao truck alone is worth the BART ride", {
     image: "off-the-grid", location: "Fort Mason, San Francisco", love: 2, comments: [["armaan", "save me a bao"]],
   }),
+  post("abishek", hoursAgo(26), "every SF coffee shop is 50% people pitching a startup. today that was us 🤓☕", {
+    comments: [["armaan", "we said 'AI' 11 times in 20 minutes"], ["nivan", "and we got the oat milk discount"]],
+  }),
   post("abishek", daysAgo(6), "unpopular opinion: BART is fine. it's the escalators that aren't 🚇", {
     image: "bart", comments: [["keira", "the escalators at civic center have never worked"], ["vedansh", "defending BART is wild"]],
   }),
@@ -137,6 +144,7 @@ const msgs: [string, number, string][] = [
   ["nivan", 5, "ok but who actually knows the city best. armaan thinks he's a local because he knows 4 taquerias"],
   ["armaan", 4.9, "5 taquerias. and I'll prove it"],
   ["abishek", 4.8, "berkeley counts as the bay, don't forget about me"],
+  ["vedansh", 4.7, "also if anyone asks I'm the hackathon's designated debugger. bring snacks"],
 ];
 export const demoConversation: Conversation = {
   id: DEMO_CHAT,
@@ -164,3 +172,45 @@ export const demoEvents: FBEvent[] = [
     going: [], interested: [],
   },
 ];
+
+// ---------- 1:1 DMs with game streaks (they power each person's Hangout critters) ----------
+// Streaks come from finished games logged in each 1:1 DM (src/lib/streaks). Each pair gets a different state so every
+// judge's Hangout shows a mix: celebrating, your turn, their turn, sleepy (at risk) and napping (streak ended).
+type Today = "both" | "none" | "lost" | string; // string = the one person who played today
+const PAIRS: [a: string, b: string, days: number, today: Today, game: string, chat: [string, string][]][] = [
+  ["nivan", "keira", 6, "both", "Bay Area Deep Cuts", [["keira", "6 days. we are unstoppable"], ["nivan", "lands end after we hit 7"]]],
+  ["nivan", "vedansh", 3, "vedansh", "Trail Race", [["vedansh", "beat my time today, I dare you"], ["nivan", "after this standup. watch"]]],
+  ["nivan", "armaan", 2, "none", "Taqueria Rush", [["armaan", "we're gonna lose the streak at this rate"], ["nivan", "tonight, promise"]]],
+  ["nivan", "abishek", 1, "lost", "Food Truck Frenzy", [["abishek", "we forgot to play 😭 the critter is napping"], ["nivan", "we restart this weekend"]]],
+  ["armaan", "keira", 4, "armaan", "Burrito Builder", [["armaan", "your turn, I set a record"], ["keira", "on it after my hike"]]],
+  ["armaan", "vedansh", 1, "both", "Mission Munchies", [["vedansh", "day 1 let's gooo"], ["armaan", "the egg hatched!!"]]],
+  ["armaan", "abishek", 5, "abishek", "Off the Grid Sprint", [["abishek", "done for today, you're up"], ["armaan", "after lunch"]]],
+  ["vedansh", "keira", 7, "both", "Fog City Doodles", [["keira", "a full week!!"], ["vedansh", "the critter is throwing a party"]]],
+  ["vedansh", "abishek", 2, "none", "BART Dash", [["abishek", "don't let it die tonight"], ["vedansh", "setting an alarm"]]],
+  ["keira", "abishek", 3, "keira", "Sunset Sketch", [["keira", "drew the golden gate, AI got it in 2 seconds"], ["abishek", "showoff. my turn soon"]]],
+];
+
+export function demoDMs(now = Date.now(), startToday = now): Conversation[] {
+  const DAY = 864e5;
+  const dAgo = (days: number, mins: number) => new Date(now - days * DAY + mins * 60e3).toISOString();
+  // inside today's game day, even right after midnight
+  const todayIso = (minsAgo: number) => new Date(Math.min(now - 1000, Math.max(startToday + 1000, now - minsAgo * 60e3))).toISOString();
+  return PAIRS.map(([a, b, days, today, game, chat], k) => {
+    const id = `c_dm_${a}_${b}`;
+    const log = (who: string, at: string, ref: string, pts: number) => ({ id: uid("m"), senderId: who, text: `played ${game} · ${pts} pts`, createdAt: at, attachment: { type: "sqgamelog" as const, ref }, readBy: [a, b] });
+    const msgs: Conversation["messages"] = [];
+    // the streak: both finished on each of the last `days` days (minus today's, handled below); "lost" = played once, 4 days ago
+    const past = today === "lost" ? [4] : Array.from({ length: today === "both" ? days - 1 : days }, (_, i) => i + 1);
+    for (const d of past.reverse()) {
+      const ref = `sqdemo${k}d${d}`;
+      msgs.push(log(b, dAgo(d, -30), ref, 180 + ((d * 37 + k * 11) % 140)), log(a, dAgo(d, -20), ref, 170 + ((d * 53 + k * 7) % 150)));
+    }
+    if (today !== "none" && today !== "lost") {
+      const ref = `sqdemo${k}t`;
+      for (const who of today === "both" ? [b, a] : [today]) msgs.push(log(who, todayIso(who === a ? 40 : 55), ref, 200 + ((k * 31) % 120)));
+    }
+    chat.forEach(([who, text], i) => msgs.push({ id: uid("m"), senderId: who, text, createdAt: todayIso(30 - i * 5), readBy: [a, b] }));
+    msgs.sort((x, y) => x.createdAt.localeCompare(y.createdAt));
+    return { id, participantIds: [a, b], isGroup: false, messages: msgs };
+  });
+}
