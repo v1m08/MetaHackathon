@@ -8,6 +8,8 @@ cp .env.example .env     # optional; leave MODEL_API_KEY empty for mock mode
 npm run dev              # http://localhost:3000
 ```
 
+> **Demo branch (`demo-stage`).** This branch puts the pieces together: the daily AI Chat Games, the Hangout streaks screen, the four Sidequest games and the context engine. To run the demo, follow [DEMO-RUNBOOK.md](DEMO-RUNBOOK.md); what went in, what was cut and what is still missing is in [DEMO-PLAN.md](DEMO-PLAN.md). The app opens on Messenger; the Facebook feed is at `/feed`.
+
 ## Run it on your iPhone
 
 The app is mobile-first and renders full-bleed on a real phone (the desktop phone frame only appears at tablet widths and up).
@@ -27,14 +29,15 @@ For a smoother demo use the production build: `npm run build && npm run start:ph
 
 | Surface | Route | Notes |
 |---|---|---|
-| Feed | `/` | Stories, composer, posts with reactions (hold Like for the picker), comments & replies |
+| Feed | `/feed` | Stories, composer, posts with reactions (hold Like for the picker), comments & replies |
 | Reels | `/reels` | Full-screen snap scroll, double-tap to like, save |
 | Profile | `/profile/:id` | Cover, about, friends grid, posts/photos/reels tabs, friend requests |
 | Friends | `/friends` | Requests, suggestions with mutuals, friends grid |
 | Groups | `/groups`, `/groups/:id` | 6 groups with 15–20 post histories each; join, post, **AI "Catch me up"** |
 | Events | `/events`, `/events/:id` | RSVP, guests, discussion posts |
 | Marketplace | `/marketplace`, `/marketplace/:id`, `/marketplace/new` | Categories, search, save, message seller (creates a real chat), **AI "Draft listing"** |
-| Messenger | `/messages`, `/messages/:id` | Live between two windows (1.5s polling), group chats, listing attachments, read receipts |
+| Messenger | `/`, `/messages`, `/messages/:id` | The start page. Live between two windows (1.5s polling), group chats, listing attachments, read receipts. Today's game, the chat score bar, unlock cards and the Sidequest tray live in the thread. |
+| Hangout | `/streaks`, `/streaks/:friendId` | One critter per friend, kept awake by playing each day's game together |
 | Dating | `/dating` | Card stack with prompts, like/pass, matches, "It's a match" screen |
 | Gaming | `/gaming`, `/gaming/:id` | Two playable mini games (Tap Dash, Word Rush) with live friends leaderboards |
 | Notifications | `/notifications` | Derived from real seed content, unread badges |
@@ -192,10 +195,11 @@ npm start          # serve the build
 npm run typecheck  # tsc --noEmit
 npm run warm       # cache every seed image locally (server must be running)
 npm run reset      # restore the seed data (server must be running)
-npm run sidequest  # start the Sidequest game server (:5180) for Deep Cuts & Order Up!
-npm test           # unit tests: Chat Games, Sidequest context engine, streaks
+npm run sidequest  # start the Sidequest game server (:5180): Deep Cuts, Order Up!, Ghost Run, Sketch Off
+npm test           # unit tests: Chat Games, Sidequest context engine, streaks, the glue between them (67)
 npm run qa:play    # 57 end-to-end QA checks against a running server
 npm run eval:play  # Chat Games eval → eval/play.json + EVAL-PLAY.md
+npm run demo:prep  # stage the demo: reset, drop today's game, print one link per player (see DEMO-RUNBOOK.md)
 ```
 
 ## Sidequest Games + Context & Closeness Engine
