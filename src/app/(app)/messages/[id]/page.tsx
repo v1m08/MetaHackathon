@@ -10,6 +10,9 @@ import { api, refresh, useApi } from "@/lib/api";
 import { messageTime } from "@/lib/format";
 import { useSession } from "@/lib/session";
 import type { Conversation, Listing, Message } from "@/types";
+import { GameChip } from "@/components/play/GameChip";
+import { ScoreBar } from "@/components/play/ScoreBar";
+import { UnlockChip } from "@/components/play/UnlockChip";
 
 type Card = { id: string; name: string; avatar: string };
 type Conv = Conversation & { name: string; participants: Card[]; others: Card[] };
@@ -40,6 +43,13 @@ export default function ThreadPage() {
   useEffect(() => {
     refresh("/api/me");
   }, [count]);
+  const started = !!c?.messages.some((m) => !m.system && m.status !== "draft");
+  const { data: daily } = useApi<{ game: { id: string } | null }>(started ? `/api/play/daily/${id}` : null, { revalidateOnFocus: false, shouldRetryOnError: false });
+  const dailyId = daily?.game?.id;
+  useEffect(() => {
+    if (dailyId) mutate();
+  }, [dailyId, mutate]);
+  const played = () => { mutate(); refresh("/api/conversations"); refresh(`/api/play/chat/${id}`); refresh("/api/notifications"); refresh(`/api/play/daily/${id}`); };
 
   async function send(body = text, attachment?: Message["attachment"]) {
     if ((!body.trim() && !attachment) || !c) return;
@@ -53,7 +63,7 @@ export default function ThreadPage() {
     setSending(false);
   }
 
-  // ---------- Deep Cuts ----------
+  // ---------- Deep Cuts + Order Up! (sidequest chat games) ----------
   const { data: me } = useMe();
   const [tray, setTray] = useState(false);
   const [playing, setPlaying] = useState<string | null>(null);
@@ -62,10 +72,7 @@ export default function ThreadPage() {
   sendRef.current = send;
   const finished = useCallback((f: Finished) => {
     // GamePigeon style: a quiet "Maya played … · score" line, not a new card
-    if (f.text && f.ref) return void sendRef.current(f.text, { type: "gamelog", ref: f.ref });
-    const players = f.players ?? 1;
-    const place = players > 1 ? (f.rank === 1 ? " and took the lead" : ` (#${f.rank} of ${players})`) : "";
-    void sendRef.current(`${f.icon} I reached ${f.reached} in ${f.title}${place}`, { type: "game", ref: f.room ?? "" });
+    if (f.text && f.ref) void sendRef.current(f.text, { type: "sqgamelog", ref: f.ref });
   }, []);
 
   const byId = Object.fromEntries((c?.participants ?? []).map((p) => [p.id, p]));
@@ -89,6 +96,7 @@ export default function ThreadPage() {
           <button className="p-2 text-messenger"><Video size={24} /></button>
           <button className="p-2 text-messenger"><Info size={22} /></button>
         </div>
+        {c && <ScoreBar conversationId={c.id} onChanged={played} />}
       </header>
 
       <div className="flex-1 px-3 py-3">
@@ -97,10 +105,14 @@ export default function ThreadPage() {
           const prev = c.messages[i - 1];
           const next = c.messages[i + 1];
           const gap = !prev || new Date(m.createdAt).getTime() - new Date(prev.createdAt).getTime() > 30 * 60e3;
-          const firstOfRun = !prev || prev.senderId !== m.senderId || gap;
-          const lastOfRun = !next || next.senderId !== m.senderId;
+          const card = (x?: Message) => !!x && (!!x.system || x.attachment?.type === "game" || x.attachment?.type === "unlock" || x.attachment?.type === "sqgamelog");
+          const firstOfRun = !prev || card(prev) || prev.senderId !== m.senderId || gap;
+          const lastOfRun = !next || card(next) || next.senderId !== m.senderId;
           const sender = byId[m.senderId];
-          if (m.attachment?.type === "gamelog")
+          if (m.attachment?.type === "game") return <GameChip key={m.id} id={m.attachment.ref} onChanged={played} />;
+          if (m.attachment?.type === "unlock") return <UnlockChip key={m.id} id={m.attachment.ref} />;
+          if (m.system) return <div key={m.id} className="my-3 rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2 text-center text-[12.5px] leading-snug text-emerald-900">{m.text}</div>;
+          if (m.attachment?.type === "sqgamelog")
             return (
               <div key={m.id} className="my-2 flex justify-center">
                 <button onClick={() => setPlaying(m.attachment!.ref)} className="max-w-[85%] rounded-full bg-[#f0f2f5] px-3 py-1 text-center text-[12px] text-ink-2">
@@ -117,8 +129,8 @@ export default function ThreadPage() {
                 <div className={cx("flex max-w-[75%] flex-col", mine ? "items-end" : "items-start")}>
                   {m.attachment?.type === "listing" && <ListingChip id={m.attachment.ref} />}
                   {m.attachment?.type === "image" && <Photo src={m.attachment.ref} className="mb-1 max-h-60 rounded-2xl object-cover" />}
-                  {m.attachment?.type === "game" && <GameCard roomId={m.attachment.ref} userId={userId} onOpen={setPlaying} />}
-                  {m.text && !(m.attachment?.type === "game" && m.text.startsWith("🎮")) && (
+                  {m.attachment?.type === "sqgame" && <GameCard roomId={m.attachment.ref} userId={userId} onOpen={setPlaying} />}
+                  {m.text && !(m.attachment?.type === "sqgame" && m.text.startsWith("🎮")) && (
                     <div
                       className={cx(
                         "px-3 py-2 text-[15px] leading-snug break-words whitespace-pre-wrap",
@@ -135,7 +147,7 @@ export default function ThreadPage() {
             </div>
           );
         })}
-        {c && c.messages.length > 0 && c.messages.at(-1)!.senderId === userId && (
+        {c && c.messages.length > 0 && c.messages.at(-1)!.senderId === userId && !c.messages.at(-1)!.system && (
           <div className="mr-1 text-right text-[11px] text-ink-2">{(c.messages.at(-1)!.readBy?.length ?? 1) > 1 ? "Seen" : "Delivered"}</div>
         )}
         <div ref={bottom} />
@@ -160,7 +172,7 @@ export default function ThreadPage() {
           onClose={() => setTray(false)}
           onCreate={(ref, interest, game) => {
             setTray(false);
-            void send(`🎮 ${game === "orderup" ? "Order Up!" : "Deep Cuts"}: ${interest}`, { type: "game", ref });
+            void send(`🎮 ${game === "orderup" ? "Order Up!" : "Deep Cuts"}: ${interest}`, { type: "sqgame", ref });
           }}
         />
       )}

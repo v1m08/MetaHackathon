@@ -116,6 +116,18 @@ export const feedPosts: Post[] = [
     likes: 77, love: 44, images: [photo("anniversary-dinner", 800, 800)], tagged: ["devon"],
     comments: [["devon", "I still take credit for this"], ["aisha", "happy anniversary!! I'll water the plants tonight"], ["hannah", "the cheapest nice dinner is the most 'us' thing ever"]],
   }),
+  P("maya", 12, "water's back at the greenbelt!! the trail under the cliff, the creek showing through the trees, somebody carrying a lime green float like they know something I don't. ran 6 miles before it hit 90. free, obviously. the trailhead parking fills by 8 so go at 7 or bike", {
+    likes: 10, love: 4, images: [photo("atx-greenbelt", 800, 600)], audience: "public",
+    comments: [["ethan", "the float person is the smartest one on that trail"], ["omar", "bike is the move, the lot is a war zone"]],
+  }),
+  P("maya", 41, "the vegan ones. refried beans, the white crema, pineapple on top and the dark sauce drizzle. $4 each. everyone fights me on pineapple on a breakfast taco and everyone is wrong. sunday pottery then this then nothing. perfect day", {
+    likes: 9, love: 5, haha: 2, images: [photo("atx-tacos", 800, 800)], audience: "public",
+    comments: [["jordan", "pineapple on a breakfast taco is fine. the crema is what I'd fight you on"], ["hannah", "$4 is a budget win. where. I need the where"], ["grace", "pottery then tacos then nothing is the whole lifestyle"]],
+  }),
+  P("jordan", 84, "dani walked me to a truck at 11pm and I'm not the same. two al pastor, onion cilantro green salsa, lemon wedge not lime bc that's how they do it here, $2.50 each. ate them standing on a sidewalk next to a guy in flip flops who clearly does this every night. taking notes for the truck. austin we need to talk", {
+    likes: 8, love: 9, images: [photo("la-tacos", 800, 800)], audience: "public",
+    comments: [["maya", "$2.50 standing on a sidewalk at 11pm is peak. this is the dream"], ["sofia", "my sister feeding my friend tacos at 11pm. family"], ["devon", "what's the salsa situation. is it a green that hurts or a green that's friendly", [["jordan", "it hurts. in a loving way"]]]],
+  }),
 ];
 
 export const stories: Story[] = [

@@ -7,6 +7,7 @@ import { useApi } from "@/lib/api";
 import { messageTime } from "@/lib/format";
 import type { Message } from "@/types";
 
+const CARD_LABEL: Record<string, string> = { game: "Today's game", unlock: "Unlocked for this chat" };
 type Conv = { id: string; isGroup: boolean; name: string; emoji?: string; participants: { id: string; name: string; avatar: string }[]; avatar?: string; last?: Message & { mine: boolean; senderName: string }; unread: number };
 
 export default function MessagesPage() {
@@ -43,7 +44,7 @@ export default function MessagesPage() {
                 <div className={cx("truncate text-[16px]", c.unread ? "font-bold" : "font-medium")}>{c.emoji ? `${c.name}` : c.name}</div>
                 {c.last && (
                   <div className={cx("flex items-center gap-1 text-[14px]", c.unread ? "font-semibold text-ink" : "text-ink-2")}>
-                    <span className="truncate">{c.last.mine ? "You: " : c.isGroup ? `${c.last.senderName}: ` : ""}{c.last.attachment && !c.last.text ? "Sent an attachment" : c.last.text}</span>
+                    <span className="truncate">{c.last.attachment && CARD_LABEL[c.last.attachment.type] ? CARD_LABEL[c.last.attachment.type] : <>{c.last.mine ? "You: " : c.isGroup ? `${c.last.senderName}: ` : ""}{c.last.attachment && !c.last.text ? "Sent an attachment" : c.last.text}</>}</span>
                     <span className="shrink-0">· {messageTime(c.last.createdAt)}</span>
                   </div>
                 )}

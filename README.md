@@ -192,4 +192,34 @@ npm start          # serve the build
 npm run typecheck  # tsc --noEmit
 npm run warm       # cache every seed image locally (server must be running)
 npm run reset      # restore the seed data (server must be running)
+npm test           # Chat Games unit + integration tests (50 tests)
+npm run qa:play    # 57 end-to-end QA checks against a running dev server
+npm run eval:play  # Chat Games eval → eval/play.json + EVAL-PLAY.md
 ```
+
+## Chat Games
+
+Every group chat and DM gets one short game a day, written by Muse from that chat's own material. How the chat plays becomes a chat interaction score, and when the score crosses a threshold the chat is handed one real Group, Event or Marketplace listing on the topic it keeps choosing. Code picks the topic, the format, the sources, the scores and the recommendation; Muse writes the game and the one line on the unlock card; code checks every id, quote and number before anything is shown.
+
+**Six formats.** A game is a format × a topic × this chat's own messages, posts and interests (only what every member can already see; nothing crosses from one chat to another).
+
+| Format | What the chat does | What it measures |
+|---|---|---|
+| Split | Pick a side of a dilemma from the chat's topics, then predict how the chat splits | Topic preference; how well members read each other |
+| Receipts | Real lines from the chat and members' posts: who said it? | Attention to each other |
+| Lineup | Rank the members on a positive prompt (3+ people) | Peer perception; consensus |
+| Blend | Build one thing together, one slot each | Concrete picks that map onto event and listing categories |
+| Hot Seat | Answer questions about one member; they get the final say (3+ people) | Closeness; the subject's own preferences |
+| Wager | Spread 10 points over three real upcoming events, groups or listings | A direct ranking of real inventory |
+
+**How scores work** (all in `src/lib/play/score.ts`, no model). Every tap is a play event. Per member and game, engagement is 0–1 (finished, how soon, how fully, reacted or replied after). Per member and topic, affinity is a taste prior plus engagement × what they picked or passed over, with a 14-day half-life. A chat's topic score is mean affinity × coverage × agreement, so one loud member doesn't decide it. The chat interaction score is 0–100 over 14 days: 40% participation, 20% streak (days a majority played), 20% reactions and replies, 20% how settled the top topics are. Being right in a game never feeds recommendations. Unlocks: a Group at 40, an Event at 60, a Marketplace pick at 75, each only on a topic the chat has settled or put Wager points on, one card a day per chat. "I'm in" on the card is a real RSVP / join / save and is written back as that member's signal. A member sees the chat's totals and their own topic numbers, never anyone else's; any member can mute games for a chat.
+
+**Run and demo.**
+
+```
+npm run dev                         # AI_MODE=mock npm run dev spends nothing: template games, labelled Mock
+# two windows: /messages/c_volleyball?as=jordan and /messages/c_volleyball?as=sam   (maya is not in that chat)
+QA_KEEP=1 npm run qa:play           # resets, plays today's game as six of its eight members, leaves the result up
+```
+
+Today's game arrives as a card in the thread on the first load of the day (one model call per chat per day). The seeded chat sits at 58; it takes five of eight finishing to pass 60, at which point the Event card appears in the thread. `/dev/play` is the inspector: score parts, topic table, what code refused from the draft, the ranked candidates, and buttons to drop a game in any format. `npm run qa:play` runs 57 end-to-end checks and resets when it is done; `npm run eval:play` writes `EVAL-PLAY.md` (the copy in the repo is a mock dry run; a live run makes 8 to 14 model calls at the default cap of six games). Code: `src/lib/play/`, `src/app/api/play/`, `src/components/play/`, seed history in `src/data/play.ts`, tests in `tests/play.test.ts`.
