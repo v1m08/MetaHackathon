@@ -48,6 +48,11 @@ export default function MenuPage() {
             <span className="flex-1 text-[15px] font-semibold">Switch account</span>
             <ChevronRight size={18} className="text-ink-2" />
           </Link>
+          <Link href="/dev/context" className="flex items-center gap-3 px-3 py-3">
+            <Gamepad2 size={22} className="text-fb" />
+            <span className="flex-1 text-[15px] font-semibold">Context Inspector</span>
+            <ChevronRight size={18} className="text-ink-2" />
+          </Link>
           <Link href="/dev/ai" className="flex items-center gap-3 px-3 py-3">
             <Wand2 size={22} className="text-ink-2" />
             <span className="flex-1 text-[15px] font-semibold">AI Inspector</span>

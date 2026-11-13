@@ -56,6 +56,7 @@ export default function InspectorPage() {
       <header className="sticky top-0 z-10 border-b border-white/10 bg-[#0f172a]/90 backdrop-blur">
         <div className="mx-auto flex max-w-7xl items-center gap-4 px-4 py-3">
           <Link href="/" className="flex items-center gap-1 text-sm text-slate-300 hover:text-white"><ArrowLeft size={16} /> App</Link>
+          <Link href="/dev/context" className="text-sm text-slate-300 hover:text-white">Context inspector</Link>
           <h1 className="flex items-center gap-2 text-lg font-bold"><Activity size={18} className="text-fb" /> AI Inspector</h1>
           {status && (
             <div className="ml-auto flex flex-wrap items-center gap-2 text-xs">

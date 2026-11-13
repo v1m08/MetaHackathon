@@ -4,6 +4,7 @@
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { X } from "lucide-react";
+import { api } from "@/lib/api";
 import { SceneView } from "../../sidequest/client/src/rarity/scene";
 import { fmt, withScene, type PublicPack } from "../../sidequest/shared/rarity";
 import type { Menu } from "../../sidequest/shared/kitchen";
@@ -283,12 +284,13 @@ const GAMES: Record<GameKind, { name: string; blurb: string; emoji: string; api:
   orderup: { name: "Order Up!", blurb: "Run a restaurant. Serve fast, earn tips", emoji: "🍳", api: "/api/k", prefix: "k:", placeholder: "What kind of restaurant?", suggestions: ["Burgers", "Ramen", "Tacos", "Pizza", "Sushi", "Coffee shop", "Rock climbing", "Taylor Swift"], accent: "#e8492f" },
 };
 
-export function GameTray({ onCreate, onClose }: { onCreate: (ref: string, interest: string, game: GameKind) => void; onClose: () => void }) {
+export function GameTray({ conversationId, onCreate, onClose }: { conversationId?: string; onCreate: (ref: string, interest: string, game: GameKind) => void; onClose: () => void }) {
   const [game, setGame] = useState<GameKind>("deepcuts");
   const G = GAMES[game];
   const SUGGESTIONS = G.suggestions;
   const [topic, setTopic] = useState("");
   const [ready, setReady] = useState<{ interest: string; title: string; emoji: string }[]>([]);
+  const [smart, setSmart] = useState<{ forChat: { chip: string; reason: string }[]; discover: { chip: string; reason: string }[] } | null>(null);
   const [building, setBuilding] = useState<string | null>(null);
   const [secs, setSecs] = useState(0);
   const [error, setError] = useState("");
@@ -299,6 +301,12 @@ export function GameTray({ onCreate, onClose }: { onCreate: (ref: string, intere
       .then(setReady)
       .catch(() => setError("Game server isn't running. Start it with: npm run sidequest"));
   }, [G.api]);
+  useEffect(() => {
+    if (!conversationId) return;
+    api<{ forChat: { chip: string; reason: string }[]; discover: { chip: string; reason: string }[] }>(`/api/context/tray?conversationId=${encodeURIComponent(conversationId)}&game=${game}`)
+      .then(setSmart)
+      .catch(() => setSmart(null));
+  }, [conversationId, game]);
   useEffect(() => {
     if (!building) return;
     const t0 = Date.now();
@@ -376,6 +384,24 @@ export function GameTray({ onCreate, onClose }: { onCreate: (ref: string, intere
                 Send
               </button>
             </form>
+            {smart && (smart.forChat.length > 0 || smart.discover.length > 0) && (
+              <div className="mt-3">
+                <div className="mb-1.5 text-[11.5px] font-semibold text-[#6ee7b7]">Picked for this chat</div>
+                <div className="flex flex-wrap gap-1.5">
+                  {[...smart.forChat, ...smart.discover].slice(0, 5).map((s) => (
+                    <button
+                      key={s.chip}
+                      onClick={() => create(s.chip)}
+                      title={s.reason}
+                      className="rounded-full bg-[#6ee7b7]/15 px-3 py-1 text-[13px] font-medium text-[#a7f3d0] ring-1 ring-[#6ee7b7]/30 active:bg-[#6ee7b7]/25"
+                    >
+                      {readySet.has(s.chip.toLowerCase()) ? "⚡ " : ""}
+                      {s.chip}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
             <div className="mt-3 flex flex-wrap gap-2">
               {chips.map((c) => (
                 <button key={c} onClick={() => create(c)} className="rounded-full bg-white/10 px-3 py-1.5 text-[14px] font-medium active:bg-white/20">

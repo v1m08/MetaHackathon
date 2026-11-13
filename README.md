@@ -192,4 +192,26 @@ npm start          # serve the build
 npm run typecheck  # tsc --noEmit
 npm run warm       # cache every seed image locally (server must be running)
 npm run reset      # restore the seed data (server must be running)
+npm run sidequest  # start the Sidequest game server (:5180) for Deep Cuts & Order Up!
+npm test           # Sidequest Context Engine unit & privacy tests
 ```
+
+## Sidequest Games + Context & Closeness Engine
+
+Young adults stay connected in Messenger through two GamePigeon-style pixel games powered by Muse (**Deep Cuts** and **Order Up!** in `sidequest/`), while the **Context Engine** (`src/lib/context/`) turns those playful sessions into a privacy-safe **Taste + Relationship Closeness Graph** that personalizes **Events**, **Groups**, and **Marketplace**.
+
+### End-to-End Demo Loop
+1. **Smart In-Tray Suggestions (`/api/context/tray` → `src/components/ChatGames.tsx`):**
+   - Tapping **`+`** in any Messenger chat shows **"Picked for this chat"** topic chips computed from the strict visibility intersection of chat members (shared Groups, co-attended Events, visible posts/interests) plus unexplored local Austin categories (`blindSpotTopicsFor`).
+2. **Play Deep Cuts or Order Up! (`sidequest/`, `:5180`):**
+   - Muse generates a themed pixel world (**Deep Cuts**) or 75-second restaurant (**Order Up!**) for any topic; cards (`sqgame`) and GamePigeon completion lines (`sqgamelog`) post live in the thread.
+3. **Context & Closeness Graph (`src/lib/context/index.ts`, `/dev/context`):**
+   - Ingests `sqgame` / `sqgamelog` messages + Sidequest room caches (`sidequest/.cache/{rarity,kitchen}/*.json`) with zero legacy quiz dependencies.
+   - Updates per-user **Taste Affinities** (14-day decay, flagging `NEW` discovered topics absent from static profile tags) and chat-scoped **Closeness Scores (`0–100`)** (co-played rooms, replay runs, post-game chat banter, and Deep Cuts same-answer mind-melds).
+   - Open **Menu → Context Inspector (`/dev/context`)** to inspect Before (Cold Profile) vs. After (Learned Context) for any user.
+4. **Ecosystem Personalization (`Events`, `Groups`, `Marketplace`):**
+   - `socialMatchFor` ranks **Events (`/events`)**, **Groups (`/groups`)**, and **Marketplace (`/marketplace`)** using personal affinity + co-played shared-chat matches (*"Matches your games with Jordan · live music"*) with a **1-tap `Send to [Friend/Chat]`** button.
+
+### Privacy Guardrails (Enforced in Code)
+- **Strict Audience Intersection on Input:** Private Reel/Marketplace saves (`savedBy`), unshared private Groups, restricted (`friends`-only) profiles when non-friends are present, and other threads' messages are excluded from `GameTray` topic suggestions.
+- **Zero Cross-Chat Signal Leakage on Output:** Friend/group match badges (`"Matches your games with X"`) only inspect Sidequest games **both users played inside a shared thread** — games a friend played in another chat never leak.

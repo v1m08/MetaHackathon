@@ -7,9 +7,9 @@ import { useMe } from "@/components/Shell";
 import { ArrowLeft, Image as ImageIcon, Info, Phone, Plus, Send, Smile, ThumbsUp, Video } from "lucide-react";
 import { Avatar, Photo, cx } from "@/components/ui";
 import { api, refresh, useApi } from "@/lib/api";
-import { messageTime } from "@/lib/format";
+import { eventDate, messageTime } from "@/lib/format";
 import { useSession } from "@/lib/session";
-import type { Conversation, Listing, Message } from "@/types";
+import type { Conversation, FBEvent, Listing, Message } from "@/types";
 
 type Card = { id: string; name: string; avatar: string };
 type Conv = Conversation & { name: string; participants: Card[]; others: Card[] };
@@ -21,6 +21,21 @@ function ListingChip({ id }: { id: string }) {
     <Link href={`/marketplace/${id}`} className="mb-1 flex w-60 items-center gap-2 overflow-hidden rounded-xl border border-line/60 bg-white">
       <Photo src={data.images[0]} className="h-16 w-16 object-cover" />
       <div className="min-w-0 pr-2"><div className="truncate text-[13px] font-semibold text-ink">{data.title}</div><div className="text-[13px] text-ink-2">${data.price}</div></div>
+    </Link>
+  );
+}
+
+function EventChip({ id }: { id: string }) {
+  const { data } = useApi<FBEvent>(`/api/events/${id}`);
+  if (!data) return null;
+  return (
+    <Link href={`/events/${id}`} className="mb-1 flex w-60 items-center gap-2 overflow-hidden rounded-xl border border-line/60 bg-white">
+      <Photo src={data.cover} className="h-16 w-16 shrink-0 object-cover" />
+      <div className="min-w-0 py-1 pr-2">
+        <div className="truncate text-[11px] font-semibold text-red-600 uppercase">{eventDate(data.startsAt)}</div>
+        <div className="truncate text-[13px] font-semibold text-ink">{data.title}</div>
+        <div className="truncate text-[11.5px] text-ink-2">{data.location}</div>
+      </div>
     </Link>
   );
 }
@@ -114,6 +129,7 @@ export default function ThreadPage() {
                 {!mine && <span className="w-7 shrink-0">{lastOfRun && sender && <Avatar src={sender.avatar} name={sender.name} size={28} />}</span>}
                 <div className={cx("flex max-w-[75%] flex-col", mine ? "items-end" : "items-start")}>
                   {m.attachment?.type === "listing" && <ListingChip id={m.attachment.ref} />}
+                  {m.attachment?.type === "event" && <EventChip id={m.attachment.ref} />}
                   {m.attachment?.type === "image" && <Photo src={m.attachment.ref} className="mb-1 max-h-60 rounded-2xl object-cover" />}
                   {m.attachment?.type === "sqgame" && <GameCard roomId={m.attachment.ref} userId={userId} onOpen={setPlaying} />}
                   {m.text && !(m.attachment?.type === "sqgame" && m.text.startsWith("🎮")) && (
@@ -155,6 +171,7 @@ export default function ThreadPage() {
 
       {tray && (
         <GameTray
+          conversationId={c?.id}
           onClose={() => setTray(false)}
           onCreate={(ref, interest, game) => {
             setTray(false);

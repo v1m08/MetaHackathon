@@ -1,16 +1,21 @@
 // In-memory store. Seeded at boot, survives hot reloads via globalThis, resets on restart.
 // Every mutation the UI needs lives here so API routes stay thin and AI tools can reuse them.
 import { buildSeed } from "@/data";
+import { seedSidequestIntoDb } from "@/lib/context/seed";
 import { photoUrl } from "@/lib/img";
 import type { Comment, Conversation, Database, FBEvent, Group, ID, Listing, Message, Notification, Post, ReactionType, User } from "@/types";
 
 const g = globalThis as unknown as { __fbdb?: Database };
 export function db(): Database {
-  if (!g.__fbdb) g.__fbdb = buildSeed();
+  if (!g.__fbdb) {
+    g.__fbdb = buildSeed();
+    seedSidequestIntoDb(g.__fbdb);
+  }
   return g.__fbdb;
 }
 export function resetDb() {
   g.__fbdb = buildSeed();
+  seedSidequestIntoDb(g.__fbdb);
   return g.__fbdb;
 }
 

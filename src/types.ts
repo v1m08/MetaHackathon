@@ -22,6 +22,7 @@ export interface User {
   friendIds: ID[];
   interests: string[];
   birthday?: string; // MM-DD
+  privacy?: "public" | "friends";
 }
 
 export interface Comment {

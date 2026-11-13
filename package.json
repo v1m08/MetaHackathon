@@ -12,7 +12,8 @@
     "typecheck": "tsc --noEmit",
     "warm": "curl -s http://localhost:3000/api/admin/warm-images",
     "reset": "curl -s -X POST http://localhost:3000/api/admin/reset",
-    "sidequest": "tsx sidequest/cli.ts"
+    "sidequest": "tsx sidequest/cli.ts",
+    "test": "node --import tsx --test \"tests/**/*.test.ts\""
   },
   "dependencies": {
     "lucide-react": "^0.468.0",

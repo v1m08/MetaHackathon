@@ -1,27 +1,62 @@
 "use client";
 import Link from "next/link";
 import { useState } from "react";
-import { MapPin, Search, SlidersHorizontal, Tag, User } from "lucide-react";
+import { Check, MapPin, Search, Send, SlidersHorizontal, Tag, User } from "lucide-react";
 import { Shell } from "@/components/Shell";
 import { Photo, Pill, Skeleton, cx } from "@/components/ui";
-import { useApi } from "@/lib/api";
+import { api, refresh, useApi } from "@/lib/api";
 import { money } from "@/lib/format";
 import type { Listing } from "@/types";
 
-type L = Listing & { seller: { id: string; name: string; avatar: string }; saved: boolean };
+type ShareTarget = { conversationId: string; name: string; label: string };
+type L = Listing & { seller: { id: string; name: string; avatar: string }; saved: boolean; fit?: number; fitLabel?: string; shareTarget?: ShareTarget };
 const CATS = ["All", "Furniture", "Electronics", "Bikes", "Sporting Goods", "Clothing", "Plants", "Books", "Tickets", "Musical Instruments"];
 
 function ListingTile({ l }: { l: L }) {
+  const [sent, setSent] = useState(false);
+  const [busy, setBusy] = useState(false);
+  async function share() {
+    if (!l.shareTarget || busy || sent) return;
+    setBusy(true);
+    try {
+      await api(`/api/conversations/${l.shareTarget.conversationId}/messages`, {
+        method: "POST",
+        json: { text: `Saw this on Marketplace and thought of our chat`, attachment: { type: "listing", ref: l.id } },
+      });
+      refresh("/api/conversations");
+      setSent(true);
+    } finally {
+      setBusy(false);
+    }
+  }
   return (
-    <Link href={`/marketplace/${l.id}`} className="block">
-      <div className="relative aspect-square overflow-hidden rounded-lg bg-gray-200">
-        <Photo src={l.images[0]} className="h-full w-full object-cover" />
-        {l.status !== "available" && <span className="absolute top-2 left-2 rounded bg-black/70 px-1.5 py-0.5 text-[11px] font-bold text-white uppercase">{l.status}</span>}
-      </div>
-      <div className="mt-1 text-[16px] font-semibold">{money(l.price)}</div>
-      <div className="truncate text-[14px] leading-tight">{l.title}</div>
-      <div className="truncate text-[12px] text-ink-2">{l.location}</div>
-    </Link>
+    <div>
+      <Link href={`/marketplace/${l.id}`} className="block">
+        <div className="relative aspect-square overflow-hidden rounded-lg bg-gray-200">
+          <Photo src={l.images[0]} className="h-full w-full object-cover" />
+          {l.status !== "available" && <span className="absolute top-2 left-2 rounded bg-black/70 px-1.5 py-0.5 text-[11px] font-bold text-white uppercase">{l.status}</span>}
+        </div>
+        <div className="mt-1 text-[16px] font-semibold">{money(l.price)}</div>
+        <div className="truncate text-[14px] leading-tight">{l.title}</div>
+        <div className="truncate text-[12px] text-ink-2">{l.location}</div>
+      </Link>
+      {(l.fit ?? 0) > 0.15 && (
+        <div className="mt-1 space-y-1">
+          <div className="truncate text-[11.5px] font-medium text-fb">{l.fitLabel ?? "From your games"}</div>
+          {l.shareTarget && (
+            sent ? (
+              <Link href={`/messages/${l.shareTarget.conversationId}`} className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-semibold text-emerald-700">
+                <Check size={10} /> Sent · Open chat
+              </Link>
+            ) : (
+              <button onClick={share} disabled={busy} className="inline-flex items-center gap-1 rounded-full bg-[#e7f3ff] px-2 py-0.5 text-[11px] font-semibold text-fb">
+                <Send size={10} /> {l.shareTarget.label}
+              </button>
+            )
+          )}
+        </div>
+      )}
+    </div>
   );
 }
 
