@@ -13,7 +13,9 @@
     "warm": "curl -s http://localhost:3000/api/admin/warm-images",
     "reset": "curl -s -X POST http://localhost:3000/api/admin/reset",
     "sidequest": "tsx sidequest/cli.ts",
-    "test": "node --import tsx --test \"tests/**/*.test.ts\""
+    "test": "node --import tsx --test \"tests/**/*.test.ts\"",
+    "qa:play": "node scripts/qa-play.mjs",
+    "eval:play": "node scripts/eval-play.mjs"
   },
   "dependencies": {
     "lucide-react": "^0.468.0",

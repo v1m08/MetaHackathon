@@ -84,6 +84,19 @@ export const groups: Group[] = [
     rules: ["No MLM recruiting", "No unsolicited financial advice", "Celebrate wins, big or tiny"],
     postsPerDay: 3,
   },
+  {
+    id: "g_atx_lny",
+    name: "ATX Lunar New Year (20s & 30s)",
+    cover: photo("atx-lny-group", 1200, 500),
+    description:
+      "Chinese, Vietnamese, Korean and everyone-adjacent young adults in Austin who want to actually celebrate instead of calling home and feeling bad. Potlucks, dumpling nights, mahjong that gets too serious.",
+    privacy: "public",
+    memberIds: ["maya", "hannah", "zoe", "grace", "ethan", "priya"],
+    adminIds: ["hannah"],
+    tags: ["Culture", "Food", "Community"],
+    createdAt: daysAgo(900),
+    postsPerDay: 0.3,
+  },
 ];
 
 export const groupById = (id: string) => groups.find((g) => g.id === id);

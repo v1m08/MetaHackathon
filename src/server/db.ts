@@ -150,9 +150,10 @@ export function toggleReel(id: ID, userId: ID, field: "likes" | "savedBy") {
 // ---------- messenger ----------
 export const conversationsFor = (userId: ID) =>
   db()
-    .conversations.filter((c) => c.participantIds.includes(userId))
+    .conversations.filter((c) => c.participantIds.includes(userId) && c.messages.some((m) => m.status !== "draft" || m.senderId === userId))
     .sort((a, b) => (b.messages.at(-1)?.createdAt ?? "").localeCompare(a.messages.at(-1)?.createdAt ?? ""));
 export const getConversation = (id: ID) => db().conversations.find((c) => c.id === id);
+export const visibleMessages = (c: Conversation, viewerId: ID) => c.messages.filter((m) => m.status !== "draft" || m.senderId === viewerId);
 export function getOrCreateDM(a: ID, b: ID): Conversation {
   const existing = db().conversations.find((c) => !c.isGroup && c.participantIds.includes(a) && c.participantIds.includes(b));
   if (existing) return existing;
@@ -173,7 +174,7 @@ export function markConversationRead(conversationId: ID, userId: ID) {
   if (!c) return;
   for (const m of c.messages) if (!m.readBy?.includes(userId)) (m.readBy ??= []).push(userId);
 }
-export const unreadCount = (userId: ID) => conversationsFor(userId).reduce((n, c) => n + c.messages.filter((m) => m.senderId !== userId && !m.readBy?.includes(userId)).length, 0);
+export const unreadCount = (userId: ID) => conversationsFor(userId).reduce((n, c) => n + c.messages.filter((m) => (m.system || m.senderId !== userId) && m.status !== "draft" && !m.readBy?.includes(userId)).length, 0);
 
 // ---------- dating ----------
 export const datingDeckFor = (userId: ID) =>
