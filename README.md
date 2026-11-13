@@ -80,7 +80,7 @@ src/components/reconnect/  ui (StatePill, MissButton, Evidence*, PlanCard, PlanC
 src/data/reconnect.ts  shared-history posts, past events, trigger posts, culture group, seeded picks
 scripts/               eval-reconnect, qa-reconnect (+ the travel scripts)
 tests/                 reconnect.test.ts, travel.test.ts, opendoor.test.ts, ledger.test.mjs
-pitch/                 runbook.md, script.md, submission.md, shots/ (+ the travel deck and scripts as *-travel.md)
+pitch/                 runbook.md, script.md, submission.md, demo.mp4 (built by scripts/build-demo-video.py), shots-reconnect/ (+ the travel deck and scripts as *-travel.md)
 EVAL-RECONNECT.md · EVAL.md · EVAL-OPENDOOR.md · DECISIONS.md · PROGRESS.md · README-travel.md
 ```
 

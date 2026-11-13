@@ -23,7 +23,8 @@
     "animations": "node scripts/build-animations.mjs",
     "eval:opendoor": "node scripts/eval-opendoor.mjs",
     "eval:reconnect": "node scripts/eval-reconnect.mjs",
-    "qa:reconnect": "node scripts/qa-reconnect.mjs"
+    "qa:reconnect": "node scripts/qa-reconnect.mjs",
+    "video": "python3 scripts/build-demo-video.py"
   },
   "dependencies": {
     "lucide-react": "^0.468.0",

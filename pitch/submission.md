@@ -18,6 +18,6 @@
 
 **Prior art.** Hang Again (an earlier prototype on this repo's `reconnect-prototype` branch) had the drift math and the why-now idea; this build runs them on the real clone, adds the mutual layer, and puts the travel engine's planning, availability inference and validation under the plan.
 
-**Repo.** `README.md`, `EVAL-RECONNECT.md`, `DECISIONS.md`, `pitch/` (runbook, script, deck, demo video). Branch `reconnect`.
+**Repo.** `README.md`, `EVAL-RECONNECT.md`, `DECISIONS.md`, `pitch/` (runbook, script, `demo.mp4`, `shots-reconnect/`). Deck: https://claude.ai/artifact/Ba4sswTEdhgh3Enw9KkxY8 (share it from the page before judging; export to PDF from there). Branch `reconnect`.
 
 **Team.** [NAMES]
