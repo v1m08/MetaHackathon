@@ -11,6 +11,8 @@ import "./server/env";
 import { env, liveEnabled } from "./server/env";
 import { generate } from "./server/generate";
 import { findByInterest, generateGame, type Stage } from "./server/gen/pipeline";
+import { generatePack } from "./server/rarity/generate";
+import { cachedPack, cachePack, createXRoom } from "./server/rarity/rooms";
 import { spentUsd } from "./server/llm";
 import { isOurServer, lanAddress, startServer } from "./server/serve";
 import { encodeShare } from "./shared/share";
@@ -24,6 +26,35 @@ const port = portIdx >= 0 ? Number(args[portIdx + 1]) : Number(process.env.SIDEQ
 const interests = args.filter((a, i) => !a.startsWith("--") && args[i - 1] !== "--port");
 
 const c = { dim: "\x1b[2m", bold: "\x1b[1m", cyan: "\x1b[36m", green: "\x1b[32m", yellow: "\x1b[33m", reset: "\x1b[0m" };
+
+/** Deep Cuts (rarity trivia): build or reuse a pack for the interest, open a room, print its link. */
+async function makeTrivia(interest: string) {
+  const t0 = performance.now();
+  let pack = flag("--fresh") ? null : cachedPack(interest);
+  let cost = 0;
+  if (!pack) {
+    try {
+      const r = await generatePack(interest, (s) => console.log(`  ${c.dim}${((performance.now() - t0) / 1000).toFixed(0).padStart(3)}s  ${s}${c.reset}`));
+      pack = r.pack;
+      cost = r.costUsd;
+      cachePack(pack);
+    } catch (e) {
+      console.log(`  ${c.yellow}couldn't build it: ${(e as Error).message}${c.reset}\n`);
+      return;
+    }
+  }
+  const room = createXRoom(pack);
+  console.log(`\n  ${pack.host.emoji}  ${c.bold}${pack.title}${c.reset} ${c.dim}— ${pack.tagline}${c.reset}`);
+  console.log(`  ${c.dim}host ${pack.host.name} · ${pack.meter.label} ${pack.meter.icon} · tiers ${pack.tiers.join(" › ")}${c.reset}`);
+  for (const p of pack.prompts) console.log(`  ${c.dim}· ${p.q} (${p.answers.length} answers)${c.reset}`);
+  console.log(`  ${c.dim}${cost ? `new · ${((performance.now() - t0) / 1000).toFixed(0)}s · $${cost.toFixed(3)}` : "cached pack, new room"}${c.reset}`);
+  const local = `http://localhost:${port}/x/${room.id}`;
+  console.log(`  ${c.green}${local}${c.reset}`);
+  const lan = lanAddress();
+  if (lan) console.log(`  ${c.dim}phones on the same wifi:${c.reset} ${c.cyan}http://${lan}:${port}/x/${room.id}${c.reset}`);
+  console.log();
+  if (flag("--open")) execFile("open", [local]);
+}
 
 const STAGES: Record<Stage, string> = { design: "designing the game", code: "writing the code", check: "checking the code", playtest: "playtesting", repair: "fixing what the playtest found", done: "done" };
 
@@ -101,7 +132,7 @@ async function main() {
   }
   console.log();
   if (flag("--demo")) await makeLink("F1", WORDHUNT_F1); // Phase 0: hand-made F1 word hunt
-  const make = flag("--legacy") ? (i: string) => makeLink(i) : makeGame;
+  const make = flag("--legacy") ? (i: string) => makeLink(i) : flag("--code") ? makeGame : makeTrivia;
   for (const i of interests) await make(i);
 
   if (!process.stdin.isTTY && interests.length) return process.exit(0);

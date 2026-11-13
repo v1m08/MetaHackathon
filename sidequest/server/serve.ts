@@ -9,6 +9,8 @@ import { generate } from "./generate";
 import { createRoom, getRoom, sortedScores, submitScore, type ScoreRow } from "./rooms";
 import { FRAME_CSP, framePage, playPage } from "./gen/pages";
 import { loadGame } from "./gen/pipeline";
+import { generatePack } from "./rarity/generate";
+import { cachedPack, cachePack, createXRoom, getXRoom, openPrompt, roomView, submitAnswer } from "./rarity/rooms";
 
 /** Never expose playerIds (they act as the write key); mark the caller's own row instead. */
 const publicBoard = (rows: ScoreRow[], me: string | null) => rows.map((r) => ({ name: r.name, score: r.score, plays: r.plays, me: !!me && r.playerId === me }));
@@ -66,6 +68,28 @@ export async function startServer(port: number): Promise<Server> {
   };
   await build();
 
+  const xctx = await esbuild.context({
+    entryPoints: [join(CLIENT, "src", "rarity", "main.ts")],
+    bundle: true,
+    format: "iife",
+    target: "es2020",
+    write: false,
+    sourcemap: "inline",
+    logLevel: "silent",
+  });
+  let xjs = "";
+  const buildX = async () => {
+    try {
+      const r = await xctx.rebuild();
+      xjs = r.outputFiles?.[0]?.text ?? xjs;
+    } catch (err) {
+      const msg = (err as Error).message;
+      console.error("\n[rarity client build failed]\n" + msg);
+      xjs = `document.body.innerHTML = ${JSON.stringify("<pre style='color:#fff;padding:16px;white-space:pre-wrap'>Client build failed:\n" + msg.replace(/</g, "&lt;") + "</pre>")}`;
+    }
+  };
+  await buildX();
+
   const server = createServer(async (req, res) => {
     const url = new URL(req.url ?? "/", "http://x");
     try {
@@ -73,6 +97,44 @@ export async function startServer(port: number): Promise<Server> {
         res.writeHead(code, { "content-type": "application/json", "cache-control": "no-store" });
         res.end(JSON.stringify(v));
       };
+      // ---------- rarity trivia ----------
+      const xPage = url.pathname === "/x" || /^\/x\/[a-z0-9]{4,12}$/.test(url.pathname);
+      if (req.method === "GET" && xPage) {
+        await buildX();
+        res.writeHead(200, { "content-type": "text/html; charset=utf-8", "cache-control": "no-store" });
+        return res.end(readFileSync(join(CLIENT, "rarity.html")));
+      }
+      if (req.method === "GET" && url.pathname === "/rarity.js") {
+        res.writeHead(200, { "content-type": "text/javascript; charset=utf-8", "cache-control": "no-store" });
+        return res.end(xjs);
+      }
+      if (req.method === "POST" && url.pathname === "/api/x/new") {
+        const body = await readJson(req, 2000);
+        const interest = String(body.interest ?? "").slice(0, 60).trim();
+        if (!interest) return json(400, { error: "interest required" });
+        try {
+          const pack = cachedPack(interest) ?? (await generatePack(interest)).pack;
+          cachePack(pack);
+          const room = createXRoom(pack);
+          console.log(`  [web] ${JSON.stringify(interest)} → room /x/${room.id}`);
+          return json(200, { id: room.id });
+        } catch (e) {
+          return json(502, { error: `Couldn't build that one (${(e as Error).message}). Try again or another interest.` });
+        }
+      }
+      const xApi = url.pathname.match(/^\/api\/x\/([a-z0-9]{4,12})(\/open|\/answer)?$/);
+      if (xApi) {
+        const room = getXRoom(xApi[1]);
+        if (!room) return json(404, { error: "room not found" });
+        if (req.method === "GET" && !xApi[2]) return json(200, roomView(room, url.searchParams.get("me")));
+        if (req.method === "POST" && xApi[2]) {
+          const b = await readJson(req, 2000);
+          const i = Number(b.i);
+          if (xApi[2] === "/open") return json(200, openPrompt(room, b.pid, b.name, i));
+          return json(200, await submitAnswer(room, b.pid, b.name, i, b.text, b.giveUp === true));
+        }
+      }
+
       const gameRoute = url.pathname.match(/^\/(play|frame)\/([a-z0-9]{4,16})$/);
       if (req.method === "GET" && gameRoute) {
         const g = loadGame(gameRoute[2]);
